@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #=============================================================================
-# File setup.py, v0.05
+# File setup.py, v0.06
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -35,7 +35,7 @@ from setuptools import setup, find_packages
 NAME = 'Orange-Textable'
 DOCUMENTATION_NAME = 'Orange Textable'
 
-VERSION = '1.3'
+VERSION = '1.3a1'
 
 DESCRIPTION = 'Orange Canvas add-on for text analysis.'
 LONG_DESCRIPTION = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
