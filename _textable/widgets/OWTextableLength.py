@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableLength, v0.08
+# Class OWTextableLength, v0.10
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -527,11 +527,17 @@ class OWTextableLength(OWWidget):
 
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        self.restoreSettings()
+        try:
+            self.restoreSettings()
+        except AttributeError:
+            pass
 
     def getSettings(self, alsoContexts = True, globalContexts=False):
         """Overridden: called when a file is saved (among other situations)"""
-        self.storeSettings()
+        try:
+            self.storeSettings()
+        except AttributeError:
+            pass
         return super(type(self), self).getSettings(
                 alsoContexts = True, globalContexts=False
         )
@@ -545,12 +551,12 @@ class OWTextableLength(OWWidget):
             self.mode             = self.savedMode
             for segIndex in xrange(len(self.segmentations)):
                 segmentation = self.segmentations[segIndex]
-                if segmentation[0][0].uuid == self.savedUnitSenderUuid:
+                if segmentation[0][2].uuid == self.savedUnitSenderUuid:
                     self.units = segIndex
-                if segmentation[0][0].uuid == self.savedAveragingSenderUuid:
+                if segmentation[0][2].uuid == self.savedAveragingSenderUuid:
                     self.averagingSegmentation = segIndex
                 if self.mode == u'Containing segmentation':
-                    if segmentation[0][0].uuid == self.savedContextSenderUuid:
+                    if segmentation[0][2].uuid == self.savedContextSenderUuid:
                         self.contexts = segIndex
             self.updateGUI()
             if self.mode == u'Containing segmentation':
@@ -572,28 +578,28 @@ class OWTextableLength(OWWidget):
         if self.settingsRestored:
             self.savedMode                  = self.mode
             segmentation                    = self.segmentations[self.units]
-            self.savedUnitSenderUuid        = segmentation[0][0].uuid
+            self.savedUnitSenderUuid        = segmentation[0][2].uuid
             segmentation = self.segmentations[self.averagingSegmentation]
-            self.savedAveragingSenderUuid   = segmentation[0][0].uuid
+            self.savedAveragingSenderUuid   = segmentation[0][2].uuid
             if self.mode == u'Containing segmentation':
                 segmentation = self.segmentations[self.contexts]
-                self.savedContextSenderUuid    = segmentation[0][0].uuid
+                self.savedContextSenderUuid    = segmentation[0][2].uuid
                 self.savedContextAnnotationKey = self.contextAnnotationKey
         if self.settingsRestored:
             self.savedMode                  = self.mode
             if self.units is not None:
                 segmentation                = self.segmentations[self.units]
-                self.savedUnitSenderUuid    = segmentation[0][0].uuid
+                self.savedUnitSenderUuid    = segmentation[0][2].uuid
                 if self.units is not None:
                     segmentation = \
                             self.segmentations[self.averagingSegmentation]
-                    self.savedAveragingSenderUuid   = segmentation[0][0].uuid
+                    self.savedAveragingSenderUuid   = segmentation[0][2].uuid
                 else:
                     self.savedAveragingSenderUuid   = None
                 if          self.mode == u'Containing segmentation' \
                         and self.contexts is not None:
                     segmentation = self.segmentations[self.contexts]
-                    self.savedContextSenderUuid = segmentation[0][0].uuid
+                    self.savedContextSenderUuid = segmentation[0][2].uuid
                     self.savedContextAnnotationKey \
                             = self.contextAnnotationKey
                 else:

@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableCount, v0.13
+# Class OWTextableCount, v0.15
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -638,11 +638,17 @@ class OWTextableCount(OWWidget):
 
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        self.restoreSettings()
-        
+        try:
+            self.restoreSettings()
+        except AttributeError:
+            pass
+
     def getSettings(self, alsoContexts = True, globalContexts=False):
         """Overridden: called when a file is saved (among other situations)"""
-        self.storeSettings()
+        try:
+            self.storeSettings()
+        except AttributeError:
+            pass
         return super(type(self), self).getSettings(
                 alsoContexts = True, globalContexts=False
         )
@@ -656,10 +662,10 @@ class OWTextableCount(OWWidget):
             self.mode             = self.savedMode
             for segIndex in xrange(len(self.segmentations)):
                 segmentation = self.segmentations[segIndex]
-                if segmentation[0][0].uuid == self.savedUnitSenderUuid:
+                if segmentation[0][2].uuid == self.savedUnitSenderUuid:
                     self.units = segIndex
                 if self.mode == u'Containing segmentation':
-                    if segmentation[0][0].uuid == self.savedContextSenderUuid:
+                    if segmentation[0][2].uuid == self.savedContextSenderUuid:
                         self.contexts = segIndex
             self.updateGUI()
             if self.units is not None:
@@ -693,12 +699,12 @@ class OWTextableCount(OWWidget):
             self.savedMode                  = self.mode
             if self.units is not None:
                 segmentation                = self.segmentations[self.units]
-                self.savedUnitSenderUuid    = segmentation[0][0].uuid
+                self.savedUnitSenderUuid    = segmentation[0][2].uuid
                 self.savedUnitAnnotationKey = self.unitAnnotationKey
                 if          self.mode == u'Containing segmentation' \
                         and self.contexts is not None:
                     segmentation = self.segmentations[self.contexts]
-                    self.savedContextSenderUuid = segmentation[0][0].uuid
+                    self.savedContextSenderUuid = segmentation[0][2].uuid
                     self.savedContextAnnotationKey \
                             = self.contextAnnotationKey
                 else:

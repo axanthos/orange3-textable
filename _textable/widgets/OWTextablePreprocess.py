@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextablePreprocess, v0.06
+# Class OWTextablePreprocess, v0.07
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -215,15 +215,15 @@ class OWTextablePreprocess(OWWidget):
         """Preprocess and send data"""
         if not self.segmentation:
             self.infoBox.noDataSent(u'No input.')
-            self.send('Preprocessed data', None)
+            self.send('Preprocessed data', None, self)
             return
         if not self.segmentation.is_non_overlapping():
             self.infoBox.noDataSent(u'Input segmentation is overlapping.')
-            self.send('Preprocessed data', None)
+            self.send('Preprocessed data', None, self)
             return
         if not self.label:
             self.infoBox.noDataSent(u'No label was provided.')
-            self.send('Preprocessed data', None)
+            self.send('Preprocessed data', None, self)
             return
         if self.applyCaseTransform:
             if self.caseTransform == 'to lower':
@@ -253,7 +253,7 @@ class OWTextablePreprocess(OWWidget):
         progressBar.finish()
         newNumInputs = len(Segmentation.data)
         self.createdInputIndices = range(previousNumInputs, newNumInputs)
-        self.send('Preprocessed data', preprocessed_data)
+        self.send('Preprocessed data', preprocessed_data, self)
         message = u'Data contains %i segment@p.' % len(preprocessed_data)
         message = pluralize(message, len(preprocessed_data))
         self.infoBox.dataSent(message)

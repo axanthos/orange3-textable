@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableURLs, v0.06
+# Class OWTextableURLs, v0.07
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -461,13 +461,13 @@ class OWTextableURLs(OWWidget):
              or not (self.URL or self.displayAdvancedSettings)
         ):
             self.infoBox.noDataSent(u'No input.')
-            self.send('Text data', None)
+            self.send('Text data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
             self.infoBox.noDataSent(u'No label was provided.')
-            self.send('Text data', None)
+            self.send('Text data', None, self)
             return
 
         # Check that autoNumberKey is not empty (if necessary)...
@@ -478,7 +478,7 @@ class OWTextableURLs(OWWidget):
                 self.infoBox.noDataSent(
                         u'No annotation key was provided for auto-numbering.'
                 )
-                self.send('Text data', None)
+                self.send('Text data', None, self)
                 return
         else:
             autoNumberKey = None
@@ -523,7 +523,7 @@ class OWTextableURLs(OWWidget):
                     )
                     m = '\n\t'.join(textwrap.wrap(m, 35))
                     self.infoBox.noDataSent(m)
-                    self.send('Text data', None)
+                    self.send('Text data', None, self)
                     return
                 finally:
                     URLHandle.close()
@@ -533,7 +533,7 @@ class OWTextableURLs(OWWidget):
                         35
                 ))
                 self.infoBox.noDataSent(m)
-                self.send('Text data', None)
+                self.send('Text data', None, self)
                 return
 
             # Replace newlines with '\n'...
@@ -598,7 +598,7 @@ class OWTextableURLs(OWWidget):
         message = pluralize(message, numChars)
         self.infoBox.dataSent(message)
 
-        self.send( 'Text data', self.segmentation )
+        self.send( 'Text data', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
 

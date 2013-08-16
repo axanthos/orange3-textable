@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableIntersect, v0.08
+# Class OWTextableIntersect, v0.10
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -395,13 +395,13 @@ class OWTextableIntersect(OWWidget):
         # Check that there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.noDataSent(u'No input.')
-            self.send('Filtered data', None)
+            self.send('Filtered data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
             self.infoBox.noDataSent(u'No label was provided.')
-            self.send('Filtered data', None)
+            self.send('Filtered data', None, self)
             return
 
         # Source and filtering parameter...
@@ -427,7 +427,7 @@ class OWTextableIntersect(OWWidget):
                 self.infoBox.noDataSent(
                         u'No annotation key was provided for auto-numbering.'
                 )
-                self.send('Filtered data', None)
+                self.send('Filtered data', None, self)
                 return
         else:
             autoNumberKey = None
@@ -458,8 +458,8 @@ class OWTextableIntersect(OWWidget):
         message = pluralize(message, len(filtered_data))
         self.infoBox.dataSent(message)
 
-        self.send( 'Filtered data', filtered_data )
-        self.send( 'Discarded data', discarded_data )
+        self.send( 'Filtered data', filtered_data, self)
+        self.send( 'Discarded data', discarded_data, self)
         self.sendButton.resetSettingsChangedFlag()
 
 
@@ -551,11 +551,17 @@ class OWTextableIntersect(OWWidget):
 
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        self.restoreSettings()
+        try:
+            self.restoreSettings()
+        except AttributeError:
+            pass
 
     def getSettings(self, alsoContexts = True, globalContexts=False):
         """Overridden: called when a file is saved (among other situations)"""
-        self.storeSettings()
+        try:
+            self.storeSettings()
+        except AttributeError:
+            pass
         return super(type(self), self).getSettings(
                 alsoContexts = True, globalContexts=False
         )
@@ -568,9 +574,9 @@ class OWTextableIntersect(OWWidget):
             self.settingsRestored = True
             for segIndex in xrange(len(self.segmentations)):
                 segmentation = self.segmentations[segIndex]
-                if segmentation[0][0].uuid == self.savedSourceSenderUuid:
+                if segmentation[0][2].uuid == self.savedSourceSenderUuid:
                     self.source = segIndex
-                if segmentation[0][0].uuid == self.savedFilteringSenderUuid:
+                if segmentation[0][2].uuid == self.savedFilteringSenderUuid:
                     self.filtering = segIndex
             self.updateGUI()
             if self.source is not None:
@@ -603,14 +609,14 @@ class OWTextableIntersect(OWWidget):
         if self.settingsRestored:
             if self.source is not None:
                 segmentation                 = self.segmentations[self.source]
-                self.savedSourceSenderUuid   = segmentation[0][0].uuid
+                self.savedSourceSenderUuid   = segmentation[0][2].uuid
                 self.savedSourceAnnotationKey = self.sourceAnnotationKey
                 segmentation = self.segmentations[self.filtering]
             else:
                 self.savedSourceSenderUuid    = None
                 self.savedSourceAnnotationKey = None
             if self.filtering is not None:
-                self.savedFilteringSenderUuid = segmentation[0][0].uuid
+                self.savedFilteringSenderUuid = segmentation[0][2].uuid
                 if self.displayAdvancedSettings:
                     self.savedFilteringAnnotationKey \
                             = self.filteringAnnotationKey

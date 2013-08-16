@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableDisplay, v0.08
+# Class OWTextableDisplay, v0.09
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -248,12 +248,16 @@ class OWTextableDisplay(OWWidget):
         """Send segmentation to output"""
         if not self.segmentation:
             self.infoBox.noDataSent(u'No input.')
-            self.send('Bypassed segmentation', None)
-            self.send('Displayed segmentation', None)
+            self.send('Bypassed segmentation', None, self)
+            self.send('Displayed segmentation', None, self)
             return
-        self.send('Bypassed segmentation', self.segmentation)
+        self.send('Bypassed segmentation', self.segmentation, self)
         if len(self.displayedSegmentation[0].get_content()) > 0:
-            self.send('Displayed segmentation', self.displayedSegmentation)
+            self.send(
+                    'Displayed segmentation',
+                    self.displayedSegmentation,
+                    self
+            )
         message = u'Data contains %i segment@p.' % len(self.segmentation)
         message = pluralize(message, len(self.segmentation))
         self.infoBox.dataSent(message)

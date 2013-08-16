@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableSegment, v0.13
+# Class OWTextableSegment, v0.14
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -494,7 +494,7 @@ class OWTextableSegment(OWWidget):
         # Check that there's something on input...
         if not self.inputSegmentation:
             self.infoBox.noDataSent(u'No input.')
-            self.send('Segmented data', None)
+            self.send('Segmented data', None, self)
             return
 
         # Check that there's at least one regex...
@@ -503,7 +503,7 @@ class OWTextableSegment(OWWidget):
             or not (self.regex or self.displayAdvancedSettings)
         ):
             self.infoBox.noDataSent(u'No regex defined.')
-            self.send('Segmented data', None)
+            self.send('Segmented data', None, self)
             return
 
         # Get regexes from basic or advanced settings...
@@ -526,7 +526,7 @@ class OWTextableSegment(OWWidget):
         # Check that label is not empty...
         if not self.label:
             self.infoBox.noDataSent(u'No label was provided.')
-            self.send('Segmented data', None)
+            self.send('Segmented data', None, self)
             return
 
         # Check that autoNumberKey is not empty (if necessary)...
@@ -541,7 +541,7 @@ class OWTextableSegment(OWWidget):
                 self.infoBox.noDataSent(
                         u'No annotation key was provided for auto-numbering.'
                 )
-                self.send('Segmented data', None)
+                self.send('Segmented data', None, self)
                 return
         else:
             autoNumberKey = None
@@ -595,7 +595,7 @@ class OWTextableSegment(OWWidget):
         message = pluralize(message, len(segmented_data))
         self.infoBox.dataSent(message)
 
-        self.send( 'Segmented data', segmented_data )
+        self.send( 'Segmented data', segmented_data, self)
         self.sendButton.resetSettingsChangedFlag()
 
 

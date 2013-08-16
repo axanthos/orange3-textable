@@ -35,9 +35,9 @@ from setuptools import setup, find_packages
 NAME = 'Orange-Textable'
 DOCUMENTATION_NAME = 'Orange Textable'
 
-VERSION = '1.3a2'
+VERSION = '1.3a3'
 
-DESCRIPTION = 'Orange Canvas add-on for text analysis.'
+DESCRIPTION = 'Orange Textable add-on for Orange data mining software package.'
 LONG_DESCRIPTION = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 AUTHOR = 'LangTech Sarl'
 AUTHOR_EMAIL = 'info@langtech.ch'

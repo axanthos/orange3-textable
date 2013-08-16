@@ -323,8 +323,12 @@ def pluralize(
     replacement = plural if criterion > 1 else singular
     return re.compile(r'@p').sub(replacement, input_string)
 
-
-def updateMultipleInputs(itemList, newItem, newId=None, removalCallback=None):
+def updateMultipleInputs(
+        itemList,
+        newItem,
+        newId           = None,
+        removalCallback = None
+    ):
     """Process input when the widget can take multiple ones"""
     ids = [x[0] for x in itemList]
     if not newItem: # remove

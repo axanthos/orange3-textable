@@ -14,31 +14,29 @@ interface. It offers in particular the following features:
 
 .. _Orange: http://orange.biolab.si/
 
-Textable was designed and implemented `LangTech Sarl <http://langtech.ch>`_ on behalf of the department of language and information sciences (SLI_) at the `University of Lausanne <http://www.unil.ch>`_.
+Textable was designed and implemented by `LangTech Sarl <http://langtech.ch>`_
+on behalf of the department of language and information sciences (SLI_) at the
+`University of Lausanne <http://www.unil.ch>`_.
 
 .. _SLI: http://www.unil.ch/sli
 
-Installation
-------------
+Contents
+--------
 
-To install Orange Textable add-on for Orange from PyPi_ run::
+.. toctree::
+    :maxdepth: 3
+   
+    Installation <installation>
+    Getting started <getting_started>
+    Widget reference <widget_reference>
+    Cookbook <cookbook>
+    Case studies <case_studies>
 
-    pip install Orange-Textable
+Further resource
+----------------
 
-To install it from source code run::
+The project's homepage is hosted at `langtech.ch
+<http://langtech.ch/textable>`_. Links to the source repository
+and further resource may be found there.
 
-    python setup.py install
-
-To build Python egg run::
-
-    python setup.py bdist_egg
-
-.. _PyPi: http://pypi.python.org/pypi
-
-Source Code and Issue Tracker
------------------------------
-
-Source code is available on Bitbucket_.
-
-.. _Bitbucket: https://bitbucket.org/langtech/orange-textable
 

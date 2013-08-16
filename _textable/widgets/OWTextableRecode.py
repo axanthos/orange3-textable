@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableRecode, v0.06
+# Class OWTextableRecode, v0.07
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -430,19 +430,19 @@ class OWTextableRecode(OWWidget):
         # Check that there's something on input...
         if not self.segmentation:
             self.infoBox.noDataSent(u'No input.')
-            self.send('Recoded data', None)
+            self.send('Recoded data', None, self)
             return
 
         # Check that segmentation is non-overlapping...
         if not self.segmentation.is_non_overlapping():
             self.infoBox.noDataSent(u'Input segmentation is overlapping.')
-            self.send('Recoded data', None)
+            self.send('Recoded data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
             self.infoBox.noDataSent(u'No label was provided.')
-            self.send('Recoded data', None)
+            self.send('Recoded data', None, self)
             return
 
         # Get substitutions from basic or advanced settings...
@@ -501,7 +501,7 @@ class OWTextableRecode(OWWidget):
         progressBar.finish()
         newNumInputs = len(Segmentation.data)
         self.createdInputIndices = range(previousNumInputs, newNumInputs)
-        self.send('Recoded data', recoded_data)
+        self.send('Recoded data', recoded_data, self)
         message = u'Data contains %i segment@p.' % len(recoded_data)
         message = pluralize(message, len(recoded_data))
         self.infoBox.dataSent(message)

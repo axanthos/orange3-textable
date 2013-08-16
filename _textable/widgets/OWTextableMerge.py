@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableMerge, v0.12
+# Class OWTextableMerge, v0.15
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -373,7 +373,7 @@ class OWTextableMerge(OWWidget):
         # Check that there's something on input...
         if not self.texts:
             self.infoBox.noDataSent(u'No input.')
-            self.send('Merged data', None)
+            self.send('Merged data', None, self)
             return
 
         # Extract segmentations from self.texts and get number of segments...
@@ -383,7 +383,7 @@ class OWTextableMerge(OWWidget):
         # Check that label is not empty...
         if not self.label:
             self.infoBox.noDataSent(u'No label was provided.')
-            self.send('Merged data', None)
+            self.send('Merged data', None, self)
             return
 
         # Check that labelKey is not empty (if necessary)...
@@ -394,7 +394,7 @@ class OWTextableMerge(OWWidget):
                 self.infoBox.noDataSent(
                         u'No annotation key was provided for imported labels.'
                 )
-                self.send('Merged data', None)
+                self.send('Merged data', None, self)
                 return
         else:
             labelKey = None
@@ -408,7 +408,7 @@ class OWTextableMerge(OWWidget):
                 self.infoBox.noDataSent(
                         u'No annotation key was provided for auto-numbering.'
                 )
-                self.send('Merged data', None)
+                self.send('Merged data', None, self)
                 return
         else:
             autoNumberKey = None
@@ -448,7 +448,7 @@ class OWTextableMerge(OWWidget):
         message = pluralize(message, len(concatenation))
         self.infoBox.dataSent(message)
 
-        self.send('Merged data', concatenation)
+        self.send('Merged data', concatenation, self)
         self.sendButton.resetSettingsChangedFlag()
 
 
@@ -518,11 +518,17 @@ class OWTextableMerge(OWWidget):
 
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        self.restoreSettings()
+        try:
+            self.restoreSettings()
+        except AttributeError:
+            pass
 
     def getSettings(self, alsoContexts = True, globalContexts=False):
         """Overridden: called when a file is saved (among other situations)"""
-        self.storeSettings()
+        try:
+            self.storeSettings()
+        except AttributeError:
+            pass
         return super(type(self), self).getSettings(
                 alsoContexts = True, globalContexts=False
         )
@@ -533,12 +539,11 @@ class OWTextableMerge(OWWidget):
         """
         if not self.settingsRestored:
             self.settingsRestored = True
-            newTexts = list()
             oldTexts = self.texts[:]
             for senderUuidIndex in xrange(len(self.savedSenderUuidOrder)):
                 for text in oldTexts:
                     senderUuid = self.savedSenderUuidOrder[senderUuidIndex]
-                    if text[0][0].uuid == senderUuid:
+                    if text[0][2].uuid == senderUuid:
                         self.texts[senderUuidIndex] = text
                         break
             self.textLabels = [text[1].label for text in self.texts]
@@ -549,7 +554,7 @@ class OWTextableMerge(OWWidget):
         on the particular segmentations that enter this widget.
         """
         if self.settingsRestored:
-            self.savedSenderUuidOrder = [t[0][0].uuid for t in self.texts]
+            self.savedSenderUuidOrder = [t[0][2].uuid for t in self.texts]
 
 
 

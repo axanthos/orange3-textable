@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableSelect, v0.10
+# Class OWTextableSelect, v0.11
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -660,13 +660,13 @@ class OWTextableSelect(OWWidget):
         # Check that there's something on input...
         if not self.segmentation:
             self.infoBox.noDataSent(u'No input.')
-            self.send('Selected data', None)
+            self.send('Selected data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
             self.infoBox.noDataSent(u'No label was provided.')
-            self.send('Selected data', None)
+            self.send('Selected data', None, self)
             return
 
         # Advanced settings...
@@ -678,7 +678,7 @@ class OWTextableSelect(OWWidget):
                 # Check that regex is not empty...
                 if not self.regex:
                     self.infoBox.noDataSent(u'No regex defined.')
-                    self.send('Selected data', None)
+                    self.send('Selected data', None, self)
                     return
 
                 # Prepare regex...
@@ -717,7 +717,7 @@ class OWTextableSelect(OWWidget):
                     sampleSize = self.sampleSize
                 if sampleSize <= 0:
                     self.infoBox.noDataSent(u'Sample size too small.')
-                    self.send('Selected data', None)
+                    self.send('Selected data', None, self)
                     return
 
                 # Get number of iterations...
@@ -760,7 +760,7 @@ class OWTextableSelect(OWWidget):
                     self.infoBox.noDataSent(
                             u'No annotation key was provided for auto-numbering.'
                     )
-                    self.send('Selected data', None)
+                    self.send('Selected data', None, self)
                     return
             else:
                 autoNumberKey = None
@@ -830,7 +830,7 @@ class OWTextableSelect(OWWidget):
             # Check that regex is not empty...
             if not self.regex:
                 self.infoBox.noDataSent(u'No regex defined.')
-                self.send('Selected data', None)
+                self.send('Selected data', None, self)
                 return
 
             # Get number of iterations...
@@ -861,8 +861,8 @@ class OWTextableSelect(OWWidget):
         message = pluralize(message, len(selected_data))
         self.infoBox.dataSent(message)
 
-        self.send( 'Selected data', selected_data )
-        self.send( 'Discarded data', discarded_data )
+        self.send( 'Selected data', selected_data, self)
+        self.send( 'Discarded data', discarded_data, self)
         self.sendButton.resetSettingsChangedFlag()
 
 

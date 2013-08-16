@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableTextFiles, v0.09
+# Class OWTextableTextFiles, v0.10
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -504,13 +504,13 @@ class OWTextableTextFiles(OWWidget):
              or not (self.file or self.displayAdvancedSettings)
         ):
             self.infoBox.noDataSent(u'No input.')
-            self.send('Text data', None)
+            self.send('Text data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
             self.infoBox.noDataSent(u'No label was provided.')
-            self.send('Text data', None)
+            self.send('Text data', None, self)
             return
 
         # Check that autoNumberKey is not empty (if necessary)...
@@ -521,7 +521,7 @@ class OWTextableTextFiles(OWWidget):
                 self.infoBox.noDataSent(
                         u'No annotation key was provided for auto-numbering.'
                 )
-                self.send('Text data', None)
+                self.send('Text data', None, self)
                 return
         else:
             autoNumberKey = None
@@ -565,7 +565,7 @@ class OWTextableTextFiles(OWWidget):
                     )
                     m = '\n\t'.join(textwrap.wrap(m, 35))
                     self.infoBox.noDataSent(m)
-                    self.send('Text data', None)
+                    self.send('Text data', None, self)
                     return
                 finally:
                     fileHandle.close()
@@ -575,7 +575,7 @@ class OWTextableTextFiles(OWWidget):
                         35
                 ))
                 self.infoBox.noDataSent(m)
-                self.send('Text data', None)
+                self.send('Text data', None, self)
                 return
 
             # Replace newlines with '\n'...

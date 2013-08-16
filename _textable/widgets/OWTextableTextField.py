@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableTextField, v0.06
+# Class OWTextableTextField, v0.07
 # Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.3) extension to Orange Canvas.
@@ -29,6 +29,7 @@ import uuid
 
 from unicodedata        import normalize
 from PyQt4              import QtCore
+from LTTL.Segmentation  import Segmentation
 from LTTL.Input         import Input
 
 from TextableUtils      import *
@@ -65,7 +66,7 @@ class OWTextableTextField(OWWidget):
 
         # Input and output channels...
         self.inputs             = []
-        self.outputs            = [('Text data', Input)]
+        self.outputs            = [('Text data', Segmentation)]
 
         # Settings...
         self.textFieldContent   = u''.encode('utf-8')
@@ -140,13 +141,13 @@ class OWTextableTextField(OWWidget):
         # Check that text field is not empty...
         if not self.textFieldContent:
             self.infoBox.noDataSent(u'Text field is empty.')
-            self.send('Text data', None)
+            self.send('Text data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
             self.infoBox.noDataSent(u'No label was provided.')
-            self.send('Text data', None)
+            self.send('Text data', None, self)
             return
 
         # Set status to OK...
@@ -158,7 +159,7 @@ class OWTextableTextField(OWWidget):
         self.segmentation.update(textFieldContent, label=self.label)
 
         # Send token...
-        self.send('Text data', self.segmentation)
+        self.send('Text data', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()
 
 
