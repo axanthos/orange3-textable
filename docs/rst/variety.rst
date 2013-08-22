@@ -1,3 +1,5 @@
+.. _Variety:
+
 Variety
 =======
 

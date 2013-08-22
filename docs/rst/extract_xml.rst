@@ -1,3 +1,5 @@
+.. _Extract XML:
+
 Extract XML
 ===========
 

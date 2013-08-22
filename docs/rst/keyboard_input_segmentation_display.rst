@@ -1,7 +1,7 @@
 Keyboard input and segmentation display
 =======================================
 
-Typing text in a :doc:`Text Field <text_field>` widget is the simplest way to
+Typing text in a :ref:`Text Field` widget is the simplest way to
 import a string in Orange Textable. This widget has no input connexions, and
 emits in output a segmentation containing a single segment whose address
 points to the entire string that was typed. This segmentation is assigned the
@@ -15,15 +15,15 @@ label specified in the **Output segmentation label** field (see
     :alt: Example usage of widget Text Field
     :figclass: align-center
 
-    Figure 1: Typing *a simple example* in widget :doc:`Text Field <text_field>`.
+    Figure 1: Typing *a simple example* in widget :ref:`Text Field`.
     
 This widget's simplicity makes it most adequate for pedagogic purposes. Later,
 we will discover other, more powerful ways of importing strings.
 
-The :doc:`Display <display>` widget can be used to visualize the details
+The :ref:`Display` widget can be used to visualize the details
 of a segmentation. By default, it shows the segmentation's label followed by
 each successive segment's address and content. A segmentation sent by a
-:doc:`Text Field <text_field>` instance will contain a single segment
+:ref:`Text Field` instance will contain a single segment
 covering the whole string (see :ref:`figure 2
 <keyboard_input_segmentation_fig2>` below).
 
@@ -34,9 +34,9 @@ covering the whole string (see :ref:`figure 2
     :alt: Example usage of widget Display
     :figclass: align-center
 
-    Figure 2: Viewing *a simple example* in widget :doc:`Display <display>`.
+    Figure 2: Viewing *a simple example* in widget :ref:`Display`.
     
-By default, :doc:`Display <display>` passes its input data without
+By default, :ref:`Display` passes its input data without
 modification to its output connexions. It is very useful for viewing
 intermediate results in an Orange Textable scheme and making sure that other
 widgets process data as expected.

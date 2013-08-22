@@ -1,3 +1,5 @@
+.. _Text Files:
+
 Text Files
 ==========
 

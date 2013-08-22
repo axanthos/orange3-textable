@@ -4,7 +4,7 @@ Strings, segments, and segmentations
 The main purpose of Orange Textable is to build tables based on text strings.
 As we will see, there are several methods for importing text strings, the
 simplest of which is keyboard input using widget
-:doc:`Text Field <text_field>` (see also :doc:`Keyboard input and segmentation
+:ref:`Text Field` (see also :doc:`Keyboard input and segmentation
 display <keyboard_input_segmentation_display>`). Whenever a new string is
 imported, it is assigned a unique identification number (called
 *string index*) and stays in memory as long as the widget that imported it.

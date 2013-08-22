@@ -1,7 +1,7 @@
 Hierarchical segmentations and performance issues
 =================================================
 
-When widget :doc:`Segment <segment>` is applied to real, much longer texts
+When widget :ref:`Segment` is applied to real, much longer texts
 than *a simple example*, using such general regexes as *\\w+* or *\\w* may
 result in the creation of a huge number of segments. Creating and manipulating
 such segmentations can slow down excessively the execution of Orange Textable,
@@ -23,12 +23,12 @@ to produce the most fine-grained segmentation directly (see :ref:`figure 1
     :alt: chained hierarchical segmentations execute faster
     :figclass: align-center
 
-    Figure 1: Chaining :doc:`Segment <segment>` instances to reduce execution time.
+    Figure 1: Chaining :ref:`Segment` instances to reduce execution time.
 
 The situation is different when word or letter segmentation are conceived
 as intermediate steps toward the creation of a segmentation containing only
 selected words or letters. In that case, it is much more efficient (in memory
-and execution time) to use a single instance of :doc:`Segment <segment>` with
+and execution time) to use a single instance of :ref:`Segment` with
 a regex identifying only the desired words, as seen
 :doc:`previously <segmenting_data_smaller_units>`
 with the example of *\\bretriev(e|es|ed|ing)\\b*.

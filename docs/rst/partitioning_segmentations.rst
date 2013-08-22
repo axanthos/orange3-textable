@@ -4,7 +4,7 @@ Partitioning segmentations
 There are many situations where we might want so selectively in- or exclude
 segments from a segmentation. For instance, a user might be want to exclude
 from a word segmentation all those that are less than 4 letters long. The
-:doc:`Select <select>` widget is tailored for such tasks.
+:ref:`Select` widget is tailored for such tasks.
 
 The widget's interface (see :ref:`figure 1 <partitioning_segmentations_fig1>`
 below) offers a choice between two modes: *Include* and *Exclude*. Depending
@@ -21,7 +21,7 @@ successively. (For now, the option **Annotation key: (none)** can be ignored.)
     :alt: Example usage of widget Select
     :figclass: align-center
 
-    Figure 1: Excluding short words with widget :doc:`Select <select>`.
+    Figure 1: Excluding short words with widget :ref:`Select`.
 
 In the example of :ref:`figure 1 <partitioning_segmentations_fig1>`, the
 widget is configured to exclude all incoming segments containing no more than
@@ -29,12 +29,12 @@ widget is configured to exclude all incoming segments containing no more than
 anchors (*^* and *$*), all words containing *at least* a sequence of 1 to 3
 letters--i.e. all the words--would be excluded.
 
-Note that :doc:`Select <select>` automatically emits a second segmentation
+Note that :ref:`Select` automatically emits a second segmentation
 containing all the segments that have been discarded from the main output
 segmentation (in the case of :ref:`figure 1 <partitioning_segmentations_fig1>`
 above, that would be all words less than 4 letters long). This feature is
 useful when both the selected *and* the discarded segments are to be further
-processed on distinct branches. By default, when :doc:`Select <select>` is connected to another widget, the
+processed on distinct branches. By default, when :ref:`Select` is connected to another widget, the
 main segmentation is being emitted. In order to send the segmentation of
 discarded segments instead, right-click on the outgoing connexion and select
 **Reset Signals** (see :ref:`figure 2 <partitioning_segmentations_fig2>`

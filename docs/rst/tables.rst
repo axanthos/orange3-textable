@@ -1,7 +1,8 @@
 Tables
 ======
 
-Segmentations are to tables what a means is to an end.
+Segmentations are to tables what a means is to an end. In this section, you
+will learn how to go from the ones to the others.
 
 .. toctree::
     :maxdepth: 1

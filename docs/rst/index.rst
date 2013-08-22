@@ -20,9 +20,6 @@ on behalf of the department of language and information sciences (SLI_) at the
 
 .. _SLI: http://www.unil.ch/sli
 
-Contents
---------
-
 .. toctree::
     :maxdepth: 3
    
@@ -31,12 +28,3 @@ Contents
     Widget reference <widget_reference>
     Cookbook <cookbook>
     Case studies <case_studies>
-
-Further resource
-----------------
-
-The project's homepage is hosted at `langtech.ch
-<http://langtech.ch/textable>`_. Links to the source repository
-and further resource may be found there.
-
-
