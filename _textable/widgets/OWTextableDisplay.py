@@ -1,21 +1,21 @@
 #=============================================================================
-# Class OWTextableDisplay, v0.09
-# Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
+# Class OWTextableDisplay, v0.11
+# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.3) extension to Orange Canvas.
+# This file is part of the Textable (v1.4) extension to Orange Canvas.
 #
-# Textable v1.3 is free software: you can redistribute it and/or modify
+# Textable v1.4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.3 is distributed in the hope that it will be useful,
+# Textable v1.4 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.3. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 """
@@ -40,6 +40,7 @@ class OWTextableDisplay(OWWidget):
     """A widget for displaying segmentations"""
 
     settingsList = [
+            'displayAdvancedSettings',
             'autoSend',
             'customFormatting',
             'customFormat',
@@ -71,14 +72,16 @@ class OWTextableDisplay(OWWidget):
         ]
         
         # Settings...
-        self.customFormatting       = False
-        self.customFormat           = u''
-        self.segmentDelimiter       = u''
-        self.encoding               = 'utf-8'
-        self.lastLocation           = '.'
-        self.autoSend               = True
-        self.uuid                   = uuid.uuid4()
+        self.displayAdvancedSettings    = False
+        self.customFormatting           = False
+        self.customFormat               = u''
+        self.segmentDelimiter           = u''
+        self.encoding                   = 'utf-8'
+        self.lastLocation               = '.'
+        self.autoSend                   = True
+        self.uuid                       = None
         self.loadSettings()
+        self.uuid                       = getWidgetUuid(self)
 
         # Other attributes...
         self.segmentation           = None
@@ -101,6 +104,25 @@ class OWTextableDisplay(OWWidget):
         )
 
         # GUI...
+
+        # NB: These are "custom" advanced settings, not those provided by
+        # TextableUtils. Note also that there are two copies of the checkbox
+        # controlling the same attribute, to simulate its moving from one
+        # side of the widget to the other...
+        self.advancedSettingsCheckBoxLeft = OWGUI.checkBox(
+                widget              = self.controlArea,
+                master              = self,
+                value               = 'displayAdvancedSettings',
+                label               = u'Advanced settings',
+                callback            = self.sendButton.settingsChanged,
+                tooltip             = (
+                        u"Toggle advanced settings on and off."
+                ),
+        )
+        OWGUI.separator(
+                widget              = self.controlArea,
+                height              = 3,
+        )
 
         # Custom formatting box...
         formattingBox = OWGUI.widgetBox(
@@ -204,6 +226,33 @@ class OWTextableDisplay(OWWidget):
         self.sendButton.draw()
 
         # Main area
+        
+        # NB: This is the second copy of the advanced settings checkbox,
+        # see above...
+        self.advancedSettingsRightBox = OWGUI.widgetBox(
+                widget              = self.mainArea,
+                orientation         = 'vertical',
+        )
+        self.advancedSettingsCheckBoxRight = OWGUI.checkBox(
+                widget              = self.advancedSettingsRightBox,
+                master              = self,
+                value               = 'displayAdvancedSettings',
+                label               = u'Advanced settings',
+                callback            = self.sendButton.settingsChanged,
+                tooltip             = (
+                        u"Toggle advanced settings on and off."
+                ),
+        )
+        OWGUI.separator(
+                widget              = self.advancedSettingsRightBox,
+                height              = 3,
+        )
+
+        self.advancedSettingsCheckBoxRightPlaceholder = OWGUI.separator(
+                widget              = self.mainArea,
+                height              = 25,
+        )
+
         self.navigationBox = OWGUI.widgetBox(
                 widget              = self.mainArea,
                 orientation         = 'vertical',
@@ -266,9 +315,24 @@ class OWTextableDisplay(OWWidget):
 
     def updateGUI(self):
         """Update GUI state"""
+        self.controlArea.setVisible(self.displayAdvancedSettings)
+        self.advancedSettingsCheckBoxRightPlaceholder.setVisible(
+                self.displayAdvancedSettings
+        )
+        self.advancedSettingsCheckBoxLeft.setVisible(
+                self.displayAdvancedSettings
+        )
+        self.advancedSettingsRightBox.setVisible(
+                not self.displayAdvancedSettings
+        )
         self.browser.clear()
         if self.segmentation:
-            if self.customFormatting:
+            if self.displayAdvancedSettings:
+                customFormatting = self.customFormatting
+            else:
+                customFormatting = False
+                self.autoSend    = True
+            if customFormatting:
                 self.formattingIndentedBox.setDisabled(False)
                 if self.customFormat:
                     progressBar = OWGUI.ProgressBar(
@@ -279,7 +343,7 @@ class OWTextableDisplay(OWWidget):
                         self.customFormat.decode('string_escape'),
                         self.segmentDelimiter.decode('string_escape'),
                         True,
-                        progress_callback       = progressBar.advance,
+                        progress_callback = progressBar.advance,
                     )
                     progressBar.finish()
                 else:
@@ -300,7 +364,7 @@ class OWTextableDisplay(OWWidget):
                     displayedString,
                     label           = u'displayed_segmentation',
             )
-            if self.customFormatting == False:
+            if customFormatting == False:
                 self.navigationBox.setDisabled(False)
                 self.gotoSpin.control.setRange(1, len(self.segmentation))
                 if self.goto:

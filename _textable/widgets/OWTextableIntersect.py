@@ -1,21 +1,21 @@
 #=============================================================================
-# Class OWTextableIntersect, v0.10
-# Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
+# Class OWTextableIntersect, v0.11
+# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.3) extension to Orange Canvas.
+# This file is part of the Textable (v1.4) extension to Orange Canvas.
 #
-# Textable v1.3 is free software: you can redistribute it and/or modify
+# Textable v1.4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.3 is distributed in the hope that it will be useful,
+# Textable v1.4 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.3. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 """
@@ -24,8 +24,6 @@
 <icon>icons/Intersect.png</icon>
 <priority>4004</priority>
 """
-
-import uuid
 
 from LTTL.Segmenter    import Segmenter
 from LTTL.Segmentation import Segmentation
@@ -39,6 +37,18 @@ class OWTextableIntersect(OWWidget):
 
     """Orange widget for segment in-/exclusion based on other segmentation"""
     
+    contextHandlers = {
+        '': SegmentationListContextHandler(
+            '', [
+                ContextInputListField('segmentations'),
+                ContextInputIndex('source'),
+                ContextInputIndex('filtering'),
+                'sourceAnnotationKey',
+                'filteringAnnotationKey',
+            ]
+        )
+    }
+
     settingsList = [
             'mode',
             'copyAnnotations',
@@ -48,10 +58,6 @@ class OWTextableIntersect(OWWidget):
             'autoNumberKey',
             'displayAdvancedSettings',
             'uuid',
-            'savedSourceSenderUuid',                                                  
-            'savedSourceAnnotationKey',                                               
-            'savedFilteringSenderUuid',                                                  
-            'savedFilteringAnnotationKey',                                               
     ]
 
     def __init__(self, parent=None, signalManager=None):
@@ -79,12 +85,9 @@ class OWTextableIntersect(OWWidget):
         self.autoNumber                     = False
         self.autoNumberKey                  = u'num'
         self.displayAdvancedSettings        = False
-        self.uuid                           = uuid.uuid4()
-        self.savedSourceSenderUuid          = None                                      
-        self.savedSourceAnnotationKey       = None                                      
-        self.savedFilteringSenderUuid       = None                                      
-        self.savedFilteringAnnotationKey    = None                                      
+        self.uuid                           = None
         self.loadSettings()
+        self.uuid                           = getWidgetUuid(self)
 
         # Other attributes...
         self.segmenter              = Segmenter()
@@ -406,6 +409,7 @@ class OWTextableIntersect(OWWidget):
 
         # Source and filtering parameter...
         source = {'segmentation': self.segmentations[self.source][1]}
+        source['annotation_key'] = self.sourceAnnotationKey or None
         if self.sourceAnnotationKey == u'(none)':
             source['annotation_key'] = None
         filtering = {
@@ -465,6 +469,7 @@ class OWTextableIntersect(OWWidget):
 
     def inputData(self, newItem, newId=None):
         """Process incoming data."""
+        self.closeContext()
         updateMultipleInputs(
                 self.segmentations,
                 newItem,
@@ -472,7 +477,7 @@ class OWTextableIntersect(OWWidget):
                 self.onInputRemoval
         )
         self.infoBox.inputChanged()
-        self.sendButton.sendIf()
+        self.updateGUI()
 
 
     def onInputRemoval(self, index):
@@ -551,78 +556,9 @@ class OWTextableIntersect(OWWidget):
 
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        try:
-            self.restoreSettings()
-        except AttributeError:
-            pass
-
-    def getSettings(self, alsoContexts = True, globalContexts=False):
-        """Overridden: called when a file is saved (among other situations)"""
-        try:
-            self.storeSettings()
-        except AttributeError:
-            pass
-        return super(type(self), self).getSettings(
-                alsoContexts = True, globalContexts=False
-        )
-
-    def restoreSettings(self):
-        """When a scheme file is opened, restore those settings that depend
-        on the particular segmentations that enter this widget.
-        """
-        if not self.settingsRestored:
-            self.settingsRestored = True
-            for segIndex in xrange(len(self.segmentations)):
-                segmentation = self.segmentations[segIndex]
-                if segmentation[0][2].uuid == self.savedSourceSenderUuid:
-                    self.source = segIndex
-                if segmentation[0][2].uuid == self.savedFilteringSenderUuid:
-                    self.filtering = segIndex
-            self.updateGUI()
-            if self.source is not None:
-                segmentation         = self.segmentations[self.source]
-                sourceAnnotationKeys = [u'(none)']
-                sourceAnnotationKeys.extend(
-                        segmentation[1].get_annotation_keys()
-                )
-                for key in sourceAnnotationKeys:
-                    if key == self.savedSourceAnnotationKey:
-                        self.sourceAnnotationKey = key
-                        break
-                if self.displayAdvancedSettings:
-                    if self.filtering is not None:
-                        segmentation = self.segmentations[self.filtering]
-                        filteringAnnotationKeys = [u'(none)']
-                        filteringAnnotationKeys.extend(
-                                segmentation[1].get_annotation_keys()
-                        )
-                        for key in filteringAnnotationKeys:
-                            if key == self.savedFilteringAnnotationKey:
-                                self.filteringAnnotationKey = key
-                                break
-            self.sendButton.sendIf()
-
-    def storeSettings(self):
-        """When a scheme file is saved, store those settings that depend
-        on the particular segmentations that enter this widget.
-        """
-        if self.settingsRestored:
-            if self.source is not None:
-                segmentation                 = self.segmentations[self.source]
-                self.savedSourceSenderUuid   = segmentation[0][2].uuid
-                self.savedSourceAnnotationKey = self.sourceAnnotationKey
-                segmentation = self.segmentations[self.filtering]
-            else:
-                self.savedSourceSenderUuid    = None
-                self.savedSourceAnnotationKey = None
-            if self.filtering is not None:
-                self.savedFilteringSenderUuid = segmentation[0][2].uuid
-                if self.displayAdvancedSettings:
-                    self.savedFilteringAnnotationKey \
-                            = self.filteringAnnotationKey
-            else:
-                self.savedFilteringSenderUuid    = None
-                self.savedFilteringAnnotationKey = None
+        self.openContext("", self.segmentations)
+        self.updateGUI()
+        self.sendButton.sendIf()
 
 
 

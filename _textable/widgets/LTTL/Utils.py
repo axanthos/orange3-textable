@@ -1,21 +1,21 @@
 #=============================================================================
-# Module LTTL.Utils, v0.03
-# Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
+# Module LTTL.Utils, v0.05
+# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the LTTL package v1.3
+# This file is part of the LTTL package v1.4
 #
-# LTTL v1.3 is free software: you can redistribute it and/or modify
+# LTTL v1.4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# LTTL v1.3 is distributed in the hope that it will be useful,
+# LTTL v1.4 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with LTTL v1.3. If not, see <http://www.gnu.org/licenses/>.
+# along with LTTL v1.4. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 # Provides functions:
 # - parse_xml_tag()
@@ -38,7 +38,7 @@ from Segment      import Segment
 from Address      import Address
 
 element_regex   = re.compile(r'(\w+)', re.U)
-attribute_regex = re.compile(r'''(\w+)\s*=\s*['"](.+?)['"]''', re.U)
+attribute_regex = re.compile(r'''(\w+)\s*=\s*(['"])(.+?)(?<!\\)\2''', re.U)
 
 
 def parse_xml_tag(tag):
@@ -67,7 +67,7 @@ def parse_xml_tag(tag):
         tag_description['is_element']       = True
         tag_description['element']          = elem.group(1)
         for attr in re.finditer(attribute_regex, tag):
-            tag_description['attributes'][attr.group(1)] = attr.group(2)
+            tag_description['attributes'][attr.group(1)] = attr.group(3)
         if tag[1] != '/':
             tag_description['is_opening']   = True
         elif tag[-2] == '/':
@@ -164,12 +164,11 @@ def tuple_to_simple_dict(dictionary, key):
     
     NB: keys with zero value are removed.
     """
-    return {
-            k[1]: v
-                    for (k, v) in dictionary.iteritems()
-                            if k[0] == key and v > 0
-    }
-
+    return dict(
+        (k[1], v)
+            for (k, v) in dictionary.iteritems()
+                if k[0] == key and v > 0
+    )
 
 def get_average(values, weights=None):
     """Compute the average and standard deviation of a list of values"""

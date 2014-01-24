@@ -1,31 +1,31 @@
 #=============================================================================
-# Class OWTextableURLs, v0.07
-# Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
+# Class OWTextableURLs, v0.09
+# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.3) extension to Orange Canvas.
+# This file is part of the Textable (v1.4) extension to Orange Canvas.
 #
-# Textable v1.3 is free software: you can redistribute it and/or modify
+# Textable v1.4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.3 is distributed in the hope that it will be useful,
+# Textable v1.4 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.3. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 """
 <name>URLs</name>
-<description>Fetch text online and output a segmentation</description>
+<description>Fetch text data online</description>
 <icon>icons/URLs.png</icon>
 <priority>3</priority>
 """
 
-import codecs, urllib, textwrap, re, uuid, json
+import codecs, urllib, textwrap, re, json
 from unicodedata        import normalize
 
 from LTTL.Segmentation  import Segmentation
@@ -82,8 +82,9 @@ class OWTextableURLs(OWWidget):
         self.lastLocation               = '.'
         self.displayAdvancedSettings    = False
         self.URL                        = u''
-        self.uuid                       = uuid.uuid4()
+        self.uuid                       = None
         self.loadSettings()
+        self.uuid                       = getWidgetUuid(self)
 
         # Other attributes...
         self.segmenter              = Segmenter()
@@ -245,7 +246,7 @@ class OWTextableURLs(OWWidget):
         self.importButton = OWGUI.button(
                 widget              = URLBoxCol2,
                 master              = self,
-                label               = u'Import list',
+                label               = u'Import List',
                 callback            = self.importList,
                 tooltip             = (
                         u"Open a dialog for selecting an URL list to\n"
@@ -256,7 +257,7 @@ class OWTextableURLs(OWWidget):
         self.exportButton = OWGUI.button(
                 widget              = URLBoxCol2,
                 master              = self,
-                label               = u'Export list',
+                label               = u'Export List',
                 callback            = self.exportList,
                 tooltip             = (
                         u"Open a dialog for selecting a file where the URL\n"
@@ -279,12 +280,15 @@ class OWTextableURLs(OWWidget):
                 master              = self,
                 value               = 'newURL',
                 orientation         = 'horizontal',
-                label               = u'URL:',
+                label               = u'URL(s):',
                 labelWidth          = 101,
                 callback            = self.updateGUI,
                 tooltip             = (
-                        u"The URL that will be added to the list when\n"
-                        u" button 'Add' is clicked."
+                        u"The URL(s) that will be added to the list when\n"
+                        u"button 'Add' is clicked.\n\n"
+                        u"Successive URLs must be separated with ' / ' \n"
+                        u"(whitespace + slash + whitespace). Their order in\n"
+                        u"the list will be the same as in this field."
                 ),
         )
         OWGUI.separator(

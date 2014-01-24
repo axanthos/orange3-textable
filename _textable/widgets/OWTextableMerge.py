@@ -1,21 +1,21 @@
 #=============================================================================
-# Class OWTextableMerge, v0.15
-# Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
+# Class OWTextableMerge, v0.16
+# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.3) extension to Orange Canvas.
+# This file is part of the Textable (v1.4) extension to Orange Canvas.
 #
-# Textable v1.3 is free software: you can redistribute it and/or modify
+# Textable v1.4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.3 is distributed in the hope that it will be useful,
+# Textable v1.4 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.3. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 """
@@ -24,9 +24,6 @@
 <icon>icons/Merge.png</icon>
 <priority>4001</priority>
 """
-
-
-import uuid
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input        import Input
@@ -42,6 +39,15 @@ class OWTextableMerge(OWWidget):
 
     """Orange widget for merging segmentations"""
     
+    contextHandlers = {
+        "": SegmentationListContextHandler(
+            "", [
+                ContextInputListField("texts"),
+                ContextListField("textLabels", selected="selectedTextLabels")
+            ],
+        )
+    }
+
     settingsList = [
             'autoSend',
             'copyAnnotations',
@@ -54,7 +60,6 @@ class OWTextableMerge(OWWidget):
             'mergeDuplicates',
             'displayAdvancedSettings',
             'uuid',
-            'savedSenderUuidOrder',
     ]
     
     def __init__(self, parent=None, signalManager=None):
@@ -82,16 +87,16 @@ class OWTextableMerge(OWWidget):
         self.sortSegments               = False
         self.mergeDuplicates            = False
         self.displayAdvancedSettings    = False
-        self.uuid                       = uuid.uuid4()
         self.savedSenderUuidOrder       = []
+        self.uuid                       = None
         self.loadSettings()
+        self.uuid                       = getWidgetUuid(self)
 
         # Other attributes...
         self.segmenter              = Segmenter();
         self.texts                  = [];
         self.textLabels             = [];
         self.selectedTextLabels     = [];
-        self.settingsRestored       = False                                         
         self.infoBox                = InfoBox(widget=self.controlArea)
         self.sendButton             = SendButton(
                 widget              = self.controlArea,
@@ -126,7 +131,7 @@ class OWTextableMerge(OWWidget):
                 master              = self,
                 value               = 'selectedTextLabels',
                 labels              = 'textLabels',
-                callback            = self.sendButton.settingsChanged,
+                callback            = self.updateGUI,
                 tooltip             = (
                         u"List of segmentations that will be merged\n\n"
                         u"By default, segments of the input segmentations\n"
@@ -454,10 +459,10 @@ class OWTextableMerge(OWWidget):
 
     def inputData(self, newItem, newId=None):
         """Process incoming data."""
+        self.closeContext()
         updateMultipleInputs(self.texts, newItem, newId)
         self.textLabels = [text[1].label for text in self.texts]
         self.infoBox.inputChanged()
-        self.sendButton.sendIf()
 
 
     def updateGUI(self):
@@ -515,46 +520,14 @@ class OWTextableMerge(OWWidget):
                 self.sendButton.settingsChanged()
 
 
-
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        try:
-            self.restoreSettings()
-        except AttributeError:
-            pass
+        self.openContext("", self.texts)
+        self.updateGUI()
+        self.sendButton.sendIf()
 
-    def getSettings(self, alsoContexts = True, globalContexts=False):
-        """Overridden: called when a file is saved (among other situations)"""
-        try:
-            self.storeSettings()
-        except AttributeError:
-            pass
-        return super(type(self), self).getSettings(
-                alsoContexts = True, globalContexts=False
-        )
 
-    def restoreSettings(self):
-        """When a sheme file is opened, restore those settings that depend
-        on the particular segmentations that enter this widget.
-        """
-        if not self.settingsRestored:
-            self.settingsRestored = True
-            oldTexts = self.texts[:]
-            for senderUuidIndex in xrange(len(self.savedSenderUuidOrder)):
-                for text in oldTexts:
-                    senderUuid = self.savedSenderUuidOrder[senderUuidIndex]
-                    if text[0][2].uuid == senderUuid:
-                        self.texts[senderUuidIndex] = text
-                        break
-            self.textLabels = [text[1].label for text in self.texts]
-            self.sendButton.sendIf()
 
-    def storeSettings(self):
-        """When a scheme file is saved, store those settings that depend
-        on the particular segmentations that enter this widget.
-        """
-        if self.settingsRestored:
-            self.savedSenderUuidOrder = [t[0][2].uuid for t in self.texts]
 
 
 

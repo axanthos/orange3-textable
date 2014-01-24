@@ -15,5 +15,6 @@ into 4 main categories based on their input and output data types:
     Segmentation processing widgets <segmentation_processing_widgets>
     Table construction widgets <table_construction_widgets>
     Table conversion/export widget <table_conversion_export_widget>
+    Appendix: JSON im-/export format <json_format>
 
 

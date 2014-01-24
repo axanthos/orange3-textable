@@ -1,31 +1,29 @@
 #=============================================================================
-# Class OWTextablePreprocess, v0.07
-# Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
+# Class OWTextablePreprocess, v0.08
+# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.3) extension to Orange Canvas.
+# This file is part of the Textable (v1.4) extension to Orange Canvas.
 #
-# Textable v1.3 is free software: you can redistribute it and/or modify
+# Textable v1.4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.3 is distributed in the hope that it will be useful,
+# Textable v1.4 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.3. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 """
 <name>Preprocess</name>
-<description>Standard text preprocessing</description>
+<description>Basic text preprocessing</description>
 <icon>icons/Preprocess.png</icon>
 <priority>2001</priority>
 """
-
-import uuid
 
 from LTTL.Recoder       import Recoder
 from LTTL.Segmentation  import Segmentation
@@ -72,8 +70,9 @@ class OWTextablePreprocess(OWWidget):
         self.removeAccents              = False
         self.autoSend                   = True
         self.displayAdvancedSettings    = False
-        self.uuid                       = uuid.uuid4()
+        self.uuid                       = None
         self.loadSettings()
+        self.uuid                       = getWidgetUuid(self)
 
         # Other attributes...
         self.createdInputIndices    = []

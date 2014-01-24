@@ -7,7 +7,7 @@ result in the creation of a huge number of segments. Creating and manipulating
 such segmentations can slow down excessively the execution of Orange Textable,
 or even lead to memory overflow.
 
-However, it is sometimes necessary to segment large texts into words or
+However, it is sometimes *necessary* to segment large texts into words or
 letters, for instance in order to examine their frequency distribution. In
 that case, if hardware allows it, a lot of time can be saved at the expense
 of memory usage. Indeed, the cumulated time required to successively create
@@ -22,13 +22,14 @@ to produce the most fine-grained segmentation directly (see :ref:`figure 1
     :align: center
     :alt: chained hierarchical segmentations execute faster
     :figclass: align-center
+    :scale: 80 %
 
     Figure 1: Chaining :ref:`Segment` instances to reduce execution time.
 
 The situation is different when word or letter segmentation are conceived
-as intermediate steps toward the creation of a segmentation containing only
+as *intermediate steps* toward the creation of a segmentation containing only
 selected words or letters. In that case, it is much more efficient (in memory
 and execution time) to use a single instance of :ref:`Segment` with
 a regex identifying only the desired words, as seen
 :doc:`previously <segmenting_data_smaller_units>`
-with the example of *\\bretriev(e|es|ed|ing)\\b*.
+with the example of ``\bretriev(e|es|ed|ing)\b``.

@@ -1,4 +1,4 @@
-Orange Textable documentation
+﻿Orange Textable documentation
 =============================
 
 Textable is an add-on for Orange_ data mining software package. It enables users to build data
@@ -14,9 +14,9 @@ interface. It offers in particular the following features:
 
 .. _Orange: http://orange.biolab.si/
 
-Textable was designed and implemented by `LangTech Sarl <http://langtech.ch>`_
+Textable was designed and implemented by `LangTech Sàrl <http://langtech.ch>`_
 on behalf of the department of language and information sciences (SLI_) at the
-`University of Lausanne <http://www.unil.ch>`_.
+`University of Lausanne <http://www.unil.ch>`_ (see :doc:`Credits <credits>`).
 
 .. _SLI: http://www.unil.ch/sli
 
@@ -28,3 +28,4 @@ on behalf of the department of language and information sciences (SLI_) at the
     Widget reference <widget_reference>
     Cookbook <cookbook>
     Case studies <case_studies>
+    Credits <credits>

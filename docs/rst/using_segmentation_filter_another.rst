@@ -30,14 +30,14 @@ segmentation plays the role of the **Source** segmentation and the **Filter**
 segmentation. (Here again, we will ignore the **Annotation key** option for
 the time being.)
 
-In order to try out the widget, set up a scheme similar to the one shown on
+In order to try out the widget, set up a schema similar to the one shown on
 :ref:`figure 2 <using_segmentation_filter_another_fig2>` below). The first
 instance of :ref:`Text Field` contains the text to process (for
 instance the
 `Universal Declaration of Human Rights <http://www.un.org/en/documents/udhr/>`_),
 while the second instance, *Text Field (1)*, contains the list of English
 stopwords mentioned above. Both instances of :ref:`Segment` produce
-a word segmentation with regex *\\w+*; the only difference in their
+a word segmentation with regex ``\w+``; the only difference in their
 configuration is the output segmentation label , i.e. *words* for *Segment*
 and *stopwords* for *Segment (1)*. Finally, the instance of
 :ref:`Intersect` is configured as shown on
@@ -45,12 +45,13 @@ and *stopwords* for *Segment (1)*. Finally, the instance of
 
 .. _using_segmentation_filter_another_fig2:
 
-.. figure:: figures/intersect_example_scheme.png
+.. figure:: figures/intersect_example_schema.png
     :align: center
-    :alt: Scheme illustrating the use of the Intersect widget for stopword removal
+    :alt: Schema illustrating the use of the Intersect widget for stopword removal
     :figclass: align-center
+    :scale: 80 %
 
-    Figure 2: Example scheme for removing stopword using widget :ref:`Intersect` .
+    Figure 2: Example schema for removing stopword using widget :ref:`Intersect` .
 
 The content of the first segments of the resulting segmentation is:
 
@@ -84,16 +85,16 @@ the beginning of each line, excluding *I, you, he, she, we*.
 **Solution:**
 
 :ref:`Figure 3 <using_segmentation_filter_another_fig3>` below shows a possible
-solution. The 4 instances in the lower part of the scheme (*Text Field (1)*,
+solution. The 4 instances in the lower part of the schema (*Text Field (1)*,
 *Segment (1)*, *Intersect*, and *Display*) are configured as in
 :ref:`figure 2 <using_segmentation_filter_another_fig2>` above--with
 *Text Field (1)* containing the list of pronouns to exclude.
 
 The difference lies in the addition of a :ref:`Segment` instance in
 the upper branch. In this branch, the first instance (*Segment*) produces a
-segmentation into lines with regex *.+* while *Segment (2)* extracts the first
-word of each line, provided it is shorter than 4 letters
-(regex *^\\w{1,3}\\b\*)*. *Intersect* eventually takes care of excluding the
+segmentation into lines with regex ``.+`` while *Segment (2)* extracts the
+first word of each line, provided it is shorter than 4 letters
+(regex ``^\w{1,3}\b``). *Intersect* eventually takes care of excluding the
 pronouns listed above.
 
 .. _using_segmentation_filter_another_fig3:
@@ -102,6 +103,7 @@ pronouns listed above.
     :align: center
     :alt: Solution to the exercise illustrating the Intersect widget
     :figclass: align-center
+    :scale: 80 %
 
     Figure 3: A possible solution.
 

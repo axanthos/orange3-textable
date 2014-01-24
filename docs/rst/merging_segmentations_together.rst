@@ -17,10 +17,11 @@ shown on :ref:`figure 1 <merging_segmentations_together_fig1>`.
 
 .. _merging_segmentations_together_fig1:
 
-.. figure:: figures/merge_example_scheme.png
+.. figure:: figures/merge_example_schema.png
     :align: center
-    :alt: Scheme illustrating the usage of widget Merge
+    :alt: Schema illustrating the usage of widget Merge
     :figclass: align-center
+    :scale: 75 %
 
     Figure 1: Grouping *a simple example* with *another example* using widget :ref:`Merge`.
 
@@ -67,7 +68,7 @@ each incoming segmentation, in the original order of segments).
 .. _merging_segmentations_together_ex:
 
 **Exercise:** Can you add a new instance of :ref:`Merge` to the
-scheme illustrated on :ref:`figure 1 <merging_segmentations_together_fig1>`
+schema illustrated on :ref:`figure 1 <merging_segmentations_together_fig1>`
 above and modify the connections (but not the configuration of existing
 widgets) so that the segmentation given in
 :ref:`figure 4 <merging_segmentations_together_fig1>` below appears in the
@@ -91,7 +92,7 @@ widgets) so that the segmentation given in
     :align: center
     :alt: New Merge widget takes input from old one and Text field, and sends output to Display
     :figclass: align-center
-    :scale: 80 %
+    :scale: 70 %
 
     Figure 5: Solution to the :ref:`exercise <merging_segmentations_together_ex>`.
 

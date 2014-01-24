@@ -41,8 +41,8 @@ produce a so-called *contingency table* (or *document--term matrix*):
 In a real application, rows could correspond to the writings of an author and
 columns to selected prepositions, for instance. The general idea is to
 determine the number of occurrences of various *units* in various *contexts*.
-Such data can then further analyzed by means of a statistical test (aiming
-at answering the question "does the distribution of units depend on contexts")
-or a graphical representation (making it possible to visualize the attraction
-or repulsion between specific units and contexts).
+Such data can then be further analyzed, typically by means of a statistical
+test (aiming at answering the question "does the distribution of units depend
+on contexts") or a graphical representation (making it possible to visualize
+the attraction or repulsion between specific units and contexts).
 

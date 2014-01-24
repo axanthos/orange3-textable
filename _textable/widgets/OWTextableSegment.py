@@ -1,21 +1,21 @@
 #=============================================================================
-# Class OWTextableSegment, v0.14
-# Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
+# Class OWTextableSegment, v0.16
+# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.3) extension to Orange Canvas.
+# This file is part of the Textable (v1.4) extension to Orange Canvas.
 #
-# Textable v1.3 is free software: you can redistribute it and/or modify
+# Textable v1.4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.3 is distributed in the hope that it will be useful,
+# Textable v1.4 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.3. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 """
@@ -25,7 +25,7 @@
 <priority>4002</priority>
 """
 
-import re, uuid, codecs, json
+import re, codecs, json
 
 from LTTL.Segmenter    import Segmenter
 from LTTL.Segmentation import Segmentation
@@ -78,8 +78,9 @@ class OWTextableSegment(OWWidget):
         self.lastLocation               = '.'
         self.regex                      = u''
         self.mode                       = u'Tokenize'
-        self.uuid                       = uuid.uuid4()
+        self.uuid                       = None
         self.loadSettings()
+        self.uuid = getWidgetUuid(self)
 
         # Other attributes...
         self.segmenter              = Segmenter()
@@ -134,9 +135,10 @@ class OWTextableSegment(OWWidget):
                         u"segment of the input segmentation.\n\n"
                         u"Regexes will be applied in the same order as they\n"
                         u"appear in the list.\n\n"
-                        u"Column 1 shows the regex pattern.\n"
-                        u"Column 2 shows the associated annotation (if any).\n"
-                        u"Column 3 shows the associated flags."
+                        u"Column 1 shows the segmentation mode.\n"
+                        u"Column 2 shows the regex pattern.\n"
+                        u"Column 3 shows the associated annotation (if any).\n"
+                        u"Column 4 shows the associated flags."
                 ),
         )
         font = QFont()
@@ -187,7 +189,7 @@ class OWTextableSegment(OWWidget):
         self.importButton = OWGUI.button(
                 widget              = regexBoxCol2,
                 master              = self,
-                label               = u'Import list',
+                label               = u'Import List',
                 callback            = self.importList,
                 tooltip             = (
                         u"Open a dialog for selecting a regex list to\n"
@@ -198,7 +200,7 @@ class OWTextableSegment(OWWidget):
         self.exportButton = OWGUI.button(
                 widget              = regexBoxCol2,
                 master              = self,
-                label               = u'Export list',
+                label               = u'Export List',
                 callback            = self.exportList,
                 tooltip             = (
                         u"Open a dialog for selecting a file where the\n"
@@ -227,14 +229,11 @@ class OWTextableSegment(OWWidget):
                 labelWidth          = 131,
                 callback            = self.sendButton.settingsChanged,
                 tooltip             = (
-#                        u"Selection mode.\n\n"
-#                        u"'Regex': segments are selected based on content\n"
-#                        u"or annotation pattern matching.\n\n"
-#                        u"'Sample': segments are selected based on random\n"
-#                        u"or systematic sampling.\n\n"
-#                        u"'Threshold': segments are selected based on the\n"
-#                        u"frequency of the corresponding type (content or\n"
-#                        u"annotation value)."
+                        u"Segmentation mode.\n\n"
+                        u"'Tokenize': the regex specifies the form of\n"
+                        u"segments themselves.\n\n"
+                        u"'Split': the regex specifies the form of\n"
+                        u"character sequences occuring between the segments."
                 ),
         )
         self.modeCombo.setMinimumWidth(120)
@@ -252,7 +251,13 @@ class OWTextableSegment(OWWidget):
                 callback            = self.updateGUI,
                 tooltip             = (
                         u"The regex pattern that will be added to the list\n"
-                        u"when button 'Add' is clicked."
+                        u"when button 'Add' is clicked. Commonly used\n"
+                        u"segmentation units include:\n"
+                        u"1) .\tcharacters (except newline)\n"
+                        u'2) \w\t"letters" (alphanumeric chars and underscores)\n'
+                        u'3) \w+\t"words" (sequences of "letters")\n'
+                        u"4) .+\tlines\n"
+                        u"and so on."
                 ),
         )
         OWGUI.separator(
@@ -463,7 +468,13 @@ class OWTextableSegment(OWWidget):
                 callback            = self.sendButton.settingsChanged,
                 tooltip             = (
                         u"The regex that will be applied to each segment in\n"
-                        u"the input segmentation."
+                        u"the input segmentation. Commonly used segmentation\n"
+                        u"units include:\n"
+                        u"1) .\tcharacters (except newline)\n"
+                        u'2) \w\t"letters" (alphanumeric chars and underscores)\n'
+                        u'3) \w+\t"words" (sequences of "letters")\n'
+                        u"4) .+\tlines\n"
+                        u"and so on."
                 ),
         )
         OWGUI.separator(

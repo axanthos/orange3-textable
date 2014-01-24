@@ -16,11 +16,10 @@ interface. It offers in particular the following features:
 
 Documentation is found at:
 
-Readthedocs_
+http://orange-textable.readthedocs.org/
 
-.. _Readthedocs: https://orange-textable.readthedocs.org/
-
-Textable was designed and implemented by `LangTech Sarl <http://langtech.ch>`_ on behalf of the department of language and information sciences (SLI_) at the `University of Lausanne <http://www.unil.ch>`_.
+Textable was designed and implemented by `LangTech Sarl <http://langtech.ch>`_ on behalf of the
+department of language and information sciences (SLI_) at the `University of Lausanne <http://www.unil.ch>`_.
 
 .. _SLI: http://www.unil.ch/sli
 

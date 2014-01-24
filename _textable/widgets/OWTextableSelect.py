@@ -1,21 +1,21 @@
 #=============================================================================
-# Class OWTextableSelect, v0.11
-# Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
+# Class OWTextableSelect, v0.12
+# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.3) extension to Orange Canvas.
+# This file is part of the Textable (v1.4) extension to Orange Canvas.
 #
-# Textable v1.3 is free software: you can redistribute it and/or modify
+# Textable v1.4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.3 is distributed in the hope that it will be useful,
+# Textable v1.4 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.3. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 """
@@ -27,7 +27,7 @@
 
 from __future__ import division
 
-import re, math, uuid
+import re, math
 
 from LTTL.Segmenter    import Segmenter
 from LTTL.Segmentation import Segmentation
@@ -42,6 +42,18 @@ class OWTextableSelect(OWWidget):
 
     """Orange widget for segment in-/exclusion based on intrisic properties"""
     
+    contextHandlers = {
+        '': SegmentationContextHandler(
+            '', [
+                'regexAnnotationKey',
+                'thresholdAnnotationKey'
+                'sampleSize',
+                'minCount',
+                'maxCount',
+            ],
+        )
+    }
+
     settingsList = [
             'regex',
             'method',
@@ -65,8 +77,6 @@ class OWTextableSelect(OWWidget):
             'label',
             'autoNumber',
             'autoNumberKey',
-            'savedRegexAnnotationKey',
-            'savedThresholdAnnotationKey',
             'displayAdvancedSettings',
             'uuid',
     ]
@@ -111,18 +121,16 @@ class OWTextableSelect(OWWidget):
         self.maxCount                   = 1
         self.minProportion              = 1
         self.maxProportion              = 100
-        self.savedRegexAnnotationKey    = None
-        self.savedThresholdAnnotationKey = None
         self.displayAdvancedSettings    = False
-        self.uuid                       = uuid.uuid4()
+        self.uuid                       = None
         self.loadSettings()
+        self.uuid                       = getWidgetUuid(self)
 
         # Other attributes...
         self.segmenter              = Segmenter()
         self.segmentation           = None
         self.regexAnnotationKey     = None
         self.thresholdAnnotationKey = None
-        self.settingsRestored       = False
         self.infoBox                = InfoBox(widget=self.controlArea)
         self.sendButton             = SendButton(
                 widget              = self.controlArea,
@@ -868,8 +876,12 @@ class OWTextableSelect(OWWidget):
 
     def inputData(self, segmentation):
         """Process incoming segmentation"""
+        self.closeContext()
         self.segmentation = segmentation
         self.infoBox.inputChanged()
+        self.updateGUI()
+        if segmentation is not None:
+            self.openContext("", segmentation)
         self.sendButton.sendIf()
 
 
@@ -1006,49 +1018,6 @@ class OWTextableSelect(OWWidget):
                 self.regexAnnotationKey = self.regexAnnotationKey
             self.advancedSettings.setVisible(False)
 
-
-
-    def handleNewSignals(self):
-        """Overridden: called after multiple signals have been added"""
-        self.restoreSettings()
-
-    def getSettings(self, alsoContexts = True, globalContexts=False):
-        """Overridden: called when a file is saved (among other situations)"""
-        self.storeSettings()
-        return super(type(self), self).getSettings(
-                alsoContexts = True, globalContexts=False
-        )
-
-    def restoreSettings(self):
-        """When a scheme file is opened, restore those settings that depend
-        on the particular segmentations that enter this widget.
-        """
-        if not self.settingsRestored:
-            self.settingsRestored = True
-            if self.segmentation is not None:
-                segmentation   = self.segmentation
-                annotationKeys = [u'(none)']
-                annotationKeys.extend(
-                        segmentation.get_annotation_keys()
-                )
-                for key in annotationKeys:
-                    if key == self.savedRegexAnnotationKey:
-                        self.regexAnnotationKey = key
-                    if key == self.savedThresholdAnnotationKey:
-                        self.thresholdAnnotationKey = key
-            self.sendButton.sendIf()
-
-    def storeSettings(self):
-        """When a scheme file is saved, store those settings that depend
-        on the particular segmentations that enter this widget.
-        """
-        if self.settingsRestored:
-            if self.segmentation is not None:
-                self.savedRegexAnnotationKey     = self.regexAnnotationKey
-                self.savedThresholdAnnotationKey = self.thresholdAnnotationKey
-            else:
-                self.savedRegexAnnotationKey     = None
-                self.savedThresholdAnnotationKey = None
 
 
 

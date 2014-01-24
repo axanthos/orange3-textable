@@ -1,38 +1,46 @@
 #=============================================================================
-# Module TextableUtils.py, v0.04
-# Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
+# Module TextableUtils.py, v0.06
+# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.3) extension to Orange Canvas.
+# This file is part of the Textable (v1.4) extension to Orange Canvas.
 #
-# Textable v1.3 is free software: you can redistribute it and/or modify
+# Textable v1.4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.3 is distributed in the hope that it will be useful,
+# Textable v1.4 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.3. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 # Provides classes:
 # - SendButton
 # - AdvancedSettings
 # - InfoBox
 # - BasicOptionsBox
+# - ContextField
+# - ContextListField
+# - ContextInputListField
+# - ContextInputIndex
+# - SegmentationListContextHandler
+# - SegmentationContextHandler
 #=============================================================================
 # Provides functions:
 # - pluralize
 # - updateMultipleInputs
 # - normalizeCarriageReturns
 # - getPredefinedEncodings
+# - getWidgetUuid
 #=============================================================================
 
-import re, os
+import re, os, uuid
 
 from Orange.OrangeWidgets import OWGUI
+from Orange.OrangeWidgets import OWContexts
 
 
 class SendButton(object):
@@ -457,4 +465,398 @@ def getPredefinedEncodings():
             u'utf_8_sig'
 ]
     
-    
+#============================
+# Context dependent settings.
+#============================
+
+
+class ContextField(object):
+    """
+    A simple field descriptor for storing a single value.
+
+    :param str name: Attribute name in the widget to store.
+
+    """
+    def __init__(self, name):
+        self.name = name
+
+    def save(self, widget):
+        """Return the value of the field from `widget`."""
+        return widget.getdeepattr(self.name)
+
+    def restore(self, widget, savedvalue):
+        """Restore the `savedvalue` to `widget`."""
+        setattr(widget, self.name, savedvalue)
+
+
+class ContextListField(ContextField):
+    """
+    Context field for an item list with possible selection indices.
+
+    This field descriptor can be used for storing a list of items
+    (labels) and its selection state for a list view as constructed
+    by :func:`OWGUI.listBox`
+
+    :param str name:
+        Attribute name of the item list in the widget (labels).
+    :param str selected:
+        Attribute name of a list of indices corresponding to
+        selected items (default: `None` meaning there is no selection list).
+
+    """
+    def __init__(self, name, selected=None):
+        ContextField.__init__(self, name)
+        self.selected = selected
+
+    def save(self, widget):
+        """Return the value of the field from `widget`."""
+        items = list(widget.getdeepattr(self.name))
+        if self.selected is not None:
+            selected = list(widget.getdeepattr(self.selected))
+        else:
+            selected = None
+        return (items, selected)
+
+    def restore(self, widget, savedvalue):
+        """Restore the `savedvalue` to `widget`."""
+        if len(savedvalue) == 2:
+            items, selected = savedvalue
+            setattr(widget, self.name, items)
+            if self.selected is not None and selected is not None:
+                setattr(widget, self.selected, selected)
+
+
+class ContextInputListField(ContextField):
+    """
+    Context field for a list of 'Segmentations inputs'.
+
+    This field describes a widget's input list (a list of
+    (inputid, Segmentation) tuples as managed by for instance
+    :func:`updateMultipleInputs`). In particular it stores/restores
+    the order of the input list.
+
+    :param name str: Attribute name in the widget.
+
+    .. note::
+        This field can only be used by :class:`SegmentationListContextHandler`
+
+    .. warning::
+        When the context is opened (:func:`OWWidget.openContext`) the input
+        list order can be changed and assigned back to the widget. For
+        instance the following code can raise an assertion error ::
+
+            before = self.inputs
+            self.openContext("", self.inputs)
+            assert before == self.inputs
+
+        However ``assert set(before) == set(self.inputs)`` will always
+        succeed.
+
+    """
+
+    def __init__(self, name):
+        ContextField.__init__(self, name)
+
+    # Save/Restore requires the encoded context.
+    def save(self, widget):
+        raise NotImplementedError(
+                "Save must be performed by the ContextHandler"
+        )
+
+    def restore(self, widget, savedvalue):
+        raise NotImplementedError(
+                "Restore must be performed by the ContextHandler"
+        )
+
+
+class ContextInputIndex(ContextField):
+    """
+    Context field for an index into the input Segmentations list.
+
+    .. This is the same as :class:`ContextField`, but might be
+       changed to support input index restore without permuting
+       the input list (as done by `ContextInputListField`) and just
+       change the stored index to point to the right item in the
+       current list.
+
+    """
+    pass
+
+
+class SegmentationListContextHandler(OWContexts.ContextHandler):
+    """
+    Segmentations list context handler.
+
+    This Context handler matches settings on a list of
+    (inputid, Segmentation) tuples as managed by for instance
+    :func:`updateMultipleInputs`.
+
+    :param str contextName: Context handler name.
+    :param list fields:
+        A list of :class:`ContextField`. As a convenience if the list
+        contains any strings they are automatically converted to
+        :class:`ContextField` instances.
+    :param bool findImperfect:
+        Unused, should always be the default ``False`` value (this parameter
+        is only present for compatibility with the base class).
+
+    """
+    def __init__(self, contextName, fields=[], findImperfect=False, **kwargs):
+        if findImperfect != False:
+            raise ValueError("'findImperfect' is disabled")
+
+        OWContexts.ContextHandler.__init__(
+            self,
+            contextName,
+            findImperfect       = False,
+            syncWithGlobal      = False,
+            contextDataVersion  = 2,
+            **kwargs
+        )
+
+        fields = [
+                ContextField(field) if isinstance(field, str) else field
+                        for field in fields
+        ]
+
+        self.fields = fields
+
+        # We store the ContextInputListField separately
+        # (should it be passed as a separate argument?)
+        self.inputListField = None
+        inputListField = [
+                field for field in fields
+                          if isinstance(field, ContextInputListField)
+        ]
+        if len(inputListField) == 1:
+            self.inputListField = inputListField[0]
+            self.fields.remove(self.inputListField)
+        elif len(inputListField) > 1:
+            raise ValueError("Only one 'ContextInputListField' is allowed")
+
+    def findOrCreateContext(self, widget, items):
+        encoded = self.encode(self, items)
+        context, isnew = OWContexts.ContextHandler.findOrCreateContext(
+                self, widget, encoded
+        )
+
+        # Store the encoded context
+        context.encoded = encoded
+
+        if isnew:
+            context.values = {}
+
+        return context, isnew
+
+    def encode(self, widget, segmentationlist):
+        """
+        Encode a list of input segmentations for the receiving widget.
+
+        Return a tuple of ```(widget.uuid, encoded_input)```.
+        `encoded_input` is a list of  ```(label, annotations, uuid)```
+        tuples where `label` is the segmentation label, `annotations` is
+        a sorted tuple of segmentation annotation keys and `uuid` is the
+        unique identifier if the unique input (source) widget.
+
+       .. note::
+            If the receiving widget does not have a uuid then the first
+            element of the returned tuple (`widget.uuid`) will be None.
+
+       :param OWWidget widget:
+            Widget receiving the input.
+        :param list segmentationlist:
+            List of (inputid, Segmentation) tuples.
+
+        """
+        encoded = []
+        for inputid, segmentation in segmentationlist:
+            label = segmentation.label
+            annot = tuple(sorted(segmentation.get_annotation_keys()))
+            uuid = getattr(inputid[2], "uuid", None)
+            encoded.append((label, annot, uuid))
+
+        return (getattr(widget, "uuid", None), encoded)
+            
+    def match(self, context, imperfect, encoded):
+        """
+        Match the `context` to the encoded input segmentations.
+
+        Two contexts match if the receiving widget uuid matches the
+        stored one and one input list encoding is a reordering of the
+        other.
+        
+        """
+        widget_uuid, inputs = encoded
+        stored_uuid, stored_inputs = context.encoded
+
+        if stored_uuid != widget_uuid:
+            # Receiving widget uuid does not match the stored context
+            return 0
+
+        if len(stored_inputs) == len(inputs):
+            if set(stored_inputs) == set(inputs):
+                # Perfect match on the inputs
+                return 2
+        # No match
+        return 0
+
+    def _permutation(self, seq1, seq2):
+        assert len(seq1) == len(seq2) and set(seq1) == set(seq2)
+        return [seq1.index(el) for el in seq2]
+
+    def settingsToWidget(self, widget, context):
+        """
+        Restore the saved `context` to `widget`.
+        """
+        OWContexts.ContextHandler.settingsToWidget(self, widget, context)
+
+        if self.inputListField and self.inputListField.name in context.values:
+            # find the permutation of the current input list so it matches
+            # the stored one
+            inputs = widget.getdeepattr(self.inputListField.name)
+            _, encoded = self.encode(widget, inputs)
+            _, stored = context.values[self.inputListField.name]
+
+            def uuids(seq):
+                return [uuid for _, _, uuid in seq]
+            # NOTE: Match on widget uuids only.
+            # LTTL.Input.Input can change it's 'label' in place on user
+            # interaction.
+            permutation = self._permutation(uuids(encoded), uuids(stored))
+
+            permuted = [inputs[p] for p in permutation]
+
+            # Restore the stored order in the widget.
+            setattr(widget, self.inputListField.name, permuted)
+
+        for field in self.fields:
+            if not field.name in context.values:
+                continue
+            field.restore(widget, context.values[field.name])
+
+    def settingsFromWidget(self, widget, context):
+        """
+        Get the settings from a widget.
+        """
+        OWContexts.ContextHandler.settingsFromWidget(self, widget, context)
+
+        if self.inputListField:
+            inputs = self.encode(
+                    widget, widget.getdeepattr(self.inputListField.name)
+            )
+            context.values[self.inputListField.name] = inputs
+
+        for field in self.fields:
+            context.values[field.name] = field.save(widget)
+
+
+class SegmentationContextHandler(OWContexts.ContextHandler):
+    """
+    Context handler for a single :class:`Segmentation` instance.
+
+    This context handler matches settings on a single instance of
+    :class:`Segmentation`. Two segmentations are matched if they
+    have the same label and annotation keys.
+
+    :param str contextName: Context handler name.
+    :param list fields:
+        A list of :class:`ContextField`. As a convenience if the list
+        contains any strings they are automatically converted to
+        :class:`ContextField` instances.
+    :param bool findImperfect:
+        Unused, should always be the default ``False`` value (this parameter
+        is only present for compatibility with the base class).
+
+    """
+    def __init__(self, contextName, fields=[], findImperfect=False, **kwargs):
+        if findImperfect != False:
+            raise ValueError("'findImperfect' is not supported")
+
+        OWContexts.ContextHandler.__init__(
+                self,
+                contextName,
+                findImperfect = False,
+                **kwargs
+        )
+
+        self.fields = [
+                ContextField(field) if isinstance(field, str) else field
+                       for field in fields
+        ]
+
+    def encode(self, segmentation):
+        """
+        Encode a `Segmentation` instance.
+
+        Return a (label, annotations) tuple where `label` is the
+        segmentation label and `annotations` is a tuple of sorted
+        annotations keys.
+
+        """
+        return (
+                segmentation.label,
+                tuple(sorted(segmentation.get_annotation_keys()))
+        )
+
+    def findOrCreateContext(self, widget, segmentation):
+        encoded = self.encode(segmentation)
+        context, isnew = OWContexts.ContextHandler.findOrCreateContext(
+            self, widget, encoded
+        )
+
+        # Store the encoded context
+        context.encoded = encoded
+
+        if isnew:
+            context.values = {}
+
+        return context, isnew
+
+    def match(self, context, imperfect, encoded):
+        """
+        Match the `context` to the encoded segmentation context.
+
+        Two contexts match if their encodings are structurally
+        equal (==).
+
+        """
+        return 2 if context.encoded == encoded else 0
+
+    def settingsToWidget(self, widget, context):
+        for field in self.fields:
+            if field.name in context.values:
+                field.restore(widget, context.values[field.name])
+
+    def settingsFromWidget(self, widget, context):
+        for field in self.fields:
+            context.values[field.name] = field.save(widget)
+
+
+def getWidgetUuid(widget, uuid_name="uuid"):
+    """
+    Return a persistent universally unique id for a widget.
+
+    :param widget: The OWWidget instance
+    :param str uuid_name:
+        Name of the uuid attribute (must be in widget's settingsList).
+
+    .. note::
+        This function should be called *after* `loadSettings()`.
+        Follow this pattern in the widgets __init__ method::
+
+            self.uuid = None
+            self.loadSettings()
+            self.uuid = getWidgetUuid(self, uuid_name="uuid")
+
+    """
+    # if the widget was loaded from a saved file then '_settingsFromSchema'
+    # contains the saved settings otherwise the attribute is not present
+    settings = getattr(widget, "_settingsFromSchema", None)
+    if settings is not None and \
+            uuid_name in widget.settingsList and \
+            uuid_name in settings:
+        # retrieve the stored uuid from the settings
+        return settings[uuid_name]
+    else:
+        # A newly created widget gets a brand new uuid
+        return uuid.uuid4()

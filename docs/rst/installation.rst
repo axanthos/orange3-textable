@@ -1,15 +1,23 @@
 Installation
 ============
 
-To install Orange Textable add-on for Orange from PyPi_ run::
+Python v2.7 and Orange Canvas v2.7 (or more recent) must imperatively be
+installed *before* Orange Textable v1.4. At the time of writing, most recent
+versions of Orange Canvas automatically include the 2.7 version of Python.
+After installation, Orange Textable v1.4 appears in the form of an additional
+tab in Orange Canvas. User guide, source files and other documents are then
+accessible in your distribution of Orange, in folder
+*/OrangeWidgets/Textable*.
 
-    pip install Orange-Textable
+The installation procedure is slightly different on Windows and MacOS X. [#]_
 
-To install it from source code run::
+.. toctree::
+    :maxdepth: 1
 
-    python setup.py install
+    Windows installation <windows_installation>
+    MacOS X installation <macosx_installation>
 
-Orange Textable can also be installed directly from within Orange Canvas,
-using the Add-ons manager (menu **Options > Add-ons**).
+.. [#] Even though compatibility with Linux is likely, it has not been
+       specifically tested.
 
-.. _PyPi: https://pypi.python.org/pypi/Orange-Textable
+

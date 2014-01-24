@@ -2,7 +2,7 @@ Keyboard input and segmentation display
 =======================================
 
 Typing text in a :ref:`Text Field` widget is the simplest way to
-import a string in Orange Textable. This widget has no input connexions, and
+import a string in Orange Textable. This widget has no input connections, and
 emits in output a segmentation containing a single segment whose address
 points to the entire string that was typed. This segmentation is assigned the
 label specified in the **Output segmentation label** field (see
@@ -37,8 +37,8 @@ covering the whole string (see :ref:`figure 2
     Figure 2: Viewing *a simple example* in widget :ref:`Display`.
     
 By default, :ref:`Display` passes its input data without
-modification to its output connexions. It is very useful for viewing
-intermediate results in an Orange Textable scheme and making sure that other
+modification to its output connections. It is very useful for viewing
+intermediate results in an Orange Textable schema and making sure that other
 widgets process data as expected.
     
 

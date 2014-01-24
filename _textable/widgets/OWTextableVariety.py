@@ -1,21 +1,21 @@
 #=============================================================================
-# Class OWTextableVariety, v0.08
-# Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
+# Class OWTextableVariety, v0.10
+# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.3) extension to Orange Canvas.
+# This file is part of the Textable (v1.4) extension to Orange Canvas.
 #
-# Textable v1.3 is free software: you can redistribute it and/or modify
+# Textable v1.4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.3 is distributed in the hope that it will be useful,
+# Textable v1.4 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.3. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 """
@@ -39,24 +39,37 @@ class OWTextableVariety(OWWidget):
 
     """Orange widget for mesuring variety of text units"""
 
+    contextHandlers = {
+        '': SegmentationListContextHandler(
+            '', [
+                ContextInputListField('segmentations'),
+                ContextInputIndex('units'),
+                ContextInputIndex('contexts'),
+                'mode',
+                'unitAnnotationKey',
+                'categoryAnnotationKey',
+                'contextAnnotationKey',
+                'sequenceLength',
+                'windowSize',
+                'subsampleSize',
+                'uuid',
+            ]
+        )
+    }
+
     settingsList = [
             'autoSend',
             'sequenceLength',
+            'measurePerCategory',
             'mode',
             'mergeContexts',
             'windowSize',
             'unitPosMarker',
             'unitWeighting',
-            'measurePerCategory',
             'categoryWeighting',
             'applyResampling',
             'numSubsamples',
-            'savedUnitSenderUuid',                                                  
-            'savedUnitAnnotationKey',                                               
-            'savedCategoryAnnotationKey',                                           
-            'savedContextSenderUuid',                                               
-            'savedContextAnnotationKey',                                            
-            'savedMode',                                                            
+            'subsampleSize',
     ]
 
     def __init__(self, parent=None, signalManager=None):
@@ -75,23 +88,20 @@ class OWTextableVariety(OWWidget):
         self.outputs = [('Textable Table', Table)]
         
         # Settings...
-        self.autoSend                   = False
-        self.sequenceLength             = 1
-        self.mode                       = u'No context'
-        self.mergeContexts              = False
-        self.windowSize                 = 1
-        self.unitWeighting              = False
-        self.measurePerCategory         = False
-        self.categoryWeighting          = False
-        self.applyResampling            = False
-        self.numSubsamples              = 100
-        self.savedUnitSenderUuid        = None                                      
-        self.savedUnitAnnotationKey     = None                                      
-        self.savedCategoryAnnotationKey = None                                      
-        self.savedContextSenderUuid     = None                                      
-        self.savedContextAnnotationKey  = None                                      
-        self.savedMode                  = None                                      
+        self.autoSend               = False
+        self.sequenceLength         = 1
+        self.mode                   = u'No context'
+        self.mergeContexts          = False
+        self.windowSize             = 1
+        self.unitWeighting          = False
+        self.measurePerCategory     = False
+        self.categoryWeighting      = False
+        self.applyResampling        = False
+        self.numSubsamples          = 100
+        self.subsampleSize          = 50
+        self.uuid                   = None
         self.loadSettings()
+        self.uuid = getWidgetUuid(self)
 
         # Other attributes...
         self.processor              = Processor()
@@ -101,11 +111,10 @@ class OWTextableVariety(OWWidget):
         self.categoryAnnotationKey  = None
         self.contexts               = None
         self.contextAnnotationKey   = None
-        self.subsampleSize          = 1
-        self.settingsRestored       = False                                         
+        self.settingsRestored       = False
         self.infoBox                = InfoBox(
-                widget          = self.controlArea,
-                stringClickSend = u"Please click 'Compute' when ready.",
+                widget              = self.controlArea,
+                stringClickSend     = u"Please click 'Compute' when ready.",
         )
         self.sendButton             = SendButton(
                 widget              = self.controlArea,
@@ -444,14 +453,14 @@ class OWTextableVariety(OWWidget):
                 master              = self,
                 value               = 'numSubsamples',
                 min                 = 1,
-                max                 = 10000,
+                max                 = 100000,
                 step                = 1,
                 orientation         = 'horizontal',
                 label               = u'Number of subsamples:',
                 labelWidth          = 160,
                 callback            = self.sendButton.settingsChanged,
                 tooltip             = (
-                        u"The number of subsamples per context."
+                        u"The number of subsamples (per context)."
                 ),
         )
         applyResamplingCheckBox.disables.append(iBox2)
@@ -476,6 +485,7 @@ class OWTextableVariety(OWWidget):
 
     def inputData(self, newItem, newId=None):
         """Process incoming data."""
+        self.closeContext()
         updateMultipleInputs(
                 self.segmentations,
                 newItem,
@@ -483,7 +493,7 @@ class OWTextableVariety(OWWidget):
                 self.onInputRemoval
         )
         self.infoBox.inputChanged()
-        self.sendButton.sendIf()
+        self.updateGUI()
 
 
     def onInputRemoval(self, index):
@@ -702,82 +712,9 @@ class OWTextableVariety(OWWidget):
 
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        try:
-            self.restoreSettings()
-        except AttributeError:
-            pass
-
-    def getSettings(self, alsoContexts = True, globalContexts=False):
-        """Overridden: called when a file is saved (among other situations)"""
-        try:
-            self.storeSettings()
-        except AttributeError:
-            pass
-        return super(type(self), self).getSettings(
-                alsoContexts = True, globalContexts=False
-        )
-
-    def restoreSettings(self):
-        """When a scheme file is opened, restore those settings that depend
-        on the particular segmentations that enter this widget.
-        """
-        if not self.settingsRestored:
-            self.settingsRestored = True
-            self.mode             = self.savedMode
-            for segIndex in xrange(len(self.segmentations)):
-                segmentation = self.segmentations[segIndex]
-                if segmentation[0][2].uuid == self.savedUnitSenderUuid:
-                    self.units = segIndex
-                if self.mode == u'Containing segmentation':
-                    if segmentation[0][2].uuid == self.savedContextSenderUuid:
-                        self.contexts = segIndex
-            self.updateGUI()
-            if self.units is not None:
-                segmentation       = self.segmentations[self.units]
-                unitAnnotationKeys = [u'(none)']
-                unitAnnotationKeys.extend(segmentation[1].get_annotation_keys())
-                for key in unitAnnotationKeys:
-                    if key == self.savedUnitAnnotationKey:
-                        self.unitAnnotationKey = key
-                    if key == self.savedCategoryAnnotationKey:
-                        self.categoryAnnotationKey = key
-                if self.mode == u'Containing segmentation':
-                    if self.contexts is not None:
-                        segmentation = self.segmentations[self.contexts]
-                        contextAnnotationKeys = [u'(none)']
-                        contextAnnotationKeys.extend(
-                                segmentation[1].get_annotation_keys()
-                        )
-                        for key in contextAnnotationKeys:
-                            if key == self.savedContextAnnotationKey:
-                                self.contextAnnotationKey = key
-                                break
-            self.sendButton.sendIf()
-
-    def storeSettings(self):
-        """When a scheme file is saved, store those settings that depend
-        on the particular segmentations that enter this widget.
-        """
-        if self.settingsRestored:
-            self.savedMode                      =    self.mode
-            if self.units is not None:
-                segmentation                  = self.segmentations[self.units]
-                self.savedUnitSenderUuid        = segmentation[0][2].uuid
-                self.savedUnitAnnotationKey     = self.unitAnnotationKey
-                self.savedCategoryAnnotationKey = self.categoryAnnotationKey
-            else:
-                self.savedUnitSenderUuid        = None
-                self.savedUnitAnnotationKey     = None
-                self.savedCategoryAnnotationKey = None
-            if          self.mode == u'Containing segmentation' \
-                    and self.contexts is not None:
-                segmentation = self.segmentations[self.contexts]
-                self.savedContextSenderUuid = segmentation[0][2].uuid
-                self.savedContextAnnotationKey \
-                        = self.contextAnnotationKey
-            else:
-                self.savedContextSenderUuid     = None
-                self.savedContextAnnotationKey  = None
+        self.openContext("", self.segmentations)
+        self.updateGUI()
+        self.sendButton.sendIf()
 
 
 

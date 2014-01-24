@@ -1,21 +1,21 @@
 #=============================================================================
-# Module LTTL.Table, v0.06
-# Copyright 2012-2013 LangTech Sarl (info@langtech.ch)
+# Module LTTL.Table, v0.07
+# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the LTTL package v1.3
+# This file is part of the LTTL package v1.4
 #
-# LTTL v1.3 is free software: you can redistribute it and/or modify
+# LTTL v1.4 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# LTTL v1.3 is distributed in the hope that it will be useful,
+# LTTL v1.4 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with LTTL v1.3. If not, see <http://www.gnu.org/licenses/>.
+# along with LTTL v1.4. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 # Provides classes:
 # - Table
@@ -391,6 +391,33 @@ class PivotCrosstab(Crosstab):
                         ]),
                         [0 for v in values]
                 ))
+        elif mode == 'quotients':
+            row_ids   = self.row_ids
+            col_ids   = self.col_ids
+            col_total = list()
+            for col_id in col_ids:
+                col_values = [
+                        self.values.get((row_id, col_id), 0)
+                                for row_id in row_ids
+                ]
+                col_total.append(sum(col_values))
+            total     = sum(col_total)
+            for row_id in row_ids:
+                row_values = [
+                        self.values.get((row_id, col_id), 0)
+                                for col_id in col_ids
+                ]
+                row_total = sum(row_values)
+                for col_idx in xrange(len(col_ids)):
+                    try:
+                        new_value = (
+                                (row_values[col_idx] * total)
+                                /
+                                (row_total * col_total[col_idx])
+                        )
+                    except ZeroDivisionError:
+                        new_value = 0
+                    new_values[(row_id, col_ids[col_idx])] = new_value
         return(Table(
                 list(self.row_ids),
                 list(self.col_ids),

@@ -3,23 +3,24 @@ Counting segment types
 
 Widget :ref:`Count` takes in input one or more segmentations and
 produces frequency tables such as tables 1 and 2
-:doc:`here <segmentations_tables>`. To try it out, create a scheme such as
+:doc:`here <segmentations_tables>`. To try it out, create a schema such as
 illustrated on :ref:`figure 1 <counting_segment_types_fig1>` below. As usual,
 we will suppose that the :ref:`Text Field` instance contains
 *a simple example*. The :ref:`Segment` instance is configured for
-letter segmentation (**Regex:** *\\w* and **Output segmentation label:**
+letter segmentation (**Regex:** ``\w`` and **Output segmentation label:**
 *letters*). The default configuration of the instances of
 :ref:`Convert` and *Data Table* (from the **Data** tab of Orange
 Canvas) needs not be modified for this example.
 
 .. _counting_segment_types_fig1:
 
-.. figure:: figures/count_example_scheme.png
+.. figure:: figures/count_example_schema.png
     :align: center
-    :alt: Scheme for testing the Count widget
+    :alt: Schema for testing the Count widget
     :figclass: align-center
+    :scale: 80 %
 
-    Figure 1: Scheme for testing the :ref:`Count` widget.
+    Figure 1: Schema for testing the :ref:`Count` widget.
 
 Basically, the purpose of widget :ref:`Count` is to determine the frequency
 of segment types in an input segmentation. The label of that segmentation must
@@ -60,11 +61,11 @@ nonzero frequency.
 .. _counting_segment_types_table1:
 
 .. csv-table:: Table 1: Letter bigram frequency.
-    :header: *as*, *si*, *im*, *mp*, *pl*, *le*, *ex*, *xa*, *am*
+    :header: *as*, *si*, *im*, *mp*, *pl*, *le*, *ee*, *ex*, *xa*, *am*
     :stub-columns: 0
-    :widths: 3 3 3 3 3 3 3 3 3
+    :widths: 3 3 3 3 3 3 3 3 3 3
 
-    1,   1,   1,   2,   2,   2,   1,   1,   1
+    1,   1,   1,   2,   2,   2,   1,  1,   1,   1
 
 
 
