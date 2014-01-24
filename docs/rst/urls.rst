@@ -74,7 +74,7 @@ a segment for the content of each imported URL.
 
 .. _URLs_fig2:
 
-.. figure:: figures/URLs_advanced_example.png
+.. figure:: figures/urls_advanced_example.png
     :align: center
     :alt: Advanced interface of the URLs widget
     :figclass: align-center
