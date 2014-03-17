@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableCount, v0.18
+# Class OWTextableCount, v0.19
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -76,7 +76,7 @@ class OWTextableCount(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableCount',
+                'TextableCount_0_19',
                 wantMainArea=0,
         )
         

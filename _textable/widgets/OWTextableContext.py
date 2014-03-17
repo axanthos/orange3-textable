@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableContext, v0.07
+# Class OWTextableContext, v0.08
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -76,7 +76,7 @@ class OWTextableContext(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableContext',
+                'TextableContext_0_08',
                 wantMainArea=0,
         )
         

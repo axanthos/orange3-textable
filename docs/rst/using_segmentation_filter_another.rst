@@ -55,22 +55,24 @@ and *stopwords* for *Segment (1)*. Finally, the instance of
 
 The content of the first segments of the resulting segmentation is:
 
-    *PREAMBLE*
-    *Whereas*
-    *recognition*
-    *inherent*
-    *dignity*
-    *equal*
-    *inalienable*
-    *rights*
-    *members*
-    *human*
-    *family*
-    *foundation*
-    *freedom*
-    *justice*
-    *peace*
-    *world*
+::
+
+    PREAMBLE
+    Whereas
+    recognition
+    inherent
+    dignity
+    equal
+    inalienable
+    rights
+    members
+    human
+    family
+    foundation
+    freedom
+    justice
+    peace
+    world
     ...
 
 .. _using_segmentation_filter_another_ex:

@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableTextFiles, v0.12
+# Class OWTextableTextFiles, v0.13
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -62,7 +62,7 @@ class OWTextableTextFiles(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableTextFiles',
+                'TextableTextFiles_0_13',
                 wantMainArea=0,
         )
 
@@ -602,7 +602,7 @@ class OWTextableTextFiles(OWWidget):
                     filename = os.path.basename(filePath)
                     annotation[self.importFilenamesKey] = filename
                 if self.autoNumber and self.autoNumberKey:
-                    annotation[self.autoNumberKey] = unicode(counter)
+                    annotation[self.autoNumberKey] = counter
                     counter += 1
             annotations.append(annotation)
             

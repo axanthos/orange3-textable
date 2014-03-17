@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableTextField, v0.08
+# Class OWTextableTextField, v0.09
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -58,7 +58,7 @@ class OWTextableTextField(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableTextField',
+                'TextableTextField_0_09',
                 wantMainArea=0,
         )
 
@@ -76,7 +76,6 @@ class OWTextableTextField(OWWidget):
         self.uuid               = getWidgetUuid(self)
 
         # Other attributes...
-        self.fileIndex          = 0
         self.infoBox            = InfoBox(widget=self.controlArea)
         self.sendButton         = SendButton(
                 widget              = self.controlArea,
@@ -123,7 +122,7 @@ class OWTextableTextField(OWWidget):
 
     def sendData(self):
 
-        """Open file, read and normalize content, then send Text object"""
+        """Normalize content, then create and send segmentation"""
 
         # Get, convert and normalize field content...
         textFieldContent = unicode(
@@ -154,7 +153,7 @@ class OWTextableTextField(OWWidget):
         message = pluralize(message, len(textFieldContent))
         self.infoBox.dataSent(message)
 
-        # Store content in the data array and set associated label.
+        # Update segmentation.
         self.segmentation.update(textFieldContent, label=self.label)
 
         # Send token...

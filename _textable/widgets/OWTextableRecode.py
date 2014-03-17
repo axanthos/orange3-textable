@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableRecode, v0.09
+# Class OWTextableRecode, v0.10
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -59,7 +59,7 @@ class OWTextableRecode(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableRecode',
+                'TextableRecode_0_10',
                 wantMainArea=0,
         )
 

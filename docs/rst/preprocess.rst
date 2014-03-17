@@ -14,7 +14,7 @@ Inputs:
 
 * ``Segmentation``
 
-  Segmentation covering the text to be preprocessed
+  Segmentation covering the text that should be preprocessed
 
 Outputs:
 
@@ -63,11 +63,12 @@ overlaps in the input segmentation, etc.).
 
 The **Send** button triggers data emission, as it happens a segmentation, to
 the output connection(s). When it is selected, the **Send automatically**
-checkbox deactivates the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface (editing of the text or
-label modification) or when its input data are modified (by deletion or
-addition of a connection, or because modified data is received through an
-existing connection).
+checkbox disables the button and the widget attempts to automatically emit
+a segmentation at every modification of its interface or when its input data
+are modified (by deletion or addition of a connection, or because modified
+data is received through an existing connection).
+
+.. _anchor_to_caveat:
 
 Caveat
 ------

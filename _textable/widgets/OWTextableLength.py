@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableLength, v0.11
+# Class OWTextableLength, v0.12
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -70,7 +70,7 @@ class OWTextableLength(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableLength',
+                'TextableLength_0_12',
                 wantMainArea=0,
         )
         

@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableIntersect, v0.11
+# Class OWTextableIntersect, v0.13
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -66,14 +66,14 @@ class OWTextableIntersect(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableIntersect',
+                'TextableIntersect_0_13',
                 wantMainArea=0,
         )
 
         # Input and output channels...
         self.inputs  = [('Segmentation', Segmentation, self.inputData, Multiple)]
         self.outputs = [
-            ('Filtered data', Segmentation, Default),
+            ('Selected data', Segmentation, Default),
             ('Discarded data', Segmentation)
         ]
         
@@ -398,13 +398,13 @@ class OWTextableIntersect(OWWidget):
         # Check that there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.noDataSent(u'No input.')
-            self.send('Filtered data', None, self)
+            self.send('Selected data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
             self.infoBox.noDataSent(u'No label was provided.')
-            self.send('Filtered data', None, self)
+            self.send('Selected data', None, self)
             return
 
         # Source and filtering parameter...
@@ -431,7 +431,7 @@ class OWTextableIntersect(OWWidget):
                 self.infoBox.noDataSent(
                         u'No annotation key was provided for auto-numbering.'
                 )
-                self.send('Filtered data', None, self)
+                self.send('Selected data', None, self)
                 return
         else:
             autoNumberKey = None
@@ -462,7 +462,7 @@ class OWTextableIntersect(OWWidget):
         message = pluralize(message, len(filtered_data))
         self.infoBox.dataSent(message)
 
-        self.send( 'Filtered data', filtered_data, self)
+        self.send( 'Selected data', filtered_data, self)
         self.send( 'Discarded data', discarded_data, self)
         self.sendButton.resetSettingsChangedFlag()
 

@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableConvert, v0.09
+# Class OWTextableConvert, v0.10
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -67,7 +67,7 @@ class OWTextableConvert(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableConvert',
+                'TextableConvert_0_10',
                 wantMainArea=0,
         )
         

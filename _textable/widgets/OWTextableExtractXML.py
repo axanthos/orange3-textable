@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableExtractXML, v0.09
+# Class OWTextableExtractXML, v0.11
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -20,7 +20,7 @@
 
 """
 <name>Extract XML</name>
-<description>Create a new segmentation based on xml markup</description>
+<description>Create a new segmentation based on XML markup</description>
 <icon>icons/ExtractXML.png</icon>
 <priority>4005</priority>
 """
@@ -61,13 +61,13 @@ class OWTextableExtractXML(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableExtractXML',
+                'TextableExtractXML_0_11',
                 wantMainArea=0,
         )
 
         # Input and output channels...
         self.inputs  = [('Segmentation', Segmentation, self.inputData, Single)]
-        self.outputs = [('Extracted XML', Segmentation)]
+        self.outputs = [('Extracted data', Segmentation)]
         
         # Settings...
         self.conditions                 = []
@@ -528,19 +528,19 @@ class OWTextableExtractXML(OWWidget):
         # Check that there's something on input...
         if not self.inputSegmentation:
             self.infoBox.noDataSent(u'No input.')
-            self.send('Extracted XML', None, self)
+            self.send('Extracted Data', None, self)
             return
 
         # Check that element field is not empty...
         if not self.element:
             self.infoBox.noDataSent(u'No XML element was specified.')
-            self.send('Extracted XML', None, self)
+            self.send('Extracted Data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
             self.infoBox.noDataSent(u'No label was provided.')
-            self.send('Extracted XML', None, self)
+            self.send('Extracted Data', None, self)
             return
 
         # Check that importElementAs is not empty (if necessary)...
@@ -551,7 +551,7 @@ class OWTextableExtractXML(OWWidget):
                 self.infoBox.noDataSent(
                         u'No annotation key was provided for element import.'
                 )
-                self.send('Extracted XML', None)
+                self.send('Extracted Data', None)
                 return
         else:
             importElementAs = None
@@ -565,7 +565,7 @@ class OWTextableExtractXML(OWWidget):
                 self.infoBox.noDataSent(
                         u'No annotation key was provided for auto-numbering.'
                 )
-                self.send('Extracted XML', None, self)
+                self.send('Extracted Data', None, self)
                 return
         else:
             autoNumberKey = None
@@ -628,7 +628,7 @@ class OWTextableExtractXML(OWWidget):
         message = pluralize(message, len(xml_extracted_data))
         self.infoBox.dataSent(message)
 
-        self.send( 'Extracted XML', xml_extracted_data, self)
+        self.send( 'Extracted Data', xml_extracted_data, self)
         self.sendButton.resetSettingsChangedFlag()
 
 

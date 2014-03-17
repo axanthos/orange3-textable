@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableSelect, v0.12
+# Class OWTextableSelect, v0.13
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -87,7 +87,7 @@ class OWTextableSelect(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableSelect',
+                'TextableSelect_0_13',
                 wantMainArea=0,
         )
 
@@ -729,7 +729,7 @@ class OWTextableSelect(OWWidget):
                     return
 
                 # Get number of iterations...
-                num_iterations = sampleSize
+                num_iterations = len(self.segmentation)
 
             # Else if mode is Threshold...
             elif self.method == u'Threshold':

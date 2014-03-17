@@ -49,7 +49,7 @@ select the encoding of its content.
     :alt: Basic interface of the URLs widget
     :figclass: align-center
 
-    Figure 1: Basic interface of the **URLs** widget.
+    Figure 1: **URLs** widget (basic interface).
 
 The **Options** section allows the user to define the label of the output
 segmentation (**Output segmentation label**), here *url_content*.
@@ -61,7 +61,7 @@ etc.).
 
 The **Send** button triggers data emission, as it happens a segmentation, to
 the output connection(s). When it is selected, the **Send automatically**
-checkbox deactivates the button and the widget attempts to automatically emit
+checkbox disables the button and the widget attempts to automatically emit
 a segmentation at every modification of its interface.
 
 Advanced interface
@@ -80,15 +80,17 @@ a segment for the content of each imported URL.
     :figclass: align-center
     :scale: 80%
 
-    Figure 2: Advanced interface of the **URLs** widget.
+    Figure 2: **URLs** widget (advanced interface).
 
-The **Sources** section of the advanced interface (see
-:ref:`figure 2 <URLs_fig2>` above) allows the user to specify the imported
-URL(s) as well as their content's encoding, to determine the order in which
-they appear in the output segmentation, and optionally to assign an
-annotation. The list of imported URLs appears at the top of the window; the
-columns of this list indicate (a) the URL, (b) the corresponding annotation
-(if any), and (c) the encoding with which the content of each is associated.
+The advanced interface (see :ref:`figure 2 <URLs_fig2>` above) presents
+similarities with that of the :ref:`Text Files`, :ref:`Recode`, and
+:ref:`Segment` widgets. The **Sources** section  allows the user to specify
+the imported URL(s) as well as their content's encoding, to determine the
+order in which they appear in the output segmentation, and optionally to
+assign an annotation. The list of imported URLs appears at the top of the
+window; the columns of this list indicate (a) the URL, (b) the corresponding
+annotation (if any), and (c) the encoding with which the content of each is
+associated.
 
 In :ref:`figure 2 <URLs_fig2>`, we can see that two URLs are imported (only
 the end of each URL is visible on the figure) and that each is provided with
@@ -101,9 +103,9 @@ modify the order in which they appear in the output segmentation (**Move Up**
 and **Move Down**), to delete an URL from the list (**Remove**) or to
 completely empty it (**Clear All**). Except for **Clear All**, all these
 buttons require the user to previously select an entry from the list. **Import
-list** enables the user to import a list of URLs in JSON format (see
+List** enables the user to import a list of URLs in JSON format (see
 :doc:`JSON im-/export format <json_format>`) and to add it to the previously
-selected sources. In the opposite **Export list** enables the user to export
+selected sources. In the opposite **Export List** enables the user to export
 the source list in a JSON file.
 
 The remainder of the **Sources** section allows the user to add new URLs to
@@ -131,11 +133,16 @@ annotation key specified in the text field on the right.
 In :ref:`figure 2 <URLs_fig2>`, it was thus decided to assign the label
 *novels* to the output segmentation, and to associate the name of each URL to
 the annotation key *url*. On the other hand, the auto-numbering option
-has not been activated.
+has not been enabled.
 
 The **Info** section indicates the length of the output segmentation in
 characters, or the reasons why no segmentation is emitted (inability to
 retrieve the data, encoding issue, etc.). In the example, the two segments
 corresponding to the imported URLs' content thus total up to 1'300'344
 characters.
+
+The **Send** button triggers data emission, as it happens a segmentation, to
+the output connection(s). When it is selected, the **Send automatically**
+checkbox disables the button and the widget attempts to automatically emit
+a segmentation at every modification of its interface.
 

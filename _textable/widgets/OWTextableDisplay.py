@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableDisplay, v0.11
+# Class OWTextableDisplay, v0.12
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -61,7 +61,7 @@ class OWTextableDisplay(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'Display',
+                'TextableDisplay_0_12',
                 wantMainArea=1
         )
         

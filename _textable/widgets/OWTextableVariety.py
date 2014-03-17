@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableVariety, v0.10
+# Class OWTextableVariety, v0.11
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -80,7 +80,7 @@ class OWTextableVariety(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableVariety',
+                'TextableVariety_0_11',
                 wantMainArea=0,
         )
         

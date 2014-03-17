@@ -1,5 +1,5 @@
 #=============================================================================
-# Class LTTL.Segmenter, v0.18
+# Class LTTL.Segmenter, v0.19
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the LTTL package v1.4
@@ -226,7 +226,7 @@ class Segmenter(object):
                                                 previous_end_pos,
                                                 start_pos + m.start(),
                                         ),
-                                        new_segment_annotations
+                                        new_segment_annotations.copy()
                                 )
                         )
                         previous_end_pos = start_pos + m.end()
@@ -239,7 +239,7 @@ class Segmenter(object):
                                                 previous_end_pos,
                                                 segment_end_pos,
                                         ),
-                                        new_segment_annotations
+                                        new_segment_annotations.copy()
                                 )
                         )
                 # Sort segments...
@@ -763,7 +763,7 @@ class Segmenter(object):
         """Add annotation with integers from 1 to N to segments in a list"""
         counter = 1
         for segment in segment_list:
-            segment.annotations[annotation_key] = unicode(counter)
+            segment.annotations[annotation_key] = counter
             counter += 1
             if progress_callback:
                 progress_callback()

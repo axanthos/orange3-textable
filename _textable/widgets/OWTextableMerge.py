@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableMerge, v0.16
+# Class OWTextableMerge, v0.17
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -68,7 +68,7 @@ class OWTextableMerge(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableMerge',
+                'TextableMerge_0_17',
                 wantMainArea=0,
         )
         

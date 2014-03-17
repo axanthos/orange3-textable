@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextablePreprocess, v0.08
+# Class OWTextablePreprocess, v0.09
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -55,7 +55,7 @@ class OWTextablePreprocess(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextablePreprocess',
+                'TextablePreprocess_0_09',
                 wantMainArea=0,
         )
         
@@ -246,7 +246,7 @@ class OWTextablePreprocess(OWWidget):
                 self.segmentation,
                 mode                = 'standard',
                 label               = self.label,
-                copy_annotations    = self.copyAnnotations,
+                copy_annotations    = copyAnnotations,
                 progress_callback   = progressBar.advance,
         )
         progressBar.finish()

@@ -1,5 +1,5 @@
 #=============================================================================
-# Class LTTL.Processor, v0.14
+# Class LTTL.Processor, v0.16
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the LTTL package v1.4
@@ -303,6 +303,10 @@ class Processor(object):
                         progress_callback()
 
         # Create pivot crosstab...
+        if isinstance(context_types[0], int):
+            header_type = u'continuous'
+        else:
+            header_type = u'string'
         return(PivotCrosstab(
                 context_types,
                 unit_types,
@@ -313,7 +317,7 @@ class Processor(object):
                 },
                 {
                     'id':   u'__context__',
-                    'type': u'string',
+                    'type': header_type,
                 },
                 dict([(u, u'continuous') for u in unit_types]),
                 None,
@@ -899,25 +903,7 @@ class Processor(object):
                     if contexts['merge']:
 
                         # Store average and count...
-                        average_length = (
-                                num_units[context_type]
-                              / num_averaging_units[context_type]
-                        )
-                        if average_length < 1:
-                            average_length = 0.0
-                        values[
-                                (context_type, u'__length_average__')
-                        ] = average_length
-                        values[
-                                (context_type, u'__length_count__')
-                        ] = num_averaging_units[context_type]
-
-                    # Otherwise loop over context types...
-                    else:
-
-                        for context_type in context_types:
-
-                            # Store average and count for this context...
+                        try:
                             average_length = (
                                     num_units[context_type]
                                   / num_averaging_units[context_type]
@@ -930,6 +916,30 @@ class Processor(object):
                             values[
                                     (context_type, u'__length_count__')
                             ] = num_averaging_units[context_type]
+                        except ZeroDivisionError:
+                            pass
+
+                    # Otherwise loop over context types...
+                    else:
+
+                        for context_type in context_types:
+
+                            # Store average and count for this context...
+                            try:
+                                average_length = (
+                                        num_units[context_type]
+                                      / num_averaging_units[context_type]
+                                )
+                                if average_length < 1:
+                                    average_length = 0.0
+                                values[
+                                        (context_type, u'__length_average__')
+                                ] = average_length
+                                values[
+                                        (context_type, u'__length_count__')
+                                ] = num_averaging_units[context_type]
+                            except ZeroDivisionError:
+                                pass
 
                 # Store col ids...
                 if len(values) > 0:
@@ -1007,15 +1017,18 @@ class Processor(object):
                     num_averaging_units = len(averaging['segmentation'])
 
                     # Store average and count...
-                    average_length = len(units) / num_averaging_units
-                    if average_length < 1:
-                        average_length = 0.0
-                    values[
-                            (context_type, u'__length_average__')
-                    ] = average_length
-                    values[
-                            (context_type, u'__length_count__')
-                    ] = num_averaging_units
+                    try:
+                        average_length = len(units) / num_averaging_units
+                        if average_length < 1:
+                            average_length = 0.0
+                        values[
+                                (context_type, u'__length_average__')
+                        ] = average_length
+                        values[
+                                (context_type, u'__length_count__')
+                        ] = num_averaging_units
+                    except ZeroDivisionError:
+                        pass
 
                 # Store col ids...
                 if len(values) > 0:
@@ -1043,6 +1056,10 @@ class Processor(object):
             context_types.append(context_type)
 
         # Create Table...
+        if isinstance(context_types[0], int):
+            header_type = u'continuous'
+        else:
+            header_type = u'string'
         return(Table(
                 context_types,
                 col_ids,
@@ -1050,7 +1067,7 @@ class Processor(object):
                 {},
                 {
                     'id':   u'__context__',
-                    'type': u'string',
+                    'type': header_type,
                 },
                 dict([(c, u'continuous') for c in col_ids]),
                 None,
@@ -1388,10 +1405,7 @@ class Processor(object):
                 new_col_ids,
                 new_values,
                 {},
-                {
-                    'id':   u'__context__',
-                    'type': u'string',
-                },
+                counts.header_col.copy(),
                 dict([(c, u'continuous') for c in new_col_ids]),
                 None,
                 None,
@@ -1634,10 +1648,7 @@ class Processor(object):
                 [u'__annotation__'],
                 new_values,
                 {},
-                {
-                    'id':   u'__context__',
-                    'type': u'string',
-                },
+                counts.header_col.copy(),
                 {u'__annotation__': u'discrete'},
                 u'__annotation__',
                 None,

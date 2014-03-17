@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableURLs, v0.09
+# Class OWTextableURLs, v0.10
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -62,7 +62,7 @@ class OWTextableURLs(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableURLs',
+                'TextableURLs_0_10',
                 wantMainArea=0,
         )
 
@@ -562,7 +562,7 @@ class OWTextableURLs(OWWidget):
                 if self.importURLs and self.importURLsKey:
                     annotation[self.importURLsKey] = URL
                 if self.autoNumber and self.autoNumberKey:
-                    annotation[self.autoNumberKey] = unicode(counter)
+                    annotation[self.autoNumberKey] = counter
                     counter += 1
             annotations.append(annotation)
             

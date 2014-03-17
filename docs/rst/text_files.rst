@@ -52,7 +52,7 @@ encoding of the file.
     :alt: Basic interface of the Text files widget
     :figclass: align-center
 
-    Figure 1: Basic interface of the **Text files** widget.
+    Figure 1: **Text files** widget (basic interface).
 
 The **Options** section allows the user to define the label of the output
 segmentation (**Output segmentation label**), here *Great Expectations*.
@@ -63,7 +63,7 @@ segmentation is emitted (no input data, encoding issue, etc.).
 
 The **Send** button triggers data emission, as it happens a segmentation, to
 the output connection(s). When it is selected, the **Send automatically**
-checkbox deactivates the button and the widget attempts to automatically emit
+checkbox disables the button and the widget attempts to automatically emit
 a segmentation at every modification of its interface.
 
 Advanced interface
@@ -82,10 +82,11 @@ for each imported file.
     :figclass: align-center
     :scale: 80%
     
-    Figure 2: Advanced interface of the **Text files** widget.
+    Figure 2: **Text files** widget (advanced interface).
 
-The **Sources** section of the advanced interface (see
-:ref:`figure 2 <text_files_fig2>` above) allows the user to select the input
+The advanced interface (see :ref:`figure 2 <text_files_fig2>` above) presents
+similarities with that of the :ref:`URLs`, :ref:`Recode`, and :ref:`Segment`
+widgets. The **Sources** section allows the user to select the input
 file(s) as well as their encoding, to determine the order in which they appear
 in the output segmentation, and optionally to assign an annotation. The list
 of imported files appears at the top of the window; the columns of this list
@@ -102,9 +103,9 @@ modify the order in which they appear in the output segmentation (**Move Up**
 and **Move Down**), to delete a file from the list (**Remove**) or to
 completely empty it (**Clear All**). Except for **Clear All**, all these
 buttons require the user to previously select an entry from the list. **Import
-list** enables the user to import a file list in JSON format (see
+List** enables the user to import a file list in JSON format (see
 :doc:`JSON im-/export format <json_format>`) and to add it to the previously
-selected sources. In the opposite **Export list** enables the user to export
+selected sources. In the opposite **Export List** enables the user to export
 the source list in a JSON file.
 
 The remainder of the **Sources** section allows the user to add new files to
@@ -135,10 +136,15 @@ annotation key specified in the text field on the right.
 In :ref:`figure 2 <text_files_fig2>`, it was thus decided to assign the label
 *novels* to the output segmentation, and to associate the name of each file to
 the annotation key *filename*. On the other hand, the auto-numbering option
-has not been activated.
+has not been enabled.
 
 The **Info** section indicates the length of the output segmentation in
 characters, or the reasons why no segmentation is emitted (no selected file,
 encoding issue, etc.). In the example, the two segments corresponding to the
 imported files thus total up to 1'262'145 characters.
+
+The **Send** button triggers data emission, as it happens a segmentation, to
+the output connection(s). When it is selected, the **Send automatically**
+checkbox disables the button and the widget attempts to automatically emit
+a segmentation at every modification of its interface.
 

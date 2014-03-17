@@ -1,9 +1,14 @@
-﻿Orange Textable documentation
+﻿.. image:: figures/banner.jpg
+   
+Orange Textable documentation
 =============================
 
-Textable is an add-on for Orange_ data mining software package. It enables users to build data
-tables on the basis of text data, by means of a flexible and intuitive
-interface. It offers in particular the following features:
+Orange Textable is an add-on for Orange_ data mining software package. It
+enables users to build data tables on the basis of text data, by means of a
+flexible and intuitive interface. Look at the following :doc:`example
+<illustration>` to see it in typical action.
+
+Orange Textable offers in particular the following features:
 
 - import text data from various sources
 - apply systematic recoding operations
@@ -14,15 +19,17 @@ interface. It offers in particular the following features:
 
 .. _Orange: http://orange.biolab.si/
 
-Textable was designed and implemented by `LangTech Sàrl <http://langtech.ch>`_
-on behalf of the department of language and information sciences (SLI_) at the
-`University of Lausanne <http://www.unil.ch>`_ (see :doc:`Credits <credits>`).
+Orange Textable was designed and implemented by `LangTech Sàrl 
+<http://langtech.ch>`_ on behalf of the department of language and information 
+sciences (SLI_) at the `University of Lausanne <http://www.unil.ch>`_ (see 
+:doc:`Credits <credits>`).
 
 .. _SLI: http://www.unil.ch/sli
 
 .. toctree::
     :maxdepth: 3
    
+    Illustration: mining Humanist <illustration>
     Installation <installation>
     Getting started <getting_started>
     Widget reference <widget_reference>

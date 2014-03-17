@@ -48,7 +48,7 @@ contained in the output segmentation covers 16 characters.
 
 The **Send** button triggers data emission, as it happens a segmentation, to
 the output connection(s). When it is selected, the **Send automatically**
-checkbox deactivates the button and the widget attempts to automatically emit
+checkbox disables the button and the widget attempts to automatically emit
 a segmentation at every modification of its interface (editing of the text or
 label modification).
 

@@ -1,5 +1,5 @@
 #=============================================================================
-# Class LTTL.Segmentation, v0.20
+# Class LTTL.Segmentation, v0.21
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the LTTL package v1.4
@@ -82,11 +82,14 @@ class Segmentation(object):
             if format:
                 segment_dict = default_dict.copy()
                 segment_dict.update(segment.annotations)
-                segment_dict['__num__']       = segment_count
-                segment_dict['__content__']   = segment.get_content()
-                segment_dict['__str_index__'] = str_index
-                segment_dict['__start__']     = start
-                segment_dict['__end__']       = end
+                segment_dict['__num__']             = segment_count
+                segment_dict['__content__']         = segment.get_content()
+                segment_dict['__str_index__']       = str_index
+                segment_dict['__start__']           = start
+                segment_dict['__end__']             = end
+                segment_dict['__str_index_raw__']   = str_index - offset
+                segment_dict['__start_raw__']       = start     - offset
+                segment_dict['__end_raw__']         = end
                 lines.append(format % segment_dict)
             else:
                 lines.extend([
