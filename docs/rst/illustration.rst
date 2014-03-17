@@ -6,7 +6,7 @@ without considering (for now) every detail of *how* it does it.
 
 In a paper reflecting about terminology in the field of Digital Humanities
 [#]_, Patrik Svensson compares the evolution of the frequency of expressions
-*Humanities Computing* and *Digital Humanities* in 20 years of archives of
+*Humanities Computing* and *Digital Humanities* over 20 years of archives of
 the `Humanist discussion group <http://dhhumanist.org/>`_. He uses these
 figures to show that while the former denomination remains prevalent over
 these two decades, the latter has been quickly gaining ground since the 2000s.
