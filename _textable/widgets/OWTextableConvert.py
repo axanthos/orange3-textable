@@ -1,5 +1,5 @@
 #=============================================================================
-# Class OWTextableConvert, v0.10
+# Class OWTextableConvert, v0.12
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the Textable (v1.4) extension to Orange Canvas.
@@ -67,7 +67,7 @@ class OWTextableConvert(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableConvert_0_10',
+                'TextableConvert_0_12',
                 wantMainArea=0,
         )
         
@@ -247,19 +247,23 @@ class OWTextableConvert(OWWidget):
                                             u'rows',
                                             u'columns',
                                             u'table',
-                                            u'quotients'
+                                            u'quotients',
+                                            u'presence/absence'
                                     ],
                 sendSelectedValue   = True,
                 callback            = self.sendButton.settingsChanged,
                 tooltip             = (
                         u"Select the units to which normalization will be\n"
-                        u"applied: rows, columns, or the entire table;\n"
-                        u"in 'quotients' mode, the count stored in each\n"
+                        u"applied: rows, columns, or the entire table.\n\n"
+                        u"In 'quotients' mode, the count stored in each\n"
                         u"cell is divided by the corresponding theoretical\n"
                         u"count under independence: the result is greater\n"
                         u"than 1 in case of attraction between line and\n"
                         u"column, lesser than 1 in case of repulsion, and\n"
-                        u"1 if there is no specific interaction between them."
+                        u"1 if there is no specific interaction between\n"
+                        u"them.\n\n"
+                        u"In 'presence/absence' mode, counts greater than 0\n"
+                        u"are replaced with value 1."
                 ),
         )
         self.normalizeModeCombo.setMinimumWidth(150)
@@ -645,7 +649,10 @@ class OWTextableConvert(OWWidget):
                         self.transformBoxLine4.setDisabled(False)
                         if self.normalize:
                             self.normalizeModeCombo.setDisabled(False)
-                            if self.normalizeMode != u'quotients':
+                            if (
+                                    self.normalizeMode != u'quotients'
+                                and self.normalizeMode != u'presence/absence'
+                            ):
                                 self.normalizeTypeCombo.setDisabled(False)
                             self.transformBoxLine5.setDisabled(True)
                         else:

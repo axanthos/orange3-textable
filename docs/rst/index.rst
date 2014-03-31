@@ -13,6 +13,7 @@ Orange Textable offers in particular the following features:
 - import text data from various sources
 - apply systematic recoding operations
 - apply analytical processes such as segmentation and annotation
+- extract and exploit XML-encoded annotations
 - manually, automatically or randomly select unit subsets
 - build concordances and collocation lists
 - compute quantitative indices such as frequency and complexity measures
@@ -22,7 +23,7 @@ Orange Textable offers in particular the following features:
 Orange Textable was designed and implemented by `LangTech Sàrl 
 <http://langtech.ch>`_ on behalf of the department of language and information 
 sciences (SLI_) at the `University of Lausanne <http://www.unil.ch>`_ (see 
-:doc:`Credits <credits>`).
+:doc:`Credits <credits>` and :doc:`How to cite Orange Textable <citing>`).
 
 .. _SLI: http://www.unil.ch/sli
 
@@ -35,4 +36,5 @@ sciences (SLI_) at the `University of Lausanne <http://www.unil.ch>`_ (see
     Widget reference <widget_reference>
     Cookbook <cookbook>
     Case studies <case_studies>
+    How to cite Orange Textable <citing>
     Credits <credits>

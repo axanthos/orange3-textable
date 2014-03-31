@@ -1,5 +1,5 @@
 #=============================================================================
-# Class LTTL.Segmenter, v0.19
+# Class LTTL.Segmenter, v0.20
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the LTTL package v1.4
@@ -287,7 +287,10 @@ class Segmenter(object):
             if copy_annotations:
                 old_segment_annotation_copy = segment.annotations.copy()
             if annotation_key:
-                match = regex.search(segment.annotations[annotation_key])
+                if annotation_key in segment.annotations:
+                    match = regex.search(segment.annotations[annotation_key])
+                else:
+                    match = None
             else:
                 match = regex.search(segment.get_content())
             address = segment.address

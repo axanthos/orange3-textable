@@ -1,5 +1,5 @@
 #=============================================================================
-# Module LTTL.Table, v0.07
+# Module LTTL.Table, v0.08
 # Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the LTTL package v1.4
@@ -317,7 +317,7 @@ class PivotCrosstab(Crosstab):
                 self.cached_row_id,
         ))
 
-    def to_normalized(self, mode='row', type='l1'):
+    def to_normalized(self, mode='rows', type='l1'):
         """Return a sorted copy of the crosstab"""
         new_values = {}
         denominator = 0
@@ -391,6 +391,16 @@ class PivotCrosstab(Crosstab):
                         ]),
                         [0 for v in values]
                 ))
+        elif mode == 'presence/absence':
+            row_ids   = self.row_ids
+            col_ids   = self.col_ids
+            for col_id in col_ids:
+                for row_id in row_ids:
+                    try:
+                        value = self.values[(row_id, col_id)]
+                        new_values[(row_id, col_id)] = 1 if value > 0 else 0
+                    except KeyError:
+                        pass
         elif mode == 'quotients':
             row_ids   = self.row_ids
             col_ids   = self.col_ids

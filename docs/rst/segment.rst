@@ -81,7 +81,7 @@ expressions and to determine the order in which they should successively be
 applied to each segment of the input segmentation. It also allows the user to
 specify if a given regular expression describes the form of the targeted
 segments (**Tokenize** mode) or rather the form of the separators in-between
-these segments (**Split** mode).
+these segments (**Split** mode). [#]_
 
 .. _segment_fig2:
 
@@ -182,3 +182,5 @@ See also:
        activated by default (see `Python documentation
        <http://docs.python.org/library/re.html>`_).
 
+.. [#] NB: in **Split** mode, empty segments that might occur between two
+       consecutive occurrences of separators are automatically removed.
