@@ -1,9 +1,6 @@
 Orange Textable
 ===============
 
-Orange Textable documentation
-=============================
-
 Orange Textable is an add-on for Orange_ data mining software package. It
 enables users to build data tables on the basis of text data, by means of a
 flexible and intuitive interface. Look at the following `example
