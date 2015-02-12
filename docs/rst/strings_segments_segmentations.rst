@@ -1,3 +1,8 @@
+.. meta::
+   :description: Orange Textable documentation, strings, segments, and
+                 segmentation
+   :keywords: Orange, Textable, documentation, strings, segments, segmentation
+
 Strings, segments, and segmentations
 ====================================
 
@@ -5,9 +10,11 @@ The main purpose of Orange Textable is to build tables based on text strings.
 As we will see, there are several methods for importing text strings, the
 simplest of which is keyboard input using widget
 :ref:`Text Field` (see also :doc:`Keyboard input and segmentation
-display <keyboard_input_segmentation_display>`). Whenever a new string is
-imported, it is assigned a unique identification number (called
-*string index*) and stays in memory as long as the widget that imported it.
+display <keyboard_input_segmentation_display>` or 
+:doc:`Cookbook: Import text from keyboard <import_text_keyboard>`.
+Whenever a new string is imported, it is assigned a unique identification number 
+(called *string index*) and stays in memory as long as the widget that imported 
+it.
 
 Consider the following string of 16 characters (note that whitespace counts as
 a character too), and let us suppose that its string index is 1:
@@ -78,4 +85,9 @@ string used to identify the segmentation among others. [#]_
        can also store annotations associated with segments.
 
 
+See also
+--------
 
+* :doc:`Getting started: Keyboard input and segmentation display
+  <keyboard_input_segmentation_display>`
+* :doc:`Cookbook: Import text from keyboard <import_text_keyboard>`

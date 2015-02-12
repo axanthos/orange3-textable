@@ -1,21 +1,21 @@
 #=============================================================================
 # Class LTTL.Segmentation, v0.21
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the LTTL package v1.4
+# This file is part of the LTTL package v1.5
 #
-# LTTL v1.4 is free software: you can redistribute it and/or modify
+# LTTL v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# LTTL v1.4 is distributed in the hope that it will be useful,
+# LTTL v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with LTTL v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with LTTL v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 import codecs, re
@@ -58,6 +58,8 @@ class Segmentation(object):
             self,
             format              = None,
             segment_delimiter   = u'\n',
+            header              = u'',
+            footer              = u'',
             humanize_addresses  = False,
             progress_callback   = None,
         ):
@@ -108,7 +110,10 @@ class Segmentation(object):
             segment_count += 1
             if progress_callback:
                 progress_callback()
-        return segment_delimiter.join(lines)
+        if format:
+            return header + segment_delimiter.join(lines) + footer
+        else:
+            return segment_delimiter.join(lines)
 
     def to_html(self, humanize_addresses=False, progress_callback=None):
         """Stringify a segmentation in html format"""

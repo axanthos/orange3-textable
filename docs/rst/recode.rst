@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, Recode widget
+   :keywords: Orange, Textable, documentation, Recode, widget
+
 .. _Recode:
 
 Recode
@@ -15,6 +19,10 @@ Inputs:
 * ``Segmentation``
 
   Segmentation covering the text that should be recoded
+
+* ``Message``
+
+  JSON Message controlling the list of substitutions
 
 Outputs:
 
@@ -42,6 +50,9 @@ increases the program's memory footprint; moreover this widget can only work
 on segmentations without any overlap, which means no part of the text is
 covered by more than one segment.
 
+The interface of **Recode** is available in two versions, according to
+whether or not the **Advanced Settings** checkbox is selected.
+
 Basic interface
 ~~~~~~~~~~~~~~~
 
@@ -59,7 +70,6 @@ tags. [#]_
 .. figure:: figures/recode_basic_example.png
     :align: center
     :alt: Basic interface of the Recode widget
-    :figclass: align-center
 
     Figure 1: **Recode** widget (basic interface).
 
@@ -72,12 +82,12 @@ The **Info** section indicates the number of segments present in the output
 segmentation, or the reasons why no segmentation is emitted (no input data,
 overlaps in the input segmentation, etc.).
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface or when its input data
-are modified (by deletion or addition of a connection, or because modified
-data is received through an existing connection).
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).
 
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
@@ -91,7 +101,6 @@ successively be applied to each segment of the input segmentation.
 .. figure:: figures/recode_advanced_example.png
     :align: center
     :alt: Advanced interface of the Recode widget
-    :figclass: align-center
 
     Figure 2: **Recode** widget (basic interface).
 
@@ -142,10 +151,10 @@ input segmentation (**Move Up** and **Move Down**), to delete a substitution
 from the list (**Remove**) or to empty it entirely (**Clear All**). Except for
 **Clear All**, all of these buttons require the selection of an entry in the
 list beforehand. **Import List** enables the user to import a list of
-substitutions in JSON format (see :doc:`JSON im-/export format <json_format>`)
-and to add them to those already selected. **Export List** enables the
-user on the contrary to export the list of substitutions in a JSON format
-file.
+substitutions in JSON format (see :doc:`JSON im-/export format <json_format>`,
+:doc:`Substitution list <json_substitution_list>`) and to add them to those
+already selected. **Export List** enables the user on the contrary to export
+the list of substitutions in a JSON format file.
 
 The remaining part of the **Substitutions** section allows the user to add new
 substitutions to the list. To define a new substitution, one must specify the
@@ -165,29 +174,68 @@ The **Info** section indicates the number of segments present in the output
 segmentation, or the reasons why no segmentation is emitted (no input data,
 overlaps in the input segmentation, etc.).
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface or when its input data
-are modified (by deletion or addition of a connection, or because modified
-data is received through an existing connection).
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).
+
+.. _recode_remote_control_ref:
+
+Remote control
+~~~~~~~~~~~~~~
+
+**Recode** is one the widgets that can be controlled by means of the
+:ref:`Message` widget. Indeed, it can receive in input a message consisting
+of a substitution list in JSON format (see :doc:`JSON im-/export format
+<json_format>`, :doc:`Substitution list <json_substitution_list>`), in which
+case the list of substitutions specified in this message replaces those
+previously specified (if any). Note that removing the incoming connection from
+the **Message** instance will not, by itself, remove the list of substitutions
+imported in this way from the **Recode** instance's interface; conversely,
+this list of files can be modified using buttons **Move up/down**, **Remove**,
+etc. even if the incoming connection from the **Message** instance has not
+been removed. Finally, note that if a **Recode** instance has the basic
+version of its interface activated when an incoming connection is created from
+an instance of :ref:`Message`, it automatically switches to the advanced
+interface.
 
 Caveat
 ------
 
 As one of the rare widgets of Textable that do create new *strings* and not
-only new *segmentations* (the only other one being :ref:`Preprocess`),
-**Recode** is prone to a very specific and possibly disconcerting type of
-error, which can be best understood by studying the example given in the
-documentation of :ref:`Preprocess` (section :ref:`anchor_to_caveat`), where
-all that is said about :ref:`Preprocess` also applies to **Recode**.
+only new *segmentations*, **Recode** is prone to a very specific and possibly
+disconcerting type of error, which can be best understood by studying the
+example given in the documentation of :ref:`Preprocess` (section
+:ref:`anchor_to_caveat`), where all that is said about :ref:`Preprocess` also
+applies to **Recode**.
+
+Examples
+--------
+
+* :doc:`Cookbook: Replace all occurrences of a string/pattern
+  <replace_all_occurrences_of_string_pattern>`
+
+See also
+--------
+
+* :doc:`Reference: JSON im-/export format <json_format>`, :doc:`Substitution
+  list <json_substitution_list>`
+* :ref:`Reference: Message widget <Message>`
+* :ref:`Reference: Preprocess (section "Caveat") <anchor_to_caveat>`
+* :doc:`Getting started: A note on regular expressions
+  <note_regular_expressions>`
+
+Footnotes
+---------
 
 .. [#] For more details concerning the regular expression syntax, see the
        `Python documentation <http://docs.python.org/library/re.html>`_.
        Note that option ``-u`` (*Unicode dependent*) is activated by default.
 
-.. [#] For more details on the effect of options ``i``, ``u``, ``m``, and
-       ``s``, see the
+.. [#] For more details on the effect of options ``-i``, ``-u``, ``-m``, and
+       ``-s``, see the
        `Python documentation <http://docs.python.org/library/re.html>`_.
 
 

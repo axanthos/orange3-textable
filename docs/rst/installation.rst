@@ -1,13 +1,15 @@
+.. meta::
+   :description: Orange Textable documentation, installation
+   :keywords: Orange, Textable, documentation, installation
+
 Installation
 ============
 
 Python v2.7 and Orange Canvas v2.7 (or more recent) must imperatively be
-installed *before* Orange Textable v1.4. At the time of writing, most recent
+installed *before* Orange Textable. At the time of writing, most recent
 versions of Orange Canvas automatically include the 2.7 version of Python.
-After installation, Orange Textable v1.4 appears in the form of an additional
-tab in Orange Canvas. User guide, source files and other documents are then
-accessible in your distribution of Orange, in folder
-*/OrangeWidgets/Textable*.
+After installation, Orange Textable appears in the form of an additional
+tab in Orange Canvas.
 
 The installation procedure is slightly different on Windows and MacOS X. [#]_
 

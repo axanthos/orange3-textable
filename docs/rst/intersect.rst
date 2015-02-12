@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, Intersect widget
+   :keywords: Orange, Textable, documentation, Intersect, widget
+
 .. _Intersect:
 
 Intersect
@@ -12,7 +16,7 @@ Signals
 
 Inputs:
 
-* ``Segmentation``
+* ``Segmentation`` (multiple)
 
   Segmentation out of which a subset of segments should be selected
   ("source" segmentation), or containing the segments that will be
@@ -52,7 +56,6 @@ segmentation (**Filter segmentation**) among the input segmentations. [#]_
 .. figure:: figures/intersect_example.png
     :align: center
     :alt: Basic interface of the Intersect widget
-    :figclass: align-center
 
     Figure 1: **Intersect** widget (basic interface).
 
@@ -87,12 +90,12 @@ The **Info** section indicates the number of segments in the output
 segmentation, or the reasons why no segmentation is emitted (no input data,
 no selected input segment, etc.).
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface or when its input data
-are modified (by deletion or addition of a connection, or because modified
-data is received through an existing connection).
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).
 
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
@@ -113,7 +116,13 @@ input segmentation to the output segmentation.
 Examples
 --------
 
-* :doc:`Using a segmentation to filter another <using_segmentation_filter_another>`
+* :doc:`Getting started: Using a segmentation to filter another
+  <using_segmentation_filter_another>`
+* :doc:`Cookbook: Exclude segments based on a stoplist
+  <exclude_segments_based_on_stoplist>`
+
+Footnotes
+---------
 
 .. [#] It should be noted that the interface does not prevent the user from
        selecting the same segmentation as source and filter, which can only

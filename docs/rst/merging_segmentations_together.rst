@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, merging segmentations together
+   :keywords: Orange, Textable, documentation, merge, data, corpus
+
 Merging segmentations together
 ==============================
 
@@ -20,7 +24,6 @@ shown on :ref:`figure 1 <merging_segmentations_together_fig1>`.
 .. figure:: figures/merge_example_schema.png
     :align: center
     :alt: Schema illustrating the usage of widget Merge
-    :figclass: align-center
     :scale: 75 %
 
     Figure 1: Grouping *a simple example* with *another example* using widget :ref:`Merge`.
@@ -37,7 +40,6 @@ leave the box unchecked.
 .. figure:: figures/merge_example.png
     :align: center
     :alt: Interface of widget merge
-    :figclass: align-center
 
     Figure 2: Interface of widget :ref:`Merge`.
     
@@ -53,7 +55,6 @@ of checkbox **Import labels with key**; leave it unchecked for now.
 .. figure:: figures/display_merged_example.png
     :align: center
     :alt: Displaying a merged segmentation
-    :figclass: align-center
 
     Figure 3: Merged segmentation.
 
@@ -71,7 +72,7 @@ each incoming segmentation, in the original order of segments).
 schema illustrated on :ref:`figure 1 <merging_segmentations_together_fig1>`
 above and modify the connections (but not the configuration of existing
 widgets) so that the segmentation given in
-:ref:`figure 4 <merging_segmentations_together_fig1>` below appears in the
+:ref:`figure 4 <merging_segmentations_together_fig4>` below appears in the
 :ref:`Display` widget?
 (:ref:`solution <solution_merging_segmentations_together_ex>`)
 
@@ -80,7 +81,6 @@ widgets) so that the segmentation given in
 .. figure:: figures/goal_exercise_merge.png
     :align: center
     :alt: 3 segments: "a simple example", "another example", "another example"
-    :figclass: align-center
 
     Figure 4: The segmentation requested in the :ref:`exercise <merging_segmentations_together_ex>`.
 
@@ -91,8 +91,12 @@ widgets) so that the segmentation given in
 .. figure:: figures/solution_exercise_merge.png
     :align: center
     :alt: New Merge widget takes input from old one and Text field, and sends output to Display
-    :figclass: align-center
     :scale: 70 %
 
     Figure 5: Solution to the :ref:`exercise <merging_segmentations_together_ex>`.
 
+See also
+--------
+
+* :ref:`Reference: Merge widget <Merge>`
+* :doc:`Cookbook: Merge several texts <merge_several_texts>`

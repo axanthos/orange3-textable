@@ -1,8 +1,14 @@
+.. meta::
+   :description: Orange Textable documentation, hierarchical segmentations and
+                 performance issues
+   :keywords: Orange, Textable, documentation, hierarchical, segmentation,
+              performance
+
 Hierarchical segmentations and performance issues
 =================================================
 
 When widget :ref:`Segment` is applied to real, much longer texts
-than *a simple example*, using such general regexes as *\\w+* or *\\w* may
+than *a simple example*, using such general regexes as ``\w+`` or ``\w`` may
 result in the creation of a huge number of segments. Creating and manipulating
 such segmentations can slow down excessively the execution of Orange Textable,
 or even lead to memory overflow.
@@ -21,7 +27,6 @@ to produce the most fine-grained segmentation directly (see :ref:`figure 1
 .. figure:: figures/chaining_segmentations.png
     :align: center
     :alt: chained hierarchical segmentations execute faster
-    :figclass: align-center
     :scale: 80 %
 
     Figure 1: Chaining :ref:`Segment` instances to reduce execution time.

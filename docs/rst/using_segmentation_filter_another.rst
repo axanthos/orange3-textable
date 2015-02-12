@@ -1,3 +1,8 @@
+.. meta::
+   :description: Orange Textable documentation, using a segmentation to filter
+                 another
+   :keywords: Orange, Textable, documentation, filter, stoplist, stopwords
+
 Using a segmentation to filter another
 ======================================
 
@@ -20,7 +25,6 @@ segmentation. The widget's basic interface is shown on
 .. figure:: figures/intersect_example.png
     :align: center
     :alt: Interface of widget Intersect configured for stopword removal
-    :figclass: align-center
 
     Figure 1: Interface of widget :ref:`Intersect` configured for stopword removal.
     
@@ -48,14 +52,11 @@ and *stopwords* for *Segment (1)*. Finally, the instance of
 .. figure:: figures/intersect_example_schema.png
     :align: center
     :alt: Schema illustrating the use of the Intersect widget for stopword removal
-    :figclass: align-center
     :scale: 80 %
 
     Figure 2: Example schema for removing stopword using widget :ref:`Intersect` .
 
-The content of the first segments of the resulting segmentation is:
-
-::
+The content of the first segments of the resulting segmentation is::
 
     PREAMBLE
     Whereas
@@ -104,10 +105,15 @@ pronouns listed above.
 .. figure:: figures/solution_exercise_intersect.png
     :align: center
     :alt: Solution to the exercise illustrating the Intersect widget
-    :figclass: align-center
     :scale: 80 %
 
     Figure 3: A possible solution.
 
 (:ref:`back to the exercise <using_segmentation_filter_another_ex>`)
 
+See also
+--------
+
+* :ref:`Reference: Select widget <Select>`
+* :ref:`Reference: Intersect widget <Intersect>`
+* :doc:`Cookbook: Exclude segments based on a stoplist <exclude_segments_based_on_stoplist>`

@@ -1,7 +1,12 @@
+.. meta::
+   :description: Orange Textable documentation, counting in specific contexts
+   :keywords: Orange, Textable, documentation, count, context, contigency
+              table, document-term matrix, term-document matrix
+
 Counting in specific contexts
 =============================
 
-Section **Contexts** of widget widget :ref:`Count`'s interface lets the
+Section **Contexts** of widget :ref:`Count`'s interface lets the
 user define the *contexts* in which units should be counted. Thus, while
 the settings of section **Units** affect the *columns* of the resulting table,
 those of section **Contexts** affect its *rows*.
@@ -17,7 +22,6 @@ three other modes corresponding to three different definitions of contexts.
 .. figure:: figures/count_mode_sliding_window_example.png
     :align: center
     :alt: Interface of widget Count, Sliding window mode
-    :figclass: align-center
 
     Figure 1: Interface of widget :ref:`Count`, Sliding window mode.
 
@@ -51,16 +55,15 @@ segmentation.
     *9*,    1,    0,    0,    1,    1,    1,    0,    1
     *10*,   1,    1,    0,    1,    1,    1,    0,    0
 
-When **Mode** is set to **Left-right neighborhood** (see figure 2 below),
-context is defined on the basis of adjacent segment types occurring to the
-left and/or right of each position.
+When **Mode** is set to **Left-right neighborhood** (see :ref:`figure 2
+<counting_specific_contexts_fig2>`), context is defined on the basis of
+adjacent segment types occurring to the left and/or right of each position.
 
 .. _counting_specific_contexts_fig2:
 
 .. figure:: figures/count_mode_left_right_neighborhood_example.png
     :align: center
     :alt: Interface of widget Count, Left-right neighborhood mode
-    :figclass: align-center
 
     Figure 2: Interface of widget :ref:`Count`, Left-right neighborhood mode.
 
@@ -110,14 +113,13 @@ To try this mode out, modify the schema used in the
 .. figure:: figures/count_mode_containing_segmentation_example_schema.png
     :align: center
     :alt: Schema for testing the Count widget (Containing segmentation mode)
-    :figclass: align-center
     :scale: 80 %
 
     Figure 3: Schema for testing the :ref:`Count` widget (Containing segmentation mode).
 
 The first instance of :ref:`Segment` produces a word segmentation (**Regex:**
 ``\w+`` and **Output segmentation label:** *words*) which the second instance
-(*Segment (2)*) further decomposes into letters (**Regex:** ``\w`` and
+(*Segment (1)*) further decomposes into letters (**Regex:** ``\w`` and
 **Output segmentation label:** *letters*). The instance of :ref:`Count` is
 configured as shown on :ref:`figure 4 <counting_specific_contexts_fig4>`
 below. The resulting table is the same as table 2
@@ -129,7 +131,6 @@ of columns).
 .. figure:: figures/count_mode_containing_segmentation_example.png
     :align: center
     :alt: Interface of widget Count, Containing segmentation mode
-    :figclass: align-center
 
     Figure 4: Configuration of widget :ref:`Count` for counting letters in words.
 
@@ -141,5 +142,18 @@ mode **No context** (see :doc:`previous section <counting_segment_types>`).
 It does however make a difference in the case of letter bigram counting,
 because those bigrams that straddle a word boundary will be excluded in this
 case (contrary to what can be seen in table 1
-:ref:`here <counting_segment_types_table1>`.
+:ref:`here <counting_segment_types_table1>`).
 
+See also
+--------
+
+* :doc:`Getting started: Counting segment types <counting_segment_types>`
+* :doc:`Getting started: From segmentations to tables <segmentations_tables>`
+* :ref:`Reference: Count widget <Count>`
+* :doc:`Cookbook: Count unit frequency <count_unit_frequency>`
+* :doc:`Cookbook: Count occurrences of smaller units in larger segments
+  <count_occurrences_smaller_units_larger_segments>`
+* :doc:`Cookbook: Count transition frequency between adjacent units
+  <count_transition_frequency_adjacent_units>`
+* :doc:`Cookbook: Examine the evolution of unit frequency along the text
+  <examine_evolution_unit_frequency>`

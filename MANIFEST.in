@@ -1,6 +1,5 @@
 recursive-include _textable *.png
 recursive-include docs/rst *
 include docs/Makefile
-include docs/user_guide/guide_utilisateur.pdf
 include LICENSE
 include *.py *.rst

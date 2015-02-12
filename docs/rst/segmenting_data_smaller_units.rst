@@ -1,3 +1,8 @@
+.. meta::
+   :description: Orange Textable documentation, segmenting data into smaller
+                 units
+   :keywords: Orange, Textable, documentation, segment, words, letters, units
+
 Segmenting data into smaller units
 ==================================
 
@@ -19,7 +24,6 @@ below). In what follows, we will suppose that the string typed in
 .. figure:: figures/segment_example_schema.png
     :align: center
     :alt: Schema illustrating the usage of widget Segment
-    :figclass: align-center
 
     Figure 1: A schema for testing the :ref:`Segment` widget
     
@@ -35,7 +39,6 @@ every match a new segment in the output segmentation.
 .. figure:: figures/segment_example.png
     :align: center
     :alt: Interface of widget Segment configured with regex "\w+"
-    :figclass: align-center
 
     Figure 2: Interface of the :ref:`Segment` widget, configured for word segmentation
 
@@ -50,3 +53,11 @@ regexes will often use the ``\b`` *anchor*, which represents a word boundary.
 For instance, words that contain less than 4 characters can be retrieved
 with ``\b\w{1,3}\b``, those ending in *-tion* with ``\b\w+tion\b``, and the
 inflected forms of *retrieve* with ``\bretriev(e|es|ed|ing)\b``.
+
+See also
+--------
+
+* :ref:`Reference: Segment widget <Segment>`
+* :doc:`Cookbook: Segment text in smaller units <segment_text>`
+* :doc:`Getting started: Hierarchical segmentations and performance issues
+  <hierarchical_segmentations_performance_issues>`

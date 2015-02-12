@@ -1,40 +1,71 @@
-﻿.. image:: figures/banner.jpg
+.. meta::
+   :description: Orange Textable documentation homepage
+   :keywords: Orange, Textable, documentation
+
+.. only:: html
+
+    .. image:: figures/banner.jpg
    
 Orange Textable documentation
 =============================
 
-Orange Textable is an add-on for Orange_ data mining software package. It
-enables users to build data tables on the basis of text data, by means of a
-flexible and intuitive interface. Look at the following :doc:`example
-<illustration>` to see it in typical action.
+Welcome to the documentation of Orange Textable.
 
-Orange Textable offers in particular the following features:
+This documentation is divided in five main sections (see detailed `contents`_
+below):
 
-- import text data from various sources
-- apply systematic recoding operations
-- apply analytical processes such as segmentation and annotation
-- extract and exploit XML-encoded annotations
-- manually, automatically or randomly select unit subsets
-- build concordances and collocation lists
-- compute quantitative indices such as frequency and complexity measures
+* The :doc:`Introduction <introduction>` offers a brief overview of what
+  Orange Textable can do, as well as how it should be installed and
+  configured. This is what you should read first if you are unsure whether
+  Orange Textable is the right piece of software for your needs or how to set
+  it up.
 
-.. _Orange: http://orange.biolab.si/
+* Section :doc:`Getting started <getting_started>` is a tutorial that
+  introduces the basic concepts underlying Orange Textable and its main usage
+  patterns. This should be your first reading once you've determined that
+  Orange Textable can be useful to you and installed it.
 
-Orange Textable was designed and implemented by `LangTech Sàrl 
-<http://langtech.ch>`_ on behalf of the department of language and information 
-sciences (SLI_) at the `University of Lausanne <http://www.unil.ch>`_ (see 
-:doc:`Credits <credits>` and :doc:`How to cite Orange Textable <citing>`).
+* The :doc:`Reference <reference>` is an exhaustive explanation of the role
+  and effect of every component of Orange Textable's interface. The purpose of
+  this part of the documentation is to help you find a specific piece of
+  information about Orange Textable's operation when using it for your own
+  projects.
 
-.. _SLI: http://www.unil.ch/sli
+* In the :doc:`Cookbook <cookbook>` section, you'll find a number of concise,
+  illustrated recipes describing how to perform various basic tasks with
+  Orange Textable. When starting a new project, you might want to skim through
+  this section in case some elementary operation you need is listed there.
+
+* (In time, section :doc:`Case studies <case_studies>` will present several
+  illustrations of the application of Orange Textable to more complex and
+  hopefully interesting problems in text data analysis.)
+
+
+Contents
+--------
+
+.. toctree::
+    :maxdepth: 2
+
+    Introduction <introduction>
+
+.. toctree::
+    :maxdepth: 2
+
+    Getting started <getting_started>
 
 .. toctree::
     :maxdepth: 3
-   
-    Illustration: mining Humanist <illustration>
-    Installation <installation>
-    Getting started <getting_started>
-    Widget reference <widget_reference>
+
+    Reference <reference>
+
+.. toctree::
+    :maxdepth: 2
+
     Cookbook <cookbook>
+
+.. toctree::
+    :maxdepth: 2
+
     Case studies <case_studies>
-    How to cite Orange Textable <citing>
-    Credits <credits>
+

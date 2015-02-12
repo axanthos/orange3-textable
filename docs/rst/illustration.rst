@@ -1,10 +1,14 @@
+.. meta::
+   :description: Orange Textable documentation, mining Humanist illustration
+   :keywords: Orange, Textable, documentation, illustration, Humanist
+
 Illustration: mining Humanist
 =============================
 
 The following example is meant to show *what* Orange Textable typically does,
 without considering (for now) every detail of *how* it does it.
 
-In a paper reflecting about terminology in the field of Digital Humanities
+In a paper reflecting on terminology in the field of Digital Humanities
 [#]_, Patrik Svensson compares the evolution of the frequency of expressions
 *Humanities Computing* and *Digital Humanities* over 20 years of archives of
 the `Humanist discussion group <http://dhhumanist.org/>`_. He uses these
@@ -19,7 +23,6 @@ program" like the one shown on :ref:`figure 1 <illustration_fig1>` below:
 .. figure:: figures/mining_humanist_schema.png
     :align: center
     :alt: Mining Humanist with an Orange Textable schema
-    :figclass: align-center
     :scale: 80%
 
     Figure 1: Mining Humanist with an Orange Textable schema.
@@ -40,19 +43,18 @@ Widget instances can (and indeed must) be individually parameterized in order
 to "fine-tune" their operation. For example, double-clicking on the
 :ref:`Recode` instance of :ref:`figure 1 <illustration_fig1>` above displays
 the interface shown on :ref:`figure 2 <illustration_fig2>` below. What this
-particular configuration means is that every line beginning with symbol "|" or
-">" (**Regex** field) should be replaced with an empty string (**Replacement
-string**): in other words, remove those lines that are marked as being part
-of a reply to another message. There is a fair amount of variation between
-widget interfaces, but regular expressions play an important role in many of
-them and Orange Textable's flexibility owes a lot to them.
+particular configuration means is that every line beginning with symbol ``|``
+or ``>`` (**Regex** field) should be replaced with an empty string
+(**Replacement string**): in other words, remove those lines that are marked
+as being part of a reply to another message. There is a fair amount of
+variation between widget interfaces, but regular expressions play an important
+role in many of them and Orange Textable's flexibility owes a lot to them.
 
 .. _illustration_fig2:
 
 .. figure:: figures/mining_humanist_recode.png
     :align: center
     :alt: Interface of Recode widget in the Humanist example
-    :figclass: align-center
 
     Figure 2: Interface of the :ref:`Recode` widget.
 
@@ -76,7 +78,6 @@ programs easier.
 .. figure:: figures/mining_humanist_results.png
     :align: center
     :alt: Monitoring the frequency of two expressions over time
-    :figclass: align-center
 
     Figure 3: Monitoring the frequency of *Humanities Computing* vs. *Digital Humanities*.
 

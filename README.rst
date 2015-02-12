@@ -1,34 +1,34 @@
 Orange Textable
 ===============
 
-Orange Textable is an add-on for Orange_ data mining software package. It
-enables users to build data tables on the basis of text data, by means of a
-flexible and intuitive interface. Look at the following `example
+Orange Textable is an open-source add-on bringing advanced text-analytical
+functionalities to the `Orange Canvas <http://orange.biolab.si/>`_ data mining
+software package (itself open-source). It essentially enables users to build
+data tables on the basis of text data, by means of a flexible and intuitive
+interface. Look at the following `example
 <http://orange-textable.readthedocs.org/en/latest/illustration.html>`_ to see
 it in typical action.
 
 Orange Textable offers in particular the following features:
 
-- import text data from various sources
-- apply systematic recoding operations
-- apply analytical processes such as segmentation and annotation
-- extract and exploit XML-encoded annotations
-- manually, automatically or randomly select unit subsets
-- build concordances and collocation lists
-- compute quantitative indices such as frequency and complexity measures
+* text data import from keyboard, files, or urls
+* support for various encodings, including Unicode
+* standard preprocessing and custom recoding (based on regular expressions)
+* segmentation and annotation of various text units (letters, words, etc.)
+* ability to extract and exploit XML-encoded annotations
+* automatic, random, or arbitrary selection of unit subsets
+* unit context examination using concordance and collocation tables
+* calculation of frequency and complexity measures
+* recoded text data and table export
 
-.. _Orange: http://orange.biolab.si/
+The project's homepage is http://langtech.ch/textable
 
-Documentation is found at:
+Documentation is hosted at: http://orange-textable.readthedocs.org/
 
-http://orange-textable.readthedocs.org/
-
-Textable was designed and implemented by `LangTech Sarl <http://langtech.ch>`_
-on behalf of the department of language and information
-sciences (SLI_) at the `University of Lausanne <http://www.unil.ch>`_ (see
-`Credits <http://orange-textable.readthedocs.org/en/latest/credits.html>`_
-and `How to cite Orange Textable
+Orange Textable was designed and implemented by `LangTech Sarl
+<http://langtech.ch>`_ on behalf of the `department of language and
+information sciences (SLI) <http://www.unil.ch/sli>`_ at the `University of
+Lausanne <http://www.unil.ch>`_ (see `Credits
+<http://orange-textable.readthedocs.org/en/latest/credits.html>`_ and
+`How to cite Orange Textable
 <http://orange-textable.readthedocs.org/en/latest/credits.html>`_).
-
-.. _SLI: http://www.unil.ch/sli
-

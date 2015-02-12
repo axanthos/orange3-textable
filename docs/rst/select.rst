@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, Select widget
+   :keywords: Orange, Textable, documentation, Select, widget
+
 .. _Select:
 
 Select
@@ -36,6 +40,9 @@ matter which method is used, the widget emits on a second output connection
 (not selected by default) a segmentation containing the segments that were
 *not* selected.
 
+The interface of **Select** is available in two versions, according to
+whether or not the **Advanced Settings** checkbox is selected.
+
 Basic interface
 ~~~~~~~~~~~~~~~
 
@@ -52,7 +59,6 @@ by default.
 .. figure:: figures/select_example.png
     :align: center
     :alt: Basic interface of the Select widget
-    :figclass: align-center
 
     Figure 1: **Select** widget (basic interface).
 
@@ -68,7 +74,6 @@ menu (see figures :ref:`2 <select_fig2>` to :ref:`4 <select_fig4>` below).
 .. figure:: figures/select_advanced_regex_example.png
     :align: center
     :alt: Advanced interface of the Select widget (Regex method)
-    :figclass: align-center
 
     Figure 2: **Select** widget (advanced interface, **Regex** method).
 
@@ -110,7 +115,6 @@ probability of being selected or not.
 .. figure:: figures/select_advanced_sample_example.png
     :align: center
     :alt: Advanced interface of the Select widget (Sample method)
-    :figclass: align-center
 
     Figure 3: **Select** widget (advanced interface, **Sample** method).
 
@@ -134,7 +138,6 @@ in the segmentation that is comprised between given bounds.
 .. figure:: figures/select_advanced_threshold_example.png
     :align: center
     :alt: Advanced interface of the Select widget (Threshold method)
-    :figclass: align-center
 
     Figure 4: **Select** widget (advanced interface, **Threshold** method).
 
@@ -171,18 +174,29 @@ The **Info** section indicates the number of segments in the output
 segmentation, or the reasons why no segmentation is emitted (no input data,
 no selected input segment, etc.).
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface or when its input data
-are modified (by deletion or addition of a connection, or because modified
-data is received through an existing connection).
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).
 
 Examples
 --------
 
-* :doc:`Partitioning segmentations <partitioning_segmentations>`
-* :doc:`Annotation-based selection <annotation_based_selection>`
+* :doc:`Getting started: Partitioning segmentations
+  <partitioning_segmentations>`
+* :doc:`Getting started: Annotation-based selection
+  <annotation_based_selection>`
+* :doc:`Cookbook: Include/exclude segments based on a pattern
+  <include_exclude_based_on_pattern>`
+* :doc:`Cookbook: Filter segments based on their frequency
+  <filter_segments_based_on_frequency>`
+* :doc:`Cookbook: Create a random selection or sample of segments
+  <random_sample>`
+
+Footnotes
+---------
 
 .. [#] Here it concerns the segmentation containing the selected segments and
        emitted on the default output channel; the segmentation containing the

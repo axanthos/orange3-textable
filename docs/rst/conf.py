@@ -44,9 +44,9 @@ master_doc = 'index'
 # General information about the project.
 project = DOCUMENTATION_NAME
 copyright = (
-      u'2012-2014 '
+      u'2012-2015 '
     + AUTHOR
-    + u', translation \u00A9 2014 University of Lausanne'
+    + u', translation \u00A9 2014-2015 University of Lausanne'
 )
 
 # The version info for the project you're documenting, acts as replacement for
@@ -129,7 +129,7 @@ html_title = TITLE
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -227,4 +227,5 @@ man_pages = [
 intersphinx_mapping = {
     'python': ('http://python.readthedocs.org/en/latest/', None),
 }
+
 

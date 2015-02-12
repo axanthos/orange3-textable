@@ -1,10 +1,15 @@
-﻿Tagging table rows with annotations
+.. meta::
+   :description: Orange Textable documentation, tagging table rows with
+                 annotations
+   :keywords: Orange, Textable, documentation, table, row, annotations
+
+Tagging table rows with annotations
 ===================================
 
 There are several situations in which annotations attached to a segment can be
 used in place of this segment's content. A particularly common case consists
 in using annotations for tagging the rows of a table built with an instance
-of :ref:`Count`, :ref:`Length`, :ref:`Variety`, or :ref:`Annotation`.
+of :ref:`Count`, :ref:`Length`, :ref:`Variety`, or :ref:`Category`.
 
 Consider the example of the texts in English and French introduced
 :doc:`here <annotating_merging>`. Suppose that after having merged them into
@@ -22,7 +27,6 @@ each text.
 .. figure:: figures/tagging_rows_annotations_schema.png
     :align: center
     :alt: Counting letter frequency in three texts
-    :figclass: align-center
     :scale: 80%
     
     Figure 1: Schema for counting letter frequency in three texts.
@@ -37,7 +41,6 @@ the content of the three texts.
 .. figure:: figures/count_tagging_rows_annotations.png
     :align: center
     :alt: Counting letter frequency in three texts
-    :figclass: align-center
 
     Figure 2: Counting letter frequency in texts.
 
@@ -49,7 +52,7 @@ column order:
 .. csv-table:: Table 1: Letter frequency in three texts.
     :header: "", *a*, *t*, *e*, *x*, *i*, *n*, *E*, *g*, *l*, *s*, *h*, *o*, *r*, *u*, *f*, *ç*
     :stub-columns: 1
-    :widths: 20 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+    :widths: 7 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
 
     *a text in English*,       1, 2, 1, 1, 2, 2, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0
     *another text in English*, 1, 3, 2, 1, 2, 3, 1, 1, 1, 1, 2, 1, 1, 0, 0, 0
@@ -69,7 +72,6 @@ content. To that effect, the desired annotation key must be selected in the
 .. figure:: figures/count_tagging_rows_annotations_language.png
     :align: center
     :alt: Tagging contexts with annotation values
-    :figclass: align-center
 
     Figure 3: Tagging contexts with annotation values.
 
@@ -93,3 +95,14 @@ manipulation: contexts associated with the same annotation value are, in
 effect, collapsed together so that they form a single row. If this behavior
 is not desired, it can be avoided by assigning distinct annotation values to
 the contexts that must be kept separated (e.g. *en_1* and *en_2*).
+
+See also
+--------
+
+* :doc:`Getting started: Annotating by merging <annotating_merging>`
+* :ref:`Reference: Merge widget <Merge>`
+* :ref:`Reference: Segment widget <Segment>`
+* :ref:`Reference: Count widget <Count>`
+* :doc:`Reference: Table construction widgets <table_construction_widgets>`
+
+

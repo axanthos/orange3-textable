@@ -1,3 +1,8 @@
+.. meta::
+   :description: Orange Textable documentation, a note on regular expressions
+   :keywords: Orange, Textable, documentation, regular expressions, regex,
+              regexp, python
+
 A note on regular expressions
 =============================
 
@@ -15,13 +20,18 @@ best source of information. In particular, it features a good
 `introduction to regexes <http://docs.python.org/2/howto/regex.html>`_. A
 first reading might be limited to the following sections:
 
-    - `Simple Patterns <http://docs.python.org/2/howto/regex.html#simple-patterns>`_
-    - `More Metacharaters <http://docs.python.org/2/howto/regex.html#more-metacharacters>`_
+    - `Simple Patterns
+      <http://docs.python.org/2/howto/regex.html#simple-patterns>`_
+    - `More Metacharaters
+      <http://docs.python.org/2/howto/regex.html#more-metacharacters>`_
     
 Also recommended are the following:
 
-    - `Compilation Flags <http://docs.python.org/2/howto/regex.html#compilation-flags>`_
-    - `Lookahead Assertions <http://docs.python.org/2/howto/regex.html#lookahead-assertions>`_
-    - `Greedy vs. Non-Greedy <http://docs.python.org/2/howto/regex.html#greedy-versus-non-greedy>`_
+    - `Compilation Flags
+      <http://docs.python.org/2/howto/regex.html#compilation-flags>`_
+    - `Lookahead Assertions
+      <http://docs.python.org/2/howto/regex.html#lookahead-assertions>`_
+    - `Greedy vs. Non-Greedy
+      <http://docs.python.org/2/howto/regex.html#greedy-versus-non-greedy>`_
 
 
