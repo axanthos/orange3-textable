@@ -1,3 +1,9 @@
+.. meta::
+   :description: Orange Textable documentation, converting XML markup to
+                 annotations
+   :keywords: Orange, Textable, documentation, xml, markup, tag, extract,
+              import, annotation
+
 Converting XML markup to annotations
 ====================================
 
@@ -14,7 +20,6 @@ of speech" associated with each word (e.g. *DET*, *NOUN*, *PREP*, and so on).
 .. figure:: figures/text_field_xml_example.png
     :align: center
     :alt: Specifying annotations values using the label of Text field instances
-    :figclass: align-center
 
     Figure 1: Sample text annotated using XML markup.
 
@@ -23,7 +28,7 @@ segments (in the sense of Orange Textable). In its basic version (see
 :ref:`figure 2 <converting_xml_markup_annotations_fig2>` below), the widget's
 interface essentially requires the user to specify the name of the XML
 tags that must be imported, namely *w* in this example. The **Remove markup**
-checkbox indicates whether further markup (if any) detected *whithin*
+checkbox indicates whether further markup (if any) detected *within*
 imported tags must be removed (there is no further markup in this example, so
 that this option has no effect here).
 
@@ -32,7 +37,6 @@ that this option has no effect here).
 .. figure:: figures/extract_xml_example.png
     :align: center
     :alt: Interface of the Extract XML widget
-    :figclass: align-center
 
     Figure 2: Interface of the :ref:`Extract XML` widget.
 
@@ -50,7 +54,13 @@ to a *{key: value}* annotation.
 .. figure:: figures/display_xml_annotations_example.png
     :align: center
     :alt: Annotations imported using Extract XML
-    :figclass: align-center
 
     Figure 3: Annotations imported using :ref:`Extract XML`.
 
+See also
+--------
+
+* :ref:`Reference: Text Field widget <Text Field>`
+* :ref:`Reference: Extract XML widget <Extract XML>`
+* :doc:`Cookbook: Convert XML tags to Orange Textable annotations
+  <convert_xml_tags_annotations>`

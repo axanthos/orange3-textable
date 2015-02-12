@@ -1,23 +1,23 @@
 #!/usr/bin/env python
 
 #=============================================================================
-# File setup.py, v0.11
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# File setup.py, v0.12
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.4) extension to Orange Canvas.
+# This file is part of the Textable (v1.5) extension to Orange Canvas.
 #
-# Textable v1.4 is free software: you can redistribute it and/or modify
+# Textable v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.4 is distributed in the hope that it will be useful,
+# Textable v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 try:
@@ -35,7 +35,7 @@ from setuptools import setup, find_packages
 NAME = 'Orange-Textable'
 DOCUMENTATION_NAME = 'Orange Textable'
 
-VERSION = '1.4.2'
+VERSION = '1.5'
 
 DESCRIPTION = 'Orange Textable add-on for Orange data mining software package.'
 LONG_DESCRIPTION = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()

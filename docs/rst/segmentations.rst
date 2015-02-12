@@ -1,7 +1,18 @@
+.. meta::
+   :description: Orange Textable documentation, segmentation
+   :keywords: Orange, Textable, documentation, segmentation
+
 Segmentations
 =============
 
-Segmentations are at the heart of Orange Textable. Start learning about them.
+Orange Textable is mostly about taking text in input and producing tables
+in output. What makes the transition from text to tables possible and
+hopefully easy is the concept of "segmentation", which is at the heart of
+Orange Textable.
+
+In this section, you'll learn about segmentations and closely related topics
+such as strings and segments. You'll also survey the main ways in which
+segmentations are used in Orange Textable.
 
 .. toctree::
     :maxdepth: 1

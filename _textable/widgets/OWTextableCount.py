@@ -1,31 +1,33 @@
 #=============================================================================
-# Class OWTextableCount, v0.19
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Class OWTextableCount
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.4) extension to Orange Canvas.
+# This file is part of the Textable (v1.5) extension to Orange Canvas.
 #
-# Textable v1.4 is free software: you can redistribute it and/or modify
+# Textable v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.4 is distributed in the hope that it will be useful,
+# Textable v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
+
+__version__ = '0.21'
 
 """
 <name>Count</name>
-<description>Count segments</description>
+<description>Count segment types</description>
 <icon>icons/Count.png</icon>
 <priority>8001</priority>
 """
 
-from LTTL.Table        import PivotCrosstab
+from LTTL.Table        import IntPivotCrosstab
 from LTTL.Processor    import Processor
 from LTTL.Segmentation import Segmentation
 
@@ -76,12 +78,11 @@ class OWTextableCount(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableCount_0_19',
                 wantMainArea=0,
         )
         
         self.inputs  = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [('Pivot Crosstab', PivotCrosstab)]
+        self.outputs = [('Pivot Crosstab', IntPivotCrosstab)]
         
         # Settings...
         self.autoSend                   = False
@@ -654,6 +655,17 @@ class OWTextableCount(OWWidget):
         self.updateGUI()
         self.sendButton.sendIf()
 
+
+    def getSettings(self, *args, **kwargs):
+        settings = OWWidget.getSettings(self, *args, **kwargs)
+        settings["settingsDataVersion"] = __version__.split('.')
+        return settings
+
+    def setSettings(self, settings):
+        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+            settings = settings.copy()
+            del settings["settingsDataVersion"]
+            OWWidget.setSettings(self, settings)
 
 
 if __name__ == '__main__':

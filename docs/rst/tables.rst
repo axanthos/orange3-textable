@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, tables
+   :keywords: Orange, Textable, documentation, tables
+
 Tables
 ======
 

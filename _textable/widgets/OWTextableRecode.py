@@ -1,22 +1,24 @@
 #=============================================================================
-# Class OWTextableRecode, v0.10
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Class OWTextableRecode
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.4) extension to Orange Canvas.
+# This file is part of the Textable (v1.5) extension to Orange Canvas.
 #
-# Textable v1.4 is free software: you can redistribute it and/or modify
+# Textable v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.4 is distributed in the hope that it will be useful,
+# Textable v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
+
+__version__ = '0.13'
 
 """
 <name>Recode</name>
@@ -25,7 +27,7 @@
 <priority>2002</priority>
 """
 
-import re, codecs, json
+import re, codecs, json, textwrap
 
 from LTTL.Recoder      import Recoder
 from LTTL.Segmentation import Segmentation
@@ -59,12 +61,14 @@ class OWTextableRecode(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableRecode_0_10',
                 wantMainArea=0,
         )
 
         # Input and output channels...
-        self.inputs  = [('Segmentation', Segmentation, self.inputData, Single)]
+        self.inputs  = [
+            ('Segmentation', Segmentation, self.inputData, Single),
+            ('Message', JSONMessage, self.inputMessage, Single)
+        ]
         self.outputs = [('Recoded data', Segmentation)]
         
         # Settings...
@@ -424,13 +428,56 @@ class OWTextableRecode(OWWidget):
         self.sendButton.sendIf()
 
 
+    def inputMessage(self, message):
+        """Handle JSON message on input connection"""
+        if not message:
+            return
+        self.displayAdvancedSettings = True
+        self.advancedSettings.setVisible(True)
+        self.substitutions = list()
+        self.infoBox.inputChanged()
+        try:
+            json_data = json.loads(message.content)
+            temp_substitutions = list()
+            for entry in json_data:
+                regex               = entry.get('regex', '')
+                replString          = entry.get('replacement_string', '')
+                ignoreCase          = entry.get('ignore_case', False)
+                unicodeDependent    = entry.get('unicode_dependent', False)
+                multiline           = entry.get('multiline', False)
+                dotAll              = entry.get('dot_all', False)
+                if regex == '':
+                    m =   "JSON message on input connection doesn't " \
+                        + "have the right keys and/or values."
+                    m = '\n\t'.join(textwrap.wrap(m, 35))
+                    self.infoBox.noDataSent(m)
+                    self.send('Segmentation', None, self)
+                    return
+                temp_substitutions.append((
+                    regex,
+                    replString,
+                    ignoreCase,
+                    unicodeDependent,
+                    multiline,
+                    dotAll,
+                ))
+            self.substitutions.extend(temp_substitutions)
+            self.sendButton.settingsChanged()
+        except ValueError:
+            m = "Message content is not in JSON format."
+            m = '\n\t'.join(textwrap.wrap(m, 35))
+            self.infoBox.noDataSent(m)
+            self.send('Text data', None, self)
+            return
+
+
     def sendData(self):
     
         """(Have LTTL.Recoder) perform the actual recoding"""
 
         # Check that there's something on input...
         if not self.segmentation:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u'No input segmentation.')
             self.send('Recoded data', None, self)
             return
 
@@ -764,6 +811,18 @@ class OWTextableRecode(OWWidget):
 
     def onDeleteWidget(self):
         self.clearCreatedInputIndices()
+
+
+    def getSettings(self, *args, **kwargs):
+        settings = OWWidget.getSettings(self, *args, **kwargs)
+        settings["settingsDataVersion"] = __version__.split('.')
+        return settings
+
+    def setSettings(self, settings):
+        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+            settings = settings.copy()
+            del settings["settingsDataVersion"]
+            OWWidget.setSettings(self, settings)
 
 
 if __name__ == '__main__':

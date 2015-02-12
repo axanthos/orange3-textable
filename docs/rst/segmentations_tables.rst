@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, from segmentations to tables
+   :keywords: Orange, Textable, documentation, segmentation, table
+
 From segmentations to tables
 ============================
 
@@ -46,3 +50,7 @@ test (aiming at answering the question "does the distribution of units depend
 on contexts") or a graphical representation (making it possible to visualize
 the attraction or repulsion between specific units and contexts).
 
+See also
+--------
+ 
+* :doc:`Reference: Table construction widgets <table_construction_widgets>`

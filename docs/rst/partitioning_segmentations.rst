@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, partitioning segmentations
+   :keywords: Orange, Textable, documentation, partition, filter
+
 Partitioning segmentations
 ==========================
 
@@ -19,7 +23,6 @@ successively. (For now, the option **Annotation key: (none)** can be ignored.)
 .. figure:: figures/select_example.png
     :align: center
     :alt: Example usage of widget Select
-    :figclass: align-center
 
     Figure 1: Excluding short words with widget :ref:`Select`.
 
@@ -45,7 +48,6 @@ connection and select **Reset Signals** (see
 .. figure:: figures/select_example_schema.png
     :align: center
     :alt: Right-clicking on a connection and requesting to "Reset Signals"
-    :figclass: align-center
     :scale: 80 %
 
     Figure 2: Right-clicking on a connection and requesting to **Reset Signals**.
@@ -62,9 +64,14 @@ through the connection.
 .. figure:: figures/select_example_reset_signals_dialog.png
     :align: center
     :alt: Dialog for modifying the connection between two widgets
-    :figclass: align-center
     :scale: 80 %
 
-    Figure 3: This dialog allows the user to select a non-default connection between two widgets.
+    Figure 3: This dialog allows the user to select a non-default connection
+    between two widgets.
 
+See also
+--------
 
+* :ref:`Reference: Select widget <Select>`
+* :doc:`Cookbook: Include/exclude segments based on a pattern
+  <include_exclude_based_on_pattern>`

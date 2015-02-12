@@ -1,21 +1,21 @@
 #=============================================================================
-# Class LTTL.Segmenter, v0.20
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Class LTTL.Segmenter, v0.22
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the LTTL package v1.4
+# This file is part of the LTTL package v1.5
 #
-# LTTL v1.4 is free software: you can redistribute it and/or modify
+# LTTL v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# LTTL v1.4 is distributed in the hope that it will be useful,
+# LTTL v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with LTTL v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with LTTL v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 from __future__ import division
@@ -102,6 +102,7 @@ class Segmenter(object):
             regexes,
             label               = u'my_segmented_data',
             import_annotations  = True,
+            merge_duplicates    = True,
             auto_numbering_as   = None,
             progress_callback   = None,
     ):
@@ -250,9 +251,10 @@ class Segmenter(object):
                 ))
 
                 # Merge duplicate segments...
-                new_segments = Segmenter.merge_duplicate_segments(
-                        new_segments,
-                )
+                if merge_duplicates:
+                    new_segments = Segmenter.merge_duplicate_segments(
+                            new_segments,
+                    )
 
                 if progress_callback:
                     progress_callback()
@@ -288,7 +290,9 @@ class Segmenter(object):
                 old_segment_annotation_copy = segment.annotations.copy()
             if annotation_key:
                 if annotation_key in segment.annotations:
-                    match = regex.search(segment.annotations[annotation_key])
+                    match = regex.search(
+                        unicode(segment.annotations[annotation_key])
+                    )
                 else:
                     match = None
             else:
@@ -515,7 +519,8 @@ class Segmenter(object):
             if copy_annotations:
                 old_segment_annotation_copy = segment.annotations.copy()
             if source_annotation_key:
-                match=segment.annotations[source_annotation_key] in type_dict
+                match = unicode(segment.annotations[source_annotation_key]) \
+                                in type_dict
             else:
                 match = segment.get_content() in type_dict
             address = segment.address

@@ -1,22 +1,24 @@
 #=============================================================================
-# Class OWTextableSegment, v0.17
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Class OWTextableSegment
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.4) extension to Orange Canvas.
+# This file is part of the Textable (v1.5) extension to Orange Canvas.
 #
-# Textable v1.4 is free software: you can redistribute it and/or modify
+# Textable v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.4 is distributed in the hope that it will be useful,
+# Textable v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
+
+__version__ = '0.21'
 
 """
 <name>Segment</name>
@@ -25,7 +27,7 @@
 <priority>4002</priority>
 """
 
-import re, codecs, json
+import re, codecs, textwrap, json
 
 from LTTL.Segmenter    import Segmenter
 from LTTL.Segmentation import Segmentation
@@ -42,6 +44,7 @@ class OWTextableSegment(OWWidget):
     settingsList = [
             'regexes',
             'importAnnotations',
+            'mergeDuplicates',
             'autoSend',
             'label',
             'autoNumber',
@@ -59,17 +62,20 @@ class OWTextableSegment(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableSegment_0_17',
                 wantMainArea=0,
         )
 
         # Input and output channels...
-        self.inputs  = [('Segmentation', Segmentation, self.inputData, Single)]
+        self.inputs  = [
+            ('Segmentation', Segmentation, self.inputData, Single),
+            ('Message', JSONMessage, self.inputMessage, Single)
+        ]
         self.outputs = [('Segmented data', Segmentation)]
         
         # Settings...
         self.regexes                    = []
         self.importAnnotations          = True
+        self.mergeDuplicates            = True
         self.autoSend                   = True
         self.label                      = u'segmented_data'
         self.autoNumber                 = False
@@ -449,6 +455,25 @@ class OWTextableSegment(OWWidget):
         )
         OWGUI.separator(
                 widget              = optionsBox,
+                height              = 3,
+        )
+        OWGUI.checkBox(
+                widget              = optionsBox,
+                master              = self,
+                value               = 'mergeDuplicates',
+                label               = u'Fuse duplicates',
+                callback            = self.sendButton.settingsChanged,
+                tooltip             = (
+                        u"Fuse segments that have the same address.\n\n"
+                        u"The annotation of merged segments will be fused\n"
+                        u"as well. In the case where fused segments have\n"
+                        u"distinct values for the same annotation key, only\n"
+                        u"the value of the last one (in order of regex\n"
+                        u"application) will be kept."
+                ),
+        )
+        OWGUI.separator(
+                widget              = optionsBox,
                 height              = 2,
         )
         self.advancedSettings.advancedWidgets.append(optionsBox)
@@ -498,13 +523,60 @@ class OWTextableSegment(OWWidget):
         self.sendButton.sendIf()
 
 
+    def inputMessage(self, message):
+        """Handle JSON message on input connection"""
+        if not message:
+            return
+        self.displayAdvancedSettings = True
+        self.advancedSettings.setVisible(True)
+        self.regexes = list()
+        self.infoBox.inputChanged()
+        try:
+            json_data = json.loads(message.content)
+            temp_regexes = list()
+            for entry in json_data:
+                regex               = entry.get('regex', '')
+                annotationKey       = entry.get('annotation_key', '')
+                annotationValue     = entry.get('annotation_value', '')
+                ignoreCase          = entry.get('ignore_case', False)
+                unicodeDependent    = entry.get('unicode_dependent', False)
+                multiline           = entry.get('multiline', False)
+                dotAll              = entry.get('dot_all', False)
+                mode                = entry.get('mode', '')
+                if regex == '' or mode == '':
+                    m =   "JSON message on input connection doesn't " \
+                        + "have the right keys and/or values."
+                    m = '\n\t'.join(textwrap.wrap(m, 35))
+                    self.infoBox.noDataSent(m)
+                    self.send('Segmentation', None, self)
+                    return
+                temp_regexes.append((
+                    regex,
+                    annotationKey,
+                    annotationValue,
+                    ignoreCase,
+                    unicodeDependent,
+                    multiline,
+                    dotAll,
+                    mode,
+                ))
+            self.regexes.extend(temp_regexes)
+            self.sendButton.settingsChanged()
+        except ValueError:
+            m = "Message content is not in JSON format."
+            m = '\n\t'.join(textwrap.wrap(m, 35))
+            self.infoBox.noDataSent(m)
+            self.send('Text data', None, self)
+            return
+
+
     def sendData(self):
     
         """(Have LTTL.Segmenter) perform the actual tokenization"""
 
         # Check that there's something on input...
         if not self.inputSegmentation:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u'No input segmentation.')
             self.send('Segmented data', None, self)
             return
 
@@ -561,8 +633,10 @@ class OWTextableSegment(OWWidget):
         # Basic settings...
         if self.displayAdvancedSettings:
             importAnnotations   = self.importAnnotations
+            mergeDuplicates     = self.mergeDuplicates
         else:
             importAnnotations   = True
+            mergeDuplicates     = False
 
         # Prepare regexes...
         regexes = []
@@ -598,6 +672,7 @@ class OWTextableSegment(OWWidget):
             regexes             = regexes,
             label               = self.label,
             import_annotations  = importAnnotations,
+            merge_duplicates    = mergeDuplicates,
             auto_numbering_as   = autoNumberKey,
             progress_callback   = progressBar.advance,
         )
@@ -877,6 +952,18 @@ class OWTextableSegment(OWWidget):
         else:
             self.clearAllButton.setDisabled(True)
             self.exportButton.setDisabled(True)
+
+
+    def getSettings(self, *args, **kwargs):
+        settings = OWWidget.getSettings(self, *args, **kwargs)
+        settings["settingsDataVersion"] = __version__.split('.')
+        return settings
+
+    def setSettings(self, settings):
+        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+            settings = settings.copy()
+            del settings["settingsDataVersion"]
+            OWWidget.setSettings(self, settings)
 
 
 if __name__ == '__main__':

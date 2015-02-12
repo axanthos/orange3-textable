@@ -1,26 +1,28 @@
 #=============================================================================
-# Class OWTextableDisplay, v0.12
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Class OWTextableDisplay
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.4) extension to Orange Canvas.
+# This file is part of the Textable (v1.5) extension to Orange Canvas.
 #
-# Textable v1.4 is free software: you can redistribute it and/or modify
+# Textable v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.4 is distributed in the hope that it will be useful,
+# Textable v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
+
+__version__ = '0.16'
 
 """
 <name>Display</name>
-<description>Display a segmentation</description>
+<description>Display or export the details of a segmentation</description>
 <icon>icons/Display.png</icon>
 <priority>6001</priority>
 """
@@ -45,6 +47,8 @@ class OWTextableDisplay(OWWidget):
             'customFormatting',
             'customFormat',
             'segmentDelimiter',
+            'header',
+            'footer',
             'encoding',
             'lastLocation',
             'uuid',
@@ -61,7 +65,6 @@ class OWTextableDisplay(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableDisplay_0_12',
                 wantMainArea=1
         )
         
@@ -74,8 +77,10 @@ class OWTextableDisplay(OWWidget):
         # Settings...
         self.displayAdvancedSettings    = False
         self.customFormatting           = False
-        self.customFormat               = u''
-        self.segmentDelimiter           = u''
+        self.customFormat               = u'%(__content__)s'
+        self.segmentDelimiter           = ur'\n'
+        self.header                     = u''
+        self.footer                     = u''
         self.encoding                   = 'utf-8'
         self.lastLocation               = '.'
         self.autoSend                   = True
@@ -148,7 +153,25 @@ class OWTextableDisplay(OWWidget):
         self.formattingIndentedBox = OWGUI.indentedBox(
                 widget              = formattingBox,
         )
-        formatComboBox = OWGUI.lineEdit(
+        headerLineEdit = OWGUI.lineEdit(
+                widget              = self.formattingIndentedBox,
+                master              = self,
+                value               = 'header',
+                label               = u'Header:',
+                labelWidth          = 131,
+                orientation         = 'horizontal',
+                callback            = self.sendButton.settingsChanged,
+                tooltip             = (
+                        u"String that will be appended at the beginning of\n"
+                        u"the formatted segmentation."
+                ),
+        )
+        headerLineEdit.setMinimumWidth(200)
+        OWGUI.separator(
+                widget              = self.formattingIndentedBox,
+                height              = 3,
+        )
+        OWGUI.lineEdit(
                 widget              = self.formattingIndentedBox,
                 master              = self,
                 value               = 'customFormat',
@@ -161,7 +184,6 @@ class OWTextableDisplay(OWWidget):
                         u"See user guide for detailed instructions."
                 ),
         )
-        formatComboBox.setMinimumWidth(200)
         OWGUI.separator(
                 widget              = self.formattingIndentedBox,
                 height              = 3,
@@ -181,7 +203,25 @@ class OWTextableDisplay(OWWidget):
                 ),
         )
         OWGUI.separator(
-                widget              = formattingBox,
+                widget              = self.formattingIndentedBox,
+                height              = 3,
+        )
+        OWGUI.lineEdit(
+                widget              = self.formattingIndentedBox,
+                master              = self,
+                value               = 'footer',
+                label               = u'Footer:',
+                labelWidth          = 131,
+                orientation         = 'horizontal',
+                callback            = self.sendButton.settingsChanged,
+                tooltip             = (
+                        u"String that will be appended at the end of the\n"
+                        u"formatted segmentation."
+                ),
+        )
+        headerLineEdit.setMinimumWidth(200)
+        OWGUI.separator(
+                widget              = self.formattingIndentedBox,
                 height              = 3,
         )
 
@@ -199,23 +239,45 @@ class OWTextableDisplay(OWWidget):
                 items               = type(self).encodings,
                 sendSelectedValue   = True,
                 orientation         = 'horizontal',
-                label               = u'Encoding:',
+                label               = u'File encoding:',
                 labelWidth          = 151,
                 tooltip             = (
-                        u"Select output file encoding."
+                        u"Select the encoding of the file into which a\n"
+                        u"displayed segmentation can be saved by clicking\n"
+                        u"the 'Export' button below.\n\n"
+                        u"Note that the displayed segmentation that is\n"
+                        u"copied to the clipboard by clicking the 'Copy\n"
+                        u"to clipboard' button below is always encoded\n"
+                        u"in utf-8."
                 ),
         )
         OWGUI.separator(
                 widget              = self.exportBox,
                 height              = 3,
         )
-        exportButton = OWGUI.button(
+        exportBoxLine2 = OWGUI.widgetBox(
                 widget              = self.exportBox,
+                orientation         = 'horizontal',
+        )
+        exportButton = OWGUI.button(
+                widget              = exportBoxLine2,
                 master              = self,
-                label               = u'Export',
+                label               = u'Export to file',
                 callback            = self.exportFile,
                 tooltip             = (
-                        u"Open a dialog for selecting the output file."
+                        u"Open a dialog for selecting the output file to\n"
+                        u"which the displayed segmentation will be saved."
+                ),
+        )
+        self.copyButton = OWGUI.button(
+                widget              = exportBoxLine2,
+                master              = self,
+                label               = u'Copy to clipboard',
+                callback            = self.copyToClipboard,
+                tooltip             = (
+                        u"Copy the displayed segmentation to clipboard, in\n"
+                        u"order to paste it in another application."
+                        u"\n\nNote that the only possible encoding is utf-8."
                 ),
         )
 
@@ -342,6 +404,8 @@ class OWTextableDisplay(OWWidget):
                     displayedString = self.segmentation.to_string(
                         self.customFormat.decode('string_escape'),
                         self.segmentDelimiter.decode('string_escape'),
+                        self.header.decode('string_escape'),
+                        self.footer.decode('string_escape'),
                         True,
                         progress_callback = progressBar.advance,
                     )
@@ -426,8 +490,35 @@ class OWTextableDisplay(OWWidget):
             )
 
 
+    def copyToClipboard(self):
+        """Copy displayed segmentation to clipboard"""
+        QApplication.clipboard().setText(
+                normalizeCarriageReturns(
+                        self.displayedSegmentation[0].get_content()
+                )
+        )
+        QMessageBox.information(
+                None,
+                'Textable',
+                'Segmentation correctly copied to clipboard',
+                QMessageBox.Ok
+        )
+
+
     def onDeleteWidget(self):
         self.displayedSegmentation.clear()
+
+
+    def getSettings(self, *args, **kwargs):
+        settings = OWWidget.getSettings(self, *args, **kwargs)
+        settings["settingsDataVersion"] = __version__.split('.')
+        return settings
+
+    def setSettings(self, settings):
+        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+            settings = settings.copy()
+            del settings["settingsDataVersion"]
+            OWWidget.setSettings(self, settings)
 
 
 if __name__ == '__main__':

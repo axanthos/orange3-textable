@@ -1,26 +1,28 @@
 #=============================================================================
-# Class OWTextableVariety, v0.11
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Class OWTextableVariety
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.4) extension to Orange Canvas.
+# This file is part of the Textable (v1.5) extension to Orange Canvas.
 #
-# Textable v1.4 is free software: you can redistribute it and/or modify
+# Textable v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.4 is distributed in the hope that it will be useful,
+# Textable v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
+
+__version__ = '0.13'
 
 """
 <name>Variety</name>
-<description>Measure variety of segments</description>
+<description>Measure the variety of segments</description>
 <icon>icons/Variety.png</icon>
 <priority>8003</priority>
 """
@@ -80,7 +82,6 @@ class OWTextableVariety(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableVariety_0_11',
                 wantMainArea=0,
         )
         
@@ -546,13 +547,16 @@ class OWTextableVariety(OWWidget):
         # Case 1: sliding window...
         if self.mode == 'Sliding window':
 
-            # Count...
+            num_iterations = len(units['segmentation']) - (self.windowSize-1)
+            if self.applyResampling:
+                num_iterations += num_iterations * self.numSubsamples
+            else:
+                num_iterations *= 2
+
+            # Measure...
             progressBar = OWGUI.ProgressBar(
                     self,
-                    iterations = 2 * (
-                                          len(units['segmentation'])
-                                        - (self.windowSize - 1)
-                                     )
+                    iterations = num_iterations
             )
             table = self.processor.variety_in_window(
                     units,
@@ -578,7 +582,8 @@ class OWTextableVariety(OWWidget):
                 }
                 if contexts['annotation_key'] == u'(none)':
                     contexts['annotation_key'] = None
-                num_iterations = len(contexts['segmentation'])
+                num_contexts   = len(contexts['segmentation'])
+                num_iterations = num_contexts
             # Parameters for mode 'No context'...
             else:
                 contexts = None
@@ -586,6 +591,11 @@ class OWTextableVariety(OWWidget):
                                         len(units['segmentation'])
                                       - (self.sequenceLength - 1)
                                  )
+                num_contexts = 1
+            if self.applyResampling:
+                num_iterations += num_contexts * self.numSubsamples
+            else:
+                num_iterations += num_contexts
 
             # Measure...
             progressBar = OWGUI.ProgressBar(
@@ -716,6 +726,17 @@ class OWTextableVariety(OWWidget):
         self.updateGUI()
         self.sendButton.sendIf()
 
+
+    def getSettings(self, *args, **kwargs):
+        settings = OWWidget.getSettings(self, *args, **kwargs)
+        settings["settingsDataVersion"] = __version__.split('.')
+        return settings
+
+    def setSettings(self, settings):
+        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+            settings = settings.copy()
+            del settings["settingsDataVersion"]
+            OWWidget.setSettings(self, settings)
 
 
 if __name__ == '__main__':

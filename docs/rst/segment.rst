@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, Segment widget
+   :keywords: Orange, Textable, documentation, Segment, widget
+
 .. _Segment:
 
 Segment
@@ -15,6 +19,10 @@ Inputs:
 * ``Segmentation``
 
   Segmentation that should be further segmented
+
+* ``Message``
+
+  JSON Message controlling the list of regular expressions
 
 Outputs:
 
@@ -39,6 +47,9 @@ use the notations ``&1``, ``&2``, etc. corresponding to the pairs of
 successive brackets (numbered on the basis of the position of opening
 parentheses) of the regular expression. [#]_
 
+The interface of **Segment** is available in two versions, according to
+whether or not the **Advanced Settings** checkbox is selected.
+
 Basic interface
 ~~~~~~~~~~~~~~~
 
@@ -53,7 +64,6 @@ sequence of alphanumerical characters and underscores). [#]_
 .. figure:: figures/segment_example.png
     :align: center
     :alt: Basic interface of the Segment widget
-    :figclass: align-center
 
     Figure 1: **Segment** widget (basic interface).
 
@@ -66,12 +76,12 @@ The **Info** section indicates the number of segments in the output
 segmentation, or the reasons why no segmentation is emitted (no input data,
 overlaps in the input segmentations, etc.).
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface or when its input data
-are modified (by deletion or addition of a connection, or because modified
-data is received through an existing connection).
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).
 
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
@@ -88,7 +98,6 @@ these segments (**Split** mode). [#]_
 .. figure:: figures/segment_advanced_example.png
     :align: center
     :alt: Advanced interface of the Segment widget
-    :figclass: align-center
 
     Figure 2: **Segment** widget (advanced interface).
 
@@ -107,12 +116,13 @@ expressions have been defined, each in the **Tokenize** mode; each identifies
 a type of character in the input segmentation and assigns to it an annotation
 whose key is type. The character classes identified by the four expressions
 are not mutually exclusive, however after having successively applied them,
-the widget automatically sorts the segments and fuses those whose addresses
-are identical--exactly like the **Sort segments** and **Merge duplicate
-segments** options of the :ref:`Merge` widget. In the end, each character thus
-belongs to a single segment, whose value for the annotation key type is the
-last one that was assigned to it according to the regular expressions
-application order.
+the widget automatically sorts the segments (exactly like the **Sort
+segments** option of the :ref:`Merge` widget) and fuses those whose addresses
+are identical, given that the **Fuse duplicates** option is selected, which
+triggers the fusion of segments with identical addresses (see below). In the
+end, each character thus belongs to a single segment, whose value for the
+annotation key *type* is the last one that was assigned to it according to the
+regular expressions application order.
 
 The first of the four expressions (``.``) creates a segment for each character
 and assigns the annotation value *other* to it. The second (``\w``) creates a
@@ -132,9 +142,9 @@ an expression from the list (**Remove**) or to empty it entirely (**Clear
 All**). Except for **Clear All**, all of these buttons require the selection
 of an entry in the list beforehand. **Import List** enables the user to import
 a list of regular expressions in JSON format (see :doc:`JSON im-/export format
-<json_format>`) and to add them to those already selected. **Export List**
-enables the user on the contrary to export the list of regular expressions
-in a JSON file.
+<json_format>`, :doc:`Regular expression list <json_regular_expression_list>`)
+and to add them to those already selected. **Export List** enables the user on
+the contrary to export the list of regular expressions in a JSON file.
 
 The remaining part of the **Regexes** section allows the user to add new
 regular expressions to the list. To do so, the regular expression should be
@@ -146,33 +156,65 @@ regular expressions. Adding the new regular expression to the list is executed
 by finally clicking on the **Add** button.
 
 The **Options** section allows the user to define the output segmentation
-label. The **Copy annotations** checkbox copies every annotation of the input
-segmentation to the output segmentation.
+label. The **Auto-number with key** checkbox enables the program to
+automatically number the output segments and to associate the number to the
+annotation key specified in the text field on the right. The **Import
+annotations** checkbox copies the annotations of each input segment to the
+corresponding output segments. The **Fuse duplicate segments** checkbox
+enables the program to fuse into a single segment several distinct segments
+whose addresses are identical; the annotations associated to the fused
+segments are all copied in the single resulting segment. [#]_
 
 The **Info** section indicates the number of segments in the output
 segmentation, or the reasons why no segmentation is emitted (no input data,
 overlaps in the input segmentations, etc.).
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface or when its input data
-are modified (by deletion or addition of a connection, or because modified
-data is received through an existing connection).
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).
+
+.. _segment_remote_control_ref:
+
+Remote control
+~~~~~~~~~~~~~~
+
+**Segment** is one the widgets that can be controlled by means of the
+:ref:`Message` widget. Indeed, it can receive in input a message consisting
+of a regular expression list in JSON format (see :doc:`JSON im-/export format
+<json_format>`, :doc:`Regular expression list
+<json_regular_expression_list>`), in which case the list of regular
+expressions specified in this message replaces those previously specified
+(if any). Note that removing the incoming connection from the **Message**
+instance will not, by itself, remove the list of regular expressions imported
+in this way from the **Segment** instance's interface; conversely, this list
+of files can be modified using buttons **Move up/down**, **Remove**, etc. even
+if the incoming connection from the **Message** instance has not been removed.
+Finally, note that if a **Segment** instance has the basic version of its
+interface activated when an incoming connection is created from an instance of
+:ref:`Message`, it automatically switches to the advanced interface.
 
 Examples
 --------
 
-* :doc:`Segmenting data into smaller units <segmenting_data_smaller_units>`
-* :doc:`Hierarchical segmentations and performance issues <hierarchical_segmentations_performance_issues>`
+* :doc:`Getting started: Segmenting data into smaller units
+  <segmenting_data_smaller_units>`
+* :doc:`Cookbook: Segment text in smaller units <segment_text>`
 
-See also:
+See also
+--------
+* :doc:`Reference: JSON im-/export format <json_format>`, :doc:`Regular
+  expression list <json_regular_expression_list>`
+* :ref:`Reference: Message widget <Message>`
+* :doc:`Getting started: Hierarchical segmentations and performance issues
+  <hierarchical_segmentations_performance_issues>`
+* :doc:`Getting started: A note on regular expressions
+  <note_regular_expressions>`
 
-* :doc:`Counting segment types <counting_segment_types>`
-* :doc:`Counting in specific contexts <counting_specific_contexts>`
-* :doc:`Partitioning segmentations <partitioning_segmentations>`
-* :doc:`Using a segmentation to filter another <using_segmentation_filter_another>`
-* :doc:`Tagging table rows with annotations <tagging_table_rows_annotations>`
+Footnotes
+---------
 
 .. [#] This possibility does not apply when the widget is configured to
        identify the separators rather than the segments themselves
@@ -180,7 +222,13 @@ See also:
        
 .. [#] It should be noted that the ``-u`` (*Unicode dependent*) option is
        activated by default (see `Python documentation
-       <http://docs.python.org/library/re.html>`_).
+       <http://docs.python.org/library/re.html#re.UNICODE>`_).
 
 .. [#] NB: in **Split** mode, empty segments that might occur between two
-       consecutive occurrences of separators are automatically removed.
+       consecutive occurrences of separators are automatically removed (this
+       is because the data model adopted by Orange Canvas cannot represent
+       empty segments).
+       
+.. [#] In the case where the fused segments have distinct values for the same
+       annotation key, only the value of the last segment (in the order of the
+       output segmentation before fusion) will be retained.

@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, merging units with annotations
+   :keywords: Orange, Textable, documentation, merge, units, annotations
+
 Merging units with annotations
 ==============================
 
@@ -13,7 +17,6 @@ shown on :ref:`figure 1 <merging_units_annotations_fig1>` below.
 .. figure:: figures/merging_units_annotations_schema.png
     :align: center
     :alt: Counting segments extracted from XML data
-    :figclass: align-center
     :scale: 80%
 
     Figure 1: Counting segments extracted from XML data.
@@ -28,8 +31,7 @@ will be counted in place of the segments' content.
 .. figure:: figures/count_merging_units_annotations.png
     :align: center
     :alt: Counting segments extracted from XML data
-    :figclass: align-center
-    
+
     Figure 2: Merging units using annotation values.
 
 The resulting table is as follows:
@@ -44,4 +46,12 @@ The resulting table is as follows:
 
 Of course, annotations may be used to merge units *and* contexts
 simultaneously.
+
+See also
+--------
+
+* :doc:`Getting started: Converting XML markup to annotations
+  <converting_xml_markup_annotations>`
+* :ref:`Reference: Extract XML widget <Extract XML>`
+* :ref:`Reference: Count widget <Count>`
 

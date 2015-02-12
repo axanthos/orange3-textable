@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, MacOS X installation
+   :keywords: Orange, Textable, documentation, MacOS X, installation
+
 MacOS X installation
 ====================
 
@@ -16,7 +20,6 @@ MacOS X installation
 .. figure:: figures/options_addons_menu_macosx.png
     :align: center
     :alt: How to open the Add-ons management dialog
-    :figclass: align-center
 
     Figure 1: Opening the Add-ons management dialog in Orange Canvas.
 
@@ -29,7 +32,6 @@ MacOS X installation
 .. figure:: figures/addons_management_dialog_macosx.png
     :align: center
     :alt: Orange Textable marked for installation
-    :figclass: align-center
 
     Figure 2: Orange Textable marked for installation.
 
@@ -40,7 +42,7 @@ restarted the program.
 **Only if step 4 was not correctly carried out:**
 
 5. Go to `PyPI <https://pypi.python.org/pypi/Orange-Textable>`_ to download
-   the source distribution of Orange Textable v1.4 (*.tar.gz* file).
+   the source distribution of Orange Textable (*.tar.gz* file).
 
 6. Decompress the archive then open a Terminal and navigate to the
    decompressed archive (see below for more details on this step). Then enter
@@ -57,7 +59,7 @@ restarted the program.
    decompressed archive...":*
 
    a. Drag and drop on the desktop the *Orange-Textable-X* file (where *X* is
-      the version number, e.g. "1.4") which can be found in the downloaded
+      the version number, e.g. "1.5") which can be found in the downloaded
       archive.
 
    b. In **Finder > Applications > Utilities**, double-click on *Terminal*.

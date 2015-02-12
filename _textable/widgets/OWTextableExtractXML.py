@@ -1,22 +1,24 @@
 #=============================================================================
-# Class OWTextableExtractXML, v0.12
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Class OWTextableExtractXML
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.4) extension to Orange Canvas.
+# This file is part of the Textable (v1.5) extension to Orange Canvas.
 #
-# Textable v1.4 is free software: you can redistribute it and/or modify
+# Textable v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.4 is distributed in the hope that it will be useful,
+# Textable v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
+
+__version__ = '0.15'
 
 """
 <name>Extract XML</name>
@@ -61,7 +63,6 @@ class OWTextableExtractXML(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableExtractXML_0_12',
                 wantMainArea=0,
         )
 
@@ -449,12 +450,12 @@ class OWTextableExtractXML(OWWidget):
                 widget              = optionsBox,
                 master              = self,
                 value               = 'mergeDuplicates',
-                label               = u'Merge duplicate segments',
+                label               = u'Fuse duplicates',
                 callback            = self.sendButton.settingsChanged,
                 tooltip             = (
-                        u"Merge segments that have the same address.\n\n"
-                        u"The annotation of merged segments will be merged\n"
-                        u"as well. In the case where merged segments have\n"
+                        u"Fuse segments that have the same address.\n\n"
+                        u"The annotation of fused segments will be fused\n"
+                        u"as well. In the case where fused segments have\n"
                         u"distinct values for the same annotation key, only\n"
                         u"the value of the last one will be kept."
                 ),
@@ -616,11 +617,11 @@ class OWTextableExtractXML(OWWidget):
                 conditions          = conditions,
                 import_element_as   = importElementAs,
                 label               = self.label,
-                import_annotations  = self.importAnnotations,
+                import_annotations  = importAnnotations,
                 auto_numbering_as   = autoNumberKey,
                 remove_markup       = self.deleteMarkup,
-                merge_duplicates    = self.mergeDuplicates,
-                preserve_leaves     = self.preserveLeaves,
+                merge_duplicates    = mergeDuplicates,
+                preserve_leaves     = preserveLeaves,
                 progress_callback   = progressBar.advance,
         )
         progressBar.finish()
@@ -733,6 +734,18 @@ class OWTextableExtractXML(OWWidget):
             self.clearAllButton.setDisabled(False)
         else:
             self.clearAllButton.setDisabled(True)
+
+
+    def getSettings(self, *args, **kwargs):
+        settings = OWWidget.getSettings(self, *args, **kwargs)
+        settings["settingsDataVersion"] = __version__.split('.')
+        return settings
+
+    def setSettings(self, settings):
+        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+            settings = settings.copy()
+            del settings["settingsDataVersion"]
+            OWWidget.setSettings(self, settings)
 
 
 if __name__ == '__main__':

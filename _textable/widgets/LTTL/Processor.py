@@ -1,21 +1,21 @@
 #=============================================================================
-# Class LTTL.Processor, v0.16
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Class LTTL.Processor, v0.22
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the LTTL package v1.4
+# This file is part of the LTTL package v1.5
 #
-# LTTL v1.4 is free software: you can redistribute it and/or modify
+# LTTL v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# LTTL v1.4 is distributed in the hope that it will be useful,
+# LTTL v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with LTTL v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with LTTL v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
 from __future__   import division
@@ -58,7 +58,7 @@ class Processor(object):
         annotation_key          annotation to be counted        None
         merge                   merge contexts together?        False
 
-        Returns a PivotCrosstab table.
+        Returns an IntPivotCrosstab table.
         """
 
         default_units = {
@@ -90,7 +90,7 @@ class Processor(object):
         ):
 
             # Set default context type.
-            context_type = contexts['segmentation'].label or u'__data__'
+            context_type = u'__global__'
 
             # Optimization...
             context_annotation_key      = contexts['annotation_key']
@@ -222,8 +222,8 @@ class Processor(object):
         # CASE 2: no context segmentation is specified...
         elif (units['segmentation'] is not None):
 
-            # Set default (unique) context type to '__data__'...
-            context_type = units['segmentation'].label or u'__data__'
+            # Set default (unique) context type...
+            context_type = u'__global__'
             context_types.append(context_type)
 
             # Optimization...
@@ -303,11 +303,11 @@ class Processor(object):
                         progress_callback()
 
         # Create pivot crosstab...
-        if isinstance(context_types[0], int):
+        if len(context_types) and isinstance(context_types[0], int):
             header_type = u'continuous'
         else:
             header_type = u'string'
-        return(PivotCrosstab(
+        return(IntPivotCrosstab(
                 context_types,
                 unit_types,
                 freq,
@@ -341,7 +341,7 @@ class Processor(object):
         seq_length              length of unit sequences         1
         intra_seq_delimiter     string for joining sequences     u'#'
 
-        Returns a PivotCrosstab table.
+        Returns an IntPivotCrosstab table.
         """
 
         default_units = {
@@ -488,7 +488,7 @@ class Processor(object):
                         progress_callback()
 
         # Create pivot crosstab...
-        return(PivotCrosstab(
+        return(IntPivotCrosstab(
                 [unicode(i) for i in range(1, window_type+1)],
                 unit_types,
                 freq,
@@ -529,7 +529,7 @@ class Processor(object):
         right_size              size of right context             0
         unit_pos_marker         string indicating unit position   u'_'
 
-        Returns a PivotCrosstab table.
+        Returns a IntPivotCrosstab table.
         """
 
         default_units = {
@@ -677,7 +677,7 @@ class Processor(object):
                         progress_callback()
 
         # Create pivot crosstab...
-        return(PivotCrosstab(
+        return(IntPivotCrosstab(
                 context_types,
                 unit_types,
                 freq,
@@ -754,7 +754,7 @@ class Processor(object):
             if contexts['merge']:
             
                 # Set default context type.
-                context_type = contexts['segmentation'].label or u'__data__'
+                context_type = u'__global__'
 
             # Else get the list of contexts in final format...
             else:
@@ -987,8 +987,8 @@ class Processor(object):
             # CASE 2A: averaging units are specified...
             if averaging['segmentation'] is not None:
 
-                # Set default (unique) context type to '__data__'...
-                context_type = averaging['segmentation'].label or u'__data__'
+                # Set default (unique) context type...
+                context_type = u'__global__'
                 context_types.append(context_type)
 
                 # CASE 2A.i: Standard deviation should be computed...
@@ -1040,8 +1040,8 @@ class Processor(object):
             # CASE 2B: no averaging units are specified...
             else:
 
-                # Set default (unique) context type to '__data__'...
-                context_type = units.label or u'__data__'
+                # Set default (unique) context type...
+                context_type = u'__global__'
                 context_types.append(context_type)
 
                 # Get length...
@@ -1055,8 +1055,22 @@ class Processor(object):
         if len(values) > 0 and len(context_types) == 0:
             context_types.append(context_type)
 
+        # Remove zero-length contexts...
+        if averaging['segmentation'] is not None:
+            length_col_name = u'__length_average__'
+        else:
+            length_col_name = u'__length__'
+        context_types[:] = [
+                c for c in context_types if values[(c, length_col_name)] > 0
+        ]
+        values = dict(
+                (key, value)
+                        for key, value in values.iteritems()
+                                if key[0] in context_types
+        )
+
         # Create Table...
-        if isinstance(context_types[0], int):
+        if len(context_types) and isinstance(context_types[0], int):
             header_type = u'continuous'
         else:
             header_type = u'string'
@@ -1362,8 +1376,17 @@ class Processor(object):
 
         # Compute varieties...
         new_values = {}
+        if (
+                len(counts.row_ids) == 1
+            and counts.row_ids[0]   == '__global__'
+        ):
+            default_row_id = u'__global__'
+        else:
+            default_row_id = None
         for row_id in counts.row_ids:
             row = tuple_to_simple_dict(counts.values, row_id)
+            if default_row_id is not None:
+                row_id = default_row_id
             if apply_resampling:
                 varieties = []
                 for i in xrange(num_subsamples):
@@ -1376,7 +1399,9 @@ class Processor(object):
                                 category_delimiter  = category_delimiter,
                         ))
                     except ValueError:
-                        pass
+                        break
+                    if progress_callback:
+                        progress_callback()
                 if varieties:
                     (
                             new_values[(row_id,u'__variety_average__')],
@@ -1385,11 +1410,16 @@ class Processor(object):
                     new_values[(row_id,u'__variety_count__')] = num_subsamples
             else:
                 new_values[(row_id, u'__variety__')] = get_variety(
-                        tuple_to_simple_dict(counts.values, row_id),
+                        row,
                         unit_weighting      = units['weighting'],
                         category_weighting  = categories['weighting'],
                         category_delimiter  = category_delimiter,
                 )
+            if progress_callback:
+                progress_callback()
+
+        if default_row_id is not None:
+            counts.row_ids[0] = default_row_id
 
         if apply_resampling:
             new_col_ids = [
@@ -1498,7 +1528,7 @@ class Processor(object):
                     progress_callback,
             )
             category_delimiter = None
-
+            
         # Compute varieties...
         new_values = {}
         for row_id in counts.row_ids:
@@ -1516,6 +1546,8 @@ class Processor(object):
                         ))
                     except ValueError:
                         break
+                    if progress_callback:
+                        progress_callback()
                 if varieties:
                     (
                             new_values[(row_id,u'__variety_average__')],
@@ -1524,12 +1556,13 @@ class Processor(object):
                     new_values[(row_id,u'__variety_count__')] = num_subsamples
             else:
                 new_values[(row_id, u'__variety__')] = get_variety(
-                        tuple_to_simple_dict(counts.values, row_id),
+                        row,
                         unit_weighting      = units['weighting'],
                         category_weighting  = categories['weighting'],
                         category_delimiter  = category_delimiter,
                 )
-            progress_callback()
+            if progress_callback:
+                progress_callback()
 
         if apply_resampling:
             new_col_ids = [
@@ -1740,7 +1773,7 @@ class Processor(object):
 
                 # Get unit token and its string value.
                 unit_token = unit_segmentation[unit_index]
-                new_values[(row_id, u'__pivot__')] \
+                new_values[(row_id, u'__key_segment__')] \
                         = unit_token.get_content()
                 if unit_annotation_key is not None:
                     annotation_value = unit_token.annotations.get(
@@ -1751,7 +1784,7 @@ class Processor(object):
                         new_values[(row_id, unit_annotation_key)] \
                                 = annotation_value
                     else:
-                        new_values[(row_id, u'__pivot__')] \
+                        new_values[(row_id, u'__key_segment__')] \
                                 = annotation_value
 
                 # Left and right context...
@@ -1802,7 +1835,7 @@ class Processor(object):
         col_ids = [u'__pos__']
         if has_imm_left:
             col_ids.append(u'__left__')
-        col_ids.append(u'__pivot__')
+        col_ids.append(u'__key_segment__')
         if has_imm_right:
             col_ids.append(u'__right__')
         if unit_annotation_key is not None and units['separate_annotation']:
@@ -1901,7 +1934,7 @@ class Processor(object):
 
                 # Get unit token and its string value.
                 unit_token = unit_segmentation[unit_index]
-                new_values[(row_id, u'__pivot__')] \
+                new_values[(row_id, u'__key_segment__')] \
                         = unit_token.get_content()
                 if unit_annotation_key is not None:
                     annotation_value = unit_token.annotations.get(
@@ -1912,7 +1945,7 @@ class Processor(object):
                         new_values[(row_id, unit_annotation_key)] \
                                 = annotation_value
                     else:
-                        new_values[(row_id, u'__pivot__')] \
+                        new_values[(row_id, u'__key_segment__')] \
                                 = annotation_value
 
                 # Neighboring segments...
@@ -1950,7 +1983,7 @@ class Processor(object):
         col_ids.extend(
                 [unicode(p) + u'L' for p in reversed(adjacent_positions)]
         )
-        col_ids.append(u'__pivot__')
+        col_ids.append(u'__key_segment__')
         col_ids.extend([unicode(p) + u'R' for p in adjacent_positions])
         if unit_annotation_key is not None and units['separate_annotation']:
             col_ids.append(unit_annotation_key)

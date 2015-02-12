@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, annotating by merging
+   :keywords: Orange, Textable, documentation, annotation, merge
+
 Annotating by merging
 =====================
 
@@ -16,10 +20,9 @@ shown on :ref:`figure 1 <annotating_merging_fig1>` below.
 .. figure:: figures/annotation_text_field.png
     :align: center
     :alt: Specifying annotations values using the label of Text field instances
-    :figclass: align-center
     :scale: 80 %
 
-    Figure 1: Specifying annotations values using the label of :ref:`Text field` instances.
+    Figure 1: Specifying annotations values using the label of :ref:`Text Field` instances.
 
 The three instances of :ref:`Text field` should then be connected to an
 instance of :ref:`Merge` as shown on :ref:`figure 2 <annotating_merging_fig2>`
@@ -30,7 +33,6 @@ below.
 .. figure:: figures/merge_annotations_example_schema.png
     :align: center
     :alt: Creating annotations with Merge
-    :figclass: align-center
 
     Figure 2: Example schema for creating annotations with :ref:`Merge`.
 
@@ -46,9 +48,8 @@ values by checking the box at the left of this line (see :ref:`figure 3
 .. figure:: figures/merge_annotations_example.png
     :align: center
     :alt: Importing labels as annotation values with Merge
-    :figclass: align-center
 
-    Figure 2: Importing labels as annotation values with :ref:`Merge`.
+    Figure 3: Importing labels as annotation values with :ref:`Merge`.
 
 The result of these operations can be viewed using an instance of
 :ref:`Merge`, whose output is shown on
@@ -61,7 +62,11 @@ the merged segmentation, an annotation value *en* or *fr* associated with key
 .. figure:: figures/display_merged_annotations_example.png
     :align: center
     :alt: Annotations created with Merge
-    :figclass: align-center
 
     Figure 4: Annotations created with :ref:`Merge`.
-    
+
+See also
+--------
+
+* :ref:`Reference: Text Field widget <Text Field>`
+* :ref:`Reference: Merge widget <Merge>`

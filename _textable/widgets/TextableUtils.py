@@ -1,27 +1,28 @@
 #=============================================================================
-# Module TextableUtils.py, v0.06
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Module TextableUtils.py
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.4) extension to Orange Canvas.
+# This file is part of the Textable (v1.5) extension to Orange Canvas.
 #
-# Textable v1.4 is free software: you can redistribute it and/or modify
+# Textable v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.4 is distributed in the hope that it will be useful,
+# Textable v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 # Provides classes:
 # - SendButton
 # - AdvancedSettings
 # - InfoBox
 # - BasicOptionsBox
+# - JSONMessage
 # - ContextField
 # - ContextListField
 # - ContextInputListField
@@ -36,6 +37,8 @@
 # - getPredefinedEncodings
 # - getWidgetUuid
 #=============================================================================
+
+__version__ = '0.10'
 
 import re, os, uuid
 
@@ -316,6 +319,18 @@ class BasicOptionsBox(object):
                 height              = 3,
         )
         return basicOptionsBox
+
+
+class JSONMessage(object):
+
+    """A class encapsulating a JSON message for inter-widget communication"""
+
+    def __init__(
+            self,
+            content     = u'',
+    ):
+        """Initialize a new JSON message instance"""
+        self.content    = content
 
 
 def pluralize(
@@ -776,6 +791,7 @@ class SegmentationContextHandler(OWContexts.ContextHandler):
                 self,
                 contextName,
                 findImperfect = False,
+                contextDataVersion = 2,
                 **kwargs
         )
 

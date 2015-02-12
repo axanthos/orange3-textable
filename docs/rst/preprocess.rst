@@ -1,4 +1,8 @@
-﻿.. _Preprocess:
+﻿.. meta::
+   :description: Orange Textable documentation, Preprocess widget
+   :keywords: Orange, Textable, documentation, Preprocess, widget
+
+.. _Preprocess:
 
 Preprocess
 ==========
@@ -35,7 +39,6 @@ the replacing of accentuated characters by their non-accentuated equivalents.
 .. figure:: figures/preprocess_advanced_example.png
     :align: center
     :alt: Interface of the Preprocess widget
-    :figclass: align-center
 
     Figure 1: Interface of the **Preprocess** widget.
 
@@ -61,12 +64,12 @@ The **Info** section indicates the number of segments present in the output
 segmentation, or the reasons why no segmentation is emitted (no input data,
 overlaps in the input segmentation, etc.).
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface or when its input data
-are modified (by deletion or addition of a connection, or because modified
-data is received through an existing connection).
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).
 
 .. _anchor_to_caveat:
 
@@ -74,9 +77,9 @@ Caveat
 ------
 
 As one of the rare widgets of Textable that do create new *strings* and not
-only new *segmentations* (the only other one being :ref:`Recode`),
-**Preprocess** is prone to a very specific and possibly disconcerting type of
-error, which can be best understood by studying an example.
+only new *segmentations*, **Preprocess** is prone to a very specific and
+possibly disconcerting type of error, which can be best understood by studying
+an example.
 
 Suppose that you wish to count word frequency in the content of two
 :ref:`Text Field` instances--a scenario similar to that illustrated in section
@@ -93,7 +96,6 @@ building the frequency table.
 .. figure:: figures/preprocess_caveat_schema_without.png
     :align: center
     :alt: Counting words in the content of two Text Field instances
-    :figclass: align-center
 
     Figure 2: Counting words in the content of two :ref:`Text Field` instances.
 
@@ -109,7 +111,6 @@ refers to these new strings, this raises a rather insidious issue.
 .. figure:: figures/preprocess_caveat_schema_wrong.png
     :align: center
     :alt: Counting words in the content of two Text Field instances
-    :figclass: align-center
 
     Figure 3: WRONG way of inserting a **Preprocess** instance in the schema.
 
@@ -131,9 +132,22 @@ in the others.
 .. figure:: figures/preprocess_caveat_schema_right.png
     :align: center
     :alt: Counting words in the content of two Text Field instances
-    :figclass: align-center
 
     Figure 4: RIGHT way of inserting **Preprocess**.
 
+Examples
+--------
 
+* :doc:`Cookbook: Convert text to lower or upper case <convert_text_to_lower_upper_case>`
+* :doc:`Cookbook: Remove accents from text <remove_accents_from_text>`
+
+See also
+--------
+
+* :doc:`Getting started: Counting in specific contexts
+  <counting_specific_contexts>`
+* :ref:`Reference: Text Field widget <Text Field>`
+* :ref:`Reference: Merge widget <Merge>`
+* :ref:`Reference: Segment widget <Segment>`
+* :ref:`Reference: Count widget <Count>`
 

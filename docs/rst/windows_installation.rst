@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, Windows installation
+   :keywords: Orange, Textable, documentation, Windows, installation
+
 Windows installation
 ====================
 
@@ -17,7 +21,6 @@ Windows installation
 .. figure:: figures/options_addons_menu.png
     :align: center
     :alt: How to open the Add-ons management dialog
-    :figclass: align-center
 
     Figure 1: Opening the Add-ons management dialog in Orange Canvas.
 
@@ -30,7 +33,6 @@ Windows installation
 .. figure:: figures/addons_management_dialog.png
     :align: center
     :alt: Orange Textable marked for installation
-    :figclass: align-center
 
     Figure 2: Orange Textable marked for installation.
 
@@ -41,8 +43,8 @@ restarted the program.
 **Only if step 4 was not correctly carried out:**
 
 5. Go to `PyPI <https://pypi.python.org/pypi/Orange-Textable>`_ to download
-   the Orange Textable v1.4 Windows installer (*MS Windows installer*, *.exe*
+   the Orange Textable Windows installer (*MS Windows installer*, *.exe*
    file).
 
-6. Execute the Orange Textable v1.4 installer and click on **Ok** for each
+6. Execute the Orange Textable installer and click on **Ok** for each
    stage.

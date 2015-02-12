@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, Extract XML widget
+   :keywords: Orange, Textable, documentation, Extract, XML, widget
+
 .. _Extract XML:
 
 Extract XML
@@ -44,7 +48,7 @@ will result in the creation of a segment whose content is *Cripes!* and whose
 annotation value for key *type* is *interjection*.
 
 This widget offers the easiest and most flexible way to import into Orange
-Textable v1.4 a segmentation and arbitrary annotations specified by the user
+Textable a segmentation and arbitrary annotations specified by the user
 for a given text. Let us however mention the following limitation: the widget
 automatically deletes all segments of zero length in the output segmentation.
 As a consequence, it is impossible to import empty XML elements (be they in
@@ -64,7 +68,6 @@ this element, including those embedded in other occurrences of the same type.
 .. figure:: figures/extract_xml_basic_example.png
     :align: center
     :alt: Basic interface of the Extract XML widget
-    :figclass: align-center
 
     Figure 1: **Extract XML** widget (basic interface).
     
@@ -82,12 +85,12 @@ The **Info** section indicates the number of segments in the output
 segmentation, or the reasons why no segmentation is emitted (no input data,
 no output segment created, etc.).
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface or when its input data
-are modified (by deletion or addition of a connection, or because modified
-data is received through an existing connection).
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).
 
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
@@ -105,7 +108,6 @@ the name of the XML element extracted by the widget.
 .. figure:: figures/extract_xml_advanced_example.png
     :align: center
     :alt: Advanced interface of the Extract XML widget
-    :figclass: align-center
 
     Figure 2: **Extract XML** widget (advanced interface).
 
@@ -146,25 +148,22 @@ The **Prioritize shallow attributes** checkbox determines the behavior of the
 widget in the very particular case where (a) elements of the extracted type
 are (exactly) embedded in one another, (b) they have different values for the
 same attribute, (c) the **Remove markup** option is selected and (d) the
-**Merge duplicate segments** option (section **Options**) as well. This could
-be the case in the extraction of the *<div>* element in the following fragment
-for example:
+**Fuse duplicates** option (section **Options**) as well. This could be the
+case in the extraction of the *<div>* element in the following fragment for
+example:
 
 ::
 
-    <div type="A"><div type="B">
-    two exactly embedded elements
-    </div></div>
+    <div type="A"><div type="B">two exactly embedded elements</div></div>
 
 In such a case, the widget will first create two segments that have the exact
 same address (since the embedded XML tags are deleted with **Remove markup**),
-then by the effect of **Merge duplicate segments**, it will seek to fuse them
-into one. It will only be able to keep one of the rival annotation values *A*
-and *B* for the annotation key *type*; by default, it will be the value
-associated to the element closest to the root in the XML tree, namely *A*.
-If on the other hand the **Prioritize shallow attributes** option is selected,
-the value of the element closest to the "surface" will be kept, in our example
-*B*.
+then by the effect of **Fuse duplicates**, it will seek to fuse them into one.
+It will only be able to keep one of the rival annotation values *A* and *B*
+for the annotation key *type*; by default, it will be the value associated to
+the element closest to the root in the XML tree, namely *A*. If on the other
+hand the **Prioritize shallow attributes** option is selected, the value of
+the element closest to the "surface" will be kept, in our example *B*.
 
 The **Conditions** subsection included in the **XML Extraction** section
 allows the user to limit the extraction by specifying conditions bearing on
@@ -203,25 +202,27 @@ The **Info** section indicates the number of segments in the output
 segmentation, or the reasons why no segmentation is emitted (no input data,
 no output segment created, etc.).
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface or when its input data
-are modified (by deletion or addition of a connection, or because modified
-data is received through an existing connection).
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).
 
 Examples
 --------
 
-* :doc:`Converting XML markup to annotations <converting_xml_markup_annotations>`
+* :doc:`Getting started: Converting XML markup to annotations
+  <converting_xml_markup_annotations>`
+* :doc:`Cookbook: Convert XML tags to Orange Textable annotations
+  <convert_xml_tags_annotations>`
 
-See also:
-
-* :doc:`Merging units with annotations <merging_units_annotations>`
+Footnotes
+---------
 
 .. [#] In comparison with the advance interface, it should also be noted that
        in the basic interface the options **Prioritize shallow attributes**
-       and **Merge duplicate segments** are disabled by default.
+       and **Fuse duplicates** are disabled by default.
 
 .. [#] See `Python documentation <http://docs.python.org/library/re.html>`_.
 

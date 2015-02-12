@@ -44,9 +44,9 @@ master_doc = 'index'
 # General information about the project.
 project = DOCUMENTATION_NAME
 copyright = (
-      u'2012-2014 '
+      u'2012-2015 '
     + AUTHOR
-    + u', translation \u00A9 2014 University of Lausanne'
+    + u', translation \u00A9 2014-2015 University of Lausanne'
 )
 
 # The version info for the project you're documenting, acts as replacement for
@@ -227,4 +227,5 @@ man_pages = [
 intersphinx_mapping = {
     'python': ('http://python.readthedocs.org/en/latest/', None),
 }
+
 

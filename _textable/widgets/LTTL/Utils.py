@@ -1,21 +1,21 @@
 #=============================================================================
-# Module LTTL.Utils, v0.05
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Module LTTL.Utils, v0.06
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the LTTL package v1.4
+# This file is part of the LTTL package v1.5
 #
-# LTTL v1.4 is free software: you can redistribute it and/or modify
+# LTTL v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# LTTL v1.4 is distributed in the hope that it will be useful,
+# LTTL v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with LTTL v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with LTTL v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 # Provides functions:
 # - parse_xml_tag()
@@ -25,6 +25,7 @@
 # - get_average()
 # - get_perplexity()
 # - tuple_to_simple_dict()
+# - tuple_to_simple_dict_transpose()
 # - get_unused_char_in_segmentation()
 # - generate_random_annotation_key()
 # - prepend_unit_with_category()
@@ -168,6 +169,18 @@ def tuple_to_simple_dict(dictionary, key):
         (k[1], v)
             for (k, v) in dictionary.iteritems()
                 if k[0] == key and v > 0
+    )
+
+def tuple_to_simple_dict_transpose(dictionary, key):
+    """Take a dict with size-2 tuple key and a value for the 1st key element,
+    and return a dict with only the 1st key element as key.
+
+    NB: keys with zero value are removed.
+    """
+    return dict(
+        (k[0], v)
+            for (k, v) in dictionary.iteritems()
+                if k[1] == key and v > 0
     )
 
 def get_average(values, weights=None):

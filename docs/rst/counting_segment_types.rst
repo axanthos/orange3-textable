@@ -1,3 +1,8 @@
+.. meta::
+   :description: Orange Textable documentation, counting segment types
+   :keywords: Orange, Textable, documentation, count, types, frequency,
+              distribution
+
 Counting segment types
 ======================
 
@@ -17,7 +22,6 @@ Canvas) needs not be modified for this example.
 .. figure:: figures/count_example_schema.png
     :align: center
     :alt: Schema for testing the Count widget
-    :figclass: align-center
     :scale: 80 %
 
     Figure 1: Schema for testing the :ref:`Count` widget.
@@ -37,7 +41,6 @@ the order of columns).
 .. figure:: figures/count_example.png
     :align: center
     :alt: Counting the frequency of letter types with widget :ref:`Count`
-    :figclass: align-center
 
     Figure 2: Counting the frequency of letter types with widget :ref:`Count`.
 
@@ -69,4 +72,10 @@ nonzero frequency.
 
 
 
+See also
+--------
 
+* :doc:`Getting started: From segmentations to tables <segmentations_tables>`
+* :ref:`Reference: Count widget <Count>`
+* :doc:`Reference: Table construction widgets <table_construction_widgets>`
+* :doc:`Cookbook: Count unit frequency <count_unit_frequency>`

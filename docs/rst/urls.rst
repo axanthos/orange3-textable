@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, URLs widget
+   :keywords: Orange, Textable, documentation, URLs, widget
+
 .. _URLs:
 
 URLs
@@ -10,13 +14,17 @@ Fetch text data from internet locations.
 Signals
 -------
 
-Inputs: none
+Inputs:
+
+* ``Message``
+
+  JSON Message controlling the list of imported URLs
 
 Outputs:
 
 * ``Text data``
 
-  Segmentation covering the content of selected URL(s)
+  Segmentation covering the content of imported URLs
 
 Description
 -----------
@@ -31,13 +39,13 @@ Unicode sequences such as ``LATIN SMALL LETTER C (U+0063)`` + ``COMBINING
 CEDILLA (U+0327)`` are systematically replaced by the combined equivalent,
 e.g. ``LATIN SMALL LETTER C WITH CEDILLA (U+00C7)``.
 
-The interface of *URLs* is available in two versions, according to whether or
+The interface of **URLs** is available in two versions, according to whether or
 not the **Advanced Settings** checkbox is selected.
 
 Basic interface
 ~~~~~~~~~~~~~~~
 
-In its basic version (see :ref:`figure 1 <URLs_fig1>` below), the *URLs*
+In its basic version (see :ref:`figure 1 <URLs_fig1>` below), the **URLs**
 widget is limited to the import of a single URL's content. The interface
 contains a **Source** section enabling the user to type the input URL and to
 select the encoding of its content.
@@ -47,7 +55,6 @@ select the encoding of its content.
 .. figure:: figures/urls_basic_example.png
     :align: center
     :alt: Basic interface of the URLs widget
-    :figclass: align-center
 
     Figure 1: **URLs** widget (basic interface).
 
@@ -59,15 +66,14 @@ segment contained in the output segmentation, or the reasons why no
 segmentation is emitted (inability to retrieve the data, encoding issue,
 etc.).
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface.
-
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface.
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
 
-The advanced version of *URLs* allows the user to import the content of
+The advanced version of **URLs** allows the user to import the content of
 several URLs in a determined order; each URL can moreover be associated to a
 distinct encoding and specific annotations. The emitted segmentation contains
 a segment for the content of each imported URL.
@@ -77,7 +83,6 @@ a segment for the content of each imported URL.
 .. figure:: figures/urls_advanced_example.png
     :align: center
     :alt: Advanced interface of the URLs widget
-    :figclass: align-center
     :scale: 80%
 
     Figure 2: **URLs** widget (advanced interface).
@@ -104,9 +109,9 @@ and **Move Down**), to delete an URL from the list (**Remove**) or to
 completely empty it (**Clear All**). Except for **Clear All**, all these
 buttons require the user to previously select an entry from the list. **Import
 List** enables the user to import a list of URLs in JSON format (see
-:doc:`JSON im-/export format <json_format>`) and to add it to the previously
-selected sources. In the opposite **Export List** enables the user to export
-the source list in a JSON file.
+:doc:`JSON im-/export format <json_format>`, :doc:`URL list <json_url_list>`)
+and to add it to the previously selected sources. In the opposite **Export
+List** enables the user to export the source list in a JSON file.
 
 The remainder of the **Sources** section allows the user to add new URLs to
 the list. these must first be inputted in the field with the same name before
@@ -141,8 +146,40 @@ retrieve the data, encoding issue, etc.). In the example, the two segments
 corresponding to the imported URLs' content thus total up to 1'300'344
 characters.
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface.
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface.
+
+.. _urls_remote_control_ref:
+
+Remote control
+~~~~~~~~~~~~~~
+
+**URLs** is one the widgets that can be controlled by means of the
+:ref:`Message` widget. Indeed, it can receive in input a message consisting
+of a URL list in JSON format (see :doc:`JSON im-/export format
+<json_format>`, :doc:`URL list <json_url_list>`), in which case the list
+of URLs specified in this message replaces previously imported sources (if
+any). Note that removing the incoming connection from the **Message** instance
+will not, by itself, remove the list of URLs imported in this way from the
+**URLs** instance's interface; conversely, this list of files can be
+modified using buttons **Move up/down**, **Remove**, etc. even if the incoming
+connection from the **Message** instance has not been removed. Finally, note
+that if an **URLs** instance has the basic version of its interface activated
+when an incoming connection is created from an instance of :ref:`Message`, it
+automatically switches to the advanced interface.
+
+Examples
+--------
+
+* :doc:`Cookbook: Import text from internet location
+  <import_text_internet_location>`
+
+See also
+--------
+
+* :doc:`Reference: JSON im-/export format <json_format>`, :doc:`URL list
+  <json_url_list>`
+* :ref:`Reference: Message widget <Message>`
 

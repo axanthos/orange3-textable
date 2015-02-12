@@ -1,22 +1,24 @@
 #=============================================================================
-# Class OWTextableContext, v0.08
-# Copyright 2012-2014 LangTech Sarl (info@langtech.ch)
+# Class OWTextableContext
+# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
-# This file is part of the Textable (v1.4) extension to Orange Canvas.
+# This file is part of the Textable (v1.5) extension to Orange Canvas.
 #
-# Textable v1.4 is free software: you can redistribute it and/or modify
+# Textable v1.5 is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Textable v1.4 is distributed in the hope that it will be useful,
+# Textable v1.5 is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Textable v1.4. If not, see <http://www.gnu.org/licenses/>.
+# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
+
+__version__ = '0.10'
 
 """
 <name>Context</name>
@@ -76,7 +78,6 @@ class OWTextableContext(OWWidget):
                 self,
                 parent,
                 signalManager,
-                'TextableContext_0_08',
                 wantMainArea=0,
         )
         
@@ -138,7 +139,7 @@ class OWTextableContext(OWWidget):
                 callback            = self.sendButton.settingsChanged,
                 tooltip             = (
                         u"The segmentation that will be used to specify\n"
-                        u"'pivot' segments."
+                        u"'key' segments."
                 ),
         )
         self.unitSegmentationCombo.setMinimumWidth(120)
@@ -162,7 +163,7 @@ class OWTextableContext(OWWidget):
                 labelWidth          = 180,
                 callback            = self.sendButton.settingsChanged,
                 tooltip             = (
-                        u"Indicate whether somme annotation value must\n"
+                        u"Indicate whether some annotation value must\n"
                         u"be displayed in place of (or in addition to) the\n"
                         u"content of segments in the above specified\n"
                         u"segmentation."
@@ -180,8 +181,8 @@ class OWTextableContext(OWWidget):
                 callback            = self.sendButton.settingsChanged,
                 tooltip             = (
                         u"Check this box in order to display the annotation\n"
-                        u"of pivot segments in a separate column rather\n"
-                        u"than in place of pivot segment content."
+                        u"of 'key' segments in a separate column rather\n"
+                        u"than in place of their content."
                 ),
         )
 
@@ -208,13 +209,13 @@ class OWTextableContext(OWWidget):
                 tooltip             = (
                         u"Context specification mode.\n\n"
                         u"'Neighboring segments': context will consist\n"
-                        u"of entire segments to the left and right of pivot\n"
+                        u"of entire segments to the left and right of 'key'\n"
                         u"segments (hence the output table possibly\n"
                         u"contains a large number of columns, depending on\n"
                         u"the 'maximum distance' parameter.\n\n"
                         u"'Containing segmentation': contexts are defined\n"
                         u"as the characters occurring immediately to the\n"
-                        u"left and right of pivot segments (hence the\n"
+                        u"left and right of 'key' segments (hence the\n"
                         u"output table usually contains 3 columns)."
                 ),
         )
@@ -285,7 +286,7 @@ class OWTextableContext(OWWidget):
                 spinCallback        = self.sendButton.settingsChanged,
                 checkCallback       = self.sendButton.settingsChanged,
                 tooltip             = (
-                      u"Maximal distance between pivot and context segments."
+                      u"Maximal distance between 'key' and context segments."
                 ),
         )
         OWGUI.separator(
@@ -299,8 +300,8 @@ class OWTextableContext(OWWidget):
                 label               = u'Use collocation format',
                 callback            = self.sendButton.settingsChanged,
                 tooltip             = (
-                        u"Check this box in order to view the pivot's\n"
-                        u"collocates rather than its contexts of\n"
+                        u"Check this box in order to view the 'key'\n"
+                        u"segment's collocates rather than its contexts of\n"
                         u"occurrence."
                 ),
         )
@@ -610,6 +611,17 @@ class OWTextableContext(OWWidget):
         self.sendButton.sendIf()
 
 
+    def getSettings(self, *args, **kwargs):
+        settings = OWWidget.getSettings(self, *args, **kwargs)
+        settings["settingsDataVersion"] = __version__.split('.')
+        return settings
+
+    def setSettings(self, settings):
+        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+            settings = settings.copy()
+            del settings["settingsDataVersion"]
+            OWWidget.setSettings(self, settings)
+
 
 if __name__ == '__main__':
     from LTTL.Segmenter import Segmenter
@@ -651,7 +663,7 @@ if __name__ == '__main__':
     seg7 = segmenter.tokenize(
         seg6,
         [(re.compile(r'l'), u'Tokenize')],
-        label               = 'pivot'
+        label               = 'key_segment'
     )
     ow.inputData(seg2, 1)
     ow.inputData(seg6, 2)

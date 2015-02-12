@@ -1,3 +1,7 @@
+.. meta::
+   :description: Orange Textable documentation, Merge widget
+   :keywords: Orange, Textable, documentation, Merge, widget
+
 .. _Merge:
 
 Merge
@@ -12,7 +16,7 @@ Signals
 
 Inputs:
 
-* ``Segmentation``
+* ``Segmentation`` (multiple)
 
   Any number of segmentations that should be merged together
 
@@ -34,7 +38,6 @@ segmentation to its output connections.
 .. figure:: figures/merge_advanced_example.png
     :align: center
     :alt: Merge widget (advanced interface)
-    :figclass: align-center
 
     Figure 1: **Merge** widget (advanced interface).
 
@@ -61,7 +64,7 @@ segments** checkbox enables the program to sort the segments on the basis of
 their address (string index first, then initial position, and final position);
 this option is typically useful to rearrange segments that belong to
 different segmentations of a single text in their order of occurrence in the
-text. [#]_ The **Merge duplicate segments** checkbox enables the program to
+text. [#]_ The **Fuse duplicate segments** checkbox enables the program to
 fuse into a single segment several distinct segments whose addresses are the
 same; the annotations associated to the fused segments are all copied in the
 single resulting segment. [#]_
@@ -75,23 +78,29 @@ The **Info** section indicates the number of segments in the output
 segmentation, or the reasons why no segmentation is emitted (no input data,
 no label specified for the output segmentation, etc.).
 
-The **Send** button triggers data emission, as it happens a segmentation, to
-the output connection(s). When it is selected, the **Send automatically**
-checkbox disables the button and the widget attempts to automatically emit
-a segmentation at every modification of its interface or when its input data
-are modified (by deletion or addition of a connection, or because modified
-data is received through an existing connection).
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).
 
 Examples
 --------
 
-* :doc:`Merging segmentations together <merging_segmentations_together>`
-* :doc:`Annotating by merging <annotating_merging>`
+* :doc:`Getting started: Merging segmentations together
+  <merging_segmentations_together>`
+* :doc:`Getting started: Annotating by merging <annotating_merging>`
+* :doc:`Cookbook: Merge several texts <merge_several_texts>`
 
-See also:
+See also
+--------
 
-* :doc:`Tagging table rows with annotations <tagging_table_rows_annotations>`
-* :ref:`Preprocess (section "Caveat") <anchor_to_caveat>`
+* :doc:`Getting started: Tagging table rows with annotations
+  <tagging_table_rows_annotations>`
+
+Footnotes
+---------
 
 .. [#] Note that if sorting is enabled, it may well result in segments being
        ordered in a different way than specified by the user in the
