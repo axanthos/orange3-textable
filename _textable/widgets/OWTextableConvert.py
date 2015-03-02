@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.18'
+__version__ = '0.19'
 
 """
 <name>Convert</name>
@@ -112,7 +112,7 @@ class OWTextableConvert(OWWidget):
         self.sortRowsKeyId          = None
         self.sortColsKeyId          = None
         self.table                  = None
-        self.segmentation           = Input(label=u'table', text=u'')
+        self.segmentation           = None
         self.infoBox                = InfoBox(widget=self.controlArea)
         self.sendButton             = SendButton(
                 widget              = self.controlArea,
@@ -686,8 +686,10 @@ class OWTextableConvert(OWWidget):
             self.infoBox.noDataSent(u'No input.')
             self.send('Orange table', None)
             self.send('Textable table', None)
-            self.send('Segmentation', None)
-            self.segmentation.clear()
+            self.send('Segmentation', None, self)
+            if self.segmentation is not None:
+                self.segmentation.clear()
+                self.segmentation = None
             return
 
         transformed_table = self.table
@@ -794,8 +796,12 @@ class OWTextableConvert(OWWidget):
                 output_orange_headers = includeOrangeHeaders,
                 col_delimiter         = colDelimiter,
         )
-        self.segmentation.update(outputString, label=u'table')
-        self.send('Segmentation', self.segmentation)
+        
+        if self.segmentation is None:
+            self.segmentation = Input(label=u'table', text=outputString)
+        else:
+            self.segmentation.update(outputString, label=u'table')
+        self.send('Segmentation', self.segmentation, self)
         message = 'Table has %i rows and %i columns.' % (
                 len(transformed_table.row_ids),
                 len(transformed_table.col_ids)+1,
@@ -984,6 +990,9 @@ class OWTextableConvert(OWWidget):
 
         self.advancedSettings.setVisible(self.displayAdvancedSettings)
 
+    def onDeleteWidget(self):
+        if self.segmentation is not None:
+            self.segmentation.clear()
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
