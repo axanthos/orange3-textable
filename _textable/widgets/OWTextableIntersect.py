@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.14'
+__version__ = '0.14.1'
 
 """
 <name>Intersect</name>
@@ -398,14 +398,16 @@ class OWTextableIntersect(OWWidget):
 
         # Check that there's something on input...
         if len(self.segmentations) == 0:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Selected data', None, self)
+            self.send( 'Discarded data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
-            self.infoBox.noDataSent(u'No label was provided.')
+            self.infoBox.noDataSent(warning = u'No label was provided.')
             self.send('Selected data', None, self)
+            self.send( 'Discarded data', None, self)
             return
 
         # Source and filtering parameter...
@@ -430,9 +432,11 @@ class OWTextableIntersect(OWWidget):
                 num_iterations = 2 * len(source['segmentation'])
             else:
                 self.infoBox.noDataSent(
-                        u'No annotation key was provided for auto-numbering.'
+                        warning = u'No annotation key was provided '
+                                  u'for auto-numbering.'
                 )
                 self.send('Selected data', None, self)
+                self.send( 'Discarded data', None, self)
                 return
         else:
             autoNumberKey = None
@@ -459,7 +463,7 @@ class OWTextableIntersect(OWWidget):
             progress_callback   = progressBar.advance,
         )
         progressBar.finish()
-        message = u'Data contains %i segment@p.' % len(filtered_data)
+        message = u'%i segment@p.' % len(filtered_data)
         message = pluralize(message, len(filtered_data))
         self.infoBox.dataSent(message)
 
@@ -564,11 +568,12 @@ class OWTextableIntersect(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

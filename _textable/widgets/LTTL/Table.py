@@ -1,5 +1,5 @@
 #=============================================================================
-# Module LTTL.Table, v0.12
+# Module LTTL.Table, v0.14
 # Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the LTTL package v1.5
@@ -293,6 +293,33 @@ class Table(object):
                 self.missing,
                 self.cached_row_id,
         ))
+        
+    def deepcopy(self):
+        """Deep copy a table"""
+        if isinstance(self, IntPivotCrosstab):
+            creator = IntPivotCrosstab
+        elif isinstance(self, PivotCrosstab):
+            creator = PivotCrosstab
+        elif isinstance(self, FlatCrosstab):
+            creator = FlatCrosstab
+        elif isinstance(self, IntWeightedFlatCrosstab):
+            creator = IntWeightedFlatCrosstab
+        elif isinstance(self, WeightedFlatCrosstab):
+            creator = WeightedFlatCrosstab
+        else:
+            creator = Table
+        return(creator(
+                self.row_ids[:],
+                self.col_ids[:],
+                self.values.copy(),
+                self.header_row.copy(),
+                self.header_col.copy(),
+                self.col_type.copy(),
+                self.class_col_id,
+                self.missing,
+                self.cached_row_id,           
+        ))
+
 
 
 class Crosstab(Table):
@@ -382,8 +409,59 @@ class PivotCrosstab(Crosstab):
                 self.missing,
                 new_cached_row_id,
         ))
-
-
+    
+    def to_numpy(self):
+        """Return a numpy array with the numeric variables of the table"""
+        if isinstance(self, IntPivotCrosstab):
+            np_type = np.dtype(np.int32)
+        elif isinstance(self, PivotCrosstab):
+            np_type = np.dtype(np.float32)
+        if self.missing == None:
+            base_table = self.deepcopy()
+            base_table.missing = 0
+        else:
+            base_table = self
+        orange_table = base_table.to_orange_table()
+        contigency_table = Orange.data.preprocess.RemoveDiscrete(orange_table)
+        return contigency_table.to_numpy()[0].astype(np_type)
+        
+    @classmethod
+    def from_numpy(
+        cls,
+        row_ids,
+        col_ids,
+        np_array,
+        header_row      = None,
+        header_col      = None,
+        col_type        = None,
+        class_col_id    = None,
+        missing         = None,
+        cached_row_id   = None,
+    ):
+        """Return an (Int)PivotCrosstab based on a numpy array."""
+        table_values = dict()
+        for i, row in enumerate(np_array):
+            for j, value in enumerate(row):
+                 table_values[(row_ids[i], col_ids[j])] = value
+        if cls == IntPivotCrosstab:    
+            if not issubclass(np_array.dtype.type, np.integer):
+                raise ValueError(
+                    'Cannot cast non-integer numpy array to IntPivotCrosstab.'
+                )
+        return cls(
+            row_ids,
+            col_ids,
+            table_values,
+            header_row,
+            header_col,
+            col_type,
+            class_col_id,
+            missing,
+            cached_row_id,
+        )
+        
+        
+        
 class IntPivotCrosstab(PivotCrosstab):
 
     """A class for storing crosstabs in 'pivot' format in LTTL, with integer
@@ -585,7 +663,7 @@ class IntPivotCrosstab(PivotCrosstab):
                 None,
         ))
 
-    def to_association_matrix(self, bias='neutral', progress_callback=None):
+    def to_association_matrix(self, bias='none', progress_callback=None):
         """Return a table with Markov associativities between columns
         (cf. Bavaud & Xanthos 2005, Deneulin et al. 2014)
         """

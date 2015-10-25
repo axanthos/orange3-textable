@@ -5,10 +5,9 @@
 Windows installation
 ====================
 
-1. On the `Download <http://orange.biolab.si/download/>`_ page of the Orange
-   Canvas website, download the software installer by following the *Full
-   package* link for a first installation or *Pure Orange* to update the
-   program.
+1. On the `Orange 2.7 download page <http://orange.biolab.si/orange2/>`_, 
+   download the software installer by following the *Orange 2.7 installer for 
+   Windows* link.
 
 2. Execute the Orange Canvas installer and click **Ok** at each stage
    (including the stages of the installation of Python modules).
@@ -48,3 +47,8 @@ restarted the program.
 
 6. Execute the Orange Textable installer and click on **Ok** for each
    stage.
+
+**If install was completed without issues but nothing happens when trying to
+launch the application:**
+
+Try to follow the steps described `here <http://bit.ly/1P07vkg>`_.

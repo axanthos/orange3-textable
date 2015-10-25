@@ -85,6 +85,48 @@ segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).
 
+Messages
+--------
+
+Information
+~~~~~~~~~~~
+
+*Data correctly sent to output: <n> segments.*
+    This confirms that the widget has operated properly.
+
+*Settings were* (or *Input has*) *changed, please click 'Send' when ready.*
+    Settings and/or input have changed but the **Send automatically** checkbox
+    has not been selected, so the user is prompted to click the **Send**
+    button (or equivalently check the box) in order for computation and data
+    emission to proceed.
+
+*No data sent to output yet: no input segmentation.*
+    The widget instance is not able to emit data to output because it receives
+    none on its input channel(s).
+
+*No data sent to output yet, see 'Widget state' below.*
+    A problem with the instance's parameters and/or input data prevents it
+    from operating properly, and additional diagnostic information can be
+    found in the **Widget state** box at the bottom of the instance's
+    interface (see `Warnings`_ below).
+
+Warnings
+~~~~~~~~
+
+*No label was provided.*
+    A label must be entered in the **Output segmentation label** field in
+    order for computation and data emission to proceed.
+    
+*No annotation key was provided for imported labels.*
+    The **Import labels with key** checkbox has been selected and an annotation
+    key must be specified in the text field on the right in order for
+    computation and data emission to proceed.
+    
+*No annotation key was provided for auto-numbering.*
+    The **Auto-number with key** checkbox has been selected and an annotation
+    key must be specified in the text field on the right in order for
+    computation and data emission to proceed.
+    
 Examples
 --------
 

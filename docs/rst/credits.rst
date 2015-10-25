@@ -37,7 +37,10 @@ version v1.4 of Orange Textable.
 In the meantime, `Unil's Faculty of Arts <http://www.unil.ch/lettres>`_ has
 granted additional funding for translating Orange Textable's User guide from
 French to English, then converting it into the electronic form you're
-currently reading.
+currently reading. Unil's `department of language and information sciences 
+<http://www.unil.ch/sli>`_ has provided some financial support to the project 
+in 2015, which made it possible to handle warnings and error messages in a
+more user-friendly fashion in Orange Textable v1.5.2. 
 
 Besides `LangTech Sàrl <http://langtech.ch>`_ and `Aris Xanthos 
 <http://www.unil.ch/unisciences/arisxanthos>`_ who have been involved at about
@@ -48,6 +51,6 @@ conception and implementation), people at `Biolab
 Zupan and Aleš Erjavec for conception and implementation work), Corinne
 Morey (French to English translation of the user guide, preparation of the
 online version of the documentation, and creation of most cookbook recipes),
-and many students (and a few scholars) mostly at `Unil <http://www.unil.ch>`_
-for their indispensable feedback as users of Orange Textable.
-
+Douglas Duhaime (case study design and write-up), and many students (and a 
+growing number of scholars) mostly at `Unil <http://www.unil.ch>`_ for their 
+indispensable feedback as users of Orange Textable.

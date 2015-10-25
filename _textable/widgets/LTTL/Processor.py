@@ -1,5 +1,5 @@
 #=============================================================================
-# Class LTTL.Processor, v0.22
+# Class LTTL.Processor, v0.23
 # Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the LTTL package v1.5
@@ -1663,7 +1663,7 @@ class Processor(object):
                         key     = row.__getitem__,
                         reverse = multiple_values['reverse'],
                 )
-            elif multiple_values['sort_order'] == 'Ascii':
+            elif multiple_values['sort_order'] == 'ASCII':
                 annotations = sorted(
                         row.keys(),
                         reverse = multiple_values['reverse'],

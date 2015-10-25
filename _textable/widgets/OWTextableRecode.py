@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.13'
+__version__ = '0.13.1'
 
 """
 <name>Recode</name>
@@ -27,7 +27,7 @@ __version__ = '0.13'
 <priority>2002</priority>
 """
 
-import re, codecs, json, textwrap
+import re, codecs, json
 
 from LTTL.Recoder      import Recoder
 from LTTL.Segmentation import Segmentation
@@ -40,7 +40,7 @@ import OWGUI
 class OWTextableRecode(OWWidget):
 
     """Orange widget for regex-based recoding"""
-    
+
     settingsList = [
             'substitutions',
             'copyAnnotations',
@@ -70,7 +70,7 @@ class OWTextableRecode(OWWidget):
             ('Message', JSONMessage, self.inputMessage, Single)
         ]
         self.outputs = [('Recoded data', Segmentation)]
-        
+
         # Settings...
         self.substitutions              = []
         self.copyAnnotations            = True
@@ -431,6 +431,8 @@ class OWTextableRecode(OWWidget):
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
         if not message:
+            self.warning(0)
+            self.sendButton.settingsChanged()
             return
         self.displayAdvancedSettings = True
         self.advancedSettings.setVisible(True)
@@ -447,11 +449,11 @@ class OWTextableRecode(OWWidget):
                 multiline           = entry.get('multiline', False)
                 dotAll              = entry.get('dot_all', False)
                 if regex == '':
-                    m =   "JSON message on input connection doesn't " \
-                        + "have the right keys and/or values."
-                    m = '\n\t'.join(textwrap.wrap(m, 35))
-                    self.infoBox.noDataSent(m)
-                    self.send('Segmentation', None, self)
+                    self.infoBox.noDataSent(
+                        warning = u"JSON message on input connection doesn't "
+                                  u"have the right keys and/or values."
+                    )
+                    self.send('Recoded data', None, self)
                     return
                 temp_substitutions.append((
                     regex,
@@ -464,32 +466,34 @@ class OWTextableRecode(OWWidget):
             self.substitutions.extend(temp_substitutions)
             self.sendButton.settingsChanged()
         except ValueError:
-            m = "Message content is not in JSON format."
-            m = '\n\t'.join(textwrap.wrap(m, 35))
-            self.infoBox.noDataSent(m)
-            self.send('Text data', None, self)
+            self.infoBox.noDataSent(
+                    warning = u"Message content is not in JSON format."
+            )
+            self.send('Recoded data', None, self)
             return
 
 
     def sendData(self):
-    
+
         """(Have LTTL.Recoder) perform the actual recoding"""
 
         # Check that there's something on input...
         if not self.segmentation:
-            self.infoBox.noDataSent(u'No input segmentation.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Recoded data', None, self)
             return
 
         # Check that segmentation is non-overlapping...
         if not self.segmentation.is_non_overlapping():
-            self.infoBox.noDataSent(u'Input segmentation is overlapping.')
+            self.infoBox.noDataSent(
+                    warning = u'Input segmentation is overlapping.'
+            )
             self.send('Recoded data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
-            self.infoBox.noDataSent(u'No label was provided.')
+            self.infoBox.noDataSent(warning = u'No label was provided.')
             self.send('Recoded data', None, self)
             return
 
@@ -516,7 +520,8 @@ class OWTextableRecode(OWWidget):
 
         # Prepare regexes...
         substitutions = []
-        for subst in mySubstitutions:
+        for subst_idx in xrange(len(mySubstitutions)):
+            subst = mySubstitutions[subst_idx]
             regex_string = subst[0]
             if subst[2] or subst[3] or subst[4] or subst[5]:
                 flags = ''
@@ -529,9 +534,18 @@ class OWTextableRecode(OWWidget):
                 if subst[5]:
                     flags += 's'
                 regex_string += '(?%s)' % flags
-            substitutions.append((re.compile(regex_string), subst[1]))
+            try:
+                substitutions.append((re.compile(regex_string), subst[1]))
+            except re.error as re_error:
+                message = u'Regex error: %s' % re_error.message
+                if self.displayAdvancedSettings and len(mySubstitutions) > 1:
+                    message += ' (substitution #%i)' % (subst_idx + 1)
+                message += '.'
+                self.infoBox.noDataSent(error = message)
+                self.send('Recoded data', None, self)
+                return
         self.recoder.substitutions = substitutions
-        
+
         # Perform recoding...
         self.clearCreatedInputIndices()
         previousNumInputs = len(Segmentation.data)
@@ -539,21 +553,32 @@ class OWTextableRecode(OWWidget):
                 self,
                 iterations = len(self.segmentation) * len(mySubstitutions)
         )
-        recoded_data = self.recoder.apply(
-            segmentation        = self.segmentation,
-            mode                = 'custom',
-            label               = self.label,
-            copy_annotations    = self.copyAnnotations,
-            progress_callback   = progressBar.advance,
-        )
-        progressBar.finish()
-        newNumInputs = len(Segmentation.data)
-        self.createdInputIndices = range(previousNumInputs, newNumInputs)
-        self.send('Recoded data', recoded_data, self)
-        message = u'Data contains %i segment@p.' % len(recoded_data)
-        message = pluralize(message, len(recoded_data))
-        self.infoBox.dataSent(message)
+        try:
+            recoded_data = self.recoder.apply(
+                segmentation        = self.segmentation,
+                mode                = 'custom',
+                label               = self.label,
+                copy_annotations    = copyAnnotations,
+                progress_callback   = progressBar.advance,
+            )
+            newNumInputs = len(Segmentation.data)
+            self.createdInputIndices = range(previousNumInputs, newNumInputs)
+            self.send('Recoded data', recoded_data, self)
+            message = u'%i segment@p.' % len(recoded_data)
+            message = pluralize(message, len(recoded_data))
+            self.infoBox.dataSent(message)
+        except re.error as re_error:
+            if re_error.message == 'invalid group reference':
+                self.infoBox.noDataSent(
+                        error = u'Reference to unmatched group in '
+                                u'replacement string.'
+                )
+            else:
+                message = u'Regex error "%s".' % re_error.message
+                self.infoBox.noDataSent(error = message)
+            self.send('Recoded data', None, self)
         self.sendButton.resetSettingsChangedFlag()
+        progressBar.finish()
 
 
     def inputData(self, segmentation):
@@ -570,7 +595,7 @@ class OWTextableRecode(OWWidget):
                         self,
                         u'Import Regex List',
                         self.lastLocation,
-                        u'Text files (*.*)'
+                        u'Text files (*)'
                 )
         )
         if not filePath:
@@ -704,7 +729,7 @@ class OWTextableRecode(OWWidget):
         del self.substitutions[:]
         del self.selectedSubstLabels[:]
         self.sendButton.settingsChanged()
-        
+
 
     def remove(self):
         """Remove substitution from substitutions attr"""
@@ -815,11 +840,12 @@ class OWTextableRecode(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

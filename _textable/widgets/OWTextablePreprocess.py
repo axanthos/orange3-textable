@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.10'
+__version__ = '0.10.1'
 
 """
 <name>Preprocess</name>
@@ -214,15 +214,17 @@ class OWTextablePreprocess(OWWidget):
     def sendData(self):
         """Preprocess and send data"""
         if not self.segmentation:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Preprocessed data', None, self)
             return
         if not self.segmentation.is_non_overlapping():
-            self.infoBox.noDataSent(u'Input segmentation is overlapping.')
+            self.infoBox.noDataSent(
+                    warning = u'Input segmentation is overlapping.'
+            )
             self.send('Preprocessed data', None, self)
             return
         if not self.label:
-            self.infoBox.noDataSent(u'No label was provided.')
+            self.infoBox.noDataSent(warning = u'No label was provided.')
             self.send('Preprocessed data', None, self)
             return
         if self.applyCaseTransform:
@@ -254,7 +256,7 @@ class OWTextablePreprocess(OWWidget):
         newNumInputs = len(Segmentation.data)
         self.createdInputIndices = range(previousNumInputs, newNumInputs)
         self.send('Preprocessed data', preprocessed_data, self)
-        message = u'Data contains %i segment@p.' % len(preprocessed_data)
+        message = u'%i segment@p.' % len(preprocessed_data)
         message = pluralize(message, len(preprocessed_data))
         self.infoBox.dataSent(message)
         self.sendButton.resetSettingsChangedFlag()
@@ -288,11 +290,12 @@ class OWTextablePreprocess(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

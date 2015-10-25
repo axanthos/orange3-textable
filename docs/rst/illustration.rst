@@ -86,7 +86,7 @@ programs easier.
        <http://digitalhumanities.org/dhq/vol/3/3/000065/000065.html>`_.
 
 .. [#] The schema can be downloaded from :download:`here
-       <schemas/humanist_mining_example.ows>`. Note that two decades of
+       <schemas/humanist_for_textable_v1.5.2.ows>`. Note that two decades of
        Humanist archives weigh dozens of megabytes and that retrieving these
        data from the Internet can take a few minutes depending on bandwidth.
        Please be patient if Orange Textable appears to be stalled when the

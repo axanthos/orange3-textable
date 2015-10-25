@@ -5,9 +5,9 @@
 MacOS X installation
 ====================
 
-1. On the `Download <http://orange.biolab.si/download/>`_ page of the Orange
-   Canvas website, download the disk image of the program by following the
-   Bundle link.
+1. On the `Orange 2.7 download page <http://orange.biolab.si/orange2/>`_, 
+   download the software installer by following the *Orange 2.7 bundle for OSX* 
+   link.
 
 2. In the window that opens at the end of the download, drag the Orange Canvas
    icon and drop it over the *Applications* folder icon.

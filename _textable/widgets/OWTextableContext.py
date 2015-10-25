@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.10'
+__version__ = '0.10.1'
 
 """
 <name>Context</name>
@@ -108,7 +108,7 @@ class OWTextableContext(OWWidget):
         self.settingsRestored       = False
         self.infoBox                = InfoBox(
                 widget          = self.controlArea,
-                stringClickSend = u"Please click 'Compute' when ready.",
+                stringClickSend = u", please click 'Compute' when ready.",
         )
         self.sendButton             = SendButton(
                 widget              = self.controlArea,
@@ -408,7 +408,7 @@ class OWTextableContext(OWWidget):
 
         # Check that there's something on input...
         if len(self.segmentations) == 0:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Textable Table', None)
             return
 
@@ -500,7 +500,7 @@ class OWTextableContext(OWWidget):
             progressBar.finish()
 
         if not len(table.row_ids):
-            self.infoBox.noDataSent(u'Resulting table is empty.')
+            self.infoBox.noDataSent(warning = u'Resulting table is empty.')
             self.send('Textable Table', None)
         else:
             self.send('Textable Table', table)
@@ -613,11 +613,12 @@ class OWTextableContext(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

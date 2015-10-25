@@ -1,5 +1,5 @@
 #=============================================================================
-# Class LTTL.Segmentation, v0.21
+# Class LTTL.Segmentation, v0.22
 # Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the LTTL package v1.5
@@ -68,7 +68,7 @@ class Segmentation(object):
             offset = 1
         else:
             offset = 0
-        if format:
+        if format != None:
             default_dict = dict(
                     (k, u'__none__') for k in self.get_annotation_keys()
             )
@@ -81,7 +81,7 @@ class Segmentation(object):
             str_index = address.str_index + offset
             start     = (address.start or 0) + offset
             end = address.end or len(Segmentation.data[address.str_index])
-            if format:
+            if format != None:
                 segment_dict = default_dict.copy()
                 segment_dict.update(segment.annotations)
                 segment_dict['__num__']             = segment_count
@@ -110,7 +110,7 @@ class Segmentation(object):
             segment_count += 1
             if progress_callback:
                 progress_callback()
-        if format:
+        if format != None:
             return header + segment_delimiter.join(lines) + footer
         else:
             return segment_delimiter.join(lines)
@@ -162,10 +162,10 @@ class Segmentation(object):
                     start + offset,
                     end,
             )
-            annotation_string = ''.join([
+            annotation_string = ''.join(
                     u'<tr><td>%s</td><td>%s</td></tr>' % (k, v)
                             for (k, v) in segment.annotations.items()
-            ])
+            )
             content = segment.get_content().replace('<', '&lt;')
             content = content.replace('>', '&gt;')
             content = content.replace('\n', '<br/>')

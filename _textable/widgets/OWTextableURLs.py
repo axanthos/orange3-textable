@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.14'
+__version__ = '0.14.1'
 
 """
 <name>URLs</name>
@@ -475,10 +475,10 @@ class OWTextableURLs(OWWidget):
                 annotationKey       = entry.get('annotation_key', '')
                 annotationValue     = entry.get('annotation_value', '')
                 if URL == '' or encoding == '':
-                    m =   "JSON message on input connection doesn't " \
-                        + "have the right keys and/or values."
-                    m = '\n\t'.join(textwrap.wrap(m, 35))
-                    self.infoBox.noDataSent(m)
+                    self.infoBox.noDataSent(
+                        warning = u"JSON message on input connection doesn't "
+                                  u"have the right keys and/or values."
+                    )
                     self.send('Text data', None, self)
                     return
                 temp_URLs.append((
@@ -490,9 +490,9 @@ class OWTextableURLs(OWWidget):
             self.URLs.extend(temp_URLs)
             self.sendButton.settingsChanged()
         except ValueError:
-            m = "Message content is not in JSON format."
-            m = '\n\t'.join(textwrap.wrap(m, 35))
-            self.infoBox.noDataSent(m)
+            self.infoBox.noDataSent(
+                    warning = u"Message content is not in JSON format."
+            )
             self.send('Text data', None, self)
             return
 
@@ -506,13 +506,13 @@ class OWTextableURLs(OWWidget):
                 (self.displayAdvancedSettings and not self.URLs)
              or not (self.URL or self.displayAdvancedSettings)
         ):
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no URL selected.')
             self.send('Text data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
-            self.infoBox.noDataSent(u'No label was provided.')
+            self.infoBox.noDataSent(warning = u'No label was provided.')
             self.send('Text data', None, self)
             return
 
@@ -522,7 +522,8 @@ class OWTextableURLs(OWWidget):
                 autoNumberKey  = self.autoNumberKey
             else:
                 self.infoBox.noDataSent(
-                        u'No annotation key was provided for auto-numbering.'
+                        warning = u'No annotation key was provided '
+                                  u'for auto-numbering.'
                 )
                 self.send('Text data', None, self)
                 return
@@ -563,22 +564,21 @@ class OWTextableURLs(OWWidget):
                 try:
                     URLContent = URLHandle.read().decode(encoding)
                 except UnicodeError:
-                    m = u'Encoding of %s does not look like %s.' % (
-                        URL,
-                        encoding,
-                    )
-                    m = '\n\t'.join(textwrap.wrap(m, 35))
-                    self.infoBox.noDataSent(m)
+                    if len(myURLs) > 1:
+                        error = u"Encoding error: %s." % URL
+                    else: 
+                        error = u"Encoding error."
+                    self.infoBox.noDataSent(error = error)
                     self.send('Text data', None, self)
                     return
                 finally:
                     URLHandle.close()
             except IOError:
-                m = '\n\t'.join(textwrap.wrap(
-                        u"Cannot retrieve URL %s." % URL,
-                        35
-                ))
-                self.infoBox.noDataSent(m)
+                if len(myURLs) > 1:
+                    error = u"Couldn't retrieve %s." % URL
+                else: 
+                    error = u"Couldn't retrieve URL."
+                self.infoBox.noDataSent(error = error)
                 self.send('Text data', None, self)
                 return
 
@@ -634,13 +634,13 @@ class OWTextableURLs(OWWidget):
                     progress_callback   = None,
             )
 
-        message = u'Data contains %i segment@p ' % len(self.segmentation)
+        message = u'%i segment@p ' % len(self.segmentation)
         message = pluralize(message, len(self.segmentation))
         numChars = 0
         for segment in self.segmentation:
             segmentLength = len(Segmentation.data[segment.address.str_index])
             numChars += segmentLength
-        message += u'and %i character@p.' % numChars
+        message += u'(%i character@p).' % numChars
         message = pluralize(message, numChars)
         self.infoBox.dataSent(message)
 
@@ -666,7 +666,7 @@ class OWTextableURLs(OWWidget):
                         self,
                         u'Import URL List',
                         self.lastLocation,
-                        u'Text files (*.*)'
+                        u'Text files (*)'
                 )
         )
         if not filePath:
@@ -901,11 +901,12 @@ class OWTextableURLs(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

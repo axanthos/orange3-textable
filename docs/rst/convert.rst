@@ -305,6 +305,25 @@ data at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).
 
+Messages
+--------
+
+Information
+~~~~~~~~~~~
+
+*Data correctly sent to output: table has <n> and <m> columns.*
+    This confirms that the widget has operated properly.
+
+*Settings were* (or *Input has*) *changed, please click 'Send' when ready.*
+    Settings and/or input have changed but the **Send automatically** checkbox
+    has not been selected, so the user is prompted to click the **Send**
+    button (or equivalently check the box) in order for computation and data
+    emission to proceed.
+
+*No data sent to output yet: no input table.*
+    The widget instance is not able to emit data to output because it receives
+    none on its input channel(s).
+
 See also
 --------
 

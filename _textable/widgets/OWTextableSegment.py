@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.21'
+__version__ = '0.21.1'
 
 """
 <name>Segment</name>
@@ -27,7 +27,7 @@ __version__ = '0.21'
 <priority>4002</priority>
 """
 
-import re, codecs, textwrap, json
+import re, codecs, json
 
 from LTTL.Segmenter    import Segmenter
 from LTTL.Segmentation import Segmentation
@@ -86,7 +86,7 @@ class OWTextableSegment(OWWidget):
         self.mode                       = u'Tokenize'
         self.uuid                       = None
         self.loadSettings()
-        self.uuid = getWidgetUuid(self)
+        self.uuid                       = getWidgetUuid(self)
 
         # Other attributes...
         self.segmenter              = Segmenter()
@@ -526,6 +526,8 @@ class OWTextableSegment(OWWidget):
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
         if not message:
+            self.warning(0)
+            self.sendButton.settingsChanged()
             return
         self.displayAdvancedSettings = True
         self.advancedSettings.setVisible(True)
@@ -544,11 +546,11 @@ class OWTextableSegment(OWWidget):
                 dotAll              = entry.get('dot_all', False)
                 mode                = entry.get('mode', '')
                 if regex == '' or mode == '':
-                    m =   "JSON message on input connection doesn't " \
-                        + "have the right keys and/or values."
-                    m = '\n\t'.join(textwrap.wrap(m, 35))
-                    self.infoBox.noDataSent(m)
-                    self.send('Segmentation', None, self)
+                    self.infoBox.noDataSent(
+                        warning = u"JSON message on input connection doesn't "
+                                  u"have the right keys and/or values."
+                    )
+                    self.send('Segmented data', None, self)
                     return
                 temp_regexes.append((
                     regex,
@@ -563,10 +565,10 @@ class OWTextableSegment(OWWidget):
             self.regexes.extend(temp_regexes)
             self.sendButton.settingsChanged()
         except ValueError:
-            m = "Message content is not in JSON format."
-            m = '\n\t'.join(textwrap.wrap(m, 35))
-            self.infoBox.noDataSent(m)
-            self.send('Text data', None, self)
+            self.infoBox.noDataSent(
+                    warning = u"Message content is not in JSON format."
+            )
+            self.send('Segmented data', None, self)
             return
 
 
@@ -576,7 +578,7 @@ class OWTextableSegment(OWWidget):
 
         # Check that there's something on input...
         if not self.inputSegmentation:
-            self.infoBox.noDataSent(u'No input segmentation.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Segmented data', None, self)
             return
 
@@ -585,7 +587,7 @@ class OWTextableSegment(OWWidget):
             (self.displayAdvancedSettings and not self.regexes)
             or not (self.regex or self.displayAdvancedSettings)
         ):
-            self.infoBox.noDataSent(u'No regex defined.')
+            self.infoBox.noDataSent(warning = u'No regex defined.')
             self.send('Segmented data', None, self)
             return
 
@@ -608,7 +610,7 @@ class OWTextableSegment(OWWidget):
 
         # Check that label is not empty...
         if not self.label:
-            self.infoBox.noDataSent(u'No label was provided.')
+            self.infoBox.noDataSent(warning = u'No label was provided.')
             self.send('Segmented data', None, self)
             return
 
@@ -622,7 +624,8 @@ class OWTextableSegment(OWWidget):
                 )
             else:
                 self.infoBox.noDataSent(
-                        u'No annotation key was provided for auto-numbering.'
+                        warning = u'No annotation key was provided '
+                                  u'for auto-numbering.'
                 )
                 self.send('Segmented data', None, self)
                 return
@@ -634,13 +637,16 @@ class OWTextableSegment(OWWidget):
         if self.displayAdvancedSettings:
             importAnnotations   = self.importAnnotations
             mergeDuplicates     = self.mergeDuplicates
+            if mergeDuplicates:
+                num_iterations += len(self.inputSegmentation)
         else:
             importAnnotations   = True
             mergeDuplicates     = False
 
         # Prepare regexes...
         regexes = []
-        for regex in myRegexes:
+        for regex_idx in xrange(len(myRegexes)):
+            regex = myRegexes[regex_idx]
             regex_string = regex[0]
             if regex[3] or regex[4] or regex[5] or regex[6]:
                 flags = ''
@@ -653,36 +659,52 @@ class OWTextableSegment(OWWidget):
                 if regex[6]:
                     flags += 's'
                 regex_string += '(?%s)' % flags
-            if regex[1] and regex[2]:
-                regexes.append((
-                        re.compile(regex_string),
-                        regex[7],
-                        {regex[1]: regex[2]}
-                ))
-            else:
-                regexes.append((re.compile(regex_string),regex[7],))
+            try:
+                if regex[1] and regex[2]:
+                    regexes.append((
+                            re.compile(regex_string),
+                            regex[7],
+                            {regex[1]: regex[2]}
+                    ))
+                else:
+                    regexes.append((re.compile(regex_string),regex[7],))
+            except re.error as re_error:
+                message = u'Regex error: %s' % re_error.message
+                if self.displayAdvancedSettings and len(myRegexes) > 1:
+                    message += ' (regex #%i)' % (regex_idx + 1)
+                message += '.'
+                self.infoBox.noDataSent(error = message)
+                self.send('Segmented data', None, self)
+                return
 
         # Perform tokenization...
         progressBar = OWGUI.ProgressBar(
                 self,
                 iterations = num_iterations
         )
-        segmented_data = self.segmenter.tokenize(
-            segmentation        = self.inputSegmentation,
-            regexes             = regexes,
-            label               = self.label,
-            import_annotations  = importAnnotations,
-            merge_duplicates    = mergeDuplicates,
-            auto_numbering_as   = autoNumberKey,
-            progress_callback   = progressBar.advance,
-        )
-        progressBar.finish()
-        message = u'Data contains %i segment@p.' % len(segmented_data)
-        message = pluralize(message, len(segmented_data))
-        self.infoBox.dataSent(message)
-
-        self.send( 'Segmented data', segmented_data, self)
+        try:
+            segmented_data = self.segmenter.tokenize(
+                segmentation        = self.inputSegmentation,
+                regexes             = regexes,
+                label               = self.label,
+                import_annotations  = importAnnotations,
+                merge_duplicates    = mergeDuplicates,
+                auto_numbering_as   = autoNumberKey,
+                progress_callback   = progressBar.advance,
+            )
+            message = u'%i segment@p.' % len(segmented_data)
+            message = pluralize(message, len(segmented_data))
+            self.infoBox.dataSent(message)
+            self.send('Segmented data', segmented_data, self)
+        except IndexError:
+            self.infoBox.noDataSent(
+                    error = u'Reference to unmatched group in '
+                            u'annotation key and/or value.'
+            )
+            self.send('Segmented data', None, self)
         self.sendButton.resetSettingsChangedFlag()
+        progressBar.finish()
+
 
 
     def inputData(self, segmentation):
@@ -699,7 +721,7 @@ class OWTextableSegment(OWWidget):
                         self,
                         u'Import Regex List',
                         self.lastLocation,
-                        u'Text files (*.*)'
+                        u'Text files (*)'
                 )
         )
         if not filePath:
@@ -956,11 +978,12 @@ class OWTextableSegment(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

@@ -59,5 +59,3 @@ See also
 
 * :ref:`Reference: Segment widget <Segment>`
 * :doc:`Cookbook: Segment text in smaller units <segment_text>`
-* :doc:`Getting started: Hierarchical segmentations and performance issues
-  <hierarchical_segmentations_performance_issues>`

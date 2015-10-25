@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.16'
+__version__ = '0.16.1'
 
 """
 <name>Display</name>
@@ -98,7 +98,7 @@ class OWTextableDisplay(OWWidget):
         self.browser                = QTextBrowser()
         self.infoBox                = InfoBox(
                 widget          = self.controlArea,
-                stringDataSent  = u'Data correctly sent to default output.',
+                stringDataSent  = u'Data correctly sent to default output',
         )
         self.sendButton             = SendButton(
                 widget              = self.controlArea,
@@ -358,7 +358,7 @@ class OWTextableDisplay(OWWidget):
     def sendData(self):
         """Send segmentation to output"""
         if not self.segmentation:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Bypassed segmentation', None, self)
             self.send('Displayed segmentation', None, self)
             return
@@ -369,9 +369,12 @@ class OWTextableDisplay(OWWidget):
                     self.displayedSegmentation,
                     self
             )
-        message = u'Data contains %i segment@p.' % len(self.segmentation)
-        message = pluralize(message, len(self.segmentation))
-        self.infoBox.dataSent(message)
+        else:
+            self.send('Displayed segmentation', None, self)        
+        if 'Format' not in self.widgetState['Error'].get(0, u''):
+            message = u'%i segment@p.' % len(self.segmentation)
+            message = pluralize(message, len(self.segmentation))
+            self.infoBox.dataSent(message)
         self.sendButton.resetSettingsChangedFlag()
 
 
@@ -395,12 +398,15 @@ class OWTextableDisplay(OWWidget):
                 customFormatting = False
                 self.autoSend    = True
             if customFormatting:
+                self.navigationBox.setDisabled(True)
+                self.exportBox.setDisabled(True)
                 self.formattingIndentedBox.setDisabled(False)
-                if self.customFormat:
-                    progressBar = OWGUI.ProgressBar(
-                            self,
-                            iterations = len(self.segmentation)
-                    )
+                displayedString = u''
+                progressBar = OWGUI.ProgressBar(
+                        self,
+                        iterations = len(self.segmentation)
+                )
+                try:
                     displayedString = self.segmentation.to_string(
                         self.customFormat.decode('string_escape'),
                         self.segmentDelimiter.decode('string_escape'),
@@ -409,9 +415,29 @@ class OWTextableDisplay(OWWidget):
                         True,
                         progress_callback = progressBar.advance,
                     )
-                    progressBar.finish()
-                else:
-                    displayedString = u''
+                    self.infoBox.customMessage(
+                            u'Segmentation labelled %s correctly displayed.' %
+                                    self.segmentation.label
+                    )
+                    self.exportBox.setDisabled(False)
+                except TypeError as type_error:
+                    message = u"No data sent to 'Displayed segmentation' channel"
+                    error = u'Format mismatch error: %s.' % type_error.message
+                    self.infoBox.customMessage(message = message, error = error)
+                except KeyError:
+                    message = u"No data sent to 'Displayed segmentation' channel"
+                    error = u'Format error: missing name.'
+                    self.infoBox.customMessage(message = message, error = error)
+                except ValueError:
+                    message = u"No data sent to 'Displayed segmentation' channel"
+                    error = u'Format error: missing variable type.'
+                    self.infoBox.customMessage(message = message, error = error)
+                self.browser.append(displayedString)
+                self.displayedSegmentation.update(
+                        displayedString,
+                        label           = u'displayed_segmentation',
+                )
+                progressBar.finish()
             else:
                 self.formattingIndentedBox.setDisabled(True)
                 progressBar = OWGUI.ProgressBar(
@@ -422,32 +448,30 @@ class OWTextableDisplay(OWWidget):
                         True,
                         progressBar.advance,
                 )
-                progressBar.finish()
-            self.browser.append(displayedString)
-            self.displayedSegmentation.update(
-                    displayedString,
-                    label           = u'displayed_segmentation',
-            )
-            if customFormatting == False:
+                self.browser.append(displayedString)
+                self.displayedSegmentation.update(
+                        displayedString,
+                        label           = u'displayed_segmentation',
+                )
                 self.navigationBox.setDisabled(False)
                 self.gotoSpin.control.setRange(1, len(self.segmentation))
                 if self.goto:
                     self.browser.setSource(QUrl("#%i" % self.goto))
                 else:
                     self.browser.setSource(QUrl("#top"))
-            else:
-                self.navigationBox.setDisabled(True)
-            self.exportBox.setDisabled(False)
-            self.infoBox.customMessage(
-                    u'Segmentation correctly displayed.',
-                    u'\tLabel is "%s".' % self.segmentation.label
-            )
+                self.exportBox.setDisabled(False)
+                self.infoBox.customMessage(
+                        u'Segmentation labelled %s correctly displayed.' %
+                                self.segmentation.label
+                )
+                progressBar.finish()
         else:
             self.goto = 0
             self.exportBox.setDisabled(True)
             self.navigationBox.setDisabled(True)
             self.formattingIndentedBox.setDisabled(True)
         self.adjustSize()
+
 
 
 
@@ -511,11 +535,12 @@ class OWTextableDisplay(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

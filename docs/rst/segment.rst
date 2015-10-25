@@ -72,9 +72,8 @@ label. The annotations of each input segment are systematically copied in the
 corresponding output segments (see `Advanced interface`_, option **Import
 annotations**).
 
-The **Info** section indicates the number of segments in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-overlaps in the input segmentations, etc.).
+The **Info** section gives indications regarding the current status of the
+widget instance (see `Messages`_ below, section `Information`_).
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
@@ -165,9 +164,8 @@ enables the program to fuse into a single segment several distinct segments
 whose addresses are identical; the annotations associated to the fused
 segments are all copied in the single resulting segment. [#]_
 
-The **Info** section indicates the number of segments in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-overlaps in the input segmentations, etc.).
+The **Info** section gives indications regarding the current status of the
+widget instance (see `Messages`_ below, section `Information`_).
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
@@ -196,6 +194,75 @@ Finally, note that if a **Segment** instance has the basic version of its
 interface activated when an incoming connection is created from an instance of
 :ref:`Message`, it automatically switches to the advanced interface.
 
+Messages
+--------
+
+Information
+~~~~~~~~~~~
+
+*Data correctly sent to output: <n> segments.*
+    This confirms that the widget has operated properly.
+
+*Settings were* (or *Input has*) *changed, please click 'Send' when ready.*
+    Settings and/or input have changed but the **Send automatically** checkbox
+    has not been selected, so the user is prompted to click the **Send**
+    button (or equivalently check the box) in order for computation and data
+    emission to proceed.
+
+*No data sent to output yet: no input segmentation.*
+    The widget instance is not able to emit data to output because it receives
+    none on its input channel(s).
+
+*No data sent to output yet, see 'Widget state' below.*
+    A problem with the instance's parameters and/or input data prevents it
+    from operating properly, and additional diagnostic information can be
+    found in the **Widget state** box at the bottom of the instance's
+    interface (see `Warnings`_ and `Errors`_ below).
+
+Warnings
+~~~~~~~~
+
+*No regex defined.*
+    A regular expression must be entered in the **Regex** field in order for
+    computation and data emission to proceed (in the advanced interface, the
+    **Add** button must also be clicked).
+
+*No label was provided.*
+    A label must be entered in the **Output segmentation label** field in
+    order for computation and data emission to proceed.
+    
+*No annotation key was provided for auto-numbering.*
+    The **Auto-number with key** checkbox has been selected and an annotation
+    key must be specified in the text field on the right in order for
+    computation and data emission to proceed.
+    
+*JSON message on input connection doesn't have the right keys and/or values.*
+    The widget instance has received a JSON message on its ``Message`` input
+    channel and the keys and/or values specified in this message do not match
+    those that are expected for this particular widget type (see :doc:`JSON
+    im-/export format <json_format>`, :doc:`Regular expression list
+    <json_regular_expression_list>`).
+
+*JSON parsing error.*
+    The widget instance has received data on its ``Message`` input channel and
+    the data couldn't be correctly parsed. Please use a JSON validator to 
+    check the data's well-formedness.
+
+Errors
+~~~~~~
+
+*Regex error: <error_message>.*
+    The regular expression entered in the **Regex** field is invalid.
+
+*Regex error: <error_message> (regex #<n>).*
+    The *n*-th regular expression in the **Regexes** list is invalid.
+
+*Reference to unmatched group in annotation key and/or value.*
+    In the advanced interface, a regular expression has been associated with
+    an annotation key--value pair and in at least one of these terms reference
+    is made to a numbered variable (``&1``, ``&2``, ...) which turns out to
+    not always have a matching element.
+    
 Examples
 --------
 
@@ -208,8 +275,6 @@ See also
 * :doc:`Reference: JSON im-/export format <json_format>`, :doc:`Regular
   expression list <json_regular_expression_list>`
 * :ref:`Reference: Message widget <Message>`
-* :doc:`Getting started: Hierarchical segmentations and performance issues
-  <hierarchical_segmentations_performance_issues>`
 * :doc:`Getting started: A note on regular expressions
   <note_regular_expressions>`
 

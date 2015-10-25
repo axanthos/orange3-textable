@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.15'
+__version__ = '0.15.1'
 
 """
 <name>Extract XML</name>
@@ -528,19 +528,19 @@ class OWTextableExtractXML(OWWidget):
 
         # Check that there's something on input...
         if not self.inputSegmentation:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Extracted data', None, self)
             return
 
         # Check that element field is not empty...
         if not self.element:
-            self.infoBox.noDataSent(u'No XML element was specified.')
+            self.infoBox.noDataSent(warning=u'No XML element was specified.')
             self.send('Extracted data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
-            self.infoBox.noDataSent(u'No label was provided.')
+            self.infoBox.noDataSent(warning = u'No label was provided.')
             self.send('Extracted data', None, self)
             return
 
@@ -550,7 +550,8 @@ class OWTextableExtractXML(OWWidget):
                 importElementAs = self.importElementAs
             else:
                 self.infoBox.noDataSent(
-                        u'No annotation key was provided for element import.'
+                        warning = u'No annotation key was provided '
+                                  u'for element import.'
                 )
                 self.send('Extracted data', None)
                 return
@@ -564,7 +565,8 @@ class OWTextableExtractXML(OWWidget):
                 num_iterations = (2 * len(self.inputSegmentation))
             else:
                 self.infoBox.noDataSent(
-                        u'No annotation key was provided for auto-numbering.'
+                        warning = u'No annotation key was provided '
+                                  u'for auto-numbering.'
                 )
                 self.send('Extracted data', None, self)
                 return
@@ -575,7 +577,8 @@ class OWTextableExtractXML(OWWidget):
         # Prepare conditions...
         conditions = {}
         if self.displayAdvancedSettings:
-            for condition in self.conditions:
+            for condition_idx in xrange(len(self.conditions)):
+                condition = self.conditions[condition_idx]
                 attribute       = condition[0]
                 regex_string    = condition[1]
                 if (
@@ -594,13 +597,25 @@ class OWTextableExtractXML(OWWidget):
                     if condition[5]:
                         flags += 's'
                     regex_string += '(?%s)' % flags
-                conditions[attribute] = re.compile(regex_string)
+
+                try:
+                    conditions[attribute] = re.compile(regex_string)
+                except re.error as re_error:
+                    message = u'Regex error: %s' % re_error.message
+                    if len(self.conditions) > 1:
+                        message += ' (condition #%i)' % (condition_idx + 1)
+                    message += '.'
+                    self.infoBox.noDataSent(error = message)
+                    self.send('Extracted data', None, self)
+                    return
 
         # Basic settings...
         if self.displayAdvancedSettings:
             importAnnotations   = self.importAnnotations
-            mergeDuplicates     = self.mergeDuplicates
             preserveLeaves      = self.preserveLeaves
+            mergeDuplicates     = self.mergeDuplicates
+            if mergeDuplicates:
+                num_iterations += len(self.inputSegmentation)
         else:
             importAnnotations   = True
             mergeDuplicates     = False
@@ -611,26 +626,31 @@ class OWTextableExtractXML(OWWidget):
                 self,
                 iterations = num_iterations
         )
-        xml_extracted_data = self.segmenter.import_xml(
-                segmentation        = self.inputSegmentation,
-                element             = self.element,
-                conditions          = conditions,
-                import_element_as   = importElementAs,
-                label               = self.label,
-                import_annotations  = importAnnotations,
-                auto_numbering_as   = autoNumberKey,
-                remove_markup       = self.deleteMarkup,
-                merge_duplicates    = mergeDuplicates,
-                preserve_leaves     = preserveLeaves,
-                progress_callback   = progressBar.advance,
-        )
-        progressBar.finish()
-        message = u'Data contains %i segment@p.' % len(xml_extracted_data)
-        message = pluralize(message, len(xml_extracted_data))
-        self.infoBox.dataSent(message)
-
-        self.send( 'Extracted data', xml_extracted_data, self)
+        try:
+            xml_extracted_data = self.segmenter.import_xml(
+                    segmentation        = self.inputSegmentation,
+                    element             = self.element,
+                    conditions          = conditions,
+                    import_element_as   = importElementAs,
+                    label               = self.label,
+                    import_annotations  = importAnnotations,
+                    auto_numbering_as   = autoNumberKey,
+                    remove_markup       = self.deleteMarkup,
+                    merge_duplicates    = mergeDuplicates,
+                    preserve_leaves     = preserveLeaves,
+                    progress_callback   = progressBar.advance,
+            )
+            message = u'%i segment@p.' % len(xml_extracted_data)
+            message = pluralize(message, len(xml_extracted_data))
+            self.infoBox.dataSent(message)
+            self.send('Extracted data', xml_extracted_data, self)
+        except ValueError:
+            self.infoBox.noDataSent(
+                    error = u'XML parsing error.'
+            )
+            self.send('Extracted data', None, self)
         self.sendButton.resetSettingsChangedFlag()
+        progressBar.finish()
 
 
     def inputData(self, segmentation):
@@ -738,11 +758,12 @@ class OWTextableExtractXML(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

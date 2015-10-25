@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.19'
+__version__ = '0.19.1'
 
 """
 <name>Convert</name>
@@ -95,7 +95,7 @@ class OWTextableConvert(OWWidget):
         self.normalizeType              = 'l1'
         self.convert                    = False
         self.conversionType             = 'association matrix'
-        self.associationBias            = 'neutral'
+        self.associationBias            = 'none'
         self.transpose                  = False
         self.reformat                   = False
         self.unweighted                 = False
@@ -683,7 +683,7 @@ class OWTextableConvert(OWWidget):
 
         # Check that there is something on input...
         if not self.table:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no input table.')
             self.send('Orange table', None)
             self.send('Textable table', None)
             self.send('Segmentation', None, self)
@@ -802,10 +802,10 @@ class OWTextableConvert(OWWidget):
         else:
             self.segmentation.update(outputString, label=u'table')
         self.send('Segmentation', self.segmentation, self)
-        message = 'Table has %i rows and %i columns.' % (
-                len(transformed_table.row_ids),
-                len(transformed_table.col_ids)+1,
-        )
+        message = 'table has %i row@p' % len(transformed_table.row_ids)
+        message = pluralize(message, len(transformed_table.row_ids))
+        message += ' and %i column@p.' % (len(transformed_table.col_ids)+1)
+        message = pluralize(message, len(transformed_table.col_ids)+1)
         self.infoBox.dataSent(message)
         self.sendButton.resetSettingsChangedFlag()
 
@@ -996,11 +996,12 @@ class OWTextableConvert(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

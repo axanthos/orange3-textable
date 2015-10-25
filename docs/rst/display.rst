@@ -190,6 +190,58 @@ When the option **Apply custom formatting** is not selected, the
 **Navigation** section is enabled and allows the user to view a particular
 segment through the **Go to segment** control.
 
+Messages
+--------
+
+Information
+~~~~~~~~~~~
+
+*Data correctly sent to output: <n> segments.*
+    This confirms that the widget has operated properly.
+
+*Settings were* (or *Input has*) *changed, please click 'Send' when ready.*
+    Settings and/or input have changed but the **Send automatically** checkbox
+    has not been selected, so the user is prompted to click the **Send**
+    button (or equivalently check the box) in order for computation and data
+    emission to proceed.
+
+*No data sent to output yet: no input segmentation.*
+    The widget instance is not able to emit data to output because it receives
+    none on its input channel(s).
+
+*No data sent to 'Displayed segmentation' channel, see 'Widget state' below.*
+    A problem with the 'Format' parameter prevents this widget instance
+    from operating properly, and additional diagnostic information can be
+    found in the **Widget state** box at the bottom of the instance's
+    interface (see and `Errors`_ below).
+
+Errors
+~~~~~~
+
+*Format mismatch error: a <variable_type> is required.*
+    In the advanced interface, the string entered in the **Format** field 
+    indicates that a variable of a certain type (e.g. float) is expected,
+    but in at least one case, the corresponding value is of another type 
+    (e.g. string). The string type (e.g. ``%(__content__)s``) is usually the 
+    safest bet.
+
+*Format mismatch error: not enough arguments for format string.*
+    In the advanced interface, the string entered in the **Format** field 
+    indicates that a variable is expected but in at least one case, there is
+    no corresponding value. Make sure that no placeholder is used without an 
+    explicit name (always use e.g. ``%(__content__)s``, and never ``%s``).
+
+*Format error: missing variable type.*
+    In the advanced interface, a variable type indication is missing in the 
+    string entered in the **Format** field. Make sure that no placeholder is 
+    used without a variable type indication (always use e.g. 
+    ``%(__content__)s``, and never ``%(__content__)``).
+
+*Format error: missing name.*
+    In the advanced interface, a variable name is missing in the string entered 
+    in the **Format** field. Make sure that no placeholder is used without a 
+    variable name (always use e.g. ``%(__content__)s``, and never ``%()s``).
+    
 Examples
 --------
 

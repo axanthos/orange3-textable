@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.21'
+__version__ = '0.21.1'
 
 """
 <name>Count</name>
@@ -110,7 +110,7 @@ class OWTextableCount(OWWidget):
         self.contextAnnotationKey   = None
         self.infoBox                = InfoBox(
                 widget          = self.controlArea,
-                stringClickSend = u"Please click 'Compute' when ready.",
+                stringClickSend = u", please click 'Compute' when ready.",
         )
         self.sendButton             = SendButton(
                 widget              = self.controlArea,
@@ -451,7 +451,7 @@ class OWTextableCount(OWWidget):
 
         # Check that there's something on input...
         if len(self.segmentations) == 0:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Pivot Crosstab', None)
             return
 
@@ -544,11 +544,11 @@ class OWTextableCount(OWWidget):
 
         totalCount = sum([i for i in table.values.values()])
         if totalCount == 0:
-            self.infoBox.noDataSent(u'Total count is 0.')
+            self.infoBox.noDataSent(warning = u'Resulting table is empty.')
             self.send('Pivot Crosstab', None)
         else:
             self.send('Pivot Crosstab', table)
-            self.infoBox.dataSent(u'Total count is %i.' % totalCount)
+            self.infoBox.dataSent(u'total count is %i.' % totalCount)
 
         self.sendButton.resetSettingsChangedFlag()
 
@@ -658,11 +658,12 @@ class OWTextableCount(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

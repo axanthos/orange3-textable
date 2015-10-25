@@ -20,7 +20,7 @@
 
 from __future__ import division
 
-__version__ = '0.14'
+__version__ = '0.14.1'
 
 """
 <name>Select</name>
@@ -42,7 +42,7 @@ import OWGUI
 
 class OWTextableSelect(OWWidget):
 
-    """Orange widget for segment in-/exclusion based on intrisic properties"""
+    """Orange widget for segment in-/exclusion based on intrinsic properties"""
     
     contextHandlers = {
         '': SegmentationContextHandler(
@@ -668,14 +668,16 @@ class OWTextableSelect(OWWidget):
 
         # Check that there's something on input...
         if not self.segmentation:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Selected data', None, self)
+            self.send( 'Discarded data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
-            self.infoBox.noDataSent(u'No label was provided.')
+            self.infoBox.noDataSent(warning = u'No label was provided.')
             self.send('Selected data', None, self)
+            self.send( 'Discarded data', None, self)
             return
 
         # Advanced settings...
@@ -686,8 +688,9 @@ class OWTextableSelect(OWWidget):
 
                 # Check that regex is not empty...
                 if not self.regex:
-                    self.infoBox.noDataSent(u'No regex defined.')
+                    self.infoBox.noDataSent(warning = u'No regex defined.')
                     self.send('Selected data', None, self)
+                    self.send( 'Discarded data', None, self)
                     return
 
                 # Prepare regex...
@@ -708,7 +711,14 @@ class OWTextableSelect(OWWidget):
                     if self.dotAll:
                         flags += 's'
                     regex_string += '(?%s)' % flags
-                regex = re.compile(regex_string)
+                try:
+                    regex = re.compile(regex_string)
+                except re.error as re_error:
+                    message = u'Regex error: %s.' % re_error.message
+                    self.infoBox.noDataSent(error = message)
+                    self.send('Selected data', None, self)
+                    self.send( 'Discarded data', None, self)
+                    return
 
                 # Get number of iterations...
                 num_iterations = len(self.segmentation)
@@ -725,8 +735,9 @@ class OWTextableSelect(OWWidget):
                 else:
                     sampleSize = self.sampleSize
                 if sampleSize <= 0:
-                    self.infoBox.noDataSent(u'Sample size too small.')
+                    self.infoBox.noDataSent(warning=u'Sample size too small.')
                     self.send('Selected data', None, self)
+                    self.send( 'Discarded data', None, self)
                     return
 
                 # Get number of iterations...
@@ -767,9 +778,11 @@ class OWTextableSelect(OWWidget):
                     num_iterations *= 2
                 else:
                     self.infoBox.noDataSent(
-                            u'No annotation key was provided for auto-numbering.'
+                            warning = u'No annotation key was provided '
+                                      u'for auto-numbering.'
                     )
                     self.send('Selected data', None, self)
+                    self.send( 'Discarded data', None, self)
                     return
             else:
                 autoNumberKey = None
@@ -838,8 +851,9 @@ class OWTextableSelect(OWWidget):
 
             # Check that regex is not empty...
             if not self.regex:
-                self.infoBox.noDataSent(u'No regex defined.')
+                self.infoBox.noDataSent(warning = u'No regex defined.')
                 self.send('Selected data', None, self)
+                self.send( 'Discarded data', None, self)
                 return
 
             # Get number of iterations...
@@ -853,20 +867,28 @@ class OWTextableSelect(OWWidget):
             regexAnnotationKeyParam = self.regexAnnotationKey
             if regexAnnotationKeyParam == u'(none)':
                 regexAnnotationKeyParam = None
-            (selected_data, discarded_data) = self.segmenter.select(
-                segmentation        = self.segmentation,
-                regex               = re.compile(self.regex + '(?u)'),
-                mode                = self.regexMode.lower(),
-                annotation_key      = regexAnnotationKeyParam or None,
-                label               = self.label,
-                copy_annotations    = True,
-                auto_numbering_as   = None,
-                progress_callback   = progressBar.advance,
-            )
+            try:
+                (selected_data, discarded_data) = self.segmenter.select(
+                    segmentation        = self.segmentation,
+                    regex               = re.compile(self.regex + '(?u)'),
+                    mode                = self.regexMode.lower(),
+                    annotation_key      = regexAnnotationKeyParam or None,
+                    label               = self.label,
+                    copy_annotations    = True,
+                    auto_numbering_as   = None,
+                    progress_callback   = progressBar.advance,
+                )
+            except re.error as re_error:
+                message = u'Regex error: %s.' % re_error.message
+                self.infoBox.noDataSent(error = message)
+                self.send('Selected data', None, self)
+                self.send( 'Discarded data', None, self)
+                progressBar.finish()
+                return
 
         progressBar.finish()
 
-        message = u'Data contains %i segment@p.' % len(selected_data)
+        message = u'%i segment@p.' % len(selected_data)
         message = pluralize(message, len(selected_data))
         self.infoBox.dataSent(message)
 
@@ -923,6 +945,8 @@ class OWTextableSelect(OWWidget):
                                 1,
                                 len(self.segmentation),
                         )
+                        if self.sampleSize > len(self.segmentation):
+                            self.sampleSize = len(self.segmentation)
                     else:
                         self.sampleSizeSpin.control.setRange(1, 1)
                     self.sampleSize = self.sampleSize or 1
@@ -1022,11 +1046,12 @@ class OWTextableSelect(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

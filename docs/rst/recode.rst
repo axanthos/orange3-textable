@@ -78,9 +78,8 @@ label. The annotations of each input segment are systematically copied in the
 corresponding output segments (see `Advanced interface`_, option **Copy
 annotations**).
 
-The **Info** section indicates the number of segments present in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-overlaps in the input segmentation, etc.).
+The **Info** section gives indications regarding the current status of the
+widget instance (see `Messages`_ below, section `Information`_).
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
@@ -170,9 +169,8 @@ The **Options** section allows the user to define the output segmentation
 label. The **Copy annotations** checkbox copies every annotation of the input
 segmentation to the output segmentation.
 
-The **Info** section indicates the number of segments present in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-overlaps in the input segmentation, etc.).
+The **Info** section gives indications regarding the current status of the
+widget instance (see `Messages`_ below, section `Information`_).
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
@@ -210,6 +208,68 @@ disconcerting type of error, which can be best understood by studying the
 example given in the documentation of :ref:`Preprocess` (section
 :ref:`anchor_to_caveat`), where all that is said about :ref:`Preprocess` also
 applies to **Recode**.
+
+Messages
+--------
+
+Information
+~~~~~~~~~~~
+
+*Data correctly sent to output: <n> segments.*
+    This confirms that the widget has operated properly.
+
+*Settings were* (or *Input has*) *changed, please click 'Send' when ready.*
+    Settings and/or input have changed but the **Send automatically** checkbox
+    has not been selected, so the user is prompted to click the **Send**
+    button (or equivalently check the box) in order for computation and data
+    emission to proceed.
+
+*No data sent to output yet: no input segmentation.*
+    The widget instance is not able to emit data to output because it receives
+    none on its input channel(s).
+
+*No data sent to output yet, see 'Widget state' below.*
+    A problem with the instance's parameters and/or input data prevents it
+    from operating properly, and additional diagnostic information can be
+    found in the **Widget state** box at the bottom of the instance's
+    interface (see `Warnings`_ and `Errors`_ below).
+
+Warnings
+~~~~~~~~
+
+*No label was provided.*
+    A label must be entered in the **Output segmentation label** field in
+    order for computation and data emission to proceed.
+
+*Input segmentation is overlapping.*
+    The instance's input segmentation contains overlapping segments, which
+    preempts the application of recoding operations.
+
+*JSON message on input connection doesn't have the right keys and/or values.*
+    The widget instance has received a JSON message on its ``Message`` input
+    channel and the keys and/or values specified in this message do not match
+    those that are expected for this particular widget type (see :doc:`JSON
+    im-/export format <json_format>`, :doc:`Substitution list
+    <json_substitution_list>`).
+
+*JSON parsing error.*
+    The widget instance has received data on its ``Message`` input channel and
+    the data couldn't be correctly parsed. Please use a JSON validator to 
+    check the data's well-formedness.
+
+Errors
+~~~~~~
+
+*Regex error: <error_message>.*
+    The regular expression entered in the **Regex** field is invalid.
+
+*Regex error: <error_message> (substitution #<n>).*
+    The *n*-th regular expression in the **Substitutions** list is invalid.
+
+*Reference to unmatched group in replacement string.*
+    A replacement string specified by the user contains a reference to a
+    numbered variable (``&1``, ``&2``, ...) which turns out to not always have
+    a matching element.
 
 Examples
 --------

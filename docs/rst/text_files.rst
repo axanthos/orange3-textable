@@ -31,14 +31,21 @@ Description
 
 This widget is designed to import the contents of one or several text files in
 Orange Canvas. It outputs a segmentation containing a (potentially annotated)
-segment for each imported file. The imported textual content is systematically
-converted in Unicode (from the encoding defined by the user) and subjected to
-the `canonical Unicode decomposition-recomposition
-<http://unicode.org/reports/tr15>`_  technique: Unicode sequences such as
-``LATIN SMALL LETTER C (U+0063)`` + ``COMBINING CEDILLA (U+0327)`` are
-systematically replaced by the combined equivalent, e.g. ``LATIN SMALL LETTER
-C WITH CEDILLA (U+00C7)``.
+segment for each imported file. The imported textual content is normalized in 
+several ways:
 
+* it is systematically converted to Unicode (from the encoding defined by the 
+  user)
+* it is subjected to the `canonical Unicode decomposition-recomposition 
+  <http://unicode.org/reports/tr15>`_ technique (Unicode sequences such as 
+  ``LATIN SMALL LETTER C (U+0063)`` + ``COMBINING CEDILLA (U+0327)`` are 
+  systematically replaced by the combined equivalent, e.g. ``LATIN SMALL LETTER 
+  C WITH CEDILLA (U+00C7)``)
+* it is stripped from the `utf8 byte-order mark 
+  <https://en.wikipedia.org/wiki/Byte_order_mark#UTF-8>`_ (if any)
+* various forms of line endings (in particular ``\r\n`` and ``\r``) are 
+  converted to a single form (namely ``\n``)
+  
 The interface of **Text files** is available in two versions, according to
 whether or not the **Advanced Settings** checkbox is selected.
 
@@ -174,6 +181,65 @@ that if a **Text Files** instance has the basic version of its interface
 activated when an incoming connection is created from an instance of
 :ref:`Message`, it automatically switches to the advanced interface.
 
+Messages
+--------
+
+Information
+~~~~~~~~~~~
+
+*Data correctly sent to output: <n> segments (<m> characters).*
+    This confirms that the widget has operated properly.
+
+*Settings were* (or *Input has*) *changed, please click 'Send' when ready.*
+    Settings and/or input have changed but the **Send automatically** checkbox
+    has not been selected, so the user is prompted to click the **Send**
+    button (or equivalently check the box) in order for computation and data
+    emission to proceed.
+
+*No data sent to output yet: no file selected.*
+    The widget instance is not able to emit data to output because no input 
+    file has been selected.
+
+*No data sent to output yet, see 'Widget state' below.*
+    A problem with the instance's parameters and/or input data prevents it
+    from operating properly, and additional diagnostic information can be
+    found in the **Widget state** box at the bottom of the instance's
+    interface (see `Warnings`_ and `Errors`_ below).
+
+Warnings
+~~~~~~~~
+
+*No label was provided.*
+    A label must be entered in the **Output segmentation label** field in
+    order for computation and data emission to proceed.
+    
+*No annotation key was provided for auto-numbering.*
+    The **Auto-number with key** checkbox has been selected and an annotation
+    key must be specified in the text field on the right in order for
+    computation and data emission to proceed.
+    
+*JSON message on input connection doesn't have the right keys and/or values.*
+    The widget instance has received a JSON message on its ``Message`` input
+    channel and the keys and/or values specified in this message do not match
+    those that are expected for this particular widget type (see :doc:`JSON
+    im-/export format <json_format>`, :doc:`File list <json_file_list>`).
+
+*JSON parsing error.*
+    The widget instance has received data on its ``Message`` input channel and
+    the data couldn't be correctly parsed. Please use a JSON validator to 
+    check the data's well-formedness.
+
+Errors
+~~~~~~
+
+*Couldn't open file* or *Couldn't open file '<filepath>'.*
+    A file couldn't be opened and read, typically because the specified path
+    is wrong.
+
+*Encoding error* or *Encoding error: file '<filepath>'.*
+    A file couldn't be read with the specified encoding (it must be in another
+    encoding).
+    
 Examples
 --------
 

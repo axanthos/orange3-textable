@@ -38,9 +38,9 @@
 # - getWidgetUuid
 #=============================================================================
 
-__version__ = '0.10'
+__version__ = '0.11'
 
-import re, os, uuid
+import re, os, uuid, textwrap
 
 from Orange.OrangeWidgets import OWGUI
 from Orange.OrangeWidgets import OWContexts
@@ -209,13 +209,13 @@ class InfoBox(object):
     def __init__(
             self,
             widget,
-            stringDataSent          = u'Data correctly sent to output.',
-            stringNoDataSent        = u'No data sent to output yet.',
-            stringSettingsChanged   = u'Settings were changed.',
-            stringInputChanged      = u'Input has changed.',
-            stringClickSend         = u"Please click 'Send' when ready.",
-            statusHeader            = u'Status:\t',
-            diagnosticHeader        = u'Diagnostic:\t',
+            stringDataSent          = u'Data correctly sent to output',
+            stringNoDataSent        = u'No data sent to output yet',
+            stringSettingsChanged   = u'Settings were changed',
+            stringInputChanged      = u'Input has changed',
+            stringSeeWidgetState    = u", see 'Widget state' below.",
+            stringClickSend         = u", please click 'Send' when ready.",
+            wrappedWidth            = 30,
     ):
         """Initialize a new InfoBox instance"""
         self.widget                 = widget
@@ -223,9 +223,9 @@ class InfoBox(object):
         self.stringNoDataSent       = stringNoDataSent
         self.stringSettingsChanged  = stringSettingsChanged
         self.stringInputChanged     = stringInputChanged
+        self.stringSeeWidgetState   = stringSeeWidgetState
         self.stringClickSend        = stringClickSend
-        self.statusHeader           = statusHeader
-        self.diagnosticHeader       = diagnosticHeader
+        self.wrappedWidth           = wrappedWidth
 
     def draw(self):
         """Draw the InfoBox on window"""
@@ -239,10 +239,6 @@ class InfoBox(object):
                 widget      = box,
                 label       = u'',
         )
-        self.line2 = OWGUI.widgetLabel(
-                widget      = box,
-                label       = u'',
-        )
         OWGUI.separator(
                 widget      = box,
                 height      = 3,
@@ -252,43 +248,59 @@ class InfoBox(object):
 
     def initialMessage(self):
         """Display initial message"""
-        self.line1.setText(self.statusHeader + self.stringNoDataSent)
-        self.line2.setText(u'\t' + self.stringClickSend)
-
-    def noDataSent(self, message=u''):
-        """Display error message (and 'no data sent' status)"""
-        self.line1.setText(self.statusHeader + self.stringNoDataSent)
-        if message:
-            self.line2.setText(self.diagnosticHeader + message)
-        else:
-            self.line2.setText(u'')
+        self.widget.topLevelWidget().warning(0)
+        self.widget.topLevelWidget().error(0)
+        self.line1.setText(self.wrap(
+                self.stringNoDataSent + self.stringClickSend
+        ))
 
     def dataSent(self, message=u''):
         """Display 'ok' message (and 'data sent' status)"""
-        self.line1.setText(self.statusHeader + self.stringDataSent)
+        self.widget.topLevelWidget().warning(0)
+        self.widget.topLevelWidget().error(0)
         if message:
-            self.line2.setText(u'\t' + message)
+            self.line1.setText(self.wrap(
+                self.stringDataSent + ': ' + message
+            ))
         else:
-            self.line2.setText(u'')
+            self.line1.setText(self.wrap(self.stringDataSent + '.'))
+
+    def noDataSent(self, message=u'', warning=u'', error=u''):
+        """Display error message (and 'no data sent' status)"""
+        self.customMessage(message, warning, error, self.stringNoDataSent)
+
+    def customMessage(self, message=u'', warning=u'', error=u'', pre=u''):
+        """Display custom message"""
+        self.widget.topLevelWidget().warning(0)
+        self.widget.topLevelWidget().error(0)
+        line1_message = pre + message
+        if warning:
+            line1_message += self.stringSeeWidgetState
+            self.widget.topLevelWidget().warning(0, warning)
+        elif error:
+            line1_message += self.stringSeeWidgetState
+            self.widget.topLevelWidget().error(0, error)
+        self.line1.setText(self.wrap(line1_message))
 
     def settingsChanged(self):
         """Display 'Settings changed' message"""
-        self.line1.setText(self.statusHeader + self.stringSettingsChanged)
-        self.line2.setText(u'\t' + self.stringClickSend)
+        self.widget.topLevelWidget().warning(0)
+        self.widget.topLevelWidget().error(0)
+        self.line1.setText(self.wrap(
+                self.stringSettingsChanged + self.stringClickSend
+        ))
 
     def inputChanged(self):
         """Display 'Input changed' message"""
-        self.line1.setText(self.statusHeader + self.stringInputChanged)
-        self.line2.setText(u'\t' + self.stringClickSend)
+        self.line1.setText(self.wrap(self.stringInputChanged))
+        self.line1.setText(self.wrap(
+                self.stringInputChanged + self.stringClickSend
+        ))
 
-    def customMessage(self, status=u'', message=u''):
-        """Display custom message"""
-        if status:
-            self.line1.setText(self.statusHeader + status)
-        else:
-            self.line1.setText(u'')
-        self.line2.setText(message)
-
+    def wrap(self, message=u''):
+        """Return a version of a string wrapped to a fixed width"""
+        return '\r\n'.join(textwrap.wrap(message, self.wrappedWidth))
+        
 
 class BasicOptionsBox(object):
 

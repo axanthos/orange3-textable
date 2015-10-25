@@ -61,12 +61,16 @@ disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface (editing of the text or
 label modification).
 
-It should be noted that the text field's content is systematically converted
-to Unicode; moreover, it is subjected to the `canonical Unicode
-decomposition-recomposition <http://unicode.org/reports/tr15>`_ technique:
-Unicode sequences such as ``LATIN SMALL LETTER C (U+0063)`` + ``COMBINING
-CEDILLA (U+0327)`` are systematically replaced by the combined equivalent,
-e.g. ``LATIN SMALL LETTER C WITH CEDILLA (U+00C7)``.
+It should be noted that the text field's content is normalized in three ways:
+
+* it is systematically converted to Unicode
+* it is subjected to the `canonical Unicode decomposition-recomposition 
+  <http://unicode.org/reports/tr15>`_ technique (Unicode sequences such as 
+  ``LATIN SMALL LETTER C (U+0063)`` + ``COMBINING CEDILLA (U+0327)`` are 
+  systematically replaced by the combined equivalent, e.g. ``LATIN SMALL LETTER 
+  C WITH CEDILLA (U+00C7)``)
+* various forms of line endings (in particular ``\r\n`` and ``\r``) are 
+  converted to a single form (namely ``\n``) 
 
 When an instance of **Text Field** receives a segmentation on an incoming
 connection, the contents of all incoming segments are concatenated (without
@@ -92,6 +96,32 @@ noting:
   **Text Field** instance's interface; indeed, removing the incoming
   connection will not remove the imported string from the instance's
   interface, where it can then be edited without risking to overwrite it.
+
+Messages
+--------
+
+Information
+~~~~~~~~~~~
+
+*Data correctly sent to output: 1 segment (<n> characters).*
+    This confirms that the widget has operated properly.
+
+*No data sent to output yet: text field is empty.*
+    The widget instance is not able to emit data to output because no text has
+    been entered in the text field.
+
+*No data sent to output yet, see 'Widget state' below.*
+    A problem with the instance's parameters and/or input data prevents it
+    from operating properly, and additional diagnostic information can be
+    found in the **Widget state** box at the bottom of the instance's
+    interface (see `Warnings`_ below).
+
+Warnings
+~~~~~~~~
+
+*No label was provided.*
+    A label must be entered in the **Output segmentation label** field in
+    order for computation and data emission to proceed.
 
 Examples
 --------

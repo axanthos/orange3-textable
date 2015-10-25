@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.01'
+__version__ = '0.01.1'
 
 """
 <name>Message</name>
@@ -97,15 +97,12 @@ class OWTextableMessage(OWWidget):
     def sendData(self):
         """Parse JSON data and send message"""
         if not self.segmentation:
-            self.infoBox.noDataSent(u'No data on input connection.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Message', None, self)
             return
         if len(self.segmentation) > 1:
-            m = (
-                    "Data on input connection contain more than 1 segment."
-            )
-            m = '\n\t'.join(textwrap.wrap(m, 35))
-            self.infoBox.noDataSent(m)
+            warning = "Input segmentation contains more than 1 segment."
+            self.infoBox.noDataSent(warning = warning)
             self.send('Message', None, self)
             return
         self.infoBox.inputChanged()
@@ -114,24 +111,25 @@ class OWTextableMessage(OWWidget):
             jsonList = json.loads(content)
             jsonMessage = JSONMessage(content)
             self.send('Message', jsonMessage, self)
-            message = u'JSON message contains %i item@p.' % len(jsonList)
+            message = u'%i item@p.' % len(jsonList)
             message = pluralize(message, len(jsonList))
             self.infoBox.dataSent(message)
         except ValueError:
-            m = "Data on input connection is not in JSON format."
-            m = '\n\t'.join(textwrap.wrap(m, 35))
-            self.infoBox.noDataSent(m)
+            error = "JSON parsing error."
+            self.infoBox.noDataSent(error = error)
             self.send('Message', None, self)
             return
         self.sendButton.resetSettingsChangedFlag()
 
+        
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

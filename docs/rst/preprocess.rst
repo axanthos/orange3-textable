@@ -118,7 +118,8 @@ To no effect, :ref:`Count` will attempt to find occurrences of the units
 specified by the segmentation received from :ref:`Segment` in the contexts
 specified by the segmentation received from :ref:`Merge`; since those actually
 belong to distinct strings, none of these units occurs in any of these
-contexts and the frequency table will remain hopelessly empty.
+contexts and the frequency table will remain hopelessly empty (as indicated by
+the warning symbol on top of the :ref:`Count` widget instance).
 
 Luckily, a small wiring modification suffices to entirely solve the problem:
 the connection between :ref:`Merge` and :ref:`Count` should simply be replaced
@@ -134,6 +135,57 @@ in the others.
     :alt: Counting words in the content of two Text Field instances
 
     Figure 4: RIGHT way of inserting **Preprocess**.
+
+Messages
+--------
+
+Information
+~~~~~~~~~~~
+
+*Data correctly sent to output: <n> segments.*
+    This confirms that the widget has operated properly.
+
+*Settings were* (or *Input has*) *changed, please click 'Send' when ready.*
+    Settings and/or input have changed but the **Send automatically** checkbox
+    has not been selected, so the user is prompted to click the **Send**
+    button (or equivalently check the box) in order for computation and data
+    emission to proceed.
+
+*No data sent to output yet: no input segmentation.*
+    The widget instance is not able to emit data to output because it receives
+    none on its input channel(s).
+
+*No data sent to output yet, see 'Widget state' below.*
+    A problem with the instance's parameters and/or input data prevents it
+    from operating properly, and additional diagnostic information can be
+    found in the **Widget state** box at the bottom of the instance's
+    interface (see `Warnings`_ below).
+
+Warnings
+~~~~~~~~
+
+*No label was provided.*
+    A label must be entered in the **Output segmentation label** field in
+    order for computation and data emission to proceed.
+    
+*Input segmentation is overlapping.*
+    At least two of the input segments cover the same substring, which this
+    widget cannot handle. Make sure every input segment covers a distinct 
+    substring.
+    
+Examples
+--------
+
+* :doc:`Getting started: Merging segmentations together
+  <merging_segmentations_together>`
+* :doc:`Getting started: Annotating by merging <annotating_merging>`
+* :doc:`Cookbook: Merge several texts <merge_several_texts>`
+
+See also
+--------
+
+* :doc:`Getting started: Tagging table rows with annotations
+  <tagging_table_rows_annotations>`
 
 Examples
 --------

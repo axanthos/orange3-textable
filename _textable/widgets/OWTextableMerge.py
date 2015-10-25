@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.20'
+__version__ = '0.20.1'
 
 """
 <name>Merge</name>
@@ -378,7 +378,7 @@ class OWTextableMerge(OWWidget):
 
         # Check that there's something on input...
         if not self.texts:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Merged data', None, self)
             return
 
@@ -388,7 +388,7 @@ class OWTextableMerge(OWWidget):
 
         # Check that label is not empty...
         if not self.label:
-            self.infoBox.noDataSent(u'No label was provided.')
+            self.infoBox.noDataSent(warning = u'No label was provided.')
             self.send('Merged data', None, self)
             return
 
@@ -398,7 +398,8 @@ class OWTextableMerge(OWWidget):
                 labelKey = self.labelKey
             else:
                 self.infoBox.noDataSent(
-                        u'No annotation key was provided for imported labels.'
+                        warning = u'No annotation key was provided '
+                                  u'for imported labels.'
                 )
                 self.send('Merged data', None, self)
                 return
@@ -412,7 +413,8 @@ class OWTextableMerge(OWWidget):
                 num_iterations = num_segments * 2
             else:
                 self.infoBox.noDataSent(
-                        u'No annotation key was provided for auto-numbering.'
+                        warning = u'No annotation key was provided '
+                                  u'for auto-numbering.'
                 )
                 self.send('Merged data', None, self)
                 return
@@ -423,8 +425,10 @@ class OWTextableMerge(OWWidget):
         # Basic settings...
         if self.displayAdvancedSettings:
             sortSegments    = self.sortSegments
-            mergeDuplicates = self.mergeDuplicates
             copyAnnotations = self.copyAnnotations
+            mergeDuplicates = self.mergeDuplicates
+            if mergeDuplicates:
+                num_iterations += num_segments
         else:
             sortSegments    = False
             mergeDuplicates = False
@@ -450,7 +454,7 @@ class OWTextableMerge(OWWidget):
             progress_callback   = progressBar.advance,
         )
         progressBar.finish()
-        message = u'Data contains %i segment@p.' % len(concatenation)
+        message = u'%i segment@p.' % len(concatenation)
         message = pluralize(message, len(concatenation))
         self.infoBox.dataSent(message)
 
@@ -530,11 +534,12 @@ class OWTextableMerge(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

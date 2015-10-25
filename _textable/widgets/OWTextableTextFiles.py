@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.17'
+__version__ = '0.17.1'
 
 """
 <name>Text Files</name>
@@ -515,10 +515,10 @@ class OWTextableTextFiles(OWWidget):
                 annotationKey       = entry.get('annotation_key', '')
                 annotationValue     = entry.get('annotation_value', '')
                 if path == '' or encoding == '':
-                    m =   "JSON message on input connection doesn't " \
-                        + "have the right keys and/or values."
-                    m = '\n\t'.join(textwrap.wrap(m, 35))
-                    self.infoBox.noDataSent(m)
+                    self.infoBox.noDataSent(
+                        warning = u"JSON message on input connection doesn't "
+                                  u"have the right keys and/or values."
+                    )
                     self.send('Text data', None, self)
                     return
                 temp_files.append((
@@ -530,9 +530,9 @@ class OWTextableTextFiles(OWWidget):
             self.files.extend(temp_files)
             self.sendButton.settingsChanged()
         except ValueError:
-            m = "Message content is not in JSON format."
-            m = '\n\t'.join(textwrap.wrap(m, 35))
-            self.infoBox.noDataSent(m)
+            self.infoBox.noDataSent(
+                    warning = u"Message content is not in JSON format."
+            )
             self.send('Text data', None, self)
             return
 
@@ -546,13 +546,13 @@ class OWTextableTextFiles(OWWidget):
                 (self.displayAdvancedSettings and not self.files)
              or not (self.file or self.displayAdvancedSettings)
         ):
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no file selected.')
             self.send('Text data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
-            self.infoBox.noDataSent(u'No label was provided.')
+            self.infoBox.noDataSent(warning = u'No label was provided.')
             self.send('Text data', None, self)
             return
 
@@ -562,7 +562,8 @@ class OWTextableTextFiles(OWWidget):
                 autoNumberKey  = self.autoNumberKey
             else:
                 self.infoBox.noDataSent(
-                        u'No annotation key was provided for auto-numbering.'
+                        warning = u'No annotation key was provided '
+                                  u'for auto-numbering.'
                 )
                 self.send('Text data', None, self)
                 return
@@ -602,22 +603,21 @@ class OWTextableTextFiles(OWWidget):
                 try:
                     fileContent = fileHandle.read()
                 except UnicodeError:
-                    m = u'Encoding of %s does not look like %s.' % (
-                        filePath,
-                        encoding,
-                    )
-                    m = '\n\t'.join(textwrap.wrap(m, 35))
-                    self.infoBox.noDataSent(m)
+                    if len(myFiles) > 1:
+                        error = u"Encoding error: file '%s'." % filePath
+                    else: 
+                        error = u"Encoding error."
+                    self.infoBox.noDataSent(error = error)
                     self.send('Text data', None, self)
                     return
                 finally:
                     fileHandle.close()
             except IOError:
-                m = '\n\t'.join(textwrap.wrap(
-                        u"Cannot open %s." % filePath,
-                        35
-                ))
-                self.infoBox.noDataSent(m)
+                if len(myFiles) > 1:
+                    error = u"Couldn't open file '%s'." % filePath
+                else: 
+                    error = u"Couldn't open file."
+                self.infoBox.noDataSent(error = error)
                 self.send('Text data', None, self)
                 return
 
@@ -674,13 +674,13 @@ class OWTextableTextFiles(OWWidget):
                     progress_callback   = None,
             )
 
-        message = u'Data contains %i segment@p ' % len(self.segmentation)
+        message = u'%i segment@p ' % len(self.segmentation)
         message = pluralize(message, len(self.segmentation))
         numChars = 0
         for segment in self.segmentation:
             segmentLength = len(Segmentation.data[segment.address.str_index])
             numChars += segmentLength
-        message += u'and %i character@p.' % numChars
+        message += u'(%i character@p).' % numChars
         message = pluralize(message, numChars)
         self.infoBox.dataSent(message)
 
@@ -706,7 +706,7 @@ class OWTextableTextFiles(OWWidget):
                         self,
                         u'Import File List',
                         self.lastLocation,
-                        u'Text files (*.*)'
+                        u'Text files (*)'
                 )
         )
         if not filePath:
@@ -756,7 +756,7 @@ class OWTextableTextFiles(OWWidget):
             QMessageBox.warning(
                     None,
                     'Textable',
-                    "Selected file is not in JSON format.",
+                    "JSON parsing error.",
                     QMessageBox.Ok
             )
             return
@@ -809,7 +809,7 @@ class OWTextableTextFiles(OWWidget):
                     self,
                     u'Select Text File(s)',
                     self.lastLocation,
-                    u'Text files (*.*)'
+                    u'Text files (*)'
             )
             if not filePathList:
                 return
@@ -823,7 +823,7 @@ class OWTextableTextFiles(OWWidget):
                             self,
                             u'Open Text File',
                             self.lastLocation,
-                            u'Text files (*.*)'
+                            u'Text files (*)'
                     )
             )
             if not filePath:
@@ -976,11 +976,12 @@ class OWTextableTextFiles(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

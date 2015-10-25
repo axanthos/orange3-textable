@@ -18,14 +18,14 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
+__version__ = '0.13.1'
+
 """
 <name>Text Field</name>
 <description>Import text data from keyboard input</description>
 <icon>icons/TextField.png</icon>
 <priority>1</priority>
 """
-
-__version__ = '0.13'
 
 import textwrap
 
@@ -154,18 +154,18 @@ class OWTextableTextField(OWWidget):
             
         # Check that text field is not empty...
         if not self.textFieldContent:
-            self.infoBox.noDataSent(u'Text field is empty.')
+            self.infoBox.noDataSent(u': text field is empty.')
             self.send('Text data', None, self)
             return
 
         # Check that label is not empty...
         if not self.label:
-            self.infoBox.noDataSent(u'No label was provided.')
+            self.infoBox.noDataSent(warning = u'No label was provided.')
             self.send('Text data', None, self)
             return
 
         # Set status to OK...
-        message = u'Data contains %i character@p.' % len(textFieldContent)
+        message = u'1 segment (%i character@p).' % len(textFieldContent)
         message = pluralize(message, len(textFieldContent))
         self.infoBox.dataSent(message)
 
@@ -183,11 +183,12 @@ class OWTextableTextField(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

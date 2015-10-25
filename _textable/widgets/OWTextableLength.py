@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.14'
+__version__ = '0.14.1'
 
 """
 <name>Length</name>
@@ -98,7 +98,7 @@ class OWTextableLength(OWWidget):
         self.settingsRestored       = False                                         
         self.infoBox                = InfoBox(
                 widget          = self.controlArea,
-                stringClickSend = u"Please click 'Compute' when ready.",
+                stringClickSend = u", please click 'Compute' when ready.",
         )
         self.sendButton             = SendButton(
                 widget              = self.controlArea,
@@ -350,7 +350,7 @@ class OWTextableLength(OWWidget):
 
         # Check that there's something on input...
         if len(self.segmentations) == 0:
-            self.infoBox.noDataSent(u'No input.')
+            self.infoBox.noDataSent(u': no input segmentation.')
             self.send('Textable table', None)
             return
 
@@ -405,7 +405,7 @@ class OWTextableLength(OWWidget):
                 contexts = None
                 num_iterations = 1
 
-            # Compute frequency...
+            # Compute length...
             progressBar = OWGUI.ProgressBar(
                     self,
                     iterations = num_iterations
@@ -418,8 +418,12 @@ class OWTextableLength(OWWidget):
             )
             progressBar.finish()
 
-        self.send('Textable table', table)
-        self.infoBox.dataSent()
+        if not len(table.row_ids):
+            self.infoBox.noDataSent(warning = u'Resulting table is empty.')
+            self.send('Textable table', None)
+        else:
+            self.infoBox.dataSent()
+            self.send('Textable table', table)
 
         self.sendButton.resetSettingsChangedFlag()
 
@@ -540,11 +544,12 @@ class OWTextableLength(OWWidget):
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')
+        settings["settingsDataVersion"] = __version__.split('.')[:2]
         return settings
 
     def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) == __version__.split('.'):
+        if settings.get("settingsDataVersion", None) \
+                == __version__.split('.')[:2]:
             settings = settings.copy()
             del settings["settingsDataVersion"]
             OWWidget.setSettings(self, settings)

@@ -254,6 +254,43 @@ to automatically emit a segmentation at every modification of its interface or
 when its input data are modified (by deletion or addition of a connection, or
 because modified data is received through an existing connection).
 
+Messages
+--------
+
+Information
+~~~~~~~~~~~
+
+*Data correctly sent to output.*
+    This confirms that the widget has operated properly.
+
+*Settings were* (or *Input has*) *changed, please click 'Compute' when ready.*
+    Settings and/or input have changed but the **Compute automatically** 
+    checkbox has not been selected, so the user is prompted to click the 
+    **Compute** button (or equivalently check the box) in order for computation 
+    and data emission to proceed.
+
+*No data sent to output yet: no input segmentation.*
+    The widget instance is not able to emit data to output because it receives
+    none on its input channel(s).
+
+*No data sent to output yet, see 'Widget state' below.*
+    A problem with the instance's parameters and/or input data prevents it
+    from operating properly, and additional diagnostic information can be
+    found in the **Widget state** box at the bottom of the instance's
+    interface (see `Warnings`_ below).
+
+Warnings
+~~~~~~~~
+
+*Resulting table is empty.*
+    No table has been emitted because the widget instance couldn't find a
+    single element in its input segmentation(s). A likely cause for this 
+    problem (when using the **Containing segmentation** mode) is that the unit
+    and context segmentations do not refer to the same strings, so that the 
+    units are in effect *not* contained in the contexts. This is typically a
+    consequence of the improper use of widgets :ref:`Preprocess` and/or
+    :ref:`Recode` (see :ref:`anchor_to_caveat`).
+        
 Footnotes
 ---------
 

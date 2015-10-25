@@ -1,5 +1,5 @@
 #=============================================================================
-# Class LTTL.Segmenter, v0.22
+# Class LTTL.Segmenter, v0.24
 # Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the LTTL package v1.5
@@ -250,12 +250,14 @@ class Segmenter(object):
                         s.address.end,
                 ))
 
-                # Merge duplicate segments...
-                if merge_duplicates:
-                    new_segments = Segmenter.merge_duplicate_segments(
-                            new_segments,
-                    )
+                if progress_callback:
+                    progress_callback()
 
+            # Merge duplicate segments...
+            if merge_duplicates:
+                new_segments = Segmenter.merge_duplicate_segments(
+                        new_segments,
+                )
                 if progress_callback:
                     progress_callback()
 
@@ -581,7 +583,7 @@ class Segmenter(object):
 
         if conditions is None:
             conditions = {}
-        tag_regex       = re.compile(r'<.+?>')
+        tag_regex       = re.compile(r'</?[^/]+?>')
         data            = Segmentation.data
         stack           = []
         attr_stack      = []
@@ -696,6 +698,8 @@ class Segmenter(object):
             new_segments = Segmenter.merge_duplicate_segments(
                     new_segments,
             )
+            if progress_callback:
+                progress_callback()
 
         new_segmentation = Segmentation([], label)
         new_segmentation.segments.extend(new_segments)
@@ -740,29 +744,54 @@ class Segmenter(object):
         Although this has been optimized, it is still very slow for large
         segment lists...
         """
-        index = 0
-        while index < len(segment_list):
-            segment     = segment_list[index]
-            address     = segment.address
-            str_index   = address.str_index
-            start       = address.start or 0
-            text_length = len(Segmentation.data[str_index])
-            end         = address.end or text_length
-            to_delete = [
-                    s for s in segment_list[index+1:]
-                            if (
-                                   str_index ==  s.address.str_index
-                               and start     == (s.address.start or 0)
-                               and end       == (s.address.end or text_length)
-                            )
-            ]
-            segment_update = segment.annotations.update
-            for duplicate in to_delete:
-                segment_update(duplicate.annotations)
-            segment_list = [s for s in segment_list if s not in to_delete]
-            index += 1
+        optim_dict = dict()
+        for segment in segment_list:
+            address_sum = (
+                  segment.address.str_index
+                + segment.address.start
+                + segment.address.end                
+            )
+            try:
+                optim_dict[address_sum].append(segment)
+            except KeyError:
+                optim_dict[address_sum] = [segment]
             if progress_callback:
                 progress_callback()
+        global_to_delete = list()
+        for subset in optim_dict.itervalues():
+            subset_size = len(subset)
+            if subset_size != 1:
+                index = 0
+                while index < subset_size:
+                    segment     = subset[index]
+                    address     = segment.address
+                    str_index   = address.str_index
+                    start       = address.start or 0
+                    text_length = len(Segmentation.data[str_index])
+                    end         = address.end or text_length
+                    to_delete = [
+                        s for s in subset[index+1:]
+                            if (
+                                    str_index ==  s.address.str_index
+                                and start     == (s.address.start or 0)
+                                and end       == (s.address.end or text_length)
+                            )
+                    ]
+                    segment_update = segment.annotations.update
+                    for duplicate in to_delete:
+                        segment_update(duplicate.annotations)
+                    set_to_delete = set(to_delete)
+                    subset = list(s for s in subset if s not in set_to_delete)
+                    global_to_delete.extend(to_delete)
+                    index += 1
+                    subset_size = len(subset)
+                    if progress_callback:
+                        progress_callback()
+        global_set_to_delete = set(global_to_delete)
+        segment_list = list(
+                s for s in segment_list
+                        if s not in global_set_to_delete
+        )
         return segment_list
 
 
