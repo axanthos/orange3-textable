@@ -1,38 +1,38 @@
-#=============================================================================
-# Class LTTL.Segmentation, v0.22
-# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
-#=============================================================================
-# This file is part of the LTTL package v1.5
-#
-# LTTL v1.5 is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# LTTL v1.5 is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with LTTL v1.5. If not, see <http://www.gnu.org/licenses/>.
-#=============================================================================
+"""
+Module Segmentation.py, v0.23
+Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
+-----------------------------------------------------------------------------
+This file is part of the LTTL package v1.6.
 
-import codecs, re
+LTTL v1.6 is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+LTTL v1.6 is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with LTTL v1.6. If not, see <http://www.gnu.org/licenses/>.
+"""
+
+import re
+
 
 class Segmentation(object):
-
     """A class for representing a segmentation."""
-    
-    # Class variable to store the data.
-    data = []
 
-    def __init__(self, segments=None, label=u'my_segmentation'):
+    # Class variable to store the data.
+    data = list()
+
+    def __init__(self, segments=None, label=u'segmented_data'):
         """Initialize a Segmentation instance"""
         if segments is None:
-            segments = []
+            segments = list()
         self.segments = segments
-        self.label    = label
+        self.label = label
 
     def __len__(self):
         """Return the number of segments in the segmentation"""
@@ -48,196 +48,275 @@ class Segmentation(object):
 
     def __delitem__(self, index):
         """Delete a given segment"""
-        del self.values[index]
+        del self.segments[index]
 
     def __iter__(self):
         """Return an iterator on segments"""
         return iter(self.segments)
-        
+
+    # TODO: update client code to match signature change (format=>formatting)
     def to_string(
             self,
-            format              = None,
-            segment_delimiter   = u'\n',
-            header              = u'',
-            footer              = u'',
-            humanize_addresses  = False,
-            progress_callback   = None,
-        ):
-        """Stringify a segmentation"""
-        if humanize_addresses:
-            offset = 1
-        else:
-            offset = 0
-        if format != None:
+            formatting=None,
+            segment_delimiter=u'\n',
+            header=u'',
+            footer=u'',
+            humanize_addresses=False,
+            progress_callback=None,
+    ):
+        """Stringify a segmentation
+
+        :param formatting: format string for each segment (default None)
+
+        :param segment_delimiter: string inserted between consecutive segments
+        (default u'\n')
+
+        :param header: string inserted at beginning of output string (default
+        u'')
+
+        :param footer: string inserted at end of output string (default u'')
+
+        :param humanize_addresses: boolean indicating whether string indices as
+        well as start positions in strings should be numbered from 1, rather
+        than from 0 as usual (default False)
+
+        :param progress_callback: callback for monitoring progress ticks (number
+        of input segments)
+
+        :return: formatted string
+
+        In format string, it is possible to use the %(variable_name) format
+        notation to insert variable element in each segment's formatted string,
+        cf. https://orange-textable.readthedocs.org/en/latest/display.html.
+        """
+
+        # Add (or not) a 1-unit offset to make addresses more readable.
+        offset = 1 if humanize_addresses else 0
+
+        # If a format has been specified, initialize default annotation dict
+        # based on existing annotations or those referred to in format...
+        if formatting is not None:
             default_dict = dict(
-                    (k, u'__none__') for k in self.get_annotation_keys()
+                (k, u'__none__') for k in self.get_annotation_keys()
             )
-            for match in re.finditer(r'(?<=%\()(.+?)(?=\))', format):
+            for match in re.finditer(ur'(?<=%\()(.+?)(?=\))', formatting):
                 default_dict[match.group(0)] = u'__none__'
+
+        # Initializations...
         segment_count = 1
-        lines = []
+        lines = list()
+
+        # Process each segment...
         for segment in self.segments:
-            address   = segment.address
-            str_index = address.str_index + offset
-            start     = (address.start or 0) + offset
-            end = address.end or len(Segmentation.data[address.str_index])
-            if format != None:
+            str_index = segment.str_index + offset
+            start = (segment.start or 0) + offset
+            end = segment.end or len(Segmentation.data[segment.str_index])
+
+            # If a format has been specified...
+            if formatting is not None:
+
+                # Clone default annotations and update them with existing...
                 segment_dict = default_dict.copy()
                 segment_dict.update(segment.annotations)
-                segment_dict['__num__']             = segment_count
-                segment_dict['__content__']         = segment.get_content()
-                segment_dict['__str_index__']       = str_index
-                segment_dict['__start__']           = start
-                segment_dict['__end__']             = end
-                segment_dict['__str_index_raw__']   = str_index - offset
-                segment_dict['__start_raw__']       = start     - offset
-                segment_dict['__end_raw__']         = end
-                lines.append(format % segment_dict)
+
+                # Update annotations with predefined variables...
+                segment_dict[u'__num__'] = segment_count
+                segment_dict[u'__content__'] = segment.get_content()
+                segment_dict[u'__str_index__'] = str_index
+                segment_dict[u'__start__'] = start
+                segment_dict[u'__end__'] = end
+                segment_dict[u'__str_index_raw__'] = str_index - offset
+                segment_dict[u'__start_raw__'] = start - offset
+                segment_dict[u'__end_raw__'] = end
+
+                # Apply format and add resulting line to list for later output.
+                lines.append(formatting % segment_dict)
+
+            # Else if no format has been specified...
             else:
+
+                # Add lines in predefined format to list for later output...
                 lines.extend([
-                        u'segment number %i'% segment_count,
-                        u'\tcontent:\t"%s"' % segment.get_content(),
-                        u'\tstr_index:\t%i' % str_index,
-                        u'\tstart:\t%i'     % start,
-                        u'\tend:\t%i'       % end
+                    u'segment number %i' % segment_count,
+                    u'\tcontent:\t"%s"' % segment.get_content(),
+                    u'\tstr_index:\t%i' % str_index,
+                    u'\tstart:\t%i' % start,
+                    u'\tend:\t%i' % end,
                 ])
+
+                # Add annotations (if any) in predefined format...
                 if len(segment.annotations):
                     lines.append(u'\tannotations:')
-                    lines.extend([
+                    lines.extend(
+                        [
                             u'\t\t%-20s %s' % (k, v)
-                                for (k, v) in segment.annotations.items()
-                    ])
+                            for (k, v) in segment.annotations.items()
+                        ]
+                    )
+
             segment_count += 1
             if progress_callback:
                 progress_callback()
-        if format != None:
+
+        # Join lines and append header and footer (if any).
+        if formatting:
             return header + segment_delimiter.join(lines) + footer
         else:
-            return segment_delimiter.join(lines)
+            return header + u'\n'.join(lines) + footer
 
+    # TODO: test
     def to_html(self, humanize_addresses=False, progress_callback=None):
-        """Stringify a segmentation in html format"""
-        if humanize_addresses:
-            offset = 1
-        else:
-            offset = 0
+        """Stringify a segmentation in HTML format
+
+        :param humanize_addresses: boolean indicating whether positions in
+        strings should be numbered from 1, rather than from 0 as usual (default
+        False)
+
+        :param progress_callback: callback for monitoring progress ticks (number
+        of input segments)
+
+        :return: HTML formatted string
+        """
+
+        # Add (or not) a 1-unit offset to make addresses more readable.
+        offset = 1 if humanize_addresses else 0
+
+        # Define HTML header, footer and other template elements...
         html_header = u"""
             <html><head><style type="text/css">
                 table.textable {
-                	border-width: 1px;
-                	border-style: solid;
-                	border-color: gray;
-                	background-color: white;
+                    border-width: 1px;
+                    border-style: solid;
+                    border-color: gray;
+                    background-color: white;
                 }
                 table.textable th {
-                	border-width: 0px;
-                	padding: 3px;
-                	background-color: lightgray;
+                    border-width: 0px;
+                    padding: 3px;
+                    background-color: lightgray;
                 }
                 table.textable td {
-                	border-width: 0px;
-                	padding: 3px;
+                    border-width: 0px;
+                    padding: 3px;
                 }
             </style></head><body><a name="top"/>
         """
-        html_footer           = u'</body></html>'
-        table_header          = u'<p><table class="textable">'
-        wide_table_header     = u'<p><table class="textable" width="100%">'
-        table_footer          = u'</table></p>'
-        first_row_address     = u'<tr><th align="left">String index</th>'   \
-                              + u'<th align="left">Start</th>'              \
-                              + u'<th align="left">End</th></tr>'
-        first_row_annotation  = u'<tr><th align="left">Annotation key</th>' \
-                              + u'<th align="left">Annotation value</th></tr>'
-        first_row_content     = u'<tr><th align="left">Content</th></tr>'
-        data    = Segmentation.data
+        html_footer = u'</body></html>'
+        table_header = u'<p><table class="textable">'
+        wide_table_header = u'<p><table class="textable" width="100%">'
+        table_footer = u'</table></p>'
+        first_row_address = u'<tr><th align="left">String index</th>' \
+                            + u'<th align="left">Start</th>' \
+                            + u'<th align="left">End</th></tr>'
+        first_row_annotation = u'<tr><th align="left">Annotation key</th>' \
+                               + u'<th align="left">Annotation value</th></tr>'
+        first_row_content = u'<tr><th align="left">Content</th></tr>'
+
+        # Initializations...
+        data = Segmentation.data
         counter = 1
-        lines   = [u'<h2>%s</h2>' % self.label]
+        lines = [u'<h2>%s</h2>' % self.label]
+
+        # For each segment...
         for segment in self.segments:
-            address =  segment.address
-            start   =  address.start or 0
-            end     =  address.end or len(data[address.str_index])
+
+            # Format address section...
+            str_index = segment.str_index
+            start = segment.start or 0
+            end = segment.end or len(data[str_index])
             address_string = u'<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (
-                    address.str_index + offset,
-                    start + offset,
-                    end,
+                str_index + offset,
+                start + offset,
+                end,
             )
+
+            # Format annotation section...
             annotation_string = ''.join(
-                    u'<tr><td>%s</td><td>%s</td></tr>' % (k, v)
-                            for (k, v) in segment.annotations.items()
+                u'<tr><td>%s</td><td>%s</td></tr>' % (k, v)
+                for (k, v) in segment.annotations.items()
             )
-            content = segment.get_content().replace('<', '&lt;')
-            content = content.replace('>', '&gt;')
-            content = content.replace('\n', '<br/>')
+
+            # Replace tag delimiters with HTML entities and CR with HTML tag...
+            content = segment.get_content().replace(u'<', u'&lt;')
+            content = content.replace(u'>', u'&gt;')
+            content = content.replace(u'\n', u'<br/>')
+
+            # Add formatted HTML for this segment...
             lines.extend([
-                    #u'<h3>Segment #%i</h3>' % counter,
-                    u'<h3>Segment #%i</h3><a name="%i"/>' % (counter, counter),
-                    table_header,
-                    first_row_address,
-                    address_string,
-                    table_footer,
+                # u'<h3>Segment #%i</h3>' % counter,
+                u'<h3>Segment #%i</h3><a name="%i"/>' % (counter, counter),
+                table_header,
+                first_row_address,
+                address_string,
+                table_footer,
             ])
             if len(segment.annotations):
                 lines.extend([
-                        table_header,
-                        first_row_annotation,
-                        annotation_string,
-                        table_footer,
-            ])
-            lines.extend([
-                    wide_table_header,
-                    first_row_content,
-                    u'<tr><td>%s</td></tr>' % content,
+                    table_header,
+                    first_row_annotation,
+                    annotation_string,
                     table_footer,
+                ])
+            lines.extend([
+                wide_table_header,
+                first_row_content,
+                u'<tr><td>%s</td></tr>' % content,
+                table_footer,
             ])
+
             counter += 1
             if progress_callback:
                 progress_callback()
-        return html_header + '\n'.join(lines) + html_footer
+
+        # Join lines and append HTML header and footer.
+        return html_header + u'\n'.join(lines) + html_footer
 
     def append(self, segment):
-        """Add a segment at the end of the segmentation"""
+        """Add a segment at the end of the segmentation
+
+        :param segment: the segment to add
+        """
         self.segments.append(segment)
 
     def get_annotation_keys(self):
         """Get the list of available annotation keys"""
+
+        # Initialize empty set.
         annotation_keys = set()
+
+        # Take the union of each segment's annotation keys...
         for segment in self.segments:
             annotation_keys = annotation_keys.union(
                 segment.annotations.keys()
             )
+
         return list(annotation_keys)
-        
+
     def is_non_overlapping(self):
         """Determine if there is no segment overlap"""
+
+        # Get list of segments sorted by address...
         segments = sorted(self.segments, key=lambda s: (
-                s.address.str_index,
-                s.address.start,
-                s.address.end,
+            s.str_index,
+            s.start,
+            s.end,
         ))
-        for first_index in xrange(len(segments)-1):
-            first_address   = self.segments[first_index].address
-            first_str_index = first_address.str_index
-            first_start     = first_address.start or 0
-            text_length     = len(Segmentation.data[first_str_index])
-            first_end       = first_address.end or text_length
-            for second_index in xrange(first_index+1, len(segments)):
-                second_address      = self.segments[second_index].address
-                second_str_index    = second_address.str_index
-                if second_str_index != first_str_index:
-                    break
-                second_start = second_address.start or 0
-                if second_start >= first_end:
-                    break
-                second_end = second_address.end or text_length
-                if second_end > second_start:
+
+        # For each segment (but the last)...
+        for first_index in xrange(len(segments) - 1):
+
+            # Get the segment's address...
+            first_segment = self.segments[first_index]
+            first_str_index = first_segment.str_index
+            first_string_length = len(Segmentation.data[first_str_index])
+            first_end = first_segment.end or first_string_length
+
+            # For each segment after this one...
+            for second_index in xrange(first_index + 1, len(segments)):
+                second_segment = self.segments[second_index]
+                if second_segment.str_index != first_str_index:
+                    continue
+                if (second_segment.start or 0) < first_end:
                     return False
+
         return True
-
-
-
-
-
-
-
-

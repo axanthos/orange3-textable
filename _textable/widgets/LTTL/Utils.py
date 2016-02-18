@@ -1,5 +1,5 @@
 #=============================================================================
-# Module LTTL.Utils, v0.06
+# Module LTTL.Utils, v0.07
 # Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
 # This file is part of the LTTL package v1.5
@@ -18,7 +18,6 @@
 # along with LTTL v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 # Provides functions:
-# - parse_xml_tag()
 # - iround()
 # - sample_dict()
 # - get_variety()
@@ -38,44 +37,6 @@ from Segmentation import Segmentation
 from Segment      import Segment
 from Address      import Address
 
-element_regex   = re.compile(r'(\w+)', re.U)
-attribute_regex = re.compile(r'''(\w+)\s*=\s*(['"])(.+?)(?<!\\)\2''', re.U)
-
-
-def parse_xml_tag(tag):
-    """Parse an xml tag and return a dict describing it.
-
-    The returned dict has the following keys:
-    - is_element:   False for processing instructions, comments, etc.
-    - is_opening:   True if tag is element opening tag, False otherwise
-    - is_empty:     True if tag is empty element, False otherwise
-    - element:      element name (None if not is_element)
-    - attributes:   a dict with a key-value pair for each xml attribute
-
-    If parsing failed somehow, return value is None.
-    """
-    tag_description = {
-        'is_element':   False,
-        'is_opening':   False,
-        'is_empty':     False,
-        'element':      None,
-        'attributes':   {},
-    }
-    if tag[1] == '!' or tag[1] == '?':
-        return tag_description
-    elem = re.search(element_regex, tag)
-    if elem:
-        tag_description['is_element']       = True
-        tag_description['element']          = elem.group(1)
-        for attr in re.finditer(attribute_regex, tag):
-            tag_description['attributes'][attr.group(1)] = attr.group(3)
-        if tag[1] != '/':
-            tag_description['is_opening']   = True
-        elif tag[-2] == '/':
-            tag_description['is_empty']     = True
-        return tag_description
-    return None
-    
 
 def iround(x):
     """Round a number to the nearest integer
@@ -84,7 +45,7 @@ def iround(x):
     round-to-nearest-integer)
     """
     return int(round(x) - .5) + (x > 0)
-    
+
 
 def sample_dict(
         dictionary,
@@ -162,7 +123,7 @@ def get_variety(
 def tuple_to_simple_dict(dictionary, key):
     """Take a dict with size-2 tuple key and a value for the 1st key element,
     and return a dict with only the 2nd key element as key.
-    
+
     NB: keys with zero value are removed.
     """
     return dict(
@@ -206,7 +167,7 @@ def get_average(values, weights=None):
     if variance < 0:
         variance = 0
     return (average, math.sqrt(variance))
-    
+
 
 def get_perplexity(dictionary):
     """Compute the perplexity (=exp entropy) of a dictionary"""
@@ -276,7 +237,7 @@ def prepend_unit_with_category(
 def generate_random_annotation_key(segmentation, length=8):
     existing_keys = segmentation.get_annotation_keys()
     while True:
-        new_key = ''.join(random.choice('01.3456789') for x in range(length))
+        new_key = ''.join(random.choice('0123456789') for x in range(length))
         if new_key not in existing_keys:
             break
     return new_key

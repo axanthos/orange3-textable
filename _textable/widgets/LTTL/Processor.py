@@ -115,8 +115,8 @@ class Processor(object):
                     ]
                 else:
                     context_list = [
-                            c.get_content() for c in context_segmentation
-                    ]
+                        c.get_content() for c in context_segmentation
+                        ]
 
                 # Get the list of units in final format...
                 if unit_annotation_key is not None:
@@ -252,7 +252,7 @@ class Processor(object):
                 for unit_index in xrange(
                         unit_segmentation_length - (unit_seq_length - 1)
                 ):
-                
+
                     # Get unit type...
                     unit_type = seq_join(unit_list[
                             unit_index : unit_index + unit_seq_length
@@ -325,7 +325,7 @@ class Processor(object):
                 None,
         ))
 
-  
+
     def count_in_window(
             self,
             units               = None,
@@ -659,7 +659,7 @@ class Processor(object):
                                     window_index + window_size
                             ])
                     )
-                    
+
                     # Get unit type...
                     unit_type = unit_list[window_index + context_left_size]
 
@@ -719,7 +719,7 @@ class Processor(object):
         NB: When some form of averaging is performed with large segmentations,
         execution can be *dramatically* slower if standard deviation is
         computed.
-        
+
         Returns a Table.
         """
 
@@ -752,7 +752,7 @@ class Processor(object):
 
             # If contexts should be merged...
             if contexts['merge']:
-            
+
                 # Set default context type.
                 context_type = u'__global__'
 
@@ -768,8 +768,8 @@ class Processor(object):
                     ]
                 else:
                     context_list = [
-                            c.get_content() for c in context_segmentation
-                    ]
+                        c.get_content() for c in context_segmentation
+                        ]
 
             # CASE 1A: averaging units are specified...
             if averaging['segmentation'] is not None:
@@ -1177,7 +1177,7 @@ class Processor(object):
                                     window_index + window_size - 1
                             ].get_contained_segments(units)
                     )
-                    
+
                     # Add new length to window and increment sums...
                     lengths.append(added_length)
                     sum_values    += added_length
@@ -1199,7 +1199,7 @@ class Processor(object):
 
             # CASE 2: standard deviation need not be computed......
             else:
-            
+
                 # Get lengths for first window...
                 lengths = [
                         len(a.get_contained_segments(units))
@@ -1528,7 +1528,7 @@ class Processor(object):
                     progress_callback,
             )
             category_delimiter = None
-            
+
         # Compute varieties...
         new_values = {}
         for row_id in counts.row_ids:
@@ -1827,7 +1827,7 @@ class Processor(object):
                 if context_annotation_key is not None:
                     new_values[(row_id, context_annotation_key)] \
                             = context_annotation
-                            
+
             if progress_callback:
                 progress_callback()
 
@@ -2060,8 +2060,8 @@ class Processor(object):
             ]
         else:
             context_list = [
-                    c.get_content() for c in context_segmentation
-            ]
+                c.get_content() for c in context_segmentation
+                ]
 
         # Loop over context token indices...
         for context_index in xrange(len(context_segmentation)):
@@ -2090,7 +2090,7 @@ class Processor(object):
 
             if progress_callback:
                 progress_callback()
-                
+
         # Count local frequency...
         for neighbor in [context_list[i] for i in neighbor_indices]:
             local_freq[neighbor] = local_freq.get(neighbor, 0) + 1
