@@ -1064,7 +1064,6 @@ def import_xml(
 # TODO: Update client code to match displacement from Recoder to Segmenter.
 # TODO: Update client code to match functions in place of methods.
 # TODO: Update client code to match change in progress tracking.
-# TODO: Test
 def recode(
         segmentation,
         substitutions=None,
