@@ -18,6 +18,9 @@ You should have received a copy of the GNU General Public License
 along with LTTL v1.6. If not, see <http://www.gnu.org/licenses/>.
 """
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import unittest
 
 import sys
@@ -34,7 +37,7 @@ class TestSegmentation(unittest.TestCase):
 
     def setUp(self):
         """ Setting up for the test """
-        self.entire_text_seg = Input(u'ab cde')
+        self.entire_text_seg = Input('ab cde')
         self.str_index = self.entire_text_seg[0].str_index
         self.word_seg = Segmentation(
             [
@@ -42,7 +45,7 @@ class TestSegmentation(unittest.TestCase):
                     str_index=self.str_index,
                     start=0,
                     end=2,
-                    annotations={u'a': u'1', u'bc': u'20'}
+                    annotations={'a': '1', 'bc': '20'}
                 ),
                 Segment(
                     str_index=self.str_index,
@@ -59,19 +62,19 @@ class TestSegmentation(unittest.TestCase):
         )
 
         self.base_output_string = (
-            u'segment number 1\n'
-            u'\tcontent:\t"ab"\n'
-            u'\tstr_index:\t%i\n'
-            u'\tstart:\t0\n'
-            u'\tend:\t2\n'
-            u'\tannotations:\n'
-            u'\t\ta                    1\n'
-            u'\t\tbc                   20\n'
-            u'segment number 2\n'
-            u'\tcontent:\t"cde"\n'
-            u'\tstr_index:\t%i\n'
-            u'\tstart:\t3\n'
-            u'\tend:\t6'
+            'segment number 1\n'
+            '\tcontent:\t"ab"\n'
+            '\tstr_index:\t%i\n'
+            '\tstart:\t0\n'
+            '\tend:\t2\n'
+            '\tannotations:\n'
+            '\t\ta                    1\n'
+            '\t\tbc                   20\n'
+            'segment number 2\n'
+            '\tcontent:\t"cde"\n'
+            '\tstr_index:\t%i\n'
+            '\tstart:\t3\n'
+            '\tend:\t6'
         ) % (self.str_index, self.str_index)
 
         self.count = 0
@@ -85,7 +88,7 @@ class TestSegmentation(unittest.TestCase):
         self.assertIsInstance(
             Segmentation(),
             Segmentation,
-            msg=u"creator doesn't return Segmentation object!"
+            msg="creator doesn't return Segmentation object!"
         )
 
     def test_to_string_default_format(self):
@@ -94,29 +97,29 @@ class TestSegmentation(unittest.TestCase):
         self.assertEqual(
             output_string,
             self.base_output_string,
-            msg=u"to_string() doesn't format segmentation correctly by default!"
+            msg="to_string() doesn't format segmentation correctly by default!"
         )
 
     def test_to_string_header(self):
         """Does to_string() format header correctly?"""
         output_string = self.word_seg.to_string(
-            header=u'HEADER',
+            header='HEADER',
         )
         self.assertEqual(
             output_string,
-            u'HEADER' + self.base_output_string,
-            msg=u"to_string() doesn't format header correctly!"
+            'HEADER' + self.base_output_string,
+            msg="to_string() doesn't format header correctly!"
         )
 
     def test_to_string_footer(self):
         """Does to_string() format footer correctly?"""
         output_string = self.word_seg.to_string(
-            footer=u'FOOTER',
+            footer='FOOTER',
         )
         self.assertEqual(
             output_string,
-            self.base_output_string + u'FOOTER',
-            msg=u"to_string() doesn't format footer correctly!"
+            self.base_output_string + 'FOOTER',
+            msg="to_string() doesn't format footer correctly!"
         )
 
     def test_to_string_humanize_addresses(self):
@@ -125,44 +128,44 @@ class TestSegmentation(unittest.TestCase):
             humanize_addresses=True,
         )
         humanized_str_index = self.str_index + 1
-        humanized_string = self.base_output_string.replace(u't:\t3', u't:\t4')
-        humanized_string = humanized_string.replace(u't:\t0', u't:\t1')
+        humanized_string = self.base_output_string.replace('t:\t3', 't:\t4')
+        humanized_string = humanized_string.replace('t:\t0', 't:\t1')
         humanized_string = humanized_string.replace(
-            u'x:\t%i' % self.str_index,
-            u'x:\t%i' % humanized_str_index
+            'x:\t%i' % self.str_index,
+            'x:\t%i' % humanized_str_index
         )
         self.assertEqual(
             output_string,
             humanized_string,
-            msg=u"to_string() doesn't humanize addresses!"
+            msg="to_string() doesn't humanize addresses!"
         )
 
     def test_to_string_interpolate_builtin_variables(self):
         """Does to_string() interpolate builtin variables?"""
         output_string = self.word_seg.to_string(
             formatting=(
-                u'%(__num__)s,%(__content__)s,'
-                u'%(__str_index__)s,%(__start__)s,%(__end__)s,'
-                u'%(__str_index_raw__)s,%(__start_raw__)s,%(__end_raw__)s'
+                '%(__num__)s,%(__content__)s,'
+                '%(__str_index__)s,%(__start__)s,%(__end__)s,'
+                '%(__str_index_raw__)s,%(__start_raw__)s,%(__end_raw__)s'
             )
         )
         self.assertEqual(
             output_string,
-            u'1,ab,%i,0,2,%i,0,2\n2,cde,%i,3,6,%i,3,6' % (
+            '1,ab,%i,0,2,%i,0,2\n2,cde,%i,3,6,%i,3,6' % (
                 self.str_index, self.str_index, self.str_index, self.str_index
             ),
-            msg=u"to_string() doesn't interpolate builtin variables!"
+            msg="to_string() doesn't interpolate builtin variables!"
         )
 
     def test_to_string_interpolate_annotations(self):
         """Does to_string() interpolate annotations?"""
         output_string = self.word_seg.to_string(
-            formatting=u'%(a)s'
+            formatting='%(a)s'
         )
         self.assertEqual(
             output_string,
-            u'1\n__none__',
-            msg=u"to_string() doesn't interpolate annotations!"
+            '1\n__none__',
+            msg="to_string() doesn't interpolate annotations!"
         )
 
     def test_to_string_progress(self):
@@ -178,33 +181,33 @@ class TestSegmentation(unittest.TestCase):
         self.assertEqual(
             self.count,
             len(self.word_seg),
-            msg=u"to_string doesn't track progress!"
+            msg="to_string doesn't track progress!"
         )
 
     def test_get_annotation_keys(self):
         """Does get_annotation_keys() return existing annotations?"""
         annotations = self.word_seg.get_annotation_keys()
-        self.assertItemsEqual(
-            annotations,
-            [u'a', u'bc'],
-            msg=u"get_annotation_keys() doesn't return existing annotations!"
+        self.assertEqual(
+            sorted(annotations),
+            sorted(['a', 'bc']),
+            msg="get_annotation_keys() doesn't return existing annotations!"
         )
 
     def test_is_non_overlapping(self):
         """Does is_non_overlapping() recognize absence of overlap?"""
         self.assertTrue(
             self.word_seg.is_non_overlapping(),
-            msg=u"is_non_overlapping() doesn't recognize absence of overlap!"
+            msg="is_non_overlapping() doesn't recognize absence of overlap!"
         )
 
     def test_is_overlapping(self):
         """Does is_non_overlapping() recognize presence of overlap?"""
         self.assertFalse(
             self.overlapping_seg.is_non_overlapping(),
-            msg=u"is_non_overlapping() doesn't recognize presence of overlap!"
+            msg="is_non_overlapping() doesn't recognize presence of overlap!"
         )
 
 
-if __name__ == u'__main__':
+if __name__ == '__main__':
     unittest.main()
 

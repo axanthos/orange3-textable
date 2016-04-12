@@ -30,6 +30,8 @@ along with LTTL v1.6. If not, see <http://www.gnu.org/licenses/>.
 """
 
 from __future__ import division
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import re
 import random
@@ -39,6 +41,9 @@ from .Segmentation import Segmentation
 from .Segment import Segment
 from .Input import Input
 
+from past.builtins import xrange
+from builtins import str as text
+from builtins import dict
 
 # TODO: Update client code to match functions in place of methods.
 # TODO: Update client code to match auto_number in place of auto_numbering.
@@ -47,9 +52,9 @@ from .Input import Input
 # TODO: verify impact of changing signature.
 def concatenate(
         segmentations,
-        label=u'my_concatenation',
+        label='my_concatenation',
         copy_annotations=True,
-        import_labels_as=u'component_label',
+        import_labels_as='component_label',
         sort=False,
         auto_number_as=None,
         merge_duplicates=False,
@@ -66,7 +71,7 @@ def concatenate(
 
     :param import_labels_as: annotation key to which input segmentation
     labels should be associated (as annotation values) in output segments
-    (default u'component_label')
+    (default 'component_label')
 
     :param auto_number_as: unless set to None (default), a string indicating
     the annotation key which should be used for storing an automatically
@@ -145,7 +150,7 @@ def concatenate(
 def tokenize(
         segmentation,
         regexes,
-        label=u'segmented_data',
+        label='segmented_data',
         import_annotations=True,
         merge_duplicates=False,
         auto_number_as=None,
@@ -158,7 +163,7 @@ def tokenize(
     tokenized
 
     :param regexes: a list of tuple, where each tuple has a compiled regex
-    as first element, either 'tokenize' or u'split' as second element (see
+    as first element, either 'tokenize' or 'split' as second element (see
     below), and an optional dict as third element; the dict has a single key
     representing an annotation key to be created with the corresponding value
     (both the key and the value are unicode strings); regexes are successively
@@ -202,7 +207,7 @@ def tokenize(
     annotation_v_backref_indices = list()
     annotation_key_format = list()
     annotation_value_format = list()
-    contains_backrefs = re.compile(ur'&([0-9]+)')
+    contains_backrefs = re.compile(r'&([0-9]+)')
 
     # For each regex...
     for regex in regexes:
@@ -211,8 +216,8 @@ def tokenize(
         if len(regex) == 3:
 
             # Get annotation key and value...
-            key = regex[2].keys()[0]
-            value = regex[2].values()[0]
+            key = list(regex[2])[0]
+            value = list(regex[2].values())[0]
 
             # Look for backrefs in key and value, extract the list of
             # corresponding digits (indices) and associate it with this regex...
@@ -224,17 +229,17 @@ def tokenize(
             )
 
             # If backrefs were found, replace them in formats with standard
-            # u'%s' Python placeholders and associate the formats with this
+            # '%s' Python placeholders and associate the formats with this
             # regex, else set them to None...
             if len(annotation_k_backref_indices[-1]):
                 annotation_key_format.append(
-                    contains_backrefs.sub(u'%s', key)
+                    contains_backrefs.sub('%s', key)
                 )
             else:
                 annotation_key_format.append(None)
             if len(annotation_v_backref_indices[-1]):
                 annotation_value_format.append(
-                    contains_backrefs.sub(u'%s', value)
+                    contains_backrefs.sub('%s', value)
                 )
             else:
                 annotation_value_format.append(None)
@@ -263,14 +268,14 @@ def tokenize(
             old_segment_annotation_copy = dict()
 
         # For each regex...
-        for regex_index in range(len(regexes)):
+        for regex_index in xrange(len(regexes)):
             regex = regexes[regex_index]
 
             # Prepare a fresh copy of the existing annotations...
             regex_annotations = old_segment_annotation_copy.copy()
 
             # CASE 1: If regex has mode 'tokenize'...
-            if regex[1] == u'tokenize':
+            if regex[1] == 'tokenize':
 
                 # For each match of the regex...
                 for match in re.finditer(regex[0], content):
@@ -296,7 +301,7 @@ def tokenize(
                     # Else, simply use the annotation key as provided by the
                     # user, if any...
                     elif len(regex) == 3:
-                        key = regex[2].keys()[0]
+                        key = list(regex[2])[0]
 
                     # If there is a list of backref indices in the annotation
                     # value...
@@ -314,7 +319,7 @@ def tokenize(
                         )
                     # Else use the annotation value as is, if any...
                     elif len(regex) == 3:
-                        value = regex[2].values()[0]
+                        value = list(regex[2].values())[0]
 
                     # Prepare a copy of existing annotations for the segment
                     # corresponding to this match of the regex.
@@ -336,7 +341,7 @@ def tokenize(
                     )
 
             # CASE 2: If regex has mode 'split'...
-            elif regex[1] == u'split':
+            elif regex[1] == 'split':
 
                 # Prepare a copy of existing annotations for the segment
                 # identified by this regex...
@@ -345,8 +350,8 @@ def tokenize(
                 # Update it with the annotation key and value provided by the
                 # user, if any (no interpolation in this mode)...
                 if len(regex) == 3:
-                    key = regex[2].keys()[0]
-                    value = regex[2].values()[0]
+                    key = list(regex[2])[0]
+                    value = list(regex[2].values())[0]
                     new_segment_annotations.update({key: value})
 
                 # For each match of the regex...
@@ -386,8 +391,8 @@ def tokenize(
             # Other modes raise a ValueError exception.
             else:
                 raise ValueError(
-                    u'Unknown regex mode "' + regex[1] + u'", ' +
-                    u'should be either "tokenize" or "split"'
+                    'Unknown regex mode "' + regex[1] + '", ' +
+                    'should be either "tokenize" or "split"'
                 )
 
             if progress_callback:
@@ -427,7 +432,7 @@ def select(
         regex,
         mode='include',
         annotation_key=None,
-        label=u'selected_data',
+        label='selected_data',
         copy_annotations=True,
         auto_number_as=None,
         progress_callback=None,
@@ -466,7 +471,7 @@ def select(
 
     # Initializations...
     new_segmentation = Segmentation(list(), label)
-    neg_segmentation = Segmentation(list(), u'NEG_' + label)
+    neg_segmentation = Segmentation(list(), 'NEG_' + label)
 
     # For each input segment...
     for segment in segmentation:
@@ -475,7 +480,7 @@ def select(
         if annotation_key:
             if annotation_key in segment.annotations:
                 match = regex.search(
-                    unicode(segment.annotations[annotation_key])
+                    text(segment.annotations[annotation_key])
                 )
             else:
                 match = None    # If key is not found, no match.
@@ -487,7 +492,7 @@ def select(
 
         # Add copied segment to selected segments or to the complementary
         # segmentation...
-        if (match and mode == u'include') or (not match and mode == u'exclude'):
+        if (match and mode == 'include') or (not match and mode == 'exclude'):
             new_segmentation.segments.append(new_segment)
         else:
             neg_segmentation.segments.append(new_segment)
@@ -517,7 +522,7 @@ def threshold(
         min_count=None,
         max_count=None,
         annotation_key=None,
-        label=u'thresholded_data',
+        label='thresholded_data',
         copy_annotations=True,
         auto_number_as=None,
         progress_callback=None,
@@ -581,7 +586,7 @@ def threshold(
 
     # Initialize output segmentations...
     new_segmentation = Segmentation(list(), label)
-    neg_segmentation = Segmentation(list(), u'NEG_' + label)
+    neg_segmentation = Segmentation(list(), 'NEG_' + label)
 
     # For each input segment...
     for segment in segmentation:
@@ -626,7 +631,7 @@ def sample(
         segmentation,
         sample_size,
         mode='random',
-        label=u'sampled_data',
+        label='sampled_data',
         copy_annotations=True,
         auto_number_as=None,
         progress_callback=None,
@@ -662,23 +667,23 @@ def sample(
 
     # Initialize output segmentations...
     new_segmentation = Segmentation(list(), label)
-    neg_segmentation = Segmentation(list(), u'NEG_' + label)
+    neg_segmentation = Segmentation(list(), 'NEG_' + label)
 
     # Get the indices of sampled segments...
-    if mode == u'random':
+    if mode == 'random':
         sampled_indices = sorted(random.sample(
             xrange(len(segmentation)),
             sample_size
         ))
-    elif mode == u'systematic':
+    elif mode == 'systematic':
         step = 1 / (sample_size / len(segmentation))
         step = int(round(step) - .5) + (step > 0)  # TODO revert to using iround
-        sampled_indices = range(len(segmentation))[::step]
+        sampled_indices = list(range(len(segmentation)))[::step]
     # Other modes raise a ValueError exception.
     else:
         raise ValueError(
-            u'Unknown sampling mode "' + mode + u'", ' +
-            u'should be either "random" or "systematic"'
+            'Unknown sampling mode "' + mode + '", ' +
+            'should be either "random" or "systematic"'
         )
 
     # For each sampled segment...
@@ -722,7 +727,7 @@ def intersect(
         source_annotation_key=None,
         filtering_annotation_key=None,
         mode='include',
-        label=u'selected_data',
+        label='selected_data',
         copy_annotations=True,
         auto_number_as=None,
         progress_callback=None,
@@ -781,7 +786,7 @@ def intersect(
 
     # Initialize the output segmentations...
     new_segmentation = Segmentation(list(), label)
-    neg_segmentation = Segmentation(list(), u'NEG_' + label)
+    neg_segmentation = Segmentation(list(), 'NEG_' + label)
 
     # For each source segment...
     for segment in source:
@@ -793,13 +798,13 @@ def intersect(
         # output segmentation accordingly...
         if source_annotation_key:
             if source_annotation_key in segment.annotations:
-                match = unicode(segment.annotations[source_annotation_key]) \
+                match = text(segment.annotations[source_annotation_key]) \
                     in filtering_set
             else:
                 match = 0
         else:
             match = segment.get_content() in filtering_set
-        if (match and mode == u'include') or (not match and mode == u'exclude'):
+        if (match and mode == 'include') or (not match and mode == 'exclude'):
             new_segmentation.segments.append(new_segment)
         else:
             neg_segmentation.segments.append(new_segment)
@@ -831,7 +836,7 @@ def import_xml(
         element,
         conditions=None,
         import_element_as=None,
-        label=u'xml_data',
+        label='xml_data',
         import_annotations=True,
         merge_duplicates=False,
         auto_number_as=None,
@@ -857,7 +862,7 @@ def import_xml(
     :param conditions: a dict where each key is the name of an attribute
     and each value is a compiled regex that must be satisfied by the
     attribute value for an occurrence of the element to be selected,
-    e.g. {'class': re.compile(ur'^navigation$')} (default None)
+    e.g. {'class': re.compile(r'^navigation$')} (default None)
 
     :param import_element_as: unless set to None (default), a string indicating
     the annotation key which should be used for storing the name of the
@@ -901,7 +906,7 @@ def import_xml(
     # Initializations...
     if conditions is None:
         conditions = dict()
-    tag_regex = re.compile(ur'</?[^/]+?/?>')
+    tag_regex = re.compile(r'</?[^/]+?/?>')
     data = Segmentation.data
     stack = list()
     attr_stack = list()
@@ -945,18 +950,18 @@ def import_xml(
                         anno.update(attr_stack[index])
                         stack[index].append([old_str_index, 0, tag_start, anno])
                 if (
-                        tag_desc[u'element'] == element and
-                        not tag_desc[u'is_empty']
+                        tag_desc['element'] == element and
+                        not tag_desc['is_empty']
                 ):
-                    if tag_desc[u'is_opening']:
+                    if tag_desc['is_opening']:
                         stack.append(list())
-                        attr_stack.append(tag_desc[u'attributes'])
+                        attr_stack.append(tag_desc['attributes'])
                     elif stack:
                         new_segments.extend(stack.pop())
                         attr_stack.pop()
                     # TODO: use tag to produce a more useful error message.
                     else:
-                        raise ValueError(u'xml parsing error')
+                        raise ValueError('xml parsing error')
                 for index in xrange(len(stack)):
                     anno = old_anno_copy.copy()
                     anno.update(attr_stack[index])
@@ -970,16 +975,16 @@ def import_xml(
                             [old_str_index, 0, None, anno]
                         )
                 if (
-                        tag_desc[u'element'] == element and
-                        not tag_desc[u'is_empty']
+                        tag_desc['element'] == element and
+                        not tag_desc['is_empty']
                 ):
-                    if tag_desc[u'is_opening']:
+                    if tag_desc['is_opening']:
                         anno = old_anno_copy.copy()
-                        anno.update(tag_desc[u'attributes'])
+                        anno.update(tag_desc['attributes'])
                         stack.append([
                             [old_str_index, tag_end, None, anno]
                         ])
-                        attr_stack.append(tag_desc[u'attributes'])
+                        attr_stack.append(tag_desc['attributes'])
                     elif stack:
                         stack[-1][-1][2] = tag_start
                         new_segments.extend(stack.pop())
@@ -987,8 +992,8 @@ def import_xml(
                     # TODO: use tag to produce a more useful error message.
                     else:
                         raise ValueError(
-                            u'xml parsing error '
-                            u'(orphan closing tag)'
+                            'xml parsing error '
+                            '(orphan closing tag)'
                         )
 
         if progress_callback:
@@ -996,7 +1001,7 @@ def import_xml(
 
     # TODO: use stack to produce a more useful error message.
     if stack:
-        raise ValueError(u'xml parsing error (missing closing tag)')
+        raise ValueError('xml parsing error (missing closing tag)')
 
     # Create actual segments based on their positions and annotation.
     new_segments = [Segment(s[0], s[1], s[2], s[3]) for s in new_segments]
@@ -1006,7 +1011,7 @@ def import_xml(
         new_segments.reverse()
 
     # Remove segments that are empty or don't match attribute regexes...
-    for index in reversed(range(len(new_segments))):
+    for index in reversed(list(range(len(new_segments)))):
         segment = new_segments[index]
         start = segment.start or 0
         if segment.end is None:
@@ -1065,7 +1070,7 @@ def recode(
         substitutions=None,
         case=None,
         remove_accents=False,
-        label=u'my_recoded_data',
+        label='my_recoded_data',
         copy_annotations=True,
         progress_callback=None,
 ):
@@ -1084,7 +1089,7 @@ def recode(
     segmentation.
 
     :param case: unless set to None (default), a unicode string indicating how
-    case should be modified (either u'lower' or u'upper')
+    case should be modified (either 'lower' or 'upper')
 
     :param remove_accents: boolean indicating whether accents should be removed
     (default True)
@@ -1112,11 +1117,11 @@ def recode(
 
     # Check that input segmentation is not overlapping...
     if not segmentation.is_non_overlapping():
-        raise ValueError(u'Cannot apply recoder to overlapping segmentation.')
+        raise ValueError('Cannot apply recoder to overlapping segmentation.')
 
     # Initializations...
     new_objects = list()
-    backref = re.compile(ur'&(?=[0-9]+)')
+    backref = re.compile(r'&(?=[0-9]+)')
 
     # For each input segment...
     for segment in segmentation:
@@ -1126,24 +1131,24 @@ def recode(
         recoded_text = original_text
 
         # Change case if needed...
-        if case == u'lower':
+        if case == 'lower':
             recoded_text = recoded_text.lower()
-        elif case == u'upper':
+        elif case == 'upper':
             recoded_text = recoded_text.upper()
 
         # Remove accents if needed...
         # (cf. http://stackoverflow.com/questions/517923/
         # what-is-the-best-way-to-remove-accents-in-a-python-unicode-string)
         if remove_accents:
-            recoded_text = u''.join(
-                (c for c in unicodedata.normalize(u'NFD', recoded_text)
-                 if unicodedata.category(c) != u'Mn')
+            recoded_text = ''.join(
+                (c for c in unicodedata.normalize('NFD', recoded_text)
+                 if unicodedata.category(c) != 'Mn')
             )
 
         # Apply substitutions (if any)...
         if substitutions is not None:
             for substitution in substitutions:
-                repl_string = backref.sub(ur'\\', substitution[1])
+                repl_string = backref.sub(r'\\', substitution[1])
                 recoded_text = substitution[0].sub(repl_string, recoded_text)
 
         # If text was modified, create and store new Input...
@@ -1185,7 +1190,7 @@ def recode(
 
 
 # TODO: verify impact on client code of removing neg_segmentation from output
-def bypass(segmentation, label=u'bypassed_data'):
+def bypass(segmentation, label='bypassed_data'):
     """Return a verbatim copy of a segmentation
 
     :param segmentation: the segmentation whose segments' content will be
@@ -1231,7 +1236,7 @@ def _merge_duplicate_segments(segment_list, progress_callback=None):
     global_to_delete = list()
 
     # For each list of segments with identical summed address...
-    for subset in optim_dict.itervalues():
+    for subset in optim_dict.values():
 
         # If there is more than 1 segment in the list...
         subset_size = len(subset)
@@ -1314,26 +1319,26 @@ def _parse_xml_tag(tag):
     - attributes:   a dict with a key-value pair for each xml attribute
     If parsing fails somehow, return value is None.
     """
-    element_regex = re.compile(ur'(\w+)', re.U)
-    attribute_regex = re.compile(ur'''(\w+)\s*=\s*(['"])(.+?)(?<!\\)\2''', re.U)
+    element_regex = re.compile(r'(\w+)', re.U)
+    attribute_regex = re.compile(r'''(\w+)\s*=\s*(['"])(.+?)(?<!\\)\2''', re.U)
     tag_description = {
-        u'is_element': False,
-        u'is_opening': False,
-        u'is_empty': False,
-        u'element': None,
-        u'attributes': dict(),
+        'is_element': False,
+        'is_opening': False,
+        'is_empty': False,
+        'element': None,
+        'attributes': dict(),
     }
-    if tag[1] == u'!' or tag[1] == u'?':
+    if tag[1] == '!' or tag[1] == '?':
         return tag_description
     elem = re.search(element_regex, tag)
     if elem:
-        tag_description[u'is_element'] = True
-        tag_description[u'element'] = elem.group(1)
+        tag_description['is_element'] = True
+        tag_description['element'] = elem.group(1)
         for attr in re.finditer(attribute_regex, tag):
-            tag_description[u'attributes'][attr.group(1)] = attr.group(3)
-        if tag[1] != u'/':
-            tag_description[u'is_opening'] = True
-        if tag[-2] == u'/':
-            tag_description[u'is_empty'] = True
+            tag_description['attributes'][attr.group(1)] = attr.group(3)
+        if tag[1] != '/':
+            tag_description['is_opening'] = True
+        if tag[-2] == '/':
+            tag_description['is_empty'] = True
         return tag_description
     return None

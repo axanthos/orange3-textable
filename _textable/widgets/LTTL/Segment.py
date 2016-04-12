@@ -18,16 +18,21 @@ You should have received a copy of the GNU General Public License
 along with LTTL v1.6. If not, see <http://www.gnu.org/licenses/>.
 """
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 from operator import itemgetter
 from itertools import groupby
 
 from .Segmentation import Segmentation
 
+from past.builtins import xrange
+
 
 class Segment(object):
     """A class for representing components of a Segmentation."""
 
-    __slots__ = [u'str_index', u'start', u'end', u'annotations']
+    __slots__ = ['str_index', 'start', 'end', 'annotations']
 
     def __init__(self, str_index, start=None, end=None, annotations=None):
         """Initialize a Segment instance"""
@@ -45,10 +50,20 @@ class Segment(object):
         """
         return Segmentation.data[self.str_index][self.start:self.end]
 
-    # TODO: document parameters in docstring.
     def deepcopy(self, annotations=None, update=True):
-        """Return a deep copy of the segment"""
-        if update == True:
+        """Return a deep copy of the segment
+
+        :param annotations: unless set to None (default), a dictionary of
+        annotation key-value pairs to be assigned to the new copy of the segment
+
+        :param update: a boolean indicating whether the annotations specified
+        in parameter 'annotations' should be added to existing annotations
+        (True, default) or replace them (False); if 'annotations' is set to None
+        and 'update' is False, the new segment copy will have no annotations.
+
+        :return: a deep copy of the segment
+        """
+        if update:
             new_annotations = self.annotations.copy()
             if annotations is not None:
                 new_annotations.update(annotations)
@@ -63,10 +78,14 @@ class Segment(object):
             annotations=new_annotations,
         )
 
-    # TODO: document parameters in docstring.
     def contains(self, other_segment):
         """Test if another segment (or segment sequence) is contained in
         this one
+
+        :param other_segment: the segment whose inclusion in this one is being
+        tested.
+
+        :return: boolean
         """
         if self.str_index != other_segment.str_index:
             return False
@@ -77,10 +96,14 @@ class Segment(object):
             return False
         return True
 
-    # TODO: document parameters in docstring.
     def get_contained_segments(self, segmentation):
         """Return segments from another segmentation that are contained in
         this segment
+
+        :param segmentation: the segmentation whose segments will be returned if
+        they are contained in the segments of this one.
+
+        :return: a list of segments
         """
         return [
             segmentation[i] for i in self.get_contained_segment_indices(
@@ -88,10 +111,14 @@ class Segment(object):
             )
         ]
 
-    # TODO: document parameters in docstring.
     def get_contained_segment_indices(self, segmentation):
         """Return indices of segments from another segmentation that are
         contained in this segment
+
+        :param segmentation: the segmentation whose segment indices will be
+        returned if they are contained in the segments of this one.
+
+        :return: a list of segment indices
         """
         str_index = self.str_index
         start = self.start or 0
@@ -105,18 +132,24 @@ class Segment(object):
             )
         ]
 
-    # TODO: document parameters in docstring.
     def get_contained_sequence_indices(self, segmentation, length):
         """Return indices of first position of sequences of segments from
         another segmentation that are contained in this segment
+
+        :param segmentation: the segmentation whose segment indices will be
+        returned if they are contained in the segments of this one.
+
+        :param length: the length of segment sequences.
+
+        :return: a list of segment indices
         """
         contained_indices = self.get_contained_segment_indices(segmentation)
         # Find runs of consecutive contained indices
         # (cf. https://docs.python.org/2.6/library/itertools.html#examples)
         contained_idx_sequences = [
-            map(itemgetter(1), g) for _, g in groupby(
+            list(map(itemgetter(1), g)) for _, g in groupby(
                 enumerate(contained_indices),
-                lambda (i, x): i - x
+                lambda args: args[0] - args[1]
             )
         ]
         fixed_length_idx_sequences = list()

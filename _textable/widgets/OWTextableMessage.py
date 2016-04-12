@@ -121,7 +121,7 @@ class OWTextableMessage(OWWidget):
             return
         self.sendButton.resetSettingsChangedFlag()
 
-        
+
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
         settings["settingsDataVersion"] = __version__.split('.')[:2]

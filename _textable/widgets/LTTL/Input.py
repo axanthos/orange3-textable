@@ -18,6 +18,9 @@ You should have received a copy of the GNU General Public License
 along with LTTL v1.6. If not, see <http://www.gnu.org/licenses/>.
 """
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 from .Segment import Segment
 from .Segmentation import Segmentation
 
@@ -27,7 +30,7 @@ class Input(Segmentation):
     the system.
     """
 
-    def __init__(self, text=None, label=u'input_string'):
+    def __init__(self, text=None, label='input_string'):
         """Initialize an Input instance"""
         Segmentation.data.append(None)
         str_index = len(Segmentation.data) - 1

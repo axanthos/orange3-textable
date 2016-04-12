@@ -796,7 +796,7 @@ class OWTextableConvert(OWWidget):
                 output_orange_headers = includeOrangeHeaders,
                 col_delimiter         = colDelimiter,
         )
-        
+
         if self.segmentation is None:
             self.segmentation = Input(label=u'table', text=outputString)
         else:

@@ -1,0 +1,9 @@
+[orange.addons]
+tt = _textable
+
+[orange.canvas.help]
+intersphinx = _textable:doc_root
+
+[orange.widgets]
+Textable = _textable.widgets
+

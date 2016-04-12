@@ -18,6 +18,9 @@ You should have received a copy of the GNU General Public License
 along with LTTL v1.6. If not, see <http://www.gnu.org/licenses/>.
 """
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import unittest
 
 import sys
@@ -44,39 +47,39 @@ class TestInput(unittest.TestCase):
         self.assertIsInstance(
             Input(),
             Input,
-            msg=u"creator doesn't return Input object!"
+            msg="creator doesn't return Input object!"
         )
 
     def test_creator_store_string(self):
         """Does creator store string in class variable?"""
-        Input(u'test')
+        Input('test')
         self.assertEqual(
             Segmentation.data[-1],
-            u'test',
-            msg=u"creator doesn't store string in class variable!"
+            'test',
+            msg="creator doesn't store string in class variable!"
         )
 
     def test_update_string(self):
         """Does update modify stored string?"""
-        seg = Input(u'test2')
-        seg.update(u'modified')
+        seg = Input('test2')
+        seg.update('modified')
         self.assertEqual(
             Segmentation.data[-1],
-            u'modified',
-            msg=u"update doesn't modify stored string!"
+            'modified',
+            msg="update doesn't modify stored string!"
         )
 
     def test_clear_string(self):
         """Does clear set stored string to None?"""
-        seg = Input(u'test3')
+        seg = Input('test3')
         seg.clear()
         self.assertEqual(
             Segmentation.data[-1],
             None,
-            msg=u"clear doesn't set stored string to None!"
+            msg="clear doesn't set stored string to None!"
         )
 
 
-if __name__ == u'__main__':
+if __name__ == '__main__':
     unittest.main()
 

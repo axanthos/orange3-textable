@@ -58,7 +58,7 @@ class OWTextableDisplay(OWWidget):
     encodings = getPredefinedEncodings()
 
     def __init__(self, parent=None, signalManager=None):
-        
+
         """Initialize a Display widget"""
 
         OWWidget.__init__(
@@ -67,13 +67,13 @@ class OWTextableDisplay(OWWidget):
                 signalManager,
                 wantMainArea=1
         )
-        
+
         self.inputs  = [('Segmentation', Segmentation, self.inputData, Single)]
         self.outputs = [
                 ('Bypassed segmentation', Segmentation, Default),
                 ('Displayed segmentation', Segmentation)
         ]
-        
+
         # Settings...
         self.displayAdvancedSettings    = False
         self.customFormatting           = False
@@ -288,7 +288,7 @@ class OWTextableDisplay(OWWidget):
         self.sendButton.draw()
 
         # Main area
-        
+
         # NB: This is the second copy of the advanced settings checkbox,
         # see above...
         self.advancedSettingsRightBox = OWGUI.widgetBox(
@@ -370,7 +370,7 @@ class OWTextableDisplay(OWWidget):
                     self
             )
         else:
-            self.send('Displayed segmentation', None, self)        
+            self.send('Displayed segmentation', None, self)
         if 'Format' not in self.widgetState['Error'].get(0, u''):
             message = u'%i segment@p.' % len(self.segmentation)
             message = pluralize(message, len(self.segmentation))

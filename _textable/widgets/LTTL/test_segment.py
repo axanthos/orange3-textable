@@ -18,6 +18,9 @@ You should have received a copy of the GNU General Public License
 along with LTTL v1.6. If not, see <http://www.gnu.org/licenses/>.
 """
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import unittest
 
 import sys
@@ -34,8 +37,8 @@ class TestSegment(unittest.TestCase):
 
     def setUp(self):
         """ Setting up for the test """
-        self.entire_text_seg = Input(u'ab cde')
-        self.other_entire_text_seg = Input(u'd')
+        self.entire_text_seg = Input('ab cde')
+        self.other_entire_text_seg = Input('d')
         str_index = self.entire_text_seg[0].str_index
         self.first_word_seg = Segmentation(
             [
@@ -43,7 +46,7 @@ class TestSegment(unittest.TestCase):
                         str_index=str_index,
                         start=0,
                         end=2,
-                        annotations={u'a': 1}
+                        annotations={'a': 1}
                 )
             ]
         )
@@ -71,7 +74,7 @@ class TestSegment(unittest.TestCase):
         self.assertIsInstance(
             Segment(mock_address),
             Segment,
-            msg=u"creator doesn't return Segment object!"
+            msg="creator doesn't return Segment object!"
         )
 
     def test_creator_no_str_index_param(self):
@@ -79,7 +82,7 @@ class TestSegment(unittest.TestCase):
         self.assertRaises(
             TypeError,
             Segment,
-            msg=u"creator raises no exception when called without int param!"
+            msg="creator raises no exception when called without int param!"
         )
 
     def test_creator_no_annotations(self):
@@ -88,15 +91,15 @@ class TestSegment(unittest.TestCase):
         self.assertEqual(
             segment.annotations,
             dict(),
-            msg=u"creator doesn't init param annotations to {} by default!"
+            msg="creator doesn't init param annotations to {} by default!"
         )
 
     def test_get_content_complete_addressing(self):
         """Does get_content() work with complete addressing?"""
         self.assertEqual(
             self.char_seg[0].get_content(),
-            u'a',
-            msg=u"get_content() doesn't work with complete address as param!"
+            'a',
+            msg="get_content() doesn't work with complete address as param!"
         )
 
     def test_get_content_missing_start(self):
@@ -108,8 +111,8 @@ class TestSegment(unittest.TestCase):
         )
         self.assertEqual(
             segment.get_content(),
-            u'ab c',
-            msg=u"get_content() doesn't work with start=None!"
+            'ab c',
+            msg="get_content() doesn't work with start=None!"
         )
 
     def test_get_content_missing_end(self):
@@ -121,8 +124,8 @@ class TestSegment(unittest.TestCase):
         )
         self.assertEqual(
             segment.get_content(),
-            u'ab cde',
-            msg=u"get_content() doesn't work with end=None!"
+            'ab cde',
+            msg="get_content() doesn't work with end=None!"
         )
 
     def test_get_content_missing_start_and_end(self):
@@ -134,8 +137,8 @@ class TestSegment(unittest.TestCase):
         )
         self.assertEqual(
             segment.get_content(),
-            u'ab cde',
-            msg=u"get_content() doesn't work with start=None and end=None!"
+            'ab cde',
+            msg="get_content() doesn't work with start=None and end=None!"
         )
 
     def test_deepcopy_correct_address(self):
@@ -148,7 +151,7 @@ class TestSegment(unittest.TestCase):
                 self.first_word_seg[0].start,
                 self.first_word_seg[0].end,
             ],
-            msg=u"deepcopy doesn't correctly copy segment address!"
+            msg="deepcopy doesn't correctly copy segment address!"
         )
 
     def test_deepcopy_no_annotations_update(self):
@@ -160,7 +163,7 @@ class TestSegment(unittest.TestCase):
         self.assertEqual(
             segment.annotations,
             self.first_word_seg[0].annotations,
-            msg=u"deepcopy doesn't work with annotations=None and update=True!"
+            msg="deepcopy doesn't work with annotations=None and update=True!"
         )
 
     def test_deepcopy_no_annotations_no_update(self):
@@ -172,59 +175,59 @@ class TestSegment(unittest.TestCase):
         self.assertEqual(
             segment.annotations,
             dict(),
-            msg=u"deepcopy doesn't work with annotations=None and update=False!"
+            msg="deepcopy doesn't work with annotations=None and update=False!"
         )
 
     def test_deepcopy_annotations_update(self):
         """Does deepcopy work with annotations and update=True?"""
         segment = self.first_word_seg[0].deepcopy(
-            annotations={u'b': 1},
+            annotations={'b': 1},
             update=True,
         )
         self.assertEqual(
             segment.annotations,
-            {u'a': 1, u'b': 1},
-            msg=u"deepcopy doesn't work with annotations and update=True!"
+            {'a': 1, 'b': 1},
+            msg="deepcopy doesn't work with annotations and update=True!"
         )
 
     def test_deepcopy_annotations_no_update(self):
         """Does deepcopy work with annotations and update=False?"""
         segment = self.first_word_seg[0].deepcopy(
-            annotations={u'b': 1},
+            annotations={'b': 1},
             update=False,
         )
         self.assertEqual(
             segment.annotations,
             {'b': 1},
-            msg=u"deepcopy doesn't work with annotations and update=False!"
+            msg="deepcopy doesn't work with annotations and update=False!"
         )
 
     def test_contains_with_contained(self):
         """Does contains recognize contained segment?"""
         self.assertTrue(
             self.entire_text_seg[0].contains(self.char_seg[0]),
-            msg=u"contains doesn't recognize contained segment!"
+            msg="contains doesn't recognize contained segment!"
         )
 
     def test_contains_with_other_string(self):
         """Does contains reject segment from other string?"""
         self.assertFalse(
             self.entire_text_seg[0].contains(self.other_entire_text_seg[0]),
-            msg=u"contains doesn't reject segment from other string!"
+            msg="contains doesn't reject segment from other string!"
         )
 
     def test_contains_with_segment_starting_before(self):
         """Does contains reject segment starting before?"""
         self.assertFalse(
             self.last_word_seg[0].contains(self.entire_text_seg[0]),
-            msg=u"contains doesn't reject segment starting before!"
+            msg="contains doesn't reject segment starting before!"
         )
 
     def test_contains_with_segment_ending_after(self):
         """Does contains reject segment ending after?"""
         self.assertFalse(
             self.first_word_seg[0].contains(self.entire_text_seg[0]),
-            msg=u"contains doesn't reject segment ending after!"
+            msg="contains doesn't reject segment ending after!"
         )
 
     def test_get_contained_segments(self):
@@ -234,7 +237,7 @@ class TestSegment(unittest.TestCase):
                 self.char_seg
             ),
             self.char_seg[0:2],
-            msg=u"get_contained_segments doesn't return contained segments!"
+            msg="get_contained_segments doesn't return contained segments!"
         )
 
     def test_get_contained_segment_indices(self):
@@ -244,7 +247,7 @@ class TestSegment(unittest.TestCase):
                 self.char_seg
             ),
             [0, 1],
-            msg=u"get_contained_segment_indices doesn't return correct indices!"
+            msg="get_contained_segment_indices doesn't return correct indices!"
         )
 
     def test_get_contained_sequence_indices(self):
@@ -255,10 +258,10 @@ class TestSegment(unittest.TestCase):
                 2
             ),
             [3, 4],
-            msg=u"get_contained_sequence_indices doesn't return correct indices!"
+            msg="get_contained_sequence_indices doesn't return correct indices!"
         )
 
 
-if __name__ == u'__main__':
+if __name__ == '__main__':
     unittest.main()
 

@@ -18,7 +18,13 @@ You should have received a copy of the GNU General Public License
 along with LTTL v1.6. If not, see <http://www.gnu.org/licenses/>.
 """
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import re
+
+from past.builtins import xrange
+from builtins import dict
 
 
 class Segmentation(object):
@@ -27,7 +33,7 @@ class Segmentation(object):
     # Class variable to store the data.
     data = list()
 
-    def __init__(self, segments=None, label=u'segmented_data'):
+    def __init__(self, segments=None, label='segmented_data'):
         """Initialize a Segmentation instance"""
         if segments is None:
             segments = list()
@@ -58,9 +64,9 @@ class Segmentation(object):
     def to_string(
             self,
             formatting=None,
-            segment_delimiter=u'\n',
-            header=u'',
-            footer=u'',
+            segment_delimiter='\n',
+            header='',
+            footer='',
             humanize_addresses=False,
             progress_callback=None,
     ):
@@ -69,12 +75,12 @@ class Segmentation(object):
         :param formatting: format string for each segment (default None)
 
         :param segment_delimiter: string inserted between consecutive segments
-        (default u'\n')
+        (default '\n')
 
         :param header: string inserted at beginning of output string (default
-        u'')
+        '')
 
-        :param footer: string inserted at end of output string (default u'')
+        :param footer: string inserted at end of output string (default '')
 
         :param humanize_addresses: boolean indicating whether string indices as
         well as start positions in strings should be numbered from 1, rather
@@ -97,10 +103,10 @@ class Segmentation(object):
         # based on existing annotations or those referred to in format...
         if formatting is not None:
             default_dict = dict(
-                (k, u'__none__') for k in self.get_annotation_keys()
+                (k, '__none__') for k in self.get_annotation_keys()
             )
-            for match in re.finditer(ur'(?<=%\()(.+?)(?=\))', formatting):
-                default_dict[match.group(0)] = u'__none__'
+            for match in re.finditer(r'(?<=%\()(.+?)(?=\))', formatting):
+                default_dict[match.group(0)] = '__none__'
 
         # Initializations...
         segment_count = 1
@@ -120,14 +126,14 @@ class Segmentation(object):
                 segment_dict.update(segment.annotations)
 
                 # Update annotations with predefined variables...
-                segment_dict[u'__num__'] = segment_count
-                segment_dict[u'__content__'] = segment.get_content()
-                segment_dict[u'__str_index__'] = str_index
-                segment_dict[u'__start__'] = start
-                segment_dict[u'__end__'] = end
-                segment_dict[u'__str_index_raw__'] = str_index - offset
-                segment_dict[u'__start_raw__'] = start - offset
-                segment_dict[u'__end_raw__'] = end
+                segment_dict['__num__'] = segment_count
+                segment_dict['__content__'] = segment.get_content()
+                segment_dict['__str_index__'] = str_index
+                segment_dict['__start__'] = start
+                segment_dict['__end__'] = end
+                segment_dict['__str_index_raw__'] = str_index - offset
+                segment_dict['__start_raw__'] = start - offset
+                segment_dict['__end_raw__'] = end
 
                 # Apply format and add resulting line to list for later output.
                 lines.append(formatting % segment_dict)
@@ -137,20 +143,20 @@ class Segmentation(object):
 
                 # Add lines in predefined format to list for later output...
                 lines.extend([
-                    u'segment number %i' % segment_count,
-                    u'\tcontent:\t"%s"' % segment.get_content(),
-                    u'\tstr_index:\t%i' % str_index,
-                    u'\tstart:\t%i' % start,
-                    u'\tend:\t%i' % end,
+                    'segment number %i' % segment_count,
+                    '\tcontent:\t"%s"' % segment.get_content(),
+                    '\tstr_index:\t%i' % str_index,
+                    '\tstart:\t%i' % start,
+                    '\tend:\t%i' % end,
                 ])
 
                 # Add annotations (if any) in predefined format...
                 if len(segment.annotations):
-                    lines.append(u'\tannotations:')
+                    lines.append('\tannotations:')
                     lines.extend(
                         [
-                            u'\t\t%-20s %s' % (k, v)
-                            for (k, v) in segment.annotations.items()
+                            '\t\t%-20s %s' % (k, v)
+                            for (k, v) in sorted(segment.annotations.items())
                         ]
                     )
 
@@ -162,7 +168,7 @@ class Segmentation(object):
         if formatting:
             return header + segment_delimiter.join(lines) + footer
         else:
-            return header + u'\n'.join(lines) + footer
+            return header + '\n'.join(lines) + footer
 
     # TODO: test
     def to_html(self, humanize_addresses=False, progress_callback=None):
@@ -182,7 +188,7 @@ class Segmentation(object):
         offset = 1 if humanize_addresses else 0
 
         # Define HTML header, footer and other template elements...
-        html_header = u"""
+        html_header = """
             <html><head><style type="text/css">
                 table.textable {
                     border-width: 1px;
@@ -201,21 +207,21 @@ class Segmentation(object):
                 }
             </style></head><body><a name="top"/>
         """
-        html_footer = u'</body></html>'
-        table_header = u'<p><table class="textable">'
-        wide_table_header = u'<p><table class="textable" width="100%">'
-        table_footer = u'</table></p>'
-        first_row_address = u'<tr><th align="left">String index</th>' \
-                            + u'<th align="left">Start</th>' \
-                            + u'<th align="left">End</th></tr>'
-        first_row_annotation = u'<tr><th align="left">Annotation key</th>' \
-                               + u'<th align="left">Annotation value</th></tr>'
-        first_row_content = u'<tr><th align="left">Content</th></tr>'
+        html_footer = '</body></html>'
+        table_header = '<p><table class="textable">'
+        wide_table_header = '<p><table class="textable" width="100%">'
+        table_footer = '</table></p>'
+        first_row_address = '<tr><th align="left">String index</th>' \
+                            + '<th align="left">Start</th>' \
+                            + '<th align="left">End</th></tr>'
+        first_row_annotation = '<tr><th align="left">Annotation key</th>' \
+                               + '<th align="left">Annotation value</th></tr>'
+        first_row_content = '<tr><th align="left">Content</th></tr>'
 
         # Initializations...
         data = Segmentation.data
         counter = 1
-        lines = [u'<h2>%s</h2>' % self.label]
+        lines = ['<h2>%s</h2>' % self.label]
 
         # For each segment...
         for segment in self.segments:
@@ -224,7 +230,7 @@ class Segmentation(object):
             str_index = segment.str_index
             start = segment.start or 0
             end = segment.end or len(data[str_index])
-            address_string = u'<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (
+            address_string = '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (
                 str_index + offset,
                 start + offset,
                 end,
@@ -232,19 +238,19 @@ class Segmentation(object):
 
             # Format annotation section...
             annotation_string = ''.join(
-                u'<tr><td>%s</td><td>%s</td></tr>' % (k, v)
-                for (k, v) in segment.annotations.items()
+                '<tr><td>%s</td><td>%s</td></tr>' % (k, v)
+                for (k, v) in sorted(segment.annotations.items())
             )
 
             # Replace tag delimiters with HTML entities and CR with HTML tag...
-            content = segment.get_content().replace(u'<', u'&lt;')
-            content = content.replace(u'>', u'&gt;')
-            content = content.replace(u'\n', u'<br/>')
+            content = segment.get_content().replace('<', '&lt;')
+            content = content.replace('>', '&gt;')
+            content = content.replace('\n', '<br/>')
 
             # Add formatted HTML for this segment...
             lines.extend([
-                # u'<h3>Segment #%i</h3>' % counter,
-                u'<h3>Segment #%i</h3><a name="%i"/>' % (counter, counter),
+                # '<h3>Segment #%i</h3>' % counter,
+                '<h3>Segment #%i</h3><a name="%i"/>' % (counter, counter),
                 table_header,
                 first_row_address,
                 address_string,
@@ -260,7 +266,7 @@ class Segmentation(object):
             lines.extend([
                 wide_table_header,
                 first_row_content,
-                u'<tr><td>%s</td></tr>' % content,
+                '<tr><td>%s</td></tr>' % content,
                 table_footer,
             ])
 
@@ -269,7 +275,7 @@ class Segmentation(object):
                 progress_callback()
 
         # Join lines and append HTML header and footer.
-        return html_header + u'\n'.join(lines) + html_footer
+        return html_header + '\n'.join(lines) + html_footer
 
     def append(self, segment):
         """Add a segment at the end of the segmentation
@@ -287,7 +293,7 @@ class Segmentation(object):
         # Take the union of each segment's annotation keys...
         for segment in self.segments:
             annotation_keys = annotation_keys.union(
-                segment.annotations.keys()
+                list(segment.annotations)
             )
 
         return list(annotation_keys)

@@ -37,6 +37,8 @@ from Segmentation import Segmentation
 from Segment      import Segment
 from Address      import Address
 
+from builtins import chr
+
 
 def iround(x):
     """Round a number to the nearest integer
@@ -194,7 +196,7 @@ def get_unused_char_in_segmentation(segmentation, annotation_key=None):
         local_max = max(ord(c) for c in text)
         if local_max > global_max:
             global_max = local_max
-    return unichr(global_max+1)
+    return chr(global_max+1)
 
 
 def prepend_unit_with_category(

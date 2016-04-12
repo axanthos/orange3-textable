@@ -46,6 +46,7 @@ class OWTextablePreprocess(OWWidget):
             'caseTransform',
             'removeAccents',
             'displayAdvancedSettings',
+            'autoSend',
             'uuid',
     ]
 

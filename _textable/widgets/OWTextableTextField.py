@@ -151,7 +151,7 @@ class OWTextableTextField(OWWidget):
         textFieldContent \
                 = textFieldContent.replace('\r\n', '\n').replace('\r','\n')
         textFieldContent = normalize('NFC', textFieldContent)
-            
+
         # Check that text field is not empty...
         if not self.textFieldContent:
             self.infoBox.noDataSent(u': text field is empty.')
