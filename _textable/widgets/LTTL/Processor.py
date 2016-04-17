@@ -1,25 +1,24 @@
-#=============================================================================
-# Class LTTL.Processor, v0.23
-# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
-#=============================================================================
-# This file is part of the LTTL package v1.5
-#
-# LTTL v1.5 is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# LTTL v1.5 is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with LTTL v1.5. If not, see <http://www.gnu.org/licenses/>.
-#=============================================================================
+"""
+Module Processor.py, v0.24
+Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
+-----------------------------------------------------------------------------
+This file is part of the LTTL package v1.6.
+
+LTTL v1.6 is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+LTTL v1.6 is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with LTTL v1.6. If not, see <http://www.gnu.org/licenses/>.
+"""
 
 from __future__   import division
-import math
 
 from Segmentation import Segmentation
 from Table        import *
@@ -1788,14 +1787,12 @@ class Processor(object):
                                 = annotation_value
 
                 # Left and right context...
-                unit_address    = unit_token.address
-                unit_start      = unit_address.start or 0
-                unit_end        = unit_address.end or \
-                        len(Segmentation.data[unit_address.str_index])
-                context_address = context_token.address
-                context_start   = context_address.start or 0
-                context_end     = context_address.end or \
-                     len(Segmentation.data[context_address.str_index])
+                unit_start      = unit_token.start or 0
+                unit_end        = unit_token.end or \
+                        len(Segmentation.data[unit_token.str_index])
+                context_start   = context_token.start or 0
+                context_end     = context_token.end or \
+                     len(Segmentation.data[context_token.str_index])
                 if context_start < unit_start:
                     imm_left_start = max(
                         context_start,
@@ -1803,7 +1800,7 @@ class Processor(object):
                     )
                     if unit_start > imm_left_start:
                         new_values[(row_id, u'__left__')] = \
-                            Segmentation.data[unit_address.str_index][
+                            Segmentation.data[unit_token.str_index][
                                     imm_left_start
                                     :
                                     unit_start
@@ -1816,7 +1813,7 @@ class Processor(object):
                     )
                     if imm_right_end > unit_end:
                         new_values[(row_id, u'__right__')] = \
-                            Segmentation.data[unit_address.str_index][
+                            Segmentation.data[unit_token.str_index][
                                 unit_end
                                 :
                                 imm_right_end

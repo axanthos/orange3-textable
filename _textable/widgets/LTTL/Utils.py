@@ -249,20 +249,20 @@ def generate_random_annotation_key(segmentation, length=8):
 if __name__ == '__main__':
     from Segmenter import Segmenter
     from Input     import Input
-    test_tags = [
-        '<?xml version="1.0" encoding="utf-8"?>',
-        '<a b="1" c="2">',
-        '</d>',
-        '<empty/>',
-    ]
-    for test_tag in test_tags:
-        print test_tag
-        tag_description = parse_xml_tag(test_tag)
-        if tag_description:
-            for (k, v) in tag_description.items():
-                print '%-15s: %s' % (k, v)
-        else:
-            print 'parsing failed'
+    # test_tags = [
+    #     '<?xml version="1.0" encoding="utf-8"?>',
+    #     '<a b="1" c="2">',
+    #     '</d>',
+    #     '<empty/>',
+    # ]
+    # for test_tag in test_tags:
+    #     print test_tag
+    #     tag_description = parse_xml_tag(test_tag)
+    #     if tag_description:
+    #         for (k, v) in tag_description.items():
+    #             print '%-15s: %s' % (k, v)
+    #     else:
+    #         print 'parsing failed'
     my_dict = {'a':2, 'b':1, 'c':1}
     for i in range(10):
         print sample_dict(my_dict, 2)
@@ -282,34 +282,34 @@ if __name__ == '__main__':
     category_dict      = {'A':2, 'B': 1}
     recoded_unit_dict  = {'A#a':1, 'A#b': 1, 'B#b':1}
     print get_variety(unit_dict)
-    print get_variety(unit_dict, unit_weighting=1)
+    print get_variety(unit_dict, unit_weighting=True)
     print get_variety(recoded_unit_dict, category_delimiter='#')
     print get_variety(
             recoded_unit_dict,
-            unit_weighting      = 1,
+            unit_weighting      = True,
             category_delimiter  = '#'
     )
     print get_variety(
             recoded_unit_dict,
-            category_weighting  = 1,
+            category_weighting  = True,
             category_delimiter  = '#',
     )
     print get_variety(
             recoded_unit_dict,
-            unit_weighting      = 1,
-            category_weighting  = 1,
+            unit_weighting      = True,
+            category_weighting  = True,
             category_delimiter  = '#',
     )
-    print generate_random_dict_key(recoded_unit_dict, length=8)
-    seg1 = Input(u'hello world', 'text1')
-    seg2 = Input(u'cruel world', 'text2')
-    segmenter = Segmenter()
-    seg3 = segmenter.concatenate([seg1, seg2], 'corpus')
-    print prepend_unit_with_category(
-        seg3,
-        get_unused_char_in_segmentation(seg3, 'component_label'),
-        generate_random_dict_key(recoded_unit_dict, length=8),
-        'component_label',
-        unit_annotation_key     = None,
-    ).to_string()
+    #print generate_random_dict_key(recoded_unit_dict, length=8)
+    #seg1 = Input(u'hello world', 'text1')
+    #seg2 = Input(u'cruel world', 'text2')
+    #segmenter = Segmenter()
+    #seg3 = segmenter.concatenate([seg1, seg2], 'corpus')
+    #print prepend_unit_with_category(
+    #    seg3,
+    #    get_unused_char_in_segmentation(seg3, 'component_label'),
+    #    generate_random_dict_key(recoded_unit_dict, length=8),
+    #    'component_label',
+    #    unit_annotation_key     = None,
+    #).to_string()
 

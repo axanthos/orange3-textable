@@ -506,6 +506,7 @@ class PivotCrosstab(Crosstab):
         num_row_ids = len(self.row_ids)
         if num_row_ids > 1:
             second_col_id = self.header_col_id or '__row__'
+            new_cached_row_id = None
             new_col_ids.append(second_col_id)
         else:
             new_cached_row_id = self.header_col_id  # TODO: check (was self.row_ids[0]
@@ -539,14 +540,12 @@ class PivotCrosstab(Crosstab):
             new_row_ids,
             new_col_ids,
             new_values,
-            None,
-            None,
-            new_header_col_id,
-            new_header_col_type,
-            new_col_type,
-            None,
-            self.missing,
-            new_cached_row_id,
+            header_col_id=new_header_col_id,
+            header_col_type=new_header_col_type,
+            col_type=new_col_type,
+            class_col_id=None,
+            missing=self.missing,
+            _cached_row_id=new_cached_row_id,
         )
 
     # TODO: test.
@@ -831,8 +830,10 @@ class IntPivotCrosstab(PivotCrosstab):
             list(self.row_ids),
             list(self.col_ids),
             new_values,
-            dict(self.header_row),
-            dict(self.header_col),
+            self.header_row_id,
+            self.header_row_type,
+            self.header_col_id,
+            self.header_col_type,
             dict(self.col_type),
             None,
             self.missing,
@@ -841,7 +842,7 @@ class IntPivotCrosstab(PivotCrosstab):
 
     def to_document_frequency(self, progress_callback=None):
         """Return a table with document frequencies based on the crosstab"""
-        context_type = '__document_frequency__';
+        context_type = '__document_frequency__'
         document_freq = dict()
         for col_id in self.col_ids:
             unit_profile = tuple_to_simple_dict_transpose(
@@ -855,14 +856,10 @@ class IntPivotCrosstab(PivotCrosstab):
             [context_type],
             self.col_ids[:],
             document_freq,
-            {
-                'id': '__unit__',
-                'type': 'string',
-            },
-            {
-                'id': '__context__',
-                'type': 'string',
-            },
+            '__unit__',
+            'string',
+            '__context__',
+            'string',
             self.col_type.copy(),
             None,
             0,
@@ -874,8 +871,9 @@ class IntPivotCrosstab(PivotCrosstab):
         (cf. Bavaud & Xanthos 2005, Deneulin et al. 2014)
         """
         orange_table = self.to_orange_table('utf8')
-        freq_table = Orange.data.preprocess.RemoveDiscrete(orange_table)
-        freq = freq_table.to_numpy()[0]
+        # freq_table = Orange.data.preprocess.RemoveDiscrete(orange_table)
+        # freq = freq_table.to_numpy()[0]
+        freq = self.to_numpy()[0]   # TODO: check (was previous 2 lines)
         if self.header_col_type == 'continuous':
             freq = freq[::, 1::]
         total_freq = freq.sum()
@@ -913,32 +911,27 @@ class IntPivotCrosstab(PivotCrosstab):
             self.col_ids[:],
             self.col_ids[:],
             values,
-            {},
-            {
-                'id': '__unit__',
-                'type': 'string',
-            },
-            self.col_type.copy(),
+            header_col_id='__unit__',
+            header_col_type='string',
+            col_type=self.col_type.copy(),
         ))
 
     def to_flat(self, progress_callback=None):
         """Return a copy of the crosstab in 'flat' format"""
-        new_header_col = {
-            'id': '__id__',
-            'type': 'string',
-        }
-        new_col_ids = [self.header_row.get('id', '__column__')]
+        new_header_col_id = '__id__'
+        new_header_col_type = 'string'
+        new_col_ids = [self.header_row_id or '__column__']
         num_row_ids = len(self.row_ids)
         if num_row_ids > 1:
-            new_col_ids.append(self.header_col.get('id', '__row__'))
+            new_col_ids.append(self.header_col_id or '__row__')
             new_cached_row_id = None
             second_col_id = new_col_ids[1]
         else:
             new_cached_row_id = self.row_ids[0]
         new_col_type = dict([(col_id, 'discrete') for col_id in new_col_ids])
         row_counter = 1
-        new_values = {}
-        new_row_ids = []
+        new_values = dict()
+        new_row_ids = list()
         get_count = self.values.get
         first_col_id = new_col_ids[0]
         for row_id in self.row_ids:
@@ -957,12 +950,12 @@ class IntPivotCrosstab(PivotCrosstab):
             new_row_ids,
             new_col_ids,
             new_values,
-            {},
-            new_header_col,
-            new_col_type,
-            None,
-            self.missing,
-            new_cached_row_id,
+            header_col_id=new_header_col_id,
+            header_col_type=new_header_col_type,
+            col_type=new_col_type,
+            class_col_id=None,
+            missing=self.missing,
+            _cached_row_id=new_cached_row_id,
         ))
 
     def to_weighted_flat(self, progress_callback=None):
@@ -1008,27 +1001,24 @@ class FlatCrosstab(Crosstab):
     def to_pivot(self, progress_callback=None):
         """Return a copy of the crosstab in 'pivot' format"""
         new_header_row_id = self.col_ids[0]
-        new_header_row = {
-            'id': new_header_row_id,
-            'type': 'discrete',
-        }
-        new_header_col = {'type': 'discrete'}
+        new_header_row_type = 'discrete'
+        new_header_col_id = '__row__'
+        new_header_col_type = 'discrete'
         new_col_ids = Crosstab.get_unique_items(
             [
                 self.values[(row_id, new_header_row_id)]
                 for row_id in self.row_ids
-                ]
+            ]
         )
-        new_row_ids = []
-        new_values = {}
+        new_row_ids = list()
+        new_values = dict()
         if len(self.col_ids) > 1:
             new_header_col_id = self.col_ids[1]
-            new_header_col_id = new_header_col_id
             new_row_ids.extend(Crosstab.get_unique_items(
                 [
                     self.values[(row_id, new_header_col_id)]
                     for row_id in self.row_ids
-                    ]
+                ]
             ))
             for row_id in self.row_ids:
                 pair = (
@@ -1056,8 +1046,10 @@ class FlatCrosstab(Crosstab):
             new_row_ids,
             new_col_ids,
             new_values,
-            new_header_row,
-            new_header_col,
+            new_header_row_id,
+            new_header_row_type,
+            new_header_col_id,
+            new_header_col_type,
             dict([(col_id, 'continuous') for col_id in new_col_ids]),
             None,
             self.missing,
@@ -1069,20 +1061,19 @@ class FlatCrosstab(Crosstab):
         new_col_ids = list(self.col_ids)
         new_col_type = dict(self.col_type)
         row_counter = 1
-        new_values = {}
-        new_row_ids = []
+        new_values = dict()
+        new_row_ids = list()
         if len(self.col_ids) > 1:
             first_col_id = self.col_ids[0]
             second_col_id = self.col_ids[1]
-            row_id_for_pair = {}
+            row_id_for_pair = dict()
             for row_id in self.row_ids:
                 first_col_value = self.values[row_id, first_col_id]
                 second_col_value = self.values[row_id, second_col_id]
                 pair = (first_col_value, second_col_value)
                 if pair in row_id_for_pair.keys():
                     known_pair_row_id = row_id_for_pair[pair]
-                    new_values[(known_pair_row_id, '__weight__')] \
-                        = new_values[(known_pair_row_id, '__weight__')] + 1
+                    new_values[(known_pair_row_id, '__weight__')] += 1
                 else:
                     new_row_id = text(row_counter)
                     new_row_ids.append(new_row_id)
@@ -1095,13 +1086,12 @@ class FlatCrosstab(Crosstab):
                     progress_callback()
         else:
             col_id = self.col_ids[0]
-            row_id_for_value = {}
+            row_id_for_value = dict()
             for row_id in self.row_ids:
                 col_value = self.values[row_id, col_id]
                 if col_value in row_id_for_value.keys():
                     known_value_row_id = row_id_for_value[col_value]
-                    new_values[(known_value_row_id, '__weight__')] \
-                        = new_values[(known_value_row_id, '__weight__')] + 1
+                    new_values[(known_value_row_id, '__weight__')] += 1
                 else:
                     new_row_id = text(row_counter)
                     new_row_ids.append(new_row_id)
@@ -1117,8 +1107,10 @@ class FlatCrosstab(Crosstab):
             new_row_ids,
             new_col_ids,
             new_values,
-            self.header_row,
-            self.header_col,
+            self.header_row_id,
+            self.header_row_type,
+            self.header_col_id,
+            self.header_col_type,
             new_col_type,
             None,
             self.missing,
@@ -1146,27 +1138,24 @@ class WeightedFlatCrosstab(Crosstab):
     def to_pivot(self, progress_callback=None):
         """Return a copy of the crosstab in 'pivot' format"""
         new_header_row_id = self.col_ids[0]
-        new_header_row = {
-            'id': new_header_row_id,
-            'type': 'discrete',
-        }
-        new_header_col = {'type': 'discrete'}
+        new_header_row_type = 'discrete'
+        new_header_col_id = '__row__'
+        new_header_col_type = 'discrete'
         new_col_ids = Crosstab.get_unique_items(
             [
                 self.values[(row_id, new_header_row_id)]
                 for row_id in self.row_ids
-                ]
+            ]
         )
-        new_row_ids = []
-        new_values = {}
+        new_row_ids = list()
+        new_values = dict()
         if len(self.col_ids) > 2:
             new_header_col_id = self.col_ids[1]
-            new_header_col_id = new_header_col_id
             new_row_ids.extend(Crosstab.get_unique_items(
                 [
                     self.values[(row_id, new_header_col_id)]
                     for row_id in self.row_ids
-                    ]
+                ]
             ))
             for row_id in self.row_ids:
                 pair = (
@@ -1194,8 +1183,10 @@ class WeightedFlatCrosstab(Crosstab):
             new_row_ids,
             new_col_ids,
             new_values,
-            new_header_row,
-            new_header_col,
+            new_header_row_id,
+            new_header_row_type,
+            new_header_col_id,
+            new_header_col_type,
             dict([(col_id, 'continuous') for col_id in new_col_ids]),
             None,
             self.missing,
@@ -1221,8 +1212,8 @@ class IntWeightedFlatCrosstab(WeightedFlatCrosstab):
         new_col_type = dict(self.col_type)
         del new_col_type['__weight__']
         row_counter = 1
-        new_values = {}
-        new_row_ids = []
+        new_values = dict()
+        new_row_ids = list()
         if len(self.col_ids) > 1:
             first_col_id = self.col_ids[0]
             second_col_id = self.col_ids[1]
@@ -1254,8 +1245,10 @@ class IntWeightedFlatCrosstab(WeightedFlatCrosstab):
             new_row_ids,
             new_col_ids,
             new_values,
-            self.header_row,
-            self.header_col,
+            self.header_row_id,
+            self.header_row_type,
+            self.header_col_id,
+            self.header_col_type,
             new_col_type,
             None,
             self.missing,
