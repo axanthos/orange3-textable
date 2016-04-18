@@ -559,15 +559,16 @@ class PivotCrosstab(Crosstab):
             np_type = np.dtype(np.float32)
 
         # Initialize numpy table...
-        np_table = np.empty([len(self.row_ids), len(self.row_ids)], np_type)
+        np_table = np.empty([len(self.row_ids), len(self.col_ids)], np_type)
         np_table.fill(self.missing or 0)
 
         # Fill and return numpy table...
         for row_idx in xrange(len(self.row_ids)):
             for col_idx in xrange(len(self.col_ids)):
                 try:
-                    np_table[row_idx][col_idx] =    \
-                      self.values[self.row_ids[row_idx]][self.col_ids[col_idx]]
+                    np_table[row_idx][col_idx] = self.values[
+                        (self.row_ids[row_idx], self.col_ids[col_idx])
+                    ]
                 except KeyError:
                     pass
         return np_table
