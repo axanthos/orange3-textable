@@ -1,5 +1,5 @@
 """
-Module Processor.py, v0.24
+Module Processor.py, v0.25
 Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the LTTL package v1.6.
@@ -1048,7 +1048,11 @@ class Processor(object):
         else:
             length_col_name = u'__length__'
         context_types[:] = [
-                c for c in context_types if values[(c, length_col_name)] > 0
+                c for c in context_types 
+                if (
+                    (c, length_col_name) in values 
+                    and values[(c, length_col_name)] 
+                )
         ]
         values = dict(
                 (key, value)
