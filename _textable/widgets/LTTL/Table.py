@@ -502,7 +502,7 @@ class PivotCrosstab(Crosstab):
         # Initialize col ids and types for the converted table...
         new_header_col_id = '__id__'
         new_header_col_type = 'continuous'  # TODO: check (was string)
-        new_col_ids = self.header_row_id or '__column__'
+        new_col_ids = [self.header_row_id or '__column__']
         num_row_ids = len(self.row_ids)
         if num_row_ids > 1:
             second_col_id = self.header_col_id or '__row__'
