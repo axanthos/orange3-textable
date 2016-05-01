@@ -1,5 +1,5 @@
 doc_root = [
-    ("http://orange-textable.readthedocs.io/en/latest/", None),
+    ("http://orange-textable.readthedocs.org/en/latest/", None),
 ]
 
 
