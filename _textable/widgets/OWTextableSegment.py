@@ -1,24 +1,24 @@
-#=============================================================================
-# Class OWTextableSegment
-# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
-#=============================================================================
-# This file is part of the Textable (v1.5) extension to Orange Canvas.
-#
-# Textable v1.5 is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Textable v1.5 is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
-#=============================================================================
+"""
+Class OWTextableSegment
+Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
+-----------------------------------------------------------------------------
+This file is part of the Orange-Textable package v1.6.
 
-__version__ = '0.21.1'
+Orange-Textable v1.6 is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Orange-Textable v1.6 is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Orange-Textable v1.6. If not, see <http://www.gnu.org/licenses/>.
+"""
+
+__version__ = '0.21.2'      # TODO: change subversion?
 
 """
 <name>Segment</name>
@@ -29,10 +29,10 @@ __version__ = '0.21.1'
 
 import re, codecs, json
 
-from LTTL.Segmenter    import Segmenter
+import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 
-from TextableUtils      import *
+from TextableUtils import *
 
 from Orange.OrangeWidgets.OWWidget import *
 import OWGUI
@@ -40,7 +40,7 @@ import OWGUI
 class OWTextableSegment(OWWidget):
 
     """Orange widget for regex-based tokenization"""
-    
+
     settingsList = [
             'regexes',
             'importAnnotations',
@@ -53,16 +53,17 @@ class OWTextableSegment(OWWidget):
             'regex',
             'lastLocation',
             'mode',
+            'segmentType'
             'uuid',
     ]
 
     def __init__(self, parent=None, signalManager=None):
 
         OWWidget.__init__(
-                self,
-                parent,
-                signalManager,
-                wantMainArea=0,
+            self,
+            parent,
+            signalManager,
+            wantMainArea=0,
         )
 
         # Input and output channels...
@@ -71,47 +72,47 @@ class OWTextableSegment(OWWidget):
             ('Message', JSONMessage, self.inputMessage, Single)
         ]
         self.outputs = [('Segmented data', Segmentation)]
-        
+
         # Settings...
-        self.regexes                    = []
-        self.importAnnotations          = True
-        self.mergeDuplicates            = True
-        self.autoSend                   = True
-        self.label                      = u'segmented_data'
-        self.autoNumber                 = False
-        self.autoNumberKey              = u'num'
-        self.displayAdvancedSettings    = False
-        self.lastLocation               = '.'
-        self.regex                      = u''
-        self.mode                       = u'Tokenize'
-        self.uuid                       = None
+        self.regexes = list()
+        self.segmentType = u'Segment into words'
+        self.importAnnotations = True
+        self.mergeDuplicates = False
+        self.autoSend = True
+        self.label = u'segmented_data'
+        self.autoNumber = False
+        self.autoNumberKey = u'num'
+        self.displayAdvancedSettings = False
+        self.lastLocation = '.'
+        self.regex = u''
+        self.mode = u'Tokenize'
+        self.uuid = None
         self.loadSettings()
-        self.uuid                       = getWidgetUuid(self)
+        self.uuid = getWidgetUuid(self)
 
         # Other attributes...
-        self.segmenter              = Segmenter()
-        self.inputSegmentation      = None
-        self.regexLabels            = []
-        self.selectedRegexLabels    = []
-        self.newRegex               = r''
-        self.newAnnotationKey       = r''
-        self.newAnnotationValue     = r''
-        self.ignoreCase             = False
-        self.unicodeDependent       = True
-        self.multiline              = False
-        self.dotAll                 = False
-        self.infoBox                = InfoBox(widget=self.controlArea)
-        self.sendButton             = SendButton(
-                widget              = self.controlArea,
-                master              = self,
-                callback            = self.sendData,
-                infoBoxAttribute    = 'infoBox',
-                sendIfPreCallback   = self.updateGUI,
+        self.inputSegmentation = None
+        self.regexLabels = list()
+        self.selectedRegexLabels = list()
+        self.newRegex = r''
+        self.newAnnotationKey = r''
+        self.newAnnotationValue = r''
+        self.ignoreCase = False
+        self.unicodeDependent = True
+        self.multiline = False
+        self.dotAll = False
+        self.infoBox = InfoBox(widget=self.controlArea)
+        self.sendButton = SendButton(
+            widget=self.controlArea,
+            master=self,
+            callback=self.sendData,
+            infoBoxAttribute='infoBox',
+            sendIfPreCallback=self.updateGUI,
         )
         self.advancedSettings = AdvancedSettings(
-                widget              = self.controlArea,
-                master              = self,
-                callback            = self.sendButton.settingsChanged,
+            widget=self.controlArea,
+            master=self,
+            callback=self.sendButton.settingsChanged,
         )
 
         # GUI...
@@ -482,24 +483,48 @@ class OWTextableSegment(OWWidget):
         # (Basic) Regex box...
         basicRegexBox = OWGUI.widgetBox(
                 widget              = self.controlArea,
-                box                 = u'Regex',
+                box                 = u'Segment type',
                 orientation         = 'vertical',
         )
-        OWGUI.lineEdit(
+        self.segmentTypeCombo = OWGUI.comboBox(
                 widget              = basicRegexBox,
                 master              = self,
-                value               = 'regex',
+                value               = 'segmentType',
+                sendSelectedValue   = True,
+                items               = [
+                    u'Segment into letters',
+                    u'Segment into words',
+                    u'Segment into lines',
+                    u'Use a regular expression',
+                ],
                 orientation         = 'horizontal',
                 callback            = self.sendButton.settingsChanged,
                 tooltip             = (
-                        u"The regex that will be applied to each segment in\n"
-                        u"the input segmentation. Commonly used segmentation\n"
-                        u"units include:\n"
-                        u"1) .\tcharacters (except newline)\n"
-                        u'2) \w\t"letters" (alphanumeric chars and underscores)\n'
-                        u'3) \w+\t"words" (sequences of "letters")\n'
-                        u"4) .+\tlines\n"
-                        u"and so on."
+                        u"Specify the kind of units into which the data will\n"
+                        u"be segmented (letters, words, lines, or custom\n"
+                        u"units defined using a regular expression)."
+                ),
+        )
+        self.basicRegexFieldBox = OWGUI.widgetBox(
+                widget              = basicRegexBox,
+                box                 = False,
+                orientation         = 'vertical',
+        )
+        OWGUI.separator(
+                widget              = self.basicRegexFieldBox,
+                height              = 2,
+        )
+        OWGUI.lineEdit(
+                widget              = self.basicRegexFieldBox,
+                master              = self,
+                value               = 'regex',
+                orientation         = 'horizontal',
+                label               = u'Regex:',
+                labelWidth          = 60,
+                callback            = self.sendButton.settingsChanged,
+                tooltip             = (
+                        u"A pattern that specifies the form of units into\n"
+                        u"which the data will be segmented."
                 ),
         )
         OWGUI.separator(
@@ -573,7 +598,7 @@ class OWTextableSegment(OWWidget):
 
 
     def sendData(self):
-    
+
         """(Have LTTL.Segmenter) perform the actual tokenization"""
 
         # Check that there's something on input...
@@ -582,30 +607,51 @@ class OWTextableSegment(OWWidget):
             self.send('Segmented data', None, self)
             return
 
-        # Check that there's at least one regex...
+        # Check that there's at least one regex (if needed)...
         if (
             (self.displayAdvancedSettings and not self.regexes)
-            or not (self.regex or self.displayAdvancedSettings)
+            or (
+                self.segmentType == 'Use a regular expression'
+                and not (self.regex or self.displayAdvancedSettings)
+            )
         ):
             self.infoBox.noDataSent(warning = u'No regex defined.')
             self.send('Segmented data', None, self)
             return
 
         # Get regexes from basic or advanced settings...
+        regexForType = {
+            u'Segment into letters': ur'\w',
+            u'Segment into words': ur'\w+',
+            u'Segment into lines': ur'.+',
+        }
         if self.displayAdvancedSettings:
             myRegexes = self.regexes
+        elif self.segmentType == 'Use a regular expression':
+            myRegexes = [
+                [
+                    self.regex,
+                    None,
+                    None,
+                    False,
+                    True,
+                    False,
+                    False,
+                    u'tokenize',
+                ]
+            ]
         else:
             myRegexes = [
-                    [
-                            self.regex,
-                            None,
-                            None,
-                            False,
-                            True,
-                            False,
-                            False,
-                            u'Tokenize',
-                    ]
+                [
+                    regexForType[self.segmentType],
+                    None,
+                    None,
+                    False,
+                    True,
+                    False,
+                    False,
+                    u'tokenize',
+                ]
             ]
 
         # Check that label is not empty...
@@ -638,13 +684,13 @@ class OWTextableSegment(OWWidget):
             importAnnotations   = self.importAnnotations
             mergeDuplicates     = self.mergeDuplicates
             if mergeDuplicates:
-                num_iterations += len(self.inputSegmentation)
+                num_iterations += 2 * len(self.inputSegmentation) - 1
         else:
             importAnnotations   = True
             mergeDuplicates     = False
 
         # Prepare regexes...
-        regexes = []
+        regexes = list()
         for regex_idx in xrange(len(myRegexes)):
             regex = myRegexes[regex_idx]
             regex_string = regex[0]
@@ -663,11 +709,11 @@ class OWTextableSegment(OWWidget):
                 if regex[1] and regex[2]:
                     regexes.append((
                             re.compile(regex_string),
-                            regex[7],
+                            (regex[7].lower()),
                             {regex[1]: regex[2]}
                     ))
                 else:
-                    regexes.append((re.compile(regex_string),regex[7],))
+                    regexes.append((re.compile(regex_string), regex[7].lower()))
             except re.error as re_error:
                 message = u'Regex error: %s' % re_error.message
                 if self.displayAdvancedSettings and len(myRegexes) > 1:
@@ -683,14 +729,14 @@ class OWTextableSegment(OWWidget):
                 iterations = num_iterations
         )
         try:
-            segmented_data = self.segmenter.tokenize(
-                segmentation        = self.inputSegmentation,
-                regexes             = regexes,
-                label               = self.label,
-                import_annotations  = importAnnotations,
-                merge_duplicates    = mergeDuplicates,
-                auto_numbering_as   = autoNumberKey,
-                progress_callback   = progressBar.advance,
+            segmented_data = Segmenter.tokenize(
+                segmentation=self.inputSegmentation,
+                regexes=regexes,
+                label=self.label,
+                import_annotations=importAnnotations,
+                merge_duplicates=mergeDuplicates,
+                auto_number_as=autoNumberKey,
+                progress_callback=progressBar.advance,
             )
             message = u'%i segment@p.' % len(segmented_data)
             message = pluralize(message, len(segmented_data))
@@ -862,7 +908,7 @@ class OWTextableSegment(OWWidget):
         del self.regexes[:]
         del self.selectedRegexLabels[:]
         self.sendButton.settingsChanged()
-        
+
 
     def remove(self):
         """Remove regex from regexes attr"""
@@ -913,7 +959,7 @@ class OWTextableSegment(OWWidget):
                             regexLabel += format % annotations[index]
                         else:
                             regexLabel += u' ' * (maxAnnoLen + 2)
-                    flags = []
+                    flags = list()
                     if self.regexes[index][3]:
                         flags.append(u'i')
                     if self.regexes[index][4]:
@@ -950,6 +996,10 @@ class OWTextableSegment(OWWidget):
             self.advancedSettings.setVisible(True)
         else:
             self.advancedSettings.setVisible(False)
+            self.basicRegexFieldBox.setVisible(
+                self.segmentType == 'Use a regular expression'
+            )
+
 
 
     def updateRegexBoxButtons(self):
@@ -975,6 +1025,17 @@ class OWTextableSegment(OWWidget):
             self.clearAllButton.setDisabled(True)
             self.exportButton.setDisabled(True)
 
+    def setCaption(self, title):
+        if 'captionTitle' in dir(self) and self.captionTitle != 'Orange Widget':
+            settings = OWWidget.setCaption(self, title)
+            QMessageBox.warning(
+                None,
+                'Textable',
+                title,
+                QMessageBox.Ok
+            )
+        else:
+            settings = OWWidget.setCaption(self, title)
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
@@ -990,8 +1051,10 @@ class OWTextableSegment(OWWidget):
 
 
 if __name__ == '__main__':
+    from LTTL.Input import Input
     appl = QApplication(sys.argv)
-    ow   = OWTextableSegment()
+    ow = OWTextableSegment()
+    ow.inputData(Input('a simple example'))
     ow.show()
     appl.exec_()
     ow.saveSettings()

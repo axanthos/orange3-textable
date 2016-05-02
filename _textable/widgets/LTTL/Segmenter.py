@@ -182,8 +182,9 @@ def tokenize(
     the annotation key which should be used for storing an automatically
     generated numeric index for each segment
 
-    :param progress_callback: callback for monitoring progress ticks (1 for each
-    input segment + merge_duplicates and auto-number (if applicable)
+    :param progress_callback: callback for monitoring progress ticks (number of
+    input segments * number of regexes + merge_duplicates and auto-number (if
+    applicable)
 
     :return: new segmentation containing the tokenized segments
 
