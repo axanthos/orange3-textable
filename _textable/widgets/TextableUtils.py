@@ -220,6 +220,16 @@ class InfoBox(object):
         self.stringClickSend = stringClickSend
         self.wrappedWidth = wrappedWidth
 
+        # Path to icons...
+        iconDir = os.path.join(
+            os.path.split(os.path.split(os.path.abspath(__file__))[0])[0],
+            'widgets',
+            'icons',
+        )
+        self.okIconPath = os.path.join(iconDir, 'ok.png')
+        self.warningIconPath = os.path.join(iconDir, 'warning.png')
+        self.errorIconPath = os.path.join(iconDir, 'error.png')
+
     def draw(self):
         """Draw the InfoBox on window"""
         box = OWGUI.widgetBox(
@@ -229,31 +239,44 @@ class InfoBox(object):
             orientation='vertical',
             addSpace=False,
         )
-        self.line1 = OWGUI.widgetLabel(
+        OWGUI.separator(widget=box, height=2)
+        self.stateLabel = OWGUI.widgetLabel(
             widget=box,
             label=u'',
         )
-        OWGUI.rubber(widget=self.widget)
+        self.stateLabel.setWordWrap(True)
         self.initialMessage()
+
+    def setText(self, message='', mode='ok'):
+        """Format and display message"""
+        self.widget.topLevelWidget().warning(0)
+        self.widget.topLevelWidget().error(0)
+        if mode == 'ok':
+            iconPath = self.okIconPath
+        elif mode == 'warning':
+            iconPath = self.warningIconPath
+            self.widget.topLevelWidget().warning(0, message)
+        elif mode == 'error':
+            iconPath = self.errorIconPath
+            self.widget.topLevelWidget().error(0, message)
+        self.stateLabel.setText(
+            "<html><img src='%s'>&nbsp;&nbsp;%s</html>" % (iconPath, message)
+        )
+        self.widget.topLevelWidget().adjustSizeWithTimer()
 
     def initialMessage(self):
         """Display initial message"""
-        self.widget.topLevelWidget().warning(0)
-        self.widget.topLevelWidget().error(0)
-        self.line1.setText(self.wrap(
-            self.stringNoDataSent + self.stringClickSend
-        ))
+        self.setText(
+            message=self.stringNoDataSent + self.stringClickSend,
+            mode='warning',
+        )
 
     def dataSent(self, message=u''):
         """Display 'ok' message (and 'data sent' status)"""
-        self.widget.topLevelWidget().warning(0)
-        self.widget.topLevelWidget().error(0)
         if message:
-            self.line1.setText("<html><img src='icons/ok.png'> " + self.wrap(
-                self.stringDataSent + ': ' + message + "</html>"
-            ))
+            self.setText(self.stringDataSent + ': ' + message)
         else:
-            self.line1.setText(self.wrap(self.stringDataSent + '.'))
+            self.setText(self.stringDataSent + '.')
 
     def noDataSent(self, message=u'', warning=u'', error=u''):
         """Display error message (and 'no data sent' status)"""
@@ -261,35 +284,35 @@ class InfoBox(object):
 
     def customMessage(self, message=u'', warning=u'', error=u'', pre=u''):
         """Display custom message"""
-        self.widget.topLevelWidget().warning(0)
-        self.widget.topLevelWidget().error(0)
-        line1_message = pre + message
         if warning:
-            line1_message += self.stringSeeWidgetState
-            self.widget.topLevelWidget().warning(0, warning)
+            mode = 'warning'
+            completeMessage = pre + ": " + warning
         elif error:
-            line1_message += self.stringSeeWidgetState
-            self.widget.topLevelWidget().error(0, error)
-        self.line1.setText(self.wrap(line1_message))
+            mode = 'error'
+            completeMessage = pre + ": " + error
+        elif message:
+            mode = 'ok'
+            completeMessage = pre + ": " + message
+        else:
+            mode = 'ok'
+            completeMessage = pre + "."
+        self.setText(completeMessage, mode)
 
     def settingsChanged(self):
         """Display 'Settings changed' message"""
-        self.widget.topLevelWidget().warning(0)
-        self.widget.topLevelWidget().error(0)
-        self.line1.setText(self.wrap(
-            self.stringSettingsChanged + self.stringClickSend
-        ))
+        if not self.widget.topLevelWidget().autoSend:
+            self.setText(
+                self.stringSettingsChanged + self.stringClickSend,
+                mode='warning',
+            )
 
     def inputChanged(self):
         """Display 'Input changed' message"""
-        self.line1.setText(self.wrap(self.stringInputChanged))
-        self.line1.setText(self.wrap(
-            self.stringInputChanged + self.stringClickSend
-        ))
-
-    def wrap(self, message=u''):
-        """Return a version of a string wrapped to a fixed width"""
-        return '\r\n'.join(textwrap.wrap(message, self.wrappedWidth))
+        if not self.widget.topLevelWidget().autoSend:
+            self.setText(
+                self.stringInputChanged + self.stringClickSend,
+                mode='warning',
+            )
 
 
 class BasicOptionsBox(object):

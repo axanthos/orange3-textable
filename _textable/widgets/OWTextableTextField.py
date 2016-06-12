@@ -180,6 +180,9 @@ class OWTextableTextField(OWWidget):
     def onDeleteWidget(self):
         self.segmentation.clear()
 
+    def adjustSizeWithTimer(self):
+        qApp.processEvents()
+        QTimer.singleShot(50, self.adjustSize)
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)

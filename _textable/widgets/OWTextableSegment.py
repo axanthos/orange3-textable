@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v1.6. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.3'  # TODO: change subversion?
+__version__ = '0.22.0a'  # TODO: change subversion?
 
 """
 <name>Segment</name>
@@ -58,7 +58,13 @@ class OWTextableSegment(OWWidget):
 
     def __init__(self, parent=None, signalManager=None):
 
-        OWWidget.__init__(self, parent, signalManager, wantMainArea=0)
+        OWWidget.__init__(
+            self,
+            parent,
+            signalManager,
+            wantMainArea=0,
+            wantStateInfoWidget=0
+        )
 
         # Input and output channels...
         self.inputs = [
@@ -463,7 +469,7 @@ class OWTextableSegment(OWWidget):
             box=u'Segment type',
             orientation='vertical',
         )
-        self.segmentTypeCombo = OWGUI.comboBox(
+        self. peCombo = OWGUI.comboBox(
             widget=basicRegexBox,
             master=self,
             value='segmentType',
@@ -511,15 +517,16 @@ class OWTextableSegment(OWWidget):
         self.advancedSettings.basicWidgets.append(basicRegexBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
-        # Info box...
-        self.infoBox.draw()
+        OWGUI.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
 
+        # Info box...
+        self.infoBox.draw()
+
         self.sendButton.sendIf()
 
-        self.setSizePolicy(QSizePolicy(QSizePolicy.Maximum))
 
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
@@ -544,9 +551,10 @@ class OWTextableSegment(OWWidget):
                 dotAll = entry.get('dot_all', False)
                 mode = entry.get('mode', '')
                 if regex == '' or mode == '':
-                    self.infoBox.noDataSent(
-                        warning=u"JSON message on input connection doesn't "
-                                u"have the right keys and/or values."
+                    self.infoBox.setText(
+                        u"Please verify attributes and values of incoming "
+                        u"JSON message.",
+                        'error'
                     )
                     self.send('Segmented data', None, self)
                     return
@@ -565,8 +573,9 @@ class OWTextableSegment(OWWidget):
             self.regexes.extend(temp_regexes)
             self.sendButton.settingsChanged()
         except ValueError:
-            self.infoBox.noDataSent(
-                warning=u"Message content is not in JSON format."
+            self.infoBox.setText(
+                u"Please make sure that incoming message is valid JSON.",
+                'error'
             )
             self.send('Segmented data', None, self)
             return
@@ -577,7 +586,7 @@ class OWTextableSegment(OWWidget):
 
         # Check that there's something on input...
         if not self.inputSegmentation:
-            self.infoBox.noDataSent(u': no input segmentation.')
+            self.infoBox.setText(u'Widget needs input.', 'warning')
             self.send('Segmented data', None, self)
             return
 
@@ -589,7 +598,7 @@ class OWTextableSegment(OWWidget):
                         and not (self.regex or self.displayAdvancedSettings)
                 )
         ):
-            self.infoBox.noDataSent(warning=u'No regex defined.')
+            self.infoBox.setText(u'Please enter a regex.', 'warning')
             self.send('Segmented data', None, self)
             return
 
@@ -635,9 +644,9 @@ class OWTextableSegment(OWWidget):
             if self.autoNumber:
                 autoNumberKey = self.autoNumberKey
                 if autoNumberKey == '':
-                    self.infoBox.noDataSent(
-                        warning=u'No annotation key was provided '
-                                u'for auto-numbering.'
+                    self.infoBox.setText(
+                        u'Please enter an annotation key for auto-numbering.',
+                        'warning'
                     )
                     self.send('Segmented data', None, self)
                     return
@@ -648,35 +657,6 @@ class OWTextableSegment(OWWidget):
             importAnnotations = True
             autoNumberKey = None
             mergeDuplicates = False
-
-        # # Check that autoNumberKey is not empty (if necessary)...
-        # if self.displayAdvancedSettings and self.autoNumber:
-        #     if self.autoNumberKey:
-        #         autoNumberKey = self.autoNumberKey
-        #         num_iterations = (
-        #             len(self.inputSegmentation)
-        #             * (len(myRegexes) + 1)
-        #         )
-        #     else:
-        #         self.infoBox.noDataSent(
-        #             warning=u'No annotation key was provided '
-        #                     u'for auto-numbering.'
-        #         )
-        #         self.send('Segmented data', None, self)
-        #         return
-        # else:
-        #     autoNumberKey = None
-        #     num_iterations = len(self.inputSegmentation) * len(myRegexes)
-        #
-        # # Basic settings...
-        # if self.displayAdvancedSettings:
-        #     importAnnotations = self.importAnnotations
-        #     mergeDuplicates = self.mergeDuplicates
-        #     if mergeDuplicates:
-        #         num_iterations += 2 * len(self.inputSegmentation) - 1
-        # else:
-        #     importAnnotations = True
-        #     mergeDuplicates = False
 
         # Prepare regexes...
         regexes = list()
@@ -706,11 +686,13 @@ class OWTextableSegment(OWWidget):
                 else:
                     regexes.append((re.compile(regex_string), regex[7].lower()))
             except re.error as re_error:
-                message = u'Regex error: %s' % re_error.message
+                message = u'Please enter a valid regex (error: %s' % re_error.message
                 if self.displayAdvancedSettings and len(myRegexes) > 1:
-                    message += ' (regex #%i)' % (regex_idx + 1)
-                message += '.'
-                self.infoBox.noDataSent(error=message)
+                    message += u', regex #%i' % (regex_idx + 1)
+                message += u').'
+                self.infoBox.setText(
+                    message, 'error'
+                )
                 self.send('Segmented data', None, self)
                 return
 
@@ -729,14 +711,14 @@ class OWTextableSegment(OWWidget):
                 auto_number_as=autoNumberKey,
                 progress_callback=progressBar.advance,
             )
-            message = u'%i segment@p.' % len(segmented_data)
+            message = u'%i segment@p sent to output.' % len(segmented_data)
             message = pluralize(message, len(segmented_data))
-            self.infoBox.dataSent(message)
+            self.infoBox.setText(message)
             self.send('Segmented data', segmented_data, self)
         except IndexError:
-            self.infoBox.noDataSent(
-                error=u'Reference to unmatched group in '
-                      u'annotation key and/or value.'
+            self.infoBox.setText(
+                u'reference to unmatched group in annotation key and/or value.',
+                'error'
             )
             self.send('Segmented data', None, self)
         self.sendButton.resetSettingsChangedFlag()
@@ -982,7 +964,7 @@ class OWTextableSegment(OWWidget):
             self.basicRegexFieldBox.setVisible(
                 self.segmentType == 'Use a regular expression'
             )
-        self.adjustSize()
+        self.adjustSizeWithTimer()
 
     def updateRegexBoxButtons(self):
         """Update state of Regex box buttons"""
@@ -1006,6 +988,10 @@ class OWTextableSegment(OWWidget):
         else:
             self.clearAllButton.setDisabled(True)
             self.exportButton.setDisabled(True)
+
+    def adjustSizeWithTimer(self):
+        qApp.processEvents()
+        QTimer.singleShot(50, self.adjustSize)
 
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
