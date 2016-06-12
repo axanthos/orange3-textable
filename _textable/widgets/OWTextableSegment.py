@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v1.6. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.22.0a'  # TODO: change subversion?
+__version__ = '0.21.3'  # TODO: change subversion?
 
 """
 <name>Segment</name>
@@ -52,7 +52,7 @@ class OWTextableSegment(OWWidget):
         'regex',
         'lastLocation',
         'mode',
-        'segmentType'
+        'segmentType',
         'uuid',
     ]
 
@@ -469,7 +469,7 @@ class OWTextableSegment(OWWidget):
             box=u'Segment type',
             orientation='vertical',
         )
-        self. peCombo = OWGUI.comboBox(
+        self.segmentTypeCombo = OWGUI.comboBox(
             widget=basicRegexBox,
             master=self,
             value='segmentType',
