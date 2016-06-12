@@ -84,7 +84,7 @@ def concatenate(
     the same address should be merged into a single segment.
 
     :param progress_callback: callback for monitoring progress ticks (1 for each
-    input segment + merge_duplicates and auto-number (if applicable)
+    input segment)
 
     :return: new segmentation containing the concatenated segments
     """
@@ -127,18 +127,11 @@ def concatenate(
 
     # Delete duplicate segments and merge their annotations if needed...
     if merge_duplicates:
-        new_segments = _merge_duplicate_segments(
-            new_segments,
-            progress_callback,
-        )
+        new_segments = _merge_duplicate_segments(new_segments)
 
     # Auto-number if needed...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(
-            new_segments,
-            auto_number_as,
-            progress_callback,
-        )
+        _auto_number(new_segments, auto_number_as)
 
     # Create and return new segmentation
     return Segmentation(new_segments, label)
@@ -183,8 +176,7 @@ def tokenize(
     generated numeric index for each segment
 
     :param progress_callback: callback for monitoring progress ticks (number of
-    input segments * number of regexes + merge_duplicates and auto-number (if
-    applicable)
+    input segments)
 
     :return: new segmentation containing the tokenized segments
 
@@ -408,21 +400,14 @@ def tokenize(
 
         # Merge duplicate segments if needed...
         if merge_duplicates:
-            new_segments = _merge_duplicate_segments(
-                new_segments,
-                progress_callback,
-            )
+            new_segments = _merge_duplicate_segments(new_segments)
 
         # Add the new segments to the output segmentation.
         new_segmentation.segments.extend(new_segments)
 
     # Auto-number (if needed)...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(
-            new_segmentation.segments,
-            auto_number_as,
-            progress_callback,
-        )
+        _auto_number(new_segmentation.segments, auto_number_as)
 
     return new_segmentation
 
@@ -462,7 +447,7 @@ def select(
     generated numeric index for each segment
 
     :param progress_callback: callback for monitoring progress ticks (1 for each
-    input segment + auto-number (if applicable)
+    input segment)
 
     :return: a tuple whose first element is a new segmentation containing the
     selected segments, and whose second value is a new segmentation containing
@@ -503,16 +488,8 @@ def select(
 
     # Auto-number if needed...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(
-            new_segmentation.segments,
-            auto_number_as,
-            progress_callback,
-        )
-        _auto_number(
-            neg_segmentation.segments,
-            auto_number_as,
-            progress_callback,
-        )
+        _auto_number(new_segmentation.segments, auto_number_as)
+        _auto_number(neg_segmentation.segments, auto_number_as)
 
     return new_segmentation, neg_segmentation
 
@@ -552,7 +529,7 @@ def threshold(
     generated numeric index for each segment
 
     :param progress_callback: callback for monitoring progress ticks (1 for each
-    input segment + auto-number (if applicable)
+    input segment)
 
     :return: a tuple whose first element is a new segmentation containing the
     selected segments, and whose second value is a new segmentation containing
@@ -614,16 +591,8 @@ def threshold(
 
     # Auto-number if needed...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(
-            new_segmentation.segments,
-            auto_number_as,
-            progress_callback,
-        )
-        _auto_number(
-            neg_segmentation.segments,
-            auto_number_as,
-            progress_callback,
-        )
+        _auto_number(new_segmentation.segments, auto_number_as)
+        _auto_number(neg_segmentation.segments, auto_number_as)
 
     return new_segmentation, neg_segmentation
 
@@ -658,7 +627,7 @@ def sample(
     generated numeric index for each segment
 
     :param progress_callback: callback for monitoring progress ticks (1 for each
-    input segment + auto-number (if applicable)
+    input segment)
 
     :return: a tuple whose first element is a new segmentation containing the
     sampled segments, and whose second value is a new segmentation containing
@@ -706,16 +675,8 @@ def sample(
 
     # Auto-number if needed...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(
-            new_segmentation.segments,
-            auto_number_as,
-            progress_callback,
-        )
-        _auto_number(
-            neg_segmentation.segments,
-            auto_number_as,
-            progress_callback,
-        )
+        _auto_number(new_segmentation.segments, auto_number_as)
+        _auto_number(neg_segmentation.segments, auto_number_as)
 
     return new_segmentation, neg_segmentation
 
@@ -764,7 +725,7 @@ def intersect(
     generated numeric index for each segment
 
     :param progress_callback: callback for monitoring progress ticks (1 for each
-    source segment + auto-number (if applicable)
+    source segment)
 
     :return: a tuple whose first element is a new segmentation containing the
     selected segments, and whose second value is a new segmentation containing
@@ -815,16 +776,8 @@ def intersect(
 
     # Auto-number (if needed)...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(
-            new_segmentation.segments,
-            auto_number_as,
-            progress_callback,
-        )
-        _auto_number(
-            neg_segmentation.segments,
-            auto_number_as,
-            progress_callback,
-        )
+        _auto_number(new_segmentation.segments, auto_number_as)
+        _auto_number(neg_segmentation.segments, auto_number_as)
 
     return new_segmentation, neg_segmentation
 
@@ -899,7 +852,7 @@ def import_xml(
     otherwise the value of the element closest to the "surface" will be kept.
 
     :param progress_callback: callback for monitoring progress ticks (1 for each
-    input segment + merge_duplicates and auto-number (if applicable)
+    input segment)
 
     :return: new segmentation containing the extracted segments
     """
@@ -1042,10 +995,7 @@ def import_xml(
 
     # Delete duplicate segments and merge their annotations if needed...
     if merge_duplicates:
-        new_segments = _merge_duplicate_segments(
-            new_segments,
-            progress_callback,
-        )
+        new_segments = _merge_duplicate_segments(new_segments)
 
     # Create and populate output segmentation...
     new_segmentation = Segmentation(list(), label)
@@ -1053,11 +1003,7 @@ def import_xml(
 
     # Auto-number if needed...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(
-            new_segmentation.segments,
-            auto_number_as,
-            progress_callback,
-        )
+        _auto_number(new_segmentation.segments, auto_number_as)
 
     return new_segmentation
 
@@ -1203,16 +1149,13 @@ def bypass(segmentation, label='bypassed_data'):
     return Segmentation([s.deepcopy() for s in segmentation.segments], label)
 
 
-def _merge_duplicate_segments(segment_list, progress_callback=None):
+def _merge_duplicate_segments(segment_list):
     """Delete duplicate segments in a list and merge their annotations
 
     Although this has been optimized, it is still very slow for large
     segment lists...
 
     :param segment_list: the list of input segments
-
-    :param progress_callback: callback for monitoring progress ticks (min =
-    number of input segments, max = 2 * number of input segments - 1)
 
     :return: output list with merged segments
     """
@@ -1229,8 +1172,6 @@ def _merge_duplicate_segments(segment_list, progress_callback=None):
             optim_dict[address_sum].append(segment)
         except KeyError:
             optim_dict[address_sum] = [segment]
-        if progress_callback:
-            progress_callback()
 
     # Initialization.
     global_to_delete = list()
@@ -1276,9 +1217,6 @@ def _merge_duplicate_segments(segment_list, progress_callback=None):
                 index += 1
                 subset_size = len(subset)
 
-                if progress_callback:
-                    progress_callback()
-
     # Effectively delete duplicates and return new list without them...
     global_set_to_delete = set(global_to_delete)
     segment_list = list(
@@ -1289,23 +1227,18 @@ def _merge_duplicate_segments(segment_list, progress_callback=None):
     return segment_list
 
 
-def _auto_number(segment_list, annotation_key, progress_callback=None):
+def _auto_number(segment_list, annotation_key, ):
     """Add annotation with integers from 1 to N to segments in a list (in place)
 
     :param segment_list: the list of segments to auto-number
 
     :param annotation_key: the annotation key with which generated numbers will
     be associated
-
-    :param progress_callback: callback for monitoring progress ticks (number
-    of input segments)
     """
     counter = 1
     for segment in segment_list:
         segment.annotations[annotation_key] = counter
         counter += 1
-        if progress_callback:
-            progress_callback()
 
 
 def _parse_xml_tag(tag):

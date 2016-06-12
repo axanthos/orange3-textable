@@ -331,8 +331,8 @@ class TestSegmenter(unittest.TestCase):
             msg="concatenate doesn't solve conflicts when merging duplicates!"
         )
 
-    def test_concatenate_progress_best_case(self):
-        """Does concatenate track progress (best case)?"""
+    def test_concatenate_progress(self):
+        """Does concatenate track progress?"""
 
         def progress_callback():
             """Mock progress callback"""
@@ -345,26 +345,7 @@ class TestSegmenter(unittest.TestCase):
         self.assertEqual(
             self.count,
             len(self.letter_seg1),
-            msg="concatenate doesn't track progress (best case)!"
-        )
-
-    def test_concatenate_progress_worst_case(self):
-        """Does concatenate track progress (worst case)?"""
-
-        def progress_callback():
-            """Mock progress callback"""
-            self.count += 1
-
-        Segmenter.concatenate(
-            [self.letter_seg1],
-            auto_number_as='num',
-            merge_duplicates=True,
-            progress_callback=progress_callback,
-        )
-        self.assertGreater(
-            self.count,
-            len(self.letter_seg1) + 1,
-            msg="concatenate doesn't track progress (worst case)!"
+            msg="concatenate doesn't track progress!"
         )
 
     def test_tokenize_segment_tokenize(self):
@@ -558,8 +539,8 @@ class TestSegmenter(unittest.TestCase):
             msg="tokenize doesn't solve conflicts when merging duplicates!"
         )
 
-    def test_tokenize_progress_best_case(self):
-        """Does tokenize track progress (best case)?"""
+    def test_tokenize_progress(self):
+        """Does tokenize track progress?"""
 
         def progress_callback():
             """Mock progress callback"""
@@ -573,27 +554,7 @@ class TestSegmenter(unittest.TestCase):
         self.assertEqual(
             self.count,
             len(self.word_seg),
-            msg="tokenize doesn't track progress (best case)!"
-        )
-
-    def test_tokenize_progress_worst_case(self):
-        """Does tokenize track progress (worst case)?"""
-
-        def progress_callback():
-            """Mock progress callback"""
-            self.count += 1
-
-        Segmenter.tokenize(
-            self.word_seg,
-            [(re.compile(r'\w'), 'tokenize')],
-            auto_number_as='num',
-            merge_duplicates=True,
-            progress_callback=progress_callback,
-        )
-        self.assertGreater(
-            self.count,
-            len(self.word_seg) + 1,
-            msg="tokenize doesn't track progress (worst case)!"
+            msg="tokenize doesn't track progress!"
         )
 
     def test_select_select(self):
@@ -684,8 +645,8 @@ class TestSegmenter(unittest.TestCase):
             msg="select doesn't autonumber input segments!"
         )
 
-    def test_select_progress_best_case(self):
-        """Does select track progress (best case)?"""
+    def test_select_progress(self):
+        """Does select track progress?"""
 
         def progress_callback():
             """Mock progress callback"""
@@ -699,26 +660,7 @@ class TestSegmenter(unittest.TestCase):
         self.assertEqual(
             self.count,
             len(self.char_seg),
-            msg="select doesn't track progress (best case)!"
-        )
-
-    def test_select_progress_worst_case(self):
-        """Does select track progress (worst case)?"""
-
-        def progress_callback():
-            """Mock progress callback"""
-            self.count += 1
-
-        Segmenter.select(
-            self.char_seg,
-            re.compile(r'.'),
-            auto_number_as='num',
-            progress_callback=progress_callback,
-        )
-        self.assertGreater(
-            self.count,
-            len(self.word_seg) + 1,
-            msg="select doesn't track progress (worst case)!"
+            msg="select doesn't track progress!"
         )
 
     def test_threshold_select(self):
@@ -825,8 +767,8 @@ class TestSegmenter(unittest.TestCase):
             msg="threshold doesn't autonumber input segments!"
         )
 
-    def test_threshold_progress_best_case(self):
-        """Does threshold track progress (best case)?"""
+    def test_threshold_progress(self):
+        """Does threshold track progress?"""
 
         def progress_callback():
             """Mock progress callback"""
@@ -841,27 +783,7 @@ class TestSegmenter(unittest.TestCase):
         self.assertEqual(
             self.count,
             len(self.other_letter_seg),
-            msg="threshold doesn't track progress (best case)!"
-        )
-
-    def test_threshold_progress_worst_case(self):
-        """Does threshold track progress (worst case)?"""
-
-        def progress_callback():
-            """Mock progress callback"""
-            self.count += 1
-
-        Segmenter.threshold(
-            self.other_letter_seg,
-            min_count=2,
-            max_count=2,
-            auto_number_as='num',
-            progress_callback=progress_callback,
-        )
-        self.assertGreater(
-            self.count,
-            len(self.other_letter_seg) + 1,
-            msg="threshold doesn't track progress (worst case)!"
+            msg="threshold doesn't track progress!"
         )
 
     def test_sample_random_sample(self):
@@ -954,8 +876,8 @@ class TestSegmenter(unittest.TestCase):
             msg="sample doesn't autonumber input segments!"
         )
 
-    def test_sample_progress_best_case(self):
-        """Does sample track progress (best case)?"""
+    def test_sample_progress(self):
+        """Does sample track progress?"""
 
         def progress_callback():
             """Mock progress callback"""
@@ -970,27 +892,7 @@ class TestSegmenter(unittest.TestCase):
         self.assertEqual(
             self.count,
             len(self.char_seg),
-            msg="sample doesn't track progress (best case)!"
-        )
-
-    def test_sample_progress_worst_case(self):
-        """Does sample track progress (worst case)?"""
-
-        def progress_callback():
-            """Mock progress callback"""
-            self.count += 1
-
-        Segmenter.sample(
-            self.char_seg,
-            sample_size=4,
-            mode='random',
-            auto_number_as='num',
-            progress_callback=progress_callback,
-        )
-        self.assertGreater(
-            self.count,
-            len(self.char_seg) + 1,
-            msg="sample doesn't track progress (worst case)!"
+            msg="sample doesn't track progress!"
         )
 
     def test_intersect_content_content(self):
@@ -1110,8 +1012,8 @@ class TestSegmenter(unittest.TestCase):
             msg="intersect doesn't autonumber input segments!"
         )
 
-    def test_intersect_progress_best_case(self):
-        """Does intersect track progress (best case)?"""
+    def test_intersect_progress(self):
+        """Does intersect track progress?"""
 
         def progress_callback():
             """Mock progress callback"""
@@ -1125,26 +1027,7 @@ class TestSegmenter(unittest.TestCase):
         self.assertEqual(
             self.count,
             len(self.letter_seg),
-            msg="intersect doesn't track progress (best case)!"
-        )
-
-    def test_intersect_progress_worst_case(self):
-        """Does intersect track progress (worst case)?"""
-
-        def progress_callback():
-            """Mock progress callback"""
-            self.count += 1
-
-        Segmenter.intersect(
-            source=self.letter_seg,
-            filtering=self.third_letter_seg,
-            auto_number_as='num',
-            progress_callback=progress_callback,
-        )
-        self.assertGreater(
-            self.count,
-            len(self.letter_seg) + 1,
-            msg="intersect doesn't track progress (worst case)!"
+            msg="intersect doesn't track progress!"
         )
 
     def test_import_xml_segment_elements(self):
@@ -1339,8 +1222,8 @@ class TestSegmenter(unittest.TestCase):
             msg="import_xml doesn't autonumber input segments!"
         )
 
-    def test_import_xml_progress_best_case(self):
-        """Does import_xml track progress (best case)?"""
+    def test_import_xml_progress(self):
+        """Does import_xml track progress?"""
 
         def progress_callback():
             """Mock progress callback"""
@@ -1354,27 +1237,7 @@ class TestSegmenter(unittest.TestCase):
         self.assertEqual(
             self.count,
             len(self.broken_xml_seg),
-            msg="import_xml doesn't track progress (best case)!"
-        )
-
-    def test_import_xml_progress_worst_case(self):
-        """Does import_xml track progress (worst case)?"""
-
-        def progress_callback():
-            """Mock progress callback"""
-            self.count += 1
-
-        Segmenter.import_xml(
-            self.broken_xml_seg,
-            element='a',
-            auto_number_as='num',
-            merge_duplicates=True,
-            progress_callback=progress_callback,
-        )
-        self.assertGreater(
-            self.count,
-            len(self.broken_xml_seg) + 1,
-            msg="import_xml doesn't track progress (worst case)!"
+            msg="import_xml doesn't track progress!"
         )
 
     def test_recode_single_input(self):
@@ -1529,7 +1392,7 @@ class TestSegmenter(unittest.TestCase):
             msg="recode doesn't skip copying annotations!"
         )
 
-    def test_tokenize_progress(self):
+    def test_recode_progress(self):
         """Does recode track progress?"""
 
         def progress_callback():
@@ -1589,40 +1452,6 @@ class TestSegmenter(unittest.TestCase):
             msg="_merge_duplicate_segments doesn't merge duplicates!"
         )
 
-    def test_merge_duplicate_segments_progress_best_case(self):
-        """Does _merge_duplicate_segments track progress (best case)?"""
-
-        def progress_callback():
-            """Mock progress callback"""
-            self.count += 1
-
-        Segmenter._merge_duplicate_segments(
-            self.letter_seg.segments,
-            progress_callback=progress_callback,
-        )
-        self.assertEqual(
-            self.count,
-            len(self.letter_seg),
-            msg="_merge_duplicate_segments doesn't track progress (best case)!"
-        )
-
-    def test_merge_duplicate_segments_progress_worst_case(self):
-        """Does _merge_duplicate_segments track progress (worst case)?"""
-
-        def progress_callback():
-            """Mock progress callback"""
-            self.count += 1
-
-        Segmenter._merge_duplicate_segments(
-            self.duplicate_seg.segments,
-            progress_callback=progress_callback,
-        )
-        self.assertEqual(
-            self.count,
-            len(self.duplicate_seg) * 2 - 1,
-            msg="_merge_duplicate_segments don't track progress (worst case)!"
-        )
-
     def test_auto_number_autonumber(self):
         """Does _auto_number autonumber in place?"""
         Segmenter._auto_number(
@@ -1633,24 +1462,6 @@ class TestSegmenter(unittest.TestCase):
             [s.annotations['num'] for s in self.third_letter_seg.segments],
             [1, 2, 3],
             msg="_auto_number doesn't autonumber in place!"
-        )
-
-    def test_auto_number_progress(self):
-        """Does _auto_number track progress?"""
-
-        def progress_callback():
-            """Mock progress callback"""
-            self.count += 1
-
-        Segmenter._auto_number(
-            self.third_letter_seg.segments,
-            progress_callback=progress_callback,
-            annotation_key='num',
-        )
-        self.assertEqual(
-            self.count,
-            len(self.third_letter_seg),
-            msg="_auto_number doesn't track progress!"
         )
 
     def test_parse_xml_tag_is_element(self):
