@@ -247,16 +247,16 @@ class InfoBox(object):
         self.stateLabel.setWordWrap(True)
         self.initialMessage()
 
-    def setText(self, message='', mode='ok'):
+    def setText(self, message='', state='ok'):
         """Format and display message"""
         self.widget.topLevelWidget().warning(0)
         self.widget.topLevelWidget().error(0)
-        if mode == 'ok':
+        if state == 'ok':
             iconPath = self.okIconPath
-        elif mode == 'warning':
+        elif state == 'warning':
             iconPath = self.warningIconPath
             self.widget.topLevelWidget().warning(0, message)
-        elif mode == 'error':
+        elif state == 'error':
             iconPath = self.errorIconPath
             self.widget.topLevelWidget().error(0, message)
         self.stateLabel.setText(
@@ -268,7 +268,7 @@ class InfoBox(object):
         """Display initial message"""
         self.setText(
             message=self.stringNoDataSent + self.stringClickSend,
-            mode='warning',
+            state='warning',
         )
 
     def dataSent(self, message=u''):
@@ -303,7 +303,7 @@ class InfoBox(object):
         if not self.widget.topLevelWidget().autoSend:
             self.setText(
                 self.stringSettingsChanged + self.stringClickSend,
-                mode='warning',
+                state='warning',
             )
 
     def inputChanged(self):
@@ -311,7 +311,7 @@ class InfoBox(object):
         if not self.widget.topLevelWidget().autoSend:
             self.setText(
                 self.stringInputChanged + self.stringClickSend,
-                mode='warning',
+                state='warning',
             )
 
 

@@ -526,6 +526,7 @@ class OWTextableSegment(OWWidget):
         self.infoBox.draw()
 
         self.sendButton.sendIf()
+        self.adjustSizeWithTimer()
 
 
     def inputMessage(self, message):
