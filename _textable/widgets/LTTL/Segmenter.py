@@ -1,5 +1,5 @@
 """
-Module LTTL.Segmenter, v0.25
+Module LTTL.Segmenter, v0.26
 Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the LTTL package v1.6
@@ -32,6 +32,7 @@ along with LTTL v1.6. If not, see <http://www.gnu.org/licenses/>.
 from __future__ import division
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from future.utils import iteritems
 
 import re
 import random
@@ -41,7 +42,7 @@ from .Segmentation import Segmentation
 from .Segment import Segment
 from .Input import Input
 
-from past.builtins import xrange
+from builtins import range
 from builtins import str as text
 from builtins import dict
 
@@ -90,14 +91,64 @@ def concatenate(
     """
 
     # Initializations...
-    new_segments = list()
-    append_to_new_segments = new_segments.append
+    new_segments = Segmentation()
+    new_segments.label = label
 
-    # For each input segmentation...
+    # ordered list of all unique str_index involved
+    str_indices = []
     for segmentation in segmentations:
+        for k in segmentation.str_index_ptr.keys():
+            if k not in str_indices:
+                str_indices.append(k)
 
-        # For each input segment...
-        for segment in segmentation:
+    # Sort output segment list if needed...
+    if sort:
+        str_indices = sorted(str_indices)
+
+    # For each str_index...
+    for index in str_indices:
+
+        merge_ptr = []
+
+        # Get all input segmentations using this str_index...
+        for segmentation in segmentations:
+            if index in segmentation.str_index_ptr:
+                merge_ptr.append((
+                    segmentation,
+                    segmentation.str_index_ptr[index],
+                    segmentation[segmentation.str_index_ptr[index]]
+                ))
+
+        # Used to remove duplicates if necessary
+        last_seen = None
+
+        # And perform a merge sort
+        while len(merge_ptr) > 0:
+
+            # get the first segment ordered by (start,end)
+            _min = merge_ptr[0]
+            _argmin = 0
+            for i, ptr in enumerate(merge_ptr[1:]):
+                if (ptr[2].start, ptr[2].end) < (_min[2].start, _min[2].end):
+                    _min = ptr
+                    _argmin = i + 1
+            segment = _min[2]
+
+            # was it the last segment of this segmentation?
+            if merge_ptr[_argmin][1] + 1 >= len(merge_ptr[_argmin][0]):
+                del merge_ptr[_argmin]
+            # otherwise increment the corresponding pointer and take the next
+            # segment from this segmentation
+            else:
+                merge_ptr[_argmin] = (
+                    merge_ptr[_argmin][0],
+                    merge_ptr[_argmin][1] + 1,
+                    merge_ptr[_argmin][0][merge_ptr[_argmin][1]+1],
+                )
+
+                # if we are done with this segmentation, remove it from the list
+                if merge_ptr[_argmin][2].str_index != index:
+                    del merge_ptr[_argmin]
 
             # Copy segment (including annotations and/or importing input
             # segmentation label if needed)...
@@ -109,32 +160,32 @@ def concatenate(
             else:
                 new_segment = segment.deepcopy(update=copy_annotations)
 
-            # Append copied segment to list.
-            append_to_new_segments(new_segment)
+            if (
+                merge_duplicates and
+                last_seen and
+                last_seen.start == new_segment.start and
+                last_seen.end == new_segment.end
+            ):
+
+                # merge and update annotations
+                last_segment = new_segments[-1]
+                last_segment.annotations.update(new_segment.annotations)
+                new_segments[-1] = last_segment
+            else:
+                # Append copied segment to list.
+                new_segments.append(new_segment)
+
+            last_seen = segment
 
             if progress_callback:
                 progress_callback()
-
-    # Sort output segment list if needed...
-    if sort:
-        new_segments.sort(
-            key=lambda s: (
-                s.str_index,
-                s.start,
-                s.end,
-            )
-        )
-
-    # Delete duplicate segments and merge their annotations if needed...
-    if merge_duplicates:
-        new_segments = _merge_duplicate_segments(new_segments)
 
     # Auto-number if needed...
     if auto_number_as is not None and len(auto_number_as) > 0:
         _auto_number(new_segments, auto_number_as)
 
-    # Create and return new segmentation
-    return Segmentation(new_segments, label)
+    return new_segments
+
 
 # TODO: verify impact of changing default value of merge_duplicate to False
 # TODO: verify impact of sorting new segments outside of regex loop
@@ -195,7 +246,7 @@ def tokenize(
     """
 
     # Initializations...
-    new_segmentation = Segmentation(list(), label)
+    new_segmentation = Segmentation(None, label)
     annotation_k_backref_indices = list()
     annotation_v_backref_indices = list()
     annotation_key_format = list()
@@ -247,7 +298,6 @@ def tokenize(
 
     # For each input segment...
     for segment in segmentation:
-
         # Initializations...
         new_segments = list()
         str_index = segment.str_index
@@ -255,18 +305,20 @@ def tokenize(
         content = segment.get_content()
 
         # Copy existing annotations if needed...
-        if import_annotations:
+        if import_annotations and segment.annotations is not None:
             old_segment_annotation_copy = segment.annotations.copy()
         else:
-            old_segment_annotation_copy = dict()
+            old_segment_annotation_copy = None
 
         # For each regex...
-        for regex_index in xrange(len(regexes)):
+        for regex_index in range(len(regexes)):
             regex = regexes[regex_index]
 
             # Prepare a fresh copy of the existing annotations...
-            regex_annotations = old_segment_annotation_copy.copy()
-
+            if old_segment_annotation_copy is not None:
+                regex_annotations = old_segment_annotation_copy.copy()
+            else:
+                regex_annotations = None
             # CASE 1: If regex has mode 'tokenize'...
             if regex[1] == 'tokenize':
 
@@ -316,8 +368,10 @@ def tokenize(
 
                     # Prepare a copy of existing annotations for the segment
                     # corresponding to this match of the regex.
-                    new_segment_annotations = regex_annotations.copy()
-
+                    if regex_annotations is not None:
+                        new_segment_annotations = regex_annotations.copy()
+                    else:
+                        new_segment_annotations = None
                     # Update annotations with the key-value pair prepared
                     # above, if any...
                     if key is not None and value is not None:
@@ -338,7 +392,10 @@ def tokenize(
 
                 # Prepare a copy of existing annotations for the segment
                 # identified by this regex...
-                new_segment_annotations = regex_annotations.copy()
+                if regex_annotations is not None:
+                    new_segment_annotations = regex_annotations.copy()
+                else:
+                    new_segment_annotations = dict()
 
                 # Update it with the annotation key and value provided by the
                 # user, if any (no interpolation in this mode)...
@@ -398,16 +455,16 @@ def tokenize(
             s.end,
         ))
 
-        # Merge duplicate segments if needed...
-        if merge_duplicates:
-            new_segments = _merge_duplicate_segments(new_segments)
-
         # Add the new segments to the output segmentation.
-        new_segmentation.segments.extend(new_segments)
+        new_segmentation.extend(new_segments)
+
+    # Merge duplicate segments if needed...
+    if merge_duplicates:
+        new_segmentation = _merge_duplicate_segments(new_segmentation, False)
 
     # Auto-number (if needed)...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(new_segmentation.segments, auto_number_as)
+        _auto_number(new_segmentation, auto_number_as)
 
     return new_segmentation
 
@@ -479,17 +536,17 @@ def select(
         # Add copied segment to selected segments or to the complementary
         # segmentation...
         if (match and mode == 'include') or (not match and mode == 'exclude'):
-            new_segmentation.segments.append(new_segment)
+            new_segmentation.append(new_segment)
         else:
-            neg_segmentation.segments.append(new_segment)
+            neg_segmentation.append(new_segment)
 
         if progress_callback:
             progress_callback()
 
     # Auto-number if needed...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(new_segmentation.segments, auto_number_as)
-        _auto_number(neg_segmentation.segments, auto_number_as)
+        _auto_number(new_segmentation, auto_number_as)
+        _auto_number(neg_segmentation, auto_number_as)
 
     return new_segmentation, neg_segmentation
 
@@ -582,17 +639,17 @@ def threshold(
         # segment to the selected segments, else add it to complementary
         # segmentation...
         if min_count <= count[token] <= max_count:
-            new_segmentation.segments.append(new_segment)
+            new_segmentation.append(new_segment)
         else:
-            neg_segmentation.segments.append(new_segment)
+            neg_segmentation.append(new_segment)
 
         if progress_callback:
             progress_callback()
 
     # Auto-number if needed...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(new_segmentation.segments, auto_number_as)
-        _auto_number(neg_segmentation.segments, auto_number_as)
+        _auto_number(new_segmentation, auto_number_as)
+        _auto_number(neg_segmentation, auto_number_as)
 
     return new_segmentation, neg_segmentation
 
@@ -636,13 +693,13 @@ def sample(
     """
 
     # Initialize output segmentations...
-    new_segmentation = Segmentation(list(), label)
-    neg_segmentation = Segmentation(list(), 'NEG_' + label)
+    new_segmentation = Segmentation(None, label)
+    neg_segmentation = Segmentation(None, 'NEG_' + label)
 
     # Get the indices of sampled segments...
     if mode == 'random':
         sampled_indices = sorted(random.sample(
-            xrange(len(segmentation)),
+            range(len(segmentation)),
             sample_size
         ))
     elif mode == 'systematic':
@@ -657,26 +714,25 @@ def sample(
         )
 
     # For each sampled segment...
-    for segment_index in xrange(len(segmentation)):
-        segment = segmentation.segments[segment_index]
+    for index, segment in enumerate(segmentation):
 
         # Copy segment (including annotations if needed)...
         new_segment = segment.deepcopy(update=copy_annotations)
 
         # Assign new segment to sampled segmentation or complementary
         # segmentation...
-        if segment_index in sampled_indices:
-            new_segmentation.segments.append(new_segment)
+        if index in sampled_indices:
+            new_segmentation.append(new_segment)
         else:
-            neg_segmentation.segments.append(new_segment)
+            neg_segmentation.append(new_segment)
 
         if progress_callback:
             progress_callback()
 
     # Auto-number if needed...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(new_segmentation.segments, auto_number_as)
-        _auto_number(neg_segmentation.segments, auto_number_as)
+        _auto_number(new_segmentation, auto_number_as)
+        _auto_number(neg_segmentation, auto_number_as)
 
     return new_segmentation, neg_segmentation
 
@@ -700,16 +756,16 @@ def intersect(
     :param source: the source segmentation, whose segments will be included in
     or excluded from the output
 
-    :param filtering: the filtering segmentation, whose segments will be used to
-    determine in-/exclusion of source segments
+    :param filtering: the filtering segmentation, whose segments will be used
+    to determine in-/exclusion of source segments
 
     :param source_annotation_key: unless set to None (default), a string
     indicating the annotation key whose value will be used in place of source
     segment content to determine in-/exclusion
 
     :param filtering_annotation_key: unless set to None (default), a string
-    indicating the annotation key whose value will be used in place of filtering
-    segment content to determine in-/exclusion
+    indicating the annotation key whose value will be used in place of
+    filtering segment content to determine in-/exclusion
 
     :param mode: either 'include' (default) or 'exclude'. The former means that
     source segments present in filtering segmentation will be kept in the
@@ -724,8 +780,8 @@ def intersect(
     the annotation key which should be used for storing an automatically
     generated numeric index for each segment
 
-    :param progress_callback: callback for monitoring progress ticks (1 for each
-    source segment)
+    :param progress_callback: callback for monitoring progress ticks (1 for
+    each source segment)
 
     :return: a tuple whose first element is a new segmentation containing the
     selected segments, and whose second value is a new segmentation containing
@@ -767,17 +823,17 @@ def intersect(
         else:
             match = segment.get_content() in filtering_set
         if (match and mode == 'include') or (not match and mode == 'exclude'):
-            new_segmentation.segments.append(new_segment)
+            new_segmentation.append(new_segment)
         else:
-            neg_segmentation.segments.append(new_segment)
+            neg_segmentation.append(new_segment)
 
         if progress_callback:
             progress_callback()
 
     # Auto-number (if needed)...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(new_segmentation.segments, auto_number_as)
-        _auto_number(neg_segmentation.segments, auto_number_as)
+        _auto_number(new_segmentation, auto_number_as)
+        _auto_number(neg_segmentation, auto_number_as)
 
     return new_segmentation, neg_segmentation
 
@@ -809,7 +865,8 @@ def import_xml(
     XML processing is rather crude for the time being: no attempt to
     resolve entities, detect errors and recover from them, and so on.
 
-    :param segmentation: the segmentation whose segment's content will be parsed
+    :param segmentation: the segmentation whose segment's content will be
+    parsed
 
     :param element: the specific xml tag used for creating segments
 
@@ -824,9 +881,9 @@ def import_xml(
 
     :param label: the label assigned to the output segmentation
 
-    :param import_annotations: boolean indicating whether annotations associated
-    with input segments should be copied to output segments extracted from them
-    (default True)
+    :param import_annotations: boolean indicating whether annotations
+    associated with input segments should be copied to output segments
+    extracted from them (default True)
 
     :param merge_duplicates: boolean indicating whether output segments with
     the same address should be merged into a single segment (default False)
@@ -836,9 +893,9 @@ def import_xml(
     generated numeric index for each segment
 
     :param remove_markup: a boolean indicating whether markup occurring within
-    the xml elements being retrieved should be discarded or kept (default True).
-    If discarded, more segments will usually be generated, since LTTL's data
-    model has no means of representing discontinuous units with a single
+    the xml elements being retrieved should be discarded or kept (default
+    True). If discarded, more segments will usually be generated, since LTTL's
+    data model has no means of representing discontinuous units with a single
     segment.
 
     :param preserve_leaves: a boolean determining the processing of the very
@@ -851,8 +908,8 @@ def import_xml(
     associated to the element closest to the root in the XML tree will be kept,
     otherwise the value of the element closest to the "surface" will be kept.
 
-    :param progress_callback: callback for monitoring progress ticks (1 for each
-    input segment)
+    :param progress_callback: callback for monitoring progress ticks (1 for
+    each input segment)
 
     :return: new segmentation containing the extracted segments
     """
@@ -864,7 +921,25 @@ def import_xml(
     data = Segmentation.data
     stack = list()
     attr_stack = list()
-    new_segments = list()
+    new_segmentation = Segmentation(list(), label)
+
+    # Inner helper for removing segments that are empty or don't match
+    # attribute regexes...
+    def filter_segment(str_index, start, end, annotations):
+        start = start or 0
+        if end is None:
+            end = len(Segmentation.data[str_index])
+        if start == end:
+            return False
+        for (attr, value_regex) in conditions.items():
+            if (
+                    (attr not in annotations) or
+                    (not value_regex.search(annotations[attr]))
+            ):
+                return False
+        return True
+
+    temp_segments = []
 
     # For each input segment...
     for old_segment in segmentation:
@@ -896,7 +971,7 @@ def import_xml(
             # Get the address and annotations of potential new segments,
             # removing inner markup if needed...
             if remove_markup:
-                for index in xrange(len(stack)):
+                for index in range(len(stack)):
                     if stack[index][-1][0] == old_str_index:
                         stack[index][-1][2] = tag_start
                     else:
@@ -911,17 +986,23 @@ def import_xml(
                         stack.append(list())
                         attr_stack.append(tag_desc['attributes'])
                     elif stack:
-                        new_segments.extend(stack.pop())
+                        temp_segments.extend(
+                            [
+                                Segment(s[0], s[1], s[2], s[3])
+                                for s in stack.pop()
+                                if filter_segment(s[0], s[1], s[2], s[3])
+                            ]
+                        )
                         attr_stack.pop()
                     # TODO: use tag to produce a more useful error message.
                     else:
                         raise ValueError('xml parsing error')
-                for index in xrange(len(stack)):
+                for index in range(len(stack)):
                     anno = old_anno_copy.copy()
                     anno.update(attr_stack[index])
                     stack[index].append([old_str_index, tag_end, None, anno])
             else:
-                for index in xrange(len(stack)):
+                for index in range(len(stack)):
                     if stack[index][-1][0] != old_str_index:
                         anno = old_anno_copy.copy()
                         anno.update(attr_stack[index])
@@ -941,7 +1022,13 @@ def import_xml(
                         attr_stack.append(tag_desc['attributes'])
                     elif stack:
                         stack[-1][-1][2] = tag_start
-                        new_segments.extend(stack.pop())
+                        temp_segments.extend(
+                            [
+                                Segment(s[0], s[1], s[2], s[3])
+                                for s in stack.pop()
+                                if filter_segment(s[0], s[1], s[2], s[3])
+                            ]
+                        )
                         attr_stack.pop()
                     # TODO: use tag to produce a more useful error message.
                     else:
@@ -953,57 +1040,28 @@ def import_xml(
         if progress_callback:
             progress_callback()
 
+    temp_segments = sorted(
+        temp_segments, key=lambda s: (s.str_index, s.start, s.end)
+    )
+    new_segmentation.extend(temp_segments)
+
     # TODO: use stack to produce a more useful error message.
     if stack:
         raise ValueError('xml parsing error (missing closing tag)')
 
-    # Create actual segments based on their positions and annotation.
-    new_segments = [Segment(s[0], s[1], s[2], s[3]) for s in new_segments]
-
-    # reverse segments order to implement preserve_leaves parameter...
-    if preserve_leaves:
-        new_segments.reverse()
-
-    # Remove segments that are empty or don't match attribute regexes...
-    for index in reversed(list(range(len(new_segments)))):
-        segment = new_segments[index]
-        start = segment.start or 0
-        if segment.end is None:
-            end = len(Segmentation.data[segment.str_index])
-        else:
-            end = segment.end
-        if start == end:
-            new_segments.pop(index)
-            continue
-        annotations = segment.annotations
-        for (attr, value_regex) in conditions.items():
-            if (
-                    (attr not in annotations) or
-                    (not value_regex.search(annotations[attr]))
-            ):
-                new_segments.pop(index)
-                break
-
     # Sort segments...
-    new_segments.sort(
-        key=lambda seg: (
-            seg.str_index,
-            seg.start,
-            seg.end,
-        )
-    )
+    # new_segmentation = new_segmentation._sort()
 
     # Delete duplicate segments and merge their annotations if needed...
     if merge_duplicates:
-        new_segments = _merge_duplicate_segments(new_segments)
-
-    # Create and populate output segmentation...
-    new_segmentation = Segmentation(list(), label)
-    new_segmentation.segments.extend(new_segments)
+        new_segmentation = _merge_duplicate_segments(
+            new_segmentation,
+            preserve_leaves,
+        )
 
     # Auto-number if needed...
     if auto_number_as is not None and len(auto_number_as) > 0:
-        _auto_number(new_segmentation.segments, auto_number_as)
+        _auto_number(new_segmentation, auto_number_as)
 
     return new_segmentation
 
@@ -1029,8 +1087,8 @@ def recode(
     :param segmentation: the segmentation whose segments' content will be
     recoded
 
-    :param substitutions: a list of tuple, where each tuple has a compiled regex
-    as first element, and a replacement string as second element (see
+    :param substitutions: a list of tuple, where each tuple has a compiled
+    regex as first element, and a replacement string as second element (see
     below); substitutions are successively applied to each segment of the input
     segmentation.
 
@@ -1045,8 +1103,8 @@ def recode(
     :param copy_annotations: boolean indicating whether annotations associated
     with input segments should be copied to output segments (default True)
 
-    :param progress_callback: callback for monitoring progress ticks (1 for each
-    input segment)
+    :param progress_callback: callback for monitoring progress ticks (1 for
+    each input segment)
 
     :return: new segmentation containing the recoded segments; this will be
     an Input object if it contains only one segment, and a Segmentation object
@@ -1120,19 +1178,20 @@ def recode(
             progress_callback()
 
     # If list of new objects contains a single Input, return it.
+    # if len(new_objects) == 1 and isinstance(new_objects[0], Input):
+    # return new_objects[0]
     if len(new_objects) == 1 and isinstance(new_objects[0], Input):
         return new_objects[0]
-
     # Otherwise return a new segmentation with the segments in the list
     # (including those contained in Input objects).
-    else:
-        new_segments = list()
-        for new_object in new_objects:
-            if isinstance(new_object, Input):
-                new_segments.append(new_object[0])
-            else:
-                new_segments.append(new_object)
-        return Segmentation(new_segments, label)
+    # else:
+    new_segmentation = Segmentation(None, label)
+    for new_object in new_objects:
+        if isinstance(new_object, Input):
+            new_segmentation.append(new_object[0])
+        else:
+            new_segmentation.append(new_object)
+    return new_segmentation
 
 
 # TODO: verify impact on client code of removing neg_segmentation from output
@@ -1146,88 +1205,57 @@ def bypass(segmentation, label='bypassed_data'):
 
     :return: deep copied segmentation.
     """
-    return Segmentation([s.deepcopy() for s in segmentation.segments], label)
+    return Segmentation([s.deepcopy() for s in segmentation], label)
 
 
-def _merge_duplicate_segments(segment_list):
-    """Delete duplicate segments in a list and merge their annotations
+def _merge_duplicate_segments(segmentation, take_first=False):
+    """Delete duplicate segments in a segmentation and merge their annotations
 
-    Although this has been optimized, it is still very slow for large
-    segment lists...
+    Using the fact that segments are always ordered by (start,end) and
+    str_index are contiguous, it only needs to look for consecutively identical
+    segments.
 
-    :param segment_list: the list of input segments
+    :param segmentation: the list of input segments can be a Segmentation or
+    a list
 
-    :return: output list with merged segments
+    :param take_first: if set to True the annotations of the first segment, in
+    case of conflit when merging, are not overwritten
+
+    :return: output segmentation with merged segments
     """
 
-    # For optimization purposes, create a mapping from segments to lists of
-    # segments whose summed address is identical...
-    optim_dict = dict()
-    for segment in segment_list:
-        str_index = segment.str_index
-        start = segment.start or 0
-        end = segment.end or len(Segmentation.data[str_index])
-        address_sum = str_index + start + end
-        try:
-            optim_dict[address_sum].append(segment)
-        except KeyError:
-            optim_dict[address_sum] = [segment]
+    new_segments = Segmentation()
 
-    # Initialization.
-    global_to_delete = list()
+    last_seen = None
 
-    # For each list of segments with identical summed address...
-    for subset in optim_dict.values():
+    for segment in segmentation:
 
-        # If there is more than 1 segment in the list...
-        subset_size = len(subset)
-        if subset_size != 1:
+        # is it a duplicate?
+        if (
+            last_seen and
+            last_seen.str_index == segment.str_index and
+            last_seen.start == segment.start and
+            last_seen.end == segment.end
+        ):
 
-            # For each segment in the list...
-            index = 0
-            while index < subset_size:
-                segment = subset[index]
-                str_index = segment.str_index
-                start = segment.start or 0
-                str_len = len(Segmentation.data[str_index])
-                end = segment.end or str_len
+            last_segment = new_segments[-1]
 
-                # Collect all other segments in the list with same address
-                # (duplicates)...
-                to_delete = [
-                    other_segment for other_segment in subset[index + 1:]
-                    if (
-                        str_index == other_segment.str_index and
-                        start == (other_segment.start or 0) and
-                        end == (other_segment.end or str_len)
-                    )
-                ]
+            if take_first:
+                segment.annotations.update(last_segment.annotations)
+                new_segments[-1] = segment
+            else:
+                last_segment.annotations.update(segment.annotations)
+                new_segments[-1] = last_segment
+        # otherwise just add it
+        else:
+            new_segments.append(segment)
 
-                # Update this segment's annotations with those of all the
-                # duplicates...
-                segment_update = segment.annotations.update
-                for duplicate in to_delete:
-                    segment_update(duplicate.annotations)
+        last_seen = segment
 
-                # Mark duplicates for later deletion and remove them from
-                # the list...
-                set_to_delete = set(to_delete)
-                subset = list(s for s in subset if s not in set_to_delete)
-                global_to_delete.extend(to_delete)
-                index += 1
-                subset_size = len(subset)
-
-    # Effectively delete duplicates and return new list without them...
-    global_set_to_delete = set(global_to_delete)
-    segment_list = list(
-        s for s in segment_list if (
-            s not in global_set_to_delete
-        )
-    )
-    return segment_list
+    return new_segments
 
 
-def _auto_number(segment_list, annotation_key, ):
+def _auto_number(segmentation, annotation_key):
     """Add annotation with integers from 1 to N to segments in a list (in place)
 
     :param segment_list: the list of segments to auto-number
@@ -1236,8 +1264,9 @@ def _auto_number(segment_list, annotation_key, ):
     be associated
     """
     counter = 1
-    for segment in segment_list:
+    for index, segment in enumerate(segmentation):
         segment.annotations[annotation_key] = counter
+        segmentation[index] = segment
         counter += 1
 
 

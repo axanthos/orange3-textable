@@ -18,7 +18,7 @@
 # along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
 #=============================================================================
 
-__version__ = '0.16.1'
+__version__ = '0.16.2'
 
 """
 <name>Display</name>
@@ -444,7 +444,7 @@ class OWTextableDisplay(OWWidget):
                         self,
                         iterations = len(self.segmentation)
                 )
-                displayedString = self.segmentation.to_html(
+                displayedString, summarized = self.segmentation.to_html(
                         True,
                         progressBar.advance,
                 )
@@ -465,10 +465,11 @@ class OWTextableDisplay(OWWidget):
                                 self.segmentation.label
                 )
                 progressBar.finish()
+                self.navigationBox.setVisible(not summarized)
         else:
             self.goto = 0
             self.exportBox.setDisabled(True)
-            self.navigationBox.setDisabled(True)
+            self.navigationBox.setVisible(False)
             self.formattingIndentedBox.setDisabled(True)
         self.adjustSize()
 

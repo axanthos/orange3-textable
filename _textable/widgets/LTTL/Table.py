@@ -184,7 +184,7 @@ class Table(object):
         return output_string + ''.join(row_strings)
 
     # Method to_orange_table() is defined differently for Python 2 and 3.
-    if sys.version_info >= 3:
+    if sys.version_info.major >= 3:
 
         # TODO: Implement and test.
         def to_orange_table(self, encoding='iso-8859-15'):

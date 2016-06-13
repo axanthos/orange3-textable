@@ -234,7 +234,7 @@ class TestSegmenter(unittest.TestCase):
         )
         self.assertEqual(
             [s.get_content() for s in segmentation],
-            ['c', 'd', 'e', 'a', 'b'],
+            ['a', 'b', 'c', 'd', 'e'],
             msg="concatenate doesn't merge input segments!"
         )
 
@@ -249,8 +249,8 @@ class TestSegmenter(unittest.TestCase):
         )
         self.assertEqual(
             [
-                segmentation[1].annotations['b'],
-                segmentation[3].annotations['a'],
+                segmentation[3].annotations['b'],
+                segmentation[0].annotations['a'],
             ],
             ['2', '1'],
             msg="concatenate doesn't copy annotations!"
@@ -1436,15 +1436,15 @@ class TestSegmenter(unittest.TestCase):
         """Does bypass deep copy input segments?"""
         segmentation = Segmenter.bypass(self.letter_seg)
         self.assertNotEqual(
-            segmentation.segments,
-            self.letter_seg.segments,
+            segmentation,
+            self.letter_seg,
             msg="bypass doesn't deep copy input segments!"
         )
 
     def test_merge_duplicate_segments(self):
         """Does _merge_duplicate_segments merge duplicates?"""
         segments = Segmenter._merge_duplicate_segments(
-            self.duplicate_seg.segments
+            self.duplicate_seg
         )
         self.assertEqual(
             [s.get_content() for s in segments],
@@ -1455,11 +1455,11 @@ class TestSegmenter(unittest.TestCase):
     def test_auto_number_autonumber(self):
         """Does _auto_number autonumber in place?"""
         Segmenter._auto_number(
-            self.third_letter_seg.segments,
+            self.third_letter_seg,
             annotation_key='num',
         )
         self.assertEqual(
-            [s.annotations['num'] for s in self.third_letter_seg.segments],
+            [s.annotations['num'] for s in self.third_letter_seg],
             [1, 2, 3],
             msg="_auto_number doesn't autonumber in place!"
         )

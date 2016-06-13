@@ -1,4 +1,4 @@
-#=============================================================================
+#============================================================================
 # Module LTTL.Utils, v0.07
 # Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
 #=============================================================================
@@ -31,11 +31,11 @@
 #=============================================================================
 
 from __future__ import division
+from future.utils import iteritems
 import re, random, math
 
-from Segmentation import Segmentation
-from Segment      import Segment
-from Address      import Address
+from .Segmentation import Segmentation
+from .Segment      import Segment
 
 from builtins import chr
 
@@ -57,7 +57,7 @@ def sample_dict(
     new_dict        = {}
     num_to_sample   = sample_size
     num_to_process  = sum(dictionary.itervalues())
-    for (k, v) in dictionary.iteritems():
+    for (k, v) in iteritems(dictionary):
         for i in xrange(v):
             if random.random() < num_to_sample / num_to_process:
                 new_dict[k] = new_dict.get(k, 0) + 1
@@ -84,18 +84,18 @@ def get_variety(
         if unit_weighting:
             return get_perplexity(dictionary)
         else:
-            return len(dictionary);
+            return len(dictionary)
     else:
         category_dict = {}
         if not unit_weighting and not category_weighting:
-            for (k, v) in dictionary.iteritems():
+            for (k, v) in iteritems(dictionary):
                 (category, unit)        = k.split(category_delimiter, 1)
                 category_dict[category] = category_dict.get(category, 0) + v
             return ( len(dictionary) / len(category_dict))
         else:
             units_in_category_dict  = {}
             unit_dict               = {}
-            for (k, v) in dictionary.iteritems():
+            for (k, v) in iteritems(dictionary):
                 (category, unit)        = k.split(category_delimiter, 1)
                 category_dict[category] = category_dict.get(category, 0) + v
                 units_in_category_dict[(category, unit,)] = (
@@ -130,9 +130,10 @@ def tuple_to_simple_dict(dictionary, key):
     """
     return dict(
         (k[1], v)
-            for (k, v) in dictionary.iteritems()
+            for (k, v) in iteritems(dictionary)
                 if k[0] == key and v > 0
     )
+
 
 def tuple_to_simple_dict_transpose(dictionary, key):
     """Take a dict with size-2 tuple key and a value for the 1st key element,
@@ -142,9 +143,10 @@ def tuple_to_simple_dict_transpose(dictionary, key):
     """
     return dict(
         (k[0], v)
-            for (k, v) in dictionary.iteritems()
+            for (k, v) in iteritems(dictionary)
                 if k[1] == key and v > 0
     )
+
 
 def get_average(values, weights=None):
     """Compute the average and standard deviation of a list of values"""
@@ -210,16 +212,14 @@ def prepend_unit_with_category(
     segment contents or annotation values prepended with another annotation
     value.
     """
-    new_segments = []
+    new_segmentation = Segmentation(label=segmentation.label)
     for segment in segmentation:
-        new_segments.append(Segment(
-                Address(
-                        segment.address.str_index,
-                        segment.address.start,
-                        segment.address.end,
-                ),
-                segment.annotations.copy()
-        ))
+        new_segment = Segment(
+                        segment.str_index, 
+                        segment.start, 
+                        segment.end, 
+                        segment.annotations.copy()
+        )
         if unit_annotation_key:
             unit = segment.annotations.get(unit_annotation_key, u'__none__')
         else:
@@ -230,10 +230,11 @@ def prepend_unit_with_category(
             )
         else:
             category = segment.get_content()
-        new_segments[-1].annotations[new_annotation_key] = (
+        new_segment.annotations[new_annotation_key] = (
                 category_delimiter.join([category, unit])
         )
-    return Segmentation(new_segments, segmentation.label)
+        new_segmentation.append(new_segment)
+    return new_segmentation
 
 
 def generate_random_annotation_key(segmentation, length=8):
@@ -265,41 +266,41 @@ if __name__ == '__main__':
     #         print 'parsing failed'
     my_dict = {'a':2, 'b':1, 'c':1}
     for i in range(10):
-        print sample_dict(my_dict, 2)
+        print(sample_dict(my_dict, 2))
     try:
         sample_dict(my_dict, 5)
     except ValueError:
-        print "exception correctly raised"
+        print("exception correctly raised")
     my_dict = {('a','A'): 1, ('a','B'): 2, ('b','A'): 0, ('b','B'): 3}
-    print tuple_to_simple_dict(my_dict, 'a')
-    print tuple_to_simple_dict(my_dict, 'b')
+    print(tuple_to_simple_dict(my_dict, 'a'))
+    print(tuple_to_simple_dict(my_dict, 'b'))
     values  = [2, 3, 4]
     weights = [2, 1, 1]
-    print get_average(values)
-    print get_average(values, weights)
-    print get_perplexity({'a': 1, 'b': 1})
+    print(get_average(values))
+    print(get_average(values, weights))
+    print(get_perplexity({'a': 1, 'b': 1}))
     unit_dict          = {'a':1, 'b': 2}
     category_dict      = {'A':2, 'B': 1}
     recoded_unit_dict  = {'A#a':1, 'A#b': 1, 'B#b':1}
-    print get_variety(unit_dict)
-    print get_variety(unit_dict, unit_weighting=True)
-    print get_variety(recoded_unit_dict, category_delimiter='#')
-    print get_variety(
+    print(get_variety(unit_dict))
+    print(get_variety(unit_dict, unit_weighting=True))
+    print(get_variety(recoded_unit_dict, category_delimiter='#'))
+    print(get_variety(
             recoded_unit_dict,
             unit_weighting      = True,
             category_delimiter  = '#'
-    )
-    print get_variety(
+    ))
+    print(get_variety(
             recoded_unit_dict,
             category_weighting  = True,
             category_delimiter  = '#',
-    )
-    print get_variety(
+    ))
+    print(get_variety(
             recoded_unit_dict,
             unit_weighting      = True,
             category_weighting  = True,
             category_delimiter  = '#',
-    )
+    ))
     #print generate_random_dict_key(recoded_unit_dict, length=8)
     #seg1 = Input(u'hello world', 'text1')
     #seg2 = Input(u'cruel world', 'text2')
