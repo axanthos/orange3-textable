@@ -2,20 +2,20 @@
 Class OWTextableSegment
 Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
-This file is part of the Orange-Textable package v1.6.
+This file is part of the Orange-Textable package v2.0.
 
-Orange-Textable v1.6 is free software: you can redistribute it and/or modify
+Orange-Textable v2.0 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Orange-Textable v1.6 is distributed in the hope that it will be useful,
+Orange-Textable v2.0 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Orange-Textable v1.6. If not, see <http://www.gnu.org/licenses/>.
+along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
 __version__ = '0.21.3'  # TODO: change subversion?
@@ -192,6 +192,16 @@ class OWTextableSegment(OWWidget):
                 u"Remove all regexes from the list."
             ),
         )
+        self.exportButton = OWGUI.button(
+            widget=regexBoxCol2,
+            master=self,
+            label=u'Export List',
+            callback=self.exportList,
+            tooltip=(
+                u"Open a dialog for selecting a file where the\n"
+                u"regex list can be exported in JSON format."
+            ),
+        )
         self.importButton = OWGUI.button(
             widget=regexBoxCol2,
             master=self,
@@ -201,16 +211,6 @@ class OWTextableSegment(OWWidget):
                 u"Open a dialog for selecting a regex list to\n"
                 u"import (in JSON format). Regexes from this list\n"
                 u"will be added to the existing ones."
-            ),
-        )
-        self.exportButton = OWGUI.button(
-            widget=regexBoxCol2,
-            master=self,
-            label=u'Export List',
-            callback=self.exportList,
-            tooltip=(
-                u"Open a dialog for selecting a file where the\n"
-                u"regex list can be exported in JSON format."
             ),
         )
         regexBoxLine2 = OWGUI.widgetBox(
@@ -553,7 +553,7 @@ class OWTextableSegment(OWWidget):
                 mode = entry.get('mode', '')
                 if regex == '' or mode == '':
                     self.infoBox.setText(
-                        u"Please verify attributes and values of incoming "
+                        u"Please verify keys and values of incoming "
                         u"JSON message.",
                         'error'
                     )
@@ -702,6 +702,8 @@ class OWTextableSegment(OWWidget):
             self,
             iterations=len(self.inputSegmentation) * len(myRegexes)
         )
+        self.warning(0)
+        self.error(0)
         try:
             segmented_data = Segmenter.tokenize(
                 segmentation=self.inputSegmentation,
