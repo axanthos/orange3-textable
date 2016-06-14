@@ -305,10 +305,38 @@ class Segment(object):
         start = self.start or 0
         string_length = len(Segmentation.data[str_index])
         end = self.end or string_length
-        return [segment for segment in segmentation if (
-                str_index == segment.str_index and
-                start <= (segment.start or 0) and
-                end >= (segment.end or string_length))]
+        ret = list()
+        try:
+            # Get first and last index of segments with the same str_index...
+            start_search = segmentation.str_index_ptr[str_index]
+            end_search = min(
+                [
+                    x for x in segmentation.str_index_ptr.values() 
+                    if x > start_search
+                ] + [len(segmentation)]
+            )
+
+            # Binary search for start of relevant segments...
+            while end_search - start_search > 1:
+                middle = segmentation[(end_search + start_search) // 2]
+                if (middle.start or 0) > start:
+                    end_search = (end_search + start_search) // 2
+                else:
+                    start_search = (end_search + start_search) // 2
+
+            # Start iterating at this point...
+            for segment in segmentation[start_search:]:
+                # and stop when we reach the end
+                if (
+                    str_index != segment.str_index or 
+                    (segment.start or 0) > end
+                ):
+                    break
+                if end >= (segment.end or string_length):
+                    ret.append(segment)
+            return ret
+        except:
+            return list()
 
     def get_contained_segment_indices(self, segmentation):
         """Return indices of segments from another segmentation that are
@@ -323,13 +351,38 @@ class Segment(object):
         start = self.start or 0
         string_length = len(Segmentation.data[str_index])
         end = self.end or string_length
-        return [
-            i for i in range(len(segmentation)) if (
-                str_index == segmentation[i].str_index and
-                start <= (segmentation[i].start or 0) and
-                end >= (segmentation[i].end or string_length)
+        ret = list()
+        try:
+            # Get first and last index of segments with the same str_index
+            start_search = segmentation.str_index_ptr[str_index]
+            end_search = min(
+                [
+                    x for x in segmentation.str_index_ptr.values() 
+                    if x > start_search
+                ] + [len(segmentation)]
             )
-        ]
+
+            # Binary search for start of relevant segments...
+            while end_search - start_search > 1:
+                middle = segmentation[(end_search + start_search) // 2]
+                if (middle.start or 0) > start:
+                    end_search = (end_search + start_search) // 2
+                else:
+                    start_search = (end_search + start_search) // 2
+
+            # start iterating at this point...
+            for i, segment in enumerate(segmentation[start_search:]):
+                # and stop when we reach the end
+                if (
+                    str_index != segment.str_index or 
+                    (segment.start or 0) > end
+                ):
+                    break
+                if end >= (segment.end or string_length):
+                    ret.append(i + start_search)
+            return ret
+        except:
+            return list()
 
     def get_contained_sequence_indices(self, segmentation, length):
         """Return indices of first position of sequences of segments from

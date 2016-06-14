@@ -236,7 +236,7 @@ class TestSegment(unittest.TestCase):
             self.first_word_seg[0].get_contained_segments(
                 self.char_seg
             ),
-            self.char_seg[0:2],
+            list(self.char_seg[0:2]),
             msg="get_contained_segments doesn't return contained segments!"
         )
 

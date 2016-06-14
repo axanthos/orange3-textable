@@ -175,6 +175,7 @@ class OWTextableTextField(OWWidget):
 
     def onDeleteWidget(self):
         self.segmentation.clear()
+        self.segmentation.__del__()
 
     def adjustSizeWithTimer(self):
         qApp.processEvents()

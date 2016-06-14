@@ -626,7 +626,7 @@ class OWTextableTextFiles(OWWidget):
     def clearCreatedInputs(self):
         for i in self.createdInputs:
             i.clear()
-            i.store()
+            i.__del__()
         del self.createdInputs[:]
         for i in reversed(xrange(len(Segmentation.data))):
             if Segmentation.data[i] is None:

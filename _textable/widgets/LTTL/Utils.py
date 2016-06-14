@@ -30,14 +30,13 @@
 # - prepend_unit_with_category()
 #=============================================================================
 
-from __future__ import division
-from future.utils import iteritems
+from __future__    import division
+from future.utils  import iteritems, itervalues
+from builtins      import range, chr
 import re, random, math
 
 from .Segmentation import Segmentation
 from .Segment      import Segment
-
-from builtins import chr
 
 
 def iround(x):
@@ -56,9 +55,9 @@ def sample_dict(
     """Return a randomly sampled frequency dict"""
     new_dict        = {}
     num_to_sample   = sample_size
-    num_to_process  = sum(dictionary.itervalues())
+    num_to_process  = sum(itervalues(dictionary))
     for (k, v) in iteritems(dictionary):
-        for i in xrange(v):
+        for i in range(v):
             if random.random() < num_to_sample / num_to_process:
                 new_dict[k] = new_dict.get(k, 0) + 1
                 num_to_sample -= 1
@@ -156,7 +155,7 @@ def get_average(values, weights=None):
     sum_of_weights          = 0
     weighted_sum            = 0
     weighted_sum_squares    = 0
-    for index in xrange(number_of_items):
+    for index in range(number_of_items):
         number = values[index]
         if weights:
             weight = weights[index]
@@ -177,7 +176,7 @@ def get_perplexity(dictionary):
     """Compute the perplexity (=exp entropy) of a dictionary"""
     sum                     = 0
     weighted_sum_of_logs    = 0
-    for freq in dictionary.itervalues():
+    for freq in itervalues(dictionary):
         if freq:
             sum                  += freq;
             weighted_sum_of_logs += freq * math.log(freq);

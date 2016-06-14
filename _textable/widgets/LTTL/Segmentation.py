@@ -34,7 +34,7 @@ MAX_SEGMENT_STRING = 1000
 NUM_SEGMENTS_SUMMARY = 5
 
 # maximum number of segments per chunk
-CHUNK_SIZE = 100000
+CHUNK_SIZE = 1000000
 
 # maximum number of chunks that are kept in RAM
 CACHE_SIZE = 200
@@ -115,6 +115,13 @@ def remove_chunk(segmentation, id):
         del segments_cache[(segmentation, id)]
 
 
+def cleanup_segmentation(segmentation):
+    """Completely remove a segmentation from memory (and files)."""
+    for k in list(segments_cache.keys()):
+        if k[0] == segmentation:
+            remove_chunk(k[0], k[1])
+
+
 def clone_chunks(source, dst):
     """Copy all chunks related to a given "source" segmentation
     and associate them with a given "dst" segmentation."""
@@ -161,6 +168,9 @@ class Segmentation(object):
             else:
                 self.label = label
 
+    def __del__(self):
+        cleanup_segmentation(self)
+
     def __len__(self):
         """Return the number of segments in the segmentation"""
         return self.segments_nbr
@@ -170,7 +180,7 @@ class Segmentation(object):
         from .Segment import Segment
         if isinstance(key, slice):
             # Get the start, stop, and step from the slice
-            return [self[ii] for ii in range(*key.indices(len(self)))]
+            return (self[ii] for ii in range(*key.indices(len(self))))
         elif isinstance(key, int):
             if key < 0:
                 key = self.segments_nbr + key
@@ -265,7 +275,7 @@ class Segmentation(object):
             self.key_to_id = dict()
 
     def get_annotation_tab(self, segment):
-        annotations_id = []
+        annotations_id = list()
         for key, value in iteritems(segment.annotations):
             self.add_annotation_tuple((key, value))
             annotations_id.append(
@@ -277,10 +287,10 @@ class Segmentation(object):
         return annotations_id
 
     def add_annotation_tuple(self, tuple):
-        id_list = self.key_to_id.get(hash(tuple), [])
+        id_list = self.key_to_id.get(hash(tuple), list())
         if tuple not in [self.id_to_key[x] for x in id_list]:
             self.id_to_key.append(tuple)
-            self.key_to_id[hash(tuple)] = self.key_to_id.get(hash(tuple), [])  \
+            self.key_to_id[hash(tuple)] = self.key_to_id.get(hash(tuple), list())  \
                                         + [len(self.id_to_key) - 1]
 
     def get_annotation(self, index):
@@ -358,10 +368,12 @@ class Segmentation(object):
     def _sort(
             self
     ):
-        """Returns a new segmentation with its segments sorted by (str_index,
-        start, end) the original order is preserved for identical elements. To
-        optimize, if the segmentation is already sorted, it doesn't copy it and
-        just returns it.
+        """Return a new segmentation with its segments sorted by (str_index, 
+        start, end)
+
+        The original order is preserved for identical elements. To optimize, 
+        if the segmentation is already sorted, it doesn't copy it and just 
+        returns it.
         """
 
         sorted_keys = sorted(self.str_index_ptr.keys())
@@ -540,7 +552,7 @@ class Segmentation(object):
 
         # Summarize?
         if display_all is None:
-            display_all = len(self) <= MAX_SEGMENT_STRING
+            display_all = len(self) < MAX_SEGMENT_STRING
 
         # Add (or not) a 1-unit offset to make addresses more readable.
         offset = 1 if humanize_addresses else 0

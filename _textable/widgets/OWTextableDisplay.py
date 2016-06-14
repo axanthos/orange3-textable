@@ -504,6 +504,8 @@ class OWTextableDisplay(OWWidget):
 
     def onDeleteWidget(self):
         self.displayedSegmentation.clear()
+        self.segmentation.__del__()
+
 
     def adjustSizeWithTimer(self):
         qApp.processEvents()
