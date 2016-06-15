@@ -532,9 +532,6 @@ class OWTextableDisplay(OWWidget):
 
 
 if __name__ == '__main__':
-    import LTTL.Segmenter as Segmenter
-    from LTTL.Input import Input
-
     appl = QApplication(sys.argv)
     ow = OWTextableDisplay()
     ow.show()

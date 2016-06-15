@@ -189,7 +189,6 @@ def concatenate(
 
 # TODO: verify impact of changing default value of merge_duplicate to False
 # TODO: verify impact of sorting new segments outside of regex loop
-# TODO: verify impact of merge_duplicates (or not) on client progress track
 # TODO: update client code to reflect de-capitalization of mode parameters.
 def tokenize(
         segmentation,
