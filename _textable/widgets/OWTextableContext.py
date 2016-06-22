@@ -24,7 +24,7 @@ __version__ = '0.10.1'
 <name>Context</name>
 <description>Explore the context of segments</description>
 <icon>icons/Context.png</icon>
-<priority>8000</priority>
+<priority>8005</priority>
 """
 
 from LTTL.Table        import Table
@@ -57,7 +57,7 @@ class OWTextableContext(OWWidget):
             ]
         )
     }
-    
+
     settingsList = [
             'autoSend',
             'mode',
@@ -71,7 +71,7 @@ class OWTextableContext(OWWidget):
     ]
 
     def __init__(self, parent=None, signalManager=None):
-        
+
         """Initialize a Context widget"""
 
         OWWidget.__init__(
@@ -80,10 +80,10 @@ class OWTextableContext(OWWidget):
                 signalManager,
                 wantMainArea=0,
         )
-        
+
         self.inputs  = [('Segmentation', Segmentation, self.inputData, Multiple)]
         self.outputs = [('Textable Table', Table)]
-        
+
         # Settings...
         self.autoSend                   = False
         self.mode                       = u'Neighboring segments'
@@ -429,7 +429,7 @@ class OWTextableContext(OWWidget):
                 contexts['annotation_key'] = None
             if self.applyMaxDistance:
                 contexts['max_distance'] = self.maxDistance
-                
+
             # Case 1a: Concordance format...
             if not self.useCollocationFormat:
 
@@ -441,7 +441,7 @@ class OWTextableContext(OWWidget):
                 }
                 if units['annotation_key'] == u'(none)':
                     units['annotation_key'] = None
-                    
+
                 # Process...
                 table = self.processor.neighbors(
                         units,
@@ -455,10 +455,10 @@ class OWTextableContext(OWWidget):
 
                 # Units parameter...
                 units = self.segmentations[self.units][1]
-                
+
                 # Contexts parameter...
                 contexts['min_frequency'] = self.minFrequency
-                
+
                 # Process...
                 table = self.processor.collocations(
                         units,

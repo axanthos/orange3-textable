@@ -27,7 +27,7 @@ __version__ = '0.16.3'
 <priority>6001</priority>
 """
 
-import os, codecs, uuid
+import codecs
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input

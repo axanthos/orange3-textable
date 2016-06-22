@@ -25,7 +25,7 @@ __version__ = '0.12.1'
 <description>Build a table with categories defined by segments' content or
 annotations.</description>
 <icon>icons/Category.png</icon>
-<priority>8004</priority>
+<priority>8006</priority>
 """
 
 from LTTL.Table        import Table
@@ -67,7 +67,7 @@ class OWTextableCategory(OWWidget):
     ]
 
     def __init__(self, parent=None, signalManager=None):
-        
+
         """Initialize a Category widget"""
 
         OWWidget.__init__(
@@ -76,10 +76,10 @@ class OWTextableCategory(OWWidget):
                 signalManager,
                 wantMainArea=0,
         )
-        
+
         self.inputs  = [('Segmentation', Segmentation, self.inputData, Multiple)]
         self.outputs = [('Textable table', Table)]
-        
+
         # Settings...
         self.autoSend               = False
         self.sequenceLength         = 1
@@ -99,7 +99,7 @@ class OWTextableCategory(OWWidget):
         self.unitAnnotationKey      = None
         self.contexts               = None
         self.contextAnnotationKey   = None
-        self.settingsRestored       = False                                         
+        self.settingsRestored       = False
         self.infoBox                = InfoBox(
                 widget          = self.controlArea,
                 stringClickSend = u", please click 'Compute' when ready.",

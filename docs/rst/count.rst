@@ -18,7 +18,7 @@ Inputs:
 
 * ``Segmentation`` (multiple)
 
-  Segmentation whose segments constitute the units to be counted or 
+  Segmentation whose segments constitute the units to be counted or
   the contexts in which the units will be counted
 
 Outputs:
@@ -30,12 +30,12 @@ Outputs:
 Description
 -----------
 
-This widget inputs one or several segmentations, counts the frequency of 
-segments defined by one of the segmentations (potentially within segments 
-defined by another), and sends the result in the form of a *contingency 
+This widget inputs one or several segmentations, counts the frequency of
+segments defined by one of the segmentations (potentially within segments
+defined by another), and sends the result in the form of a *contingency
 table* (or *co-occurrence matrix* or also *term--document matrix*).
 
-The contingency tables produced by this widget are of *PivotCrosstab* type, 
+The contingency tables produced by this widget are of *PivotCrosstab* type,
 a subtype of the generic *Table* format (see :ref:`Convert` widget, section
 :ref:`Table formats <anchor_to_table_formats>`). In such a table, each column
 corresponds to a *unit* type, each line corresponds to a *context* type, and
@@ -68,9 +68,9 @@ B) label = *letters* (extract)
  *e*        16       16     *vowel*
 =========  =======  =====  ===================
 
-Typically, we could define unit types based on the content of the segments 
-of the *letters* segmentations, and context types based on the content of 
-the segments of the *words* segmentations. Counting these unit types in these 
+Typically, we could define unit types based on the content of the segments
+of the *letters* segmentations, and context types based on the content of
+the segments of the *words* segmentations. Counting these unit types in these
 contexts types would thus produce the following contingency table [#]_:
 
 .. csv-table::
@@ -81,14 +81,14 @@ contexts types would thus produce the following contingency table [#]_:
     *a*,        1,    0,    0,    0,    0,    0,    0,    0
     *simple*,   0,    1,    1,    1,    1,    1,    1,    0
     *example*,  1,    0,    0,    1,    1,    1,    2,    1
-   
 
-Alternatively, we could rather count the *annotation values* (instead of 
-the content) of the units and/or of the contexts. For example, by defining 
-units on the basis of the annotations associated to the key *letter category* 
-in the *letters* segmentation, and contexts on the basis of the annotations 
-associated to the key *word category* in the *words* segmentation, we would 
-obtain the following table:   
+
+Alternatively, we could rather count the *annotation values* (instead of
+the content) of the units and/or of the contexts. For example, by defining
+units on the basis of the annotations associated to the key *letter category*
+in the *letters* segmentation, and contexts on the basis of the annotations
+associated to the key *word category* in the *words* segmentation, we would
+obtain the following table:
 
 
 .. csv-table::
@@ -98,20 +98,20 @@ obtain the following table:
 
     *grammatical*,  1,    0
     *lexical*,      5,    8
-  
-This way of selecting segmentations and annotation keys constitutes an 
-extremely flexible mechanism which enables the user to easily produce a 
-variety of contingency tables. Note that it is up to the user to provide a 
-coherent definition of the units and contexts. In general, a given unit is 
-considered to occur in a given context if, (a) the segment corresponding 
-to the unit and the context are both be associated to the same string, (b) 
-the initial position of the unit segment in the string is higher or equal to 
-that of the context segment, and (c) conversely the final position of the unit 
+
+This way of selecting segmentations and annotation keys constitutes an
+extremely flexible mechanism which enables the user to easily produce a
+variety of contingency tables. Note that it is up to the user to provide a
+coherent definition of the units and contexts. In general, a given unit is
+considered to occur in a given context if, (a) the segment corresponding
+to the unit and the context are both be associated to the same string, (b)
+the initial position of the unit segment in the string is higher or equal to
+that of the context segment, and (c) conversely the final position of the unit
 is lower or equal to that of the context. In short, the unit must be
 *contained* within the context.
 
-A borderline case made possible by this *modus operandi* consists of defining 
-units and contexts on the basis of the same segmentation. Indeed since every 
+A borderline case made possible by this *modus operandi* consists of defining
+units and contexts on the basis of the same segmentation. Indeed since every
 segment is contained in itself, nothing keeps us from using a single
 segmentation, *words* for example, and defining units with the key *part of
 speech* and contexts with the key *word category*:
@@ -121,7 +121,7 @@ speech* and contexts with the key *word category*:
     :header: *__context__*, *article*, *noun*, *verb*
     :stub-columns: 1
     :widths: 3 2 2 2
-    
+
     *grammatical*,  1,    0,    0
     *lexical*,      1,    1,    0
 
@@ -132,10 +132,10 @@ segmentation. In our example, by applying this principle to the *letters*
 segmentation and by setting the window size to 11 segments, we thus define
 the following contexts:
 
-	1. *a simple exam*
-	2. *simple examp*
-	3. *imple exampl*
-	4. *mple example*
+    1. *a simple exam*
+    2. *simple examp*
+    3. *imple exampl*
+    4. *mple example*
 
 By otherwise defining the units based on the *letter category* annotations for
 example, we thus obtain the following counts (where the contexts are
@@ -150,7 +150,7 @@ represented by their successive positions):
     2,    4,    7
     3,    4,    7
     4,    4,    7
-    
+
 The last context specification mode that Count offers and which involves a
 single segmentation consists of defining the contexts as *n* segments
 immediately to the left and/or to the right of each segment. For example,
@@ -164,7 +164,7 @@ separates the left and right parts of the context):
     :header: *__context__*, *consonant*, *vowel*
     :stub-columns: 1
     :widths: 4 2 1
-   
+
     *vowel+consonant_consonant*,    2,  2
     *consonant+vowel_consonant*,    2,  1
     *consonant+consonant_vowel*,    2,  1
@@ -184,12 +184,12 @@ the segments:
 
     *vowel*,        o,    5
     *consonant*,    5,    4
-    
-Let us also note that context specification, unlike unit specification, is 
-optional. Indeed, it is always possible to globally count the frequency of 
-segmentation units and thus produce a table that only contains a single row 
-corresponding to the whole concerned segmentation (thus *letters*, in the 
-following example):    
+
+Let us also note that context specification, unlike unit specification, is
+optional. Indeed, it is always possible to globally count the frequency of
+segmentation units and thus produce a table that only contains a single row
+corresponding to the whole concerned segmentation (thus *letters*, in the
+following example):
 
 .. csv-table::
     :header: *__context__*, *a*, *s*, *i*, *m*, *p*, *l*, *e*, *x*
@@ -197,7 +197,7 @@ following example):
     :widths: 3 1 1 1 1 1 1 1 1
 
     *__global__*,    2,    1,    1,    2,    2,   2,    3,    1
-    
+
 
 Finally, in every scenario considered here, we could also take an interest for
 the frequency of the sequences from 2, 3, ..., *n* segments  (or *n--grams*)
@@ -223,7 +223,7 @@ separate sections for unit definition (**Units**) and context definition
     :alt: Count widget in mode "No context"
 
     Figure 1: **Count** widget (**No context** mode).
-    
+
 In the **Units** section, the **Segmentation** drop-down menu allows the user
 to select among the input segmentations the one whose segment types will be
 counted. The **Annotation key** menu displays the annotation keys associated
@@ -264,7 +264,7 @@ only parameter is the window size (in number of segments), defined by the
     :alt: Count widget in mode "Left-right neighborhood"
 
     Figure 3: **Count** widget (**Left--right neighborhood** mode).
-  
+
 .. _count_fig4:
 
 .. figure:: figures/count_mode_containing_segmentation.png
@@ -315,9 +315,9 @@ Information
     This confirms that the widget has operated properly.
 
 *Settings were* (or *Input has*) *changed, please click 'Compute' when ready.*
-    Settings and/or input have changed but the **Compute automatically** 
-    checkbox has not been selected, so the user is prompted to click the 
-    **Compute** button (or equivalently check the box) in order for computation 
+    Settings and/or input have changed but the **Compute automatically**
+    checkbox has not been selected, so the user is prompted to click the
+    **Compute** button (or equivalently check the box) in order for computation
     and data emission to proceed.
 
 *No data sent to output yet: no input segmentation.*
@@ -335,13 +335,13 @@ Warnings
 
 *Resulting table is empty.*
     No table has been emitted because the widget instance couldn't find a
-    single element in its input segmentation(s). A likely cause for this 
+    single element in its input segmentation(s). A likely cause for this
     problem (when using the **Containing segmentation** mode) is that the unit
-    and context segmentations do not refer to the same strings, so that the 
+    and context segmentations do not refer to the same strings, so that the
     units are in effect *not* contained in the contexts. This is typically a
     consequence of the improper use of widgets :ref:`Preprocess` and/or
     :ref:`Recode` (see :ref:`anchor_to_caveat`).
-        
+
 Examples
 --------
 
@@ -364,7 +364,7 @@ See also
 
 Footnotes
 ---------
-   
+
 .. [#] By convention, we do not indicate here the string index associated with
        each segment but only its start and end positions, along with the
        various annotation values associated with it; moreover, for the sake of
