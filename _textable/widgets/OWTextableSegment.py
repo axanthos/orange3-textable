@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.3'  # TODO: change subversion?
+__version__ = '1.0.0'
 
 """
 <name>Segment</name>
@@ -57,9 +57,6 @@ class OWTextableSegment(OWWidget):
     ]
 
     def __init__(self, parent=None, signalManager=None):
-
-        import sys
-        print (sys.version)
 
         OWWidget.__init__(
             self,
@@ -531,7 +528,6 @@ class OWTextableSegment(OWWidget):
         self.sendButton.sendIf()
         self.adjustSizeWithTimer()
 
-
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
         if not message:
@@ -596,11 +592,10 @@ class OWTextableSegment(OWWidget):
 
         # Check that there's at least one regex (if needed)...
         if (
-                    (self.displayAdvancedSettings and not self.regexes)
-                or (
-                                self.segmentType == 'Use a regular expression'
-                        and not (self.regex or self.displayAdvancedSettings)
-                )
+            (self.displayAdvancedSettings and not self.regexes) or (
+                self.segmentType == 'Use a regular expression' and
+                not (self.regex or self.displayAdvancedSettings)
+            )
         ):
             self.infoBox.setText(u'Please enter a regex.', 'warning')
             self.send('Segmented data', None, self)
@@ -690,7 +685,8 @@ class OWTextableSegment(OWWidget):
                 else:
                     regexes.append((re.compile(regex_string), regex[7].lower()))
             except re.error as re_error:
-                message = u'Please enter a valid regex (error: %s' % re_error.message
+                message = u'Please enter a valid regex (error: %s' %    \
+                          re_error.message
                 if self.displayAdvancedSettings and len(myRegexes) > 1:
                     message += u', regex #%i' % (regex_idx + 1)
                 message += u').'

@@ -380,24 +380,24 @@ class OWTextableCooccurrence(OWWidget):
     def onInputRemoval(self, index):
         """Handle removal of input with given index"""
         if index < self.units:
-            self.units = self.units - 1
+            self.units -= 1
         elif index == self.units and self.units == len(self.segmentations) - 1:
-            self.units = self.units - 1
+            self.units -= 1
             if self.units < 0:
                 self.units = None
         if index < self.units2:
-            self.units2 = self.units2 - 1
+            self.units2 -= 1
         elif index == self.units2 and self.units2 == len(
                 self.segmentations) - 1:
-            self.units2 = self.units2 - 1
+            self.units2 -= 1
             if self.units2 < 0:
                 self.units2 = None
         if self.mode == u'Containing segmentation':
             if index < self._contexts:
-                self._contexts = self._contexts - 1
+                self._contexts -= 1
             elif index == self._contexts:
                 if self._contexts == len(self.segmentations) - 1:
-                    self._contexts = self._contexts - 1
+                    self._contexts -= 1
                     if self._contexts < 0:
                         self._contexts = None
                 if self.autoSend:
@@ -434,8 +434,7 @@ class OWTextableCooccurrence(OWWidget):
         if self.mode == 'Sliding window':
             progressBar = OWGUI.ProgressBar(
                 self,
-                iterations=len(units['segmentation'])
-                           - (self.windowSize - 1)
+                iterations=len(units['segmentation']) - (self.windowSize - 1)
             )
             # Calculate the co-occurrence...
             table = Processor.cooc_in_window(
@@ -453,7 +452,7 @@ class OWTextableCooccurrence(OWWidget):
             }
             if contexts['annotation_key'] == u'(none)':
                 contexts['annotation_key'] = None
-            if self.units2 != None and self.coocWithUnits2:
+            if self.units2 is not None and self.coocWithUnits2:
                 # Secondary units parameter...
                 units2 = {
                     'segmentation': self.segmentations[self.units2][1],
@@ -638,35 +637,34 @@ if __name__ == '__main__':
     appl = QApplication(sys.argv)
     ow = OWTextableCooccurrence()
     seg1 = Input(u'un texte', label=u'text')
-    segmenter = Segmenter()
-    seg2 = segmenter.tokenize(
+    seg2 = Segmenter.tokenize(
         seg1,
         regexes=[
             (
                 re.compile(r'\w+'),
-                u'Tokenize',
+                u'tokenize',
                 {'type': 'W'},
             )
         ],
         label=u'words',
     )
-    seg3 = segmenter.tokenize(
+    seg3 = Segmenter.tokenize(
         seg1,
         regexes=[
             (
                 re.compile(r'[aeiouy]'),
-                u'Tokenize',
+                u'tokenize',
                 {'type': 'V'},
             )
         ],
         label=u'vowel',
     )
-    seg4 = segmenter.tokenize(
+    seg4 = Segmenter.tokenize(
         seg1,
         regexes=[
             (
                 re.compile(r'[^aeiouy]'),
-                u'Tokenize',
+                u'tokenize',
                 {'type2': 'C'},
             )
         ],
