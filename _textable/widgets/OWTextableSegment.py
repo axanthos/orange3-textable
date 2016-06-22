@@ -58,6 +58,9 @@ class OWTextableSegment(OWWidget):
 
     def __init__(self, parent=None, signalManager=None):
 
+        import sys
+        print (sys.version)
+
         OWWidget.__init__(
             self,
             parent,

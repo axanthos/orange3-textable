@@ -1,26 +1,27 @@
 #!/usr/bin/env python
 
-"""File setup.py, v0.16
+"""File setup.py
 Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
----------------------------------------------------------------------------
-This file is part of the Textable (v1.6) extension to Orange Canvas.
+-----------------------------------------------------------------------------
+This file is part of the Orange-Textable package v2.0.
 
-Textable v1.5 is free software: you can redistribute it and/or modify
+Orange-Textable v2.0 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Textable v1.6 is distributed in the hope that it will be useful,
+Orange-Textable v2.0 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Textable v1.6. If not, see <http://www.gnu.org/licenses/>.
+along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
 from __future__ import unicode_literals
 
+import os
 import sys
 
 try:
@@ -32,14 +33,14 @@ except ImportError:
     # so it does not matter if importing fails
     pass
 
-import os
-
 from setuptools import setup, find_packages
+
+__version__ = "1.0.0"   # file version
 
 NAME = 'Orange-Textable'
 DOCUMENTATION_NAME = 'Orange Textable'
 
-VERSION = '1.5.2'
+VERSION = '2.0.0a'  # package version
 
 DESCRIPTION = 'Orange Textable add-on for Orange data mining software package.'
 LONG_DESCRIPTION = open(
@@ -81,14 +82,11 @@ PACKAGES = find_packages(
 PACKAGE_DATA = {
 }
 
-SETUP_REQUIRES = (
-    'setuptools',
-)
-
 INSTALL_REQUIRES = (
-    'Orange',
+    'Orange >= 2.7.0, < 3.0.0',
     'setuptools',
-    'future'
+    'future',
+    'LTTL >= 2.0.0, < 3.0.0',
 ),
 
 EXTRAS_REQUIRE = {
@@ -124,7 +122,6 @@ if __name__ == '__main__':
         classifiers=CLASSIFIERS,
         packages=PACKAGES,
         package_data=PACKAGE_DATA,
-        setup_requires=SETUP_REQUIRES,
         install_requires=INSTALL_REQUIRES,
         extras_require=EXTRAS_REQUIRE,
         dependency_links=DEPENDENCY_LINKS,
