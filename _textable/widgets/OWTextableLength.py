@@ -72,6 +72,7 @@ class OWTextableLength(OWWidget):
             parent,
             signalManager,
             wantMainArea=0,
+            wantStateInfoWidget=0,
         )
 
         self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
@@ -530,18 +531,20 @@ class OWTextableLength(OWWidget):
 
 
 if __name__ == '__main__':
-    from LTTL.Segmenter import Segmenter
+    import LTTL.Segmenter as Segmenter
     from LTTL.Input import Input
 
     appl = QApplication(sys.argv)
     ow = OWTextableLength()
     seg1 = Input(u'hello world', label=u'text1')
     seg2 = Input(u'wonderful world', label=u'text2')
-    segmenter = Segmenter()
-    seg3 = segmenter.concatenate([seg1, seg2], label=u'corpus')
-    seg4 = segmenter.tokenize(seg3, [(r'\w+(?u)', u'Tokenize',)],
-                              label=u'words')
-    seg5 = segmenter.tokenize(seg3, [(r'\w', u'Tokenize',)], label=u'letters')
+    seg3 = Segmenter.concatenate([seg1, seg2], label=u'corpus')
+    seg4 = Segmenter.tokenize(
+        seg3,
+        [(r'\w+(?u)', u'tokenize',)],
+        label=u'words'
+    )
+    seg5 = Segmenter.tokenize(seg3, [(r'\w', u'tokenize',)], label=u'letters')
     ow.inputData(seg3, 1)
     ow.inputData(seg4, 2)
     ow.inputData(seg5, 3)
