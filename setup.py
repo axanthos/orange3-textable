@@ -40,7 +40,7 @@ __version__ = "1.0.0"   # file version
 NAME = 'Orange-Textable'
 DOCUMENTATION_NAME = 'Orange Textable'
 
-VERSION = '2.0.0a'  # package version
+VERSION = '2.0a0'  # package version
 
 DESCRIPTION = 'Orange Textable add-on for Orange data mining software package.'
 LONG_DESCRIPTION = open(
