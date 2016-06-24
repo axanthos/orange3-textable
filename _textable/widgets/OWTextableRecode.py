@@ -1,5 +1,5 @@
 """
-Class OWTextableSegment
+Class OWTextableRecode
 Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange-Textable package v2.0.
@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '1.0.0'  # TODO change subversion?
+__version__ = '0.13.2'  # TODO change subversion?
 
 """
 <name>Recode</name>

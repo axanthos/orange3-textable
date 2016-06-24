@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.19.1'  # TODO change subversion?
+__version__ = '0.19.2'  # TODO change subversion?
 
 """
 <name>Convert</name>
