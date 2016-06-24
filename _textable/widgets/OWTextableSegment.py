@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '1.0.0'
+__version__ = '0.21.4'
 
 """
 <name>Segment</name>
@@ -690,9 +690,7 @@ class OWTextableSegment(OWWidget):
                 if self.displayAdvancedSettings and len(myRegexes) > 1:
                     message += u', regex #%i' % (regex_idx + 1)
                 message += u').'
-                self.infoBox.setText(
-                    message, 'error'
-                )
+                self.infoBox.setText(message, 'error')
                 self.send('Segmented data', None, self)
                 return
 

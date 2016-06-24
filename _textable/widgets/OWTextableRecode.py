@@ -186,6 +186,16 @@ class OWTextableRecode(OWWidget):
                 u"Remove all substitutions from the list."
             ),
         )
+        self.exportButton = OWGUI.button(
+            widget=substBoxCol2,
+            master=self,
+            label=u'Export List',
+            callback=self.exportList,
+            tooltip=(
+                u"Open a dialog for selecting a file where the\n"
+                u"substitution list can be exported in JSON format."
+            ),
+        )
         self.importButton = OWGUI.button(
             widget=substBoxCol2,
             master=self,
@@ -195,16 +205,6 @@ class OWTextableRecode(OWWidget):
                 u"Open a dialog for selecting a substitution list\n"
                 u"to import (in JSON format). Substitutions from\n"
                 u"this list will be added to the existing ones."
-            ),
-        )
-        self.exportButton = OWGUI.button(
-            widget=substBoxCol2,
-            master=self,
-            label=u'Export List',
-            callback=self.exportList,
-            tooltip=(
-                u"Open a dialog for selecting a file where the\n"
-                u"substitution list can be exported in JSON format."
             ),
         )
         substBoxLine2 = OWGUI.widgetBox(
