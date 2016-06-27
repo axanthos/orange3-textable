@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.10.2'  # TODO change subversion?
+__version__ = '0.11.0'
 
 """
 <name>Preprocess</name>
@@ -44,7 +44,6 @@ class OWTextablePreprocess(OWWidget):
         'applyCaseTransform',
         'caseTransform',
         'removeAccents',
-        'displayAdvancedSettings',
         'autoSend',
         'uuid',
     ]
@@ -70,7 +69,6 @@ class OWTextablePreprocess(OWWidget):
         self.caseTransform = 'to lower'
         self.removeAccents = False
         self.autoSend = True
-        self.displayAdvancedSettings = False
         self.uuid = None
         self.loadSettings()
         self.uuid = getWidgetUuid(self)
@@ -86,26 +84,18 @@ class OWTextablePreprocess(OWWidget):
             infoBoxAttribute='infoBox',
             sendIfPreCallback=self.updateGUI,
         )
-        self.advancedSettings = AdvancedSettings(
-            widget=self.controlArea,
-            master=self,
-            callback=self.sendButton.settingsChanged,
-        )
 
         # GUI...
 
-        # Advanced settings checkbox...
-        self.advancedSettings.draw()
-
-        # Preprocessing box
-        preprocessingBox = OWGUI.widgetBox(
+        # Options box
+        optionsBox = OWGUI.widgetBox(
             widget=self.controlArea,
-            box=u'Preprocessing',
+            box=u'Options',
             orientation='vertical',
             addSpace=True,
         )
         self.preprocessingBoxLine1 = OWGUI.widgetBox(
-            widget=preprocessingBox,
+            widget=optionsBox,
             orientation='horizontal',
         )
         OWGUI.checkBox(
@@ -131,9 +121,9 @@ class OWTextablePreprocess(OWWidget):
             ),
         )
         self.caseTransformCombo.setMinimumWidth(120)
-        OWGUI.separator(widget=preprocessingBox, height=3)
+        OWGUI.separator(widget=optionsBox, height=3)
         OWGUI.checkBox(
-            widget=preprocessingBox,
+            widget=optionsBox,
             master=self,
             value='removeAccents',
             label=u'Remove accents',
@@ -142,14 +132,7 @@ class OWTextablePreprocess(OWWidget):
                 u"Replace accented characters with non-accented ones."
             ),
         )
-        OWGUI.separator(widget=preprocessingBox, height=3)
-
-        # (Advanced) options box...
-        optionsBox = OWGUI.widgetBox(
-            widget=self.controlArea,
-            box=u'Options',
-            orientation='vertical',
-        )
+        OWGUI.separator(widget=optionsBox, height=3)
         OWGUI.checkBox(
             widget=optionsBox,
             master=self,
@@ -161,8 +144,6 @@ class OWTextablePreprocess(OWWidget):
             ),
         )
         OWGUI.separator(widget=optionsBox, height=2)
-        self.advancedSettings.advancedWidgets.append(optionsBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         OWGUI.rubber(self.controlArea)
 
@@ -204,10 +185,6 @@ class OWTextablePreprocess(OWWidget):
             case = None
         self.clearCreatedInputIndices()
         previousNumInputs = len(Segmentation.data)
-        if self.displayAdvancedSettings:
-            copyAnnotations = self.copyAnnotations
-        else:
-            copyAnnotations = True
         progressBar = OWGUI.ProgressBar(
             self,
             iterations=len(self.segmentation)
@@ -217,7 +194,7 @@ class OWTextablePreprocess(OWWidget):
             case=case,
             remove_accents=self.removeAccents,
             label=self.captionTitle,
-            copy_annotations=copyAnnotations,
+            copy_annotations=self.copyAnnotations,
             progress_callback=progressBar.advance,
         )
         progressBar.finish()
@@ -239,10 +216,6 @@ class OWTextablePreprocess(OWWidget):
             self.caseTransformCombo.setDisabled(False)
         else:
             self.caseTransformCombo.setDisabled(True)
-        if self.displayAdvancedSettings:
-            self.advancedSettings.setVisible(True)
-        else:
-            self.advancedSettings.setVisible(False)
         self.adjustSizeWithTimer()
 
     def adjustSizeWithTimer(self):
