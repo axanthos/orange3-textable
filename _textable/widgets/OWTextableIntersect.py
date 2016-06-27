@@ -517,7 +517,7 @@ if __name__ == '__main__':
     appl = QApplication(sys.argv)
     ow = OWTextableIntersect()
     seg1 = Input(u'hello world', 'text')
-    seg2 = Segmentergmenter.tokenize(
+    seg2 = Segmenter.tokenize(
         seg1,
         [
             (re.compile(r'hello'), u'tokenize', {'tag': 'interj'}),
@@ -525,29 +525,29 @@ if __name__ == '__main__':
         ],
         label='words',
     )
-    seg3 = segmenter.tokenize(
+    seg3 = Segmenter.tokenize(
         seg2,
         [(re.compile(r'[aeiou]'), u'tokenize')],
         label='V'
     )
-    seg4 = segmenter.tokenize(
+    seg4 = Segmenter.tokenize(
         seg2,
         [(re.compile(r'[hlwrdc]'), u'tokenize')],
         label='C'
     )
-    seg5 = segmenter.tokenize(
+    seg5 = Segmenter.tokenize(
         seg2,
         [(re.compile(r' '), u'tokenize')],
         label='S'
     )
-    seg6 = segmenter.concatenate(
+    seg6 = Segmenter.concatenate(
         [seg3, seg4, seg5],
         import_labels_as='category',
         label='chars',
         sort=True,
         merge_duplicates=True,
     )
-    seg7 = segmenter.tokenize(
+    seg7 = Segmenter.tokenize(
         seg6,
         [(re.compile(r'l'), u'tokenize')],
         label='pivot'
