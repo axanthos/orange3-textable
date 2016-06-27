@@ -614,7 +614,7 @@ class OWTextableTextFiles(OWWidget):
         message = pluralize(message, len(self.segmentation))
         numChars = 0
         for segment in self.segmentation:
-            segmentLength = len(Segmentation.data[segment.str_index])
+            segmentLength = len(Segmentation.get_data(segment.str_index))
             numChars += segmentLength
         message += u'(%i character@p).' % numChars
         message = pluralize(message, numChars)
@@ -625,14 +625,7 @@ class OWTextableTextFiles(OWWidget):
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
-            i.clear()
-            i.__del__()
-        del self.createdInputs[:]
-        for i in reversed(xrange(len(Segmentation.data))):
-            if Segmentation.data[i] is None:
-                Segmentation.data.pop(i)
-            else:
-                break
+            Segmentation.set_data(i[0].str_index, None)
 
     def importList(self):
         """Display a FileDialog and import file list"""

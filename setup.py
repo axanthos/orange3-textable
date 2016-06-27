@@ -86,7 +86,7 @@ INSTALL_REQUIRES = (
     'Orange >= 2.7.0, < 3.0.0',
     'setuptools',
     'future',
-    'LTTL >= 2.0.0, < 3.0.0',
+    'LTTL >= 2.0a0, < 3.0.0',
 ),
 
 EXTRAS_REQUIRE = {

@@ -231,12 +231,7 @@ class OWTextablePreprocess(OWWidget):
 
     def clearCreatedInputIndices(self):
         for i in self.createdInputIndices:
-            Segmentation.data[i] = None
-        for i in reversed(xrange(len(Segmentation.data))):
-            if Segmentation.data[i] is None:
-                Segmentation.data.pop(i)
-            else:
-                break
+            Segmentation.set_data(i, None)
 
     def updateGUI(self):
         """Update GUI state"""
