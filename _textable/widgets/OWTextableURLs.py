@@ -562,7 +562,9 @@ class OWTextableURLs(OWWidget):
             label = None
         for index in xrange(len(URLContents)):
             myInput = Input(URLContents[index], label)
-            myInput[0].annotations.update(annotations[index])
+            segment = myInput[0]
+            segment.annotations.update(annotations[index])
+            myInput[0] = segment
             self.createdInputs.append(myInput)
 
         # If there's only one URL, the widget's output is the created Input.

@@ -560,6 +560,12 @@ class OWTextableTextFiles(OWWidget):
                 self.send('Text data', None, self)
                 return
 
+            # Replace newlines with '\n'...
+            # fileContent = fileContent.replace('\r\n', '\n').replace('\r', '\n')
+
+            # TODO: check if this is more efficient than replace above...
+            fileContent = '\n'.join(fileContent.splitlines())
+
             # Remove utf-8 BOM if necessary...
             if encoding == u'utf-8':
                 fileContent = fileContent.lstrip(
@@ -591,7 +597,9 @@ class OWTextableTextFiles(OWWidget):
             label = None
         for index in xrange(len(fileContents)):
             myInput = Input(fileContents[index], label)
-            myInput[0].annotations.update(annotations[index])
+            segment = myInput[0]
+            segment.annotations.update(annotations[index])
+            myInput[0] = segment
             self.createdInputs.append(myInput)
 
         # If there's only one file, the widget's output is the created Input.
