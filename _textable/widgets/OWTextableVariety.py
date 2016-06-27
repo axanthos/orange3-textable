@@ -45,7 +45,7 @@ class OWTextableVariety(OWWidget):
             '', [
                 ContextInputListField('segmentations'),
                 ContextInputIndex('units'),
-                ContextInputIndex('contexts'),
+                ContextInputIndex('_contexts'),
                 'mode',
                 'unitAnnotationKey',
                 'categoryAnnotationKey',
@@ -323,7 +323,7 @@ class OWTextableVariety(OWWidget):
         self.contextSegmentationCombo = OWGUI.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
-            value='contexts',
+            value='_contexts',
             orientation='horizontal',
             label=u'Segmentation:',
             labelWidth=180,
@@ -692,34 +692,33 @@ class OWTextableVariety(OWWidget):
 
 
 if __name__ == '__main__':
-    from LTTL.Segmenter import Segmenter
+    import LTTL.Segmenter as Segmenter
     from LTTL.Input import Input
 
     appl = QApplication(sys.argv)
     ow = OWTextableVariety()
     seg1 = Input(u'aabccc', 'text1')
     seg2 = Input(u'abci', 'text2')
-    segmenter = Segmenter()
-    seg3 = segmenter.concatenate(
+    seg3 = Segmenter.concatenate(
         [seg1, seg2],
         import_labels_as='string',
         label='corpus'
     )
-    seg4 = segmenter.tokenize(
+    seg4 = Segmenter.tokenize(
         seg3,
-        regexes=[(re.compile(r'\w+'), u'Tokenize',)],
+        regexes=[(re.compile(r'\w+'), u'tokenize',)],
     )
-    seg5 = segmenter.tokenize(
+    seg5 = Segmenter.tokenize(
         seg4,
-        regexes=[(re.compile(r'[ai]'), u'Tokenize',)],
+        regexes=[(re.compile(r'[ai]'), u'tokenize',)],
         label='V'
     )
-    seg6 = segmenter.tokenize(
+    seg6 = Segmenter.tokenize(
         seg4,
-        regexes=[(re.compile(r'[bc]'), u'Tokenize',)],
+        regexes=[(re.compile(r'[bc]'), u'tokenize',)],
         label='C'
     )
-    seg7 = segmenter.concatenate(
+    seg7 = Segmenter.concatenate(
         [seg5, seg6],
         import_labels_as='category',
         label='letters',

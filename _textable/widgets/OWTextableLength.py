@@ -46,7 +46,7 @@ class OWTextableLength(OWWidget):
                 ContextInputListField('segmentations'),
                 ContextInputIndex('units'),
                 ContextInputIndex('averagingSegmentation'),
-                ContextInputIndex('contexts'),
+                ContextInputIndex('_contexts'),
                 'mode',
                 'unitAnnotationKey',
                 'contextAnnotationKey',
@@ -255,7 +255,7 @@ class OWTextableLength(OWWidget):
         self.contextSegmentationCombo = OWGUI.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
-            value='contexts',
+            value='_contexts',
             orientation='horizontal',
             label=u'Segmentation:',
             labelWidth=190,
