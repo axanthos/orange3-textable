@@ -597,6 +597,7 @@ class OWTextableURLs(OWWidget):
     def clearCreatedInputs(self):
         for i in self.createdInputs:
             Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
 
     def importList(self):
         """Display a FileDialog and import URL list"""
