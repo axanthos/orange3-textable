@@ -204,6 +204,8 @@ class OWTextableMerge(OWWidget):
             self.send('Merged data', None, self)
             return
 
+        # TODO: remove message 'No label was provided.' from docs
+
         # Extract segmentations from self.texts and get number of segments...
         segmentations = [text[1] for text in self.texts]
         num_segments = sum([len(s) for s in segmentations])
@@ -277,6 +279,7 @@ class OWTextableMerge(OWWidget):
             self.autoNumberKeyLineEdit.setDisabled(False)
         else:
             self.autoNumberKeyLineEdit.setDisabled(True)
+        self.adjustSizeWithTimer()
 
     def adjustSizeWithTimer(self):
         qApp.processEvents()
