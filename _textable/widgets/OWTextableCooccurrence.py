@@ -20,13 +20,13 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = u'1.0.0'
 __author__ = "Mahtab Mohammadi"
-__maintainer__ = "Aris Xanthos"
+__maintainer__ = "LangTech Sarl"
 
 """
 <name>Cooccurrence</name>
 <description>Measure cooccurrence between segment types</description>
 <icon>icons/Cooccurrence.png</icon>
-<priority>8004</priority>
+<priority>8005</priority>
 """
 
 import LTTL.Processor as Processor

@@ -18,13 +18,13 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.3'  # TODO: Change subversion?
+__version__ = '0.21.3'
 
 """
 <name>Count</name>
 <description>Count segment types</description>
 <icon>icons/Count.png</icon>
-<priority>8001</priority>
+<priority>8002</priority>
 """
 
 from LTTL.Table import IntPivotCrosstab

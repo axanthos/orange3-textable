@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.19.2'  # TODO change subversion?
+__version__ = '0.19.2'
 
 """
 <name>Convert</name>
@@ -637,30 +637,29 @@ class OWTextableConvert(OWWidget):
 
         if self.displayAdvancedSettings:
 
-            # TODO check num iterations
             # Precompute number of iterations...
             numIterations = 0
+            if self.transpose:
+                num_cols = len(transformed_table.row_ids)
+                num_rows = len(transformed_table.col_ids)
+            else:
+                num_rows = len(transformed_table.row_ids)
+                num_cols = len(transformed_table.col_ids)
             if self.normalize:
                 if self.normalizeMode == 'rows':
-                    numIterations += len(transformed_table.row_ids)
+                    numIterations += num_rows
                 elif self.normalizeMode == 'columns':
-                    numIterations += len(transformed_table.col_ids)
+                    numIterations += num_cols
                 elif self.normalizeMode == 'presence/absence':
-                    numIterations += (
-                        len(transformed_table.col_ids)
-                        * len(transformed_table.row_ids)
-                    )
+                    numIterations += num_cols * num_rows
                 elif self.normalizeMode == 'quotients':
-                    numIterations += len(transformed_table.col_ids) + (
-                        len(transformed_table.col_ids)
-                        * len(transformed_table.row_ids)
-                    )
+                    numIterations += num_cols * (num_rows + 1)
                 elif self.normalizeMode == 'TF-IDF':
-                    numIterations += len(transformed_table.col_ids)
+                    numIterations += num_cols
             elif self.convert:
-                numIterations += len(transformed_table.col_ids)
+                numIterations += num_cols
             if self.reformat:
-                numIterations += len(transformed_table.row_ids)
+                numIterations += num_rows
             progressBar = OWGUI.ProgressBar(self, numIterations)
 
             # Sort if needed...

@@ -18,13 +18,13 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.2'  # TODO: Change subversion?
+__version__ = '0.13.2'
 
 """
 <name>Variety</name>
 <description>Measure the variety of segments</description>
 <icon>icons/Variety.png</icon>
-<priority>8003</priority>
+<priority>8004</priority>
 """
 
 from LTTL.Table import Table
