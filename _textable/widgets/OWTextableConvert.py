@@ -892,8 +892,8 @@ class OWTextableConvert(OWWidget):
                             self.unweightedCheckbox.setDisabled(True)
                             self.unweighted = False
                             if (
-                                            self.normalizeMode == u'rows'
-                                    or self.normalizeMode == u'columns'
+                                self.normalizeMode == u'rows' or
+                                self.normalizeMode == u'columns'
                             ):
                                 self.normalizeTypeCombo.setDisabled(False)
                         # Convert...
@@ -921,6 +921,7 @@ class OWTextableConvert(OWWidget):
                         self.normalize = False
                         self.transformBoxLine5.setDisabled(True)
                         self.convert = False
+                        self.unweightedCheckbox.setDisabled(True)
                     # PivotCrosstab...
                     if isinstance(self.table, PivotCrosstab):
                         self.transposeCheckBox.setDisabled(False)
