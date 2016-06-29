@@ -665,23 +665,30 @@ class OWTextableConvert(OWWidget):
 
             # Sort if needed...
             if self.sortRows or self.sortCols:
-                rows = {'reverse': self.sortRowsReverse}
-                cols = {'reverse': self.sortColsReverse}
                 if self.sortRows:
                     if self.sortRowsKeyId == 0:
-                        rows['key_id'] = transformed_table.header_col['id']
+                        key_col_id = transformed_table.header_col_id
                     else:
-                        rows['key_id'] = transformed_table.col_ids[
+                        key_col_id = transformed_table.col_ids[
                             self.sortRowsKeyId - 1
-                            ]
+                        ]
+                else:
+                    key_col_id = None
                 if self.sortCols:
                     if self.sortColsKeyId == 0:
-                        cols['key_id'] = transformed_table.header_row['id']
+                        key_row_id = transformed_table.header_row_id
                     else:
-                        cols['key_id'] = transformed_table.row_ids[
+                        key_row_id = transformed_table.row_ids[
                             self.sortColsKeyId - 1
-                            ]
-                transformed_table = transformed_table.to_sorted(rows, cols)
+                        ]
+                else:
+                    key_row_id = None
+                transformed_table = transformed_table.to_sorted(
+                    key_col_id,
+                    self.sortRowsReverse,
+                    key_row_id,
+                    self.sortColsReverse,
+                )
 
             # Transpose if needed...
             if self.transpose:
@@ -832,7 +839,7 @@ class OWTextableConvert(OWWidget):
                 if self.sortRows:
                     self.sortRowsKeyIdCombo.clear()
                     self.sortRowsKeyIdCombo.addItem(
-                        self.table.header_col['id']
+                        self.table.header_col_id
                     )
                     for col_id in self.table.col_ids:
                         self.sortRowsKeyIdCombo.addItem(col_id)
@@ -847,7 +854,7 @@ class OWTextableConvert(OWWidget):
                 if self.sortCols:
                     self.sortColsKeyIdCombo.clear()
                     self.sortColsKeyIdCombo.addItem(
-                        self.table.header_row['id']
+                        self.table.header_row_id
                     )
                     if isinstance(self.table.row_ids[0], (int, long)):
                         tableRowIds = [str(i) for i in self.table.row_ids]
