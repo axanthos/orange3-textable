@@ -1,44 +1,43 @@
-#=============================================================================
-# Class OWTextableLength
-# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
-#=============================================================================
-# This file is part of the Textable (v1.5) extension to Orange Canvas.
-#
-# Textable v1.5 is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Textable v1.5 is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
-#=============================================================================
+"""
+Class OWTextableLength
+Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
+-----------------------------------------------------------------------------
+This file is part of the Orange-Textable package v2.0.
 
-__version__ = '0.14.1'
+Orange-Textable v2.0 is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Orange-Textable v2.0 is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
+"""
+
+__version__ = '0.14.2'
 
 """
 <name>Length</name>
 <description>Compute the (average) length of segments</description>
 <icon>icons/Length.png</icon>
-<priority>8002</priority>
+<priority>8003</priority>
 """
 
-from LTTL.Table        import Table
-from LTTL.Processor    import Processor
+from LTTL.Table import Table
 from LTTL.Segmentation import Segmentation
+import LTTL.Processor as Processor
 
-from TextableUtils      import *
+from TextableUtils import *
 
-import Orange
 from Orange.OrangeWidgets.OWWidget import *
 import OWGUI
 
-class OWTextableLength(OWWidget):
 
+class OWTextableLength(OWWidget):
     """Orange widget for length computation"""
 
     contextHandlers = {
@@ -47,7 +46,7 @@ class OWTextableLength(OWWidget):
                 ContextInputListField('segmentations'),
                 ContextInputIndex('units'),
                 ContextInputIndex('averagingSegmentation'),
-                ContextInputIndex('contexts'),
+                ContextInputIndex('_contexts'),
                 'mode',
                 'unitAnnotationKey',
                 'contextAnnotationKey',
@@ -57,292 +56,271 @@ class OWTextableLength(OWWidget):
     }
 
     settingsList = [
-            'autoSend',
-            'computeStdev',
-            'mergeContexts',
-            'computeAverage',
-            'sequenceLength',
+        'autoSend',
+        'computeStdev',
+        'mergeContexts',
+        'computeAverage',
+        'sequenceLength',
     ]
 
     def __init__(self, parent=None, signalManager=None):
-        
+
         """Initialize a Length widget"""
 
         OWWidget.__init__(
-                self,
-                parent,
-                signalManager,
-                wantMainArea=0,
+            self,
+            parent,
+            signalManager,
+            wantMainArea=0,
+            wantStateInfoWidget=0,
         )
-        
-        self.inputs  = [('Segmentation', Segmentation, self.inputData, Multiple)]
+
+        self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
         self.outputs = [('Textable table', Table)]
-        
+
         # Settings...
-        self.autoSend                   = False
-        self.computeAverage             = False
-        self.computeStdev               = False
-        self.autoSend                   = False
-        self.mode                       = u'No context'
-        self.mergeContexts              = False
-        self.windowSize                 = 1
+        self.autoSend = False
+        self.computeAverage = False
+        self.computeStdev = False
+        self.autoSend = False
+        self.mode = u'No context'
+        self.mergeContexts = False
+        self.windowSize = 1
         self.loadSettings()
 
         # Other attributes...
-        self.processor              = Processor()
-        self.segmentations          = []
-        self.units                  = None
-        self.averagingSegmentation  = None
-        self.contexts               = None
-        self.contextAnnotationKey   = None
-        self.settingsRestored       = False                                         
-        self.infoBox                = InfoBox(
-                widget          = self.controlArea,
-                stringClickSend = u", please click 'Compute' when ready.",
+        self.segmentations = list()
+        self.units = None
+        self.averagingSegmentation = None
+        self._contexts = None
+        self.contextAnnotationKey = None
+        self.settingsRestored = False
+        self.infoBox = InfoBox(
+            widget=self.controlArea,
+            stringClickSend=u", please click 'Send' when ready.",
         )
-        self.sendButton             = SendButton(
-                widget              = self.controlArea,
-                master              = self,
-                callback            = self.sendData,
-                infoBoxAttribute    = 'infoBox',
-                buttonLabel         = u'Compute',
-                checkboxLabel       = u'Compute automatically',
-                sendIfPreCallback   = self.updateGUI,
+        self.sendButton = SendButton(
+            widget=self.controlArea,
+            master=self,
+            callback=self.sendData,
+            infoBoxAttribute='infoBox',
+            buttonLabel=u'Send',
+            checkboxLabel=u'Send automatically',
+            sendIfPreCallback=self.updateGUI,
         )
 
         # GUI...
 
         # Units box
         self.unitsBox = OWGUI.widgetBox(
-                widget              = self.controlArea,
-                box                 = u'Units',
-                orientation         = 'vertical',
-                addSpace            = True,
+            widget=self.controlArea,
+            box=u'Units',
+            orientation='vertical',
+            addSpace=True,
         )
         self.unitSegmentationCombo = OWGUI.comboBox(
-                widget              = self.unitsBox,
-                master              = self,
-                value               = 'units',
-                orientation         = 'horizontal',
-                label               = u'Segmentation:',
-                labelWidth          = 190,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"The segmentation whose segments constitute the\n"
-                        u"units of length."
-                ),
+            widget=self.unitsBox,
+            master=self,
+            value='units',
+            orientation='horizontal',
+            label=u'Segmentation:',
+            labelWidth=190,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"The segmentation whose segments constitute the\n"
+                u"units of length."
+            ),
         )
         self.unitSegmentationCombo.setMinimumWidth(120)
-        OWGUI.separator(
-                widget              = self.unitsBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.unitsBox, height=3)
 
         # Averaging box...
         self.averagingBox = OWGUI.widgetBox(
-                widget              = self.controlArea,
-                box                 = u'Averaging',
-                orientation         = 'vertical',
-                addSpace            = True,
+            widget=self.controlArea,
+            box=u'Averaging',
+            orientation='vertical',
+            addSpace=True,
         )
         averagingBoxLine1 = OWGUI.widgetBox(
-                widget              = self.averagingBox,
-                box                 = False,
-                orientation         = 'horizontal',
-                addSpace            = True,
+            widget=self.averagingBox,
+            box=False,
+            orientation='horizontal',
+            addSpace=True,
         )
         OWGUI.checkBox(
-                widget              = averagingBoxLine1,
-                master              = self,
-                value               = 'computeAverage',
-                label               = u'Average over segmentation:',
-                labelWidth          = 190,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Check this box in order to measure the average\n"
-                        u"length of segments.\n\n"
-                        u"Leaving this box unchecked implies that no\n"
-                        u"averaging will take place."
-                ),
+            widget=averagingBoxLine1,
+            master=self,
+            value='computeAverage',
+            label=u'Average over segmentation:',
+            labelWidth=190,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Check this box in order to measure the average\n"
+                u"length of segments.\n\n"
+                u"Leaving this box unchecked implies that no\n"
+                u"averaging will take place."
+            ),
         )
         self.averagingSegmentationCombo = OWGUI.comboBox(
-                widget              = averagingBoxLine1,
-                master              = self,
-                value               = 'averagingSegmentation',
-                orientation         = 'horizontal',
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"The segmentation whose segment length will be\n"
-                        u"measured and averaged (if the box to the left\n"
-                        u"is checked)."
-                ),
+            widget=averagingBoxLine1,
+            master=self,
+            value='averagingSegmentation',
+            orientation='horizontal',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"The segmentation whose segment length will be\n"
+                u"measured and averaged (if the box to the left\n"
+                u"is checked)."
+            ),
         )
         self.computeStdevCheckBox = OWGUI.checkBox(
-                widget              = self.averagingBox,
-                master              = self,
-                value               = 'computeStdev',
-                label               = u'Compute standard deviation',
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Check this box to compute not only length average\n"
-                        u"but also standard deviation (if the above box\n"
-                        u"is checked).\n\n"
-                        u"Note that computing standard deviation can be a\n"
-                        u"lengthy operation for large segmentations."
-                ),
+            widget=self.averagingBox,
+            master=self,
+            value='computeStdev',
+            label=u'Compute standard deviation',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Check this box to compute not only length average\n"
+                u"but also standard deviation (if the above box\n"
+                u"is checked).\n\n"
+                u"Note that computing standard deviation can be a\n"
+                u"lengthy operation for large segmentations."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.averagingBox,
-                height              = 2,
-        )
+        OWGUI.separator(widget=self.averagingBox, height=2)
 
         # Contexts box...
         self.contextsBox = OWGUI.widgetBox(
-                widget              = self.controlArea,
-                box                 = u'Contexts',
-                orientation         = 'vertical',
-                addSpace            = True,
+            widget=self.controlArea,
+            box=u'Contexts',
+            orientation='vertical',
+            addSpace=True,
         )
         self.modeCombo = OWGUI.comboBox(
-                widget              = self.contextsBox,
-                master              = self,
-                value               = 'mode',
-                sendSelectedValue   = True,
-                items               = [
-                        u'No context',
-                        u'Sliding window',
-                        u'Containing segmentation',
-                ],
-                orientation         = 'horizontal',
-                label               = u'Mode:',
-                labelWidth          = 190,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Context specification mode.\n\n"
-                        u"Contexts define the rows of the resulting table.\n\n"
-                        u"'No context': simply return the length of the\n"
-                        u"'Units' segmentation, or the average length of\n"
-                        u"segments in the 'Averaging' segmentation (if any),\n"
-                        u"so that the output table contains a single row.\n\n"
-                        u"'Sliding window': contexts are defined as all the\n"
-                        u"successive, overlapping sequences of n segments\n"
-                        u"in the 'Averaging' segmentation; this mode is\n"
-                        u"available only if the 'Averaging' box is checked.\n\n"
-                        u"'Containing segmentation': contexts are defined\n"
-                        u"as the distinct segments occurring in a given\n"
-                        u"segmentation (which may or may not be the same\n"
-                        u"as the 'Units' and/or 'Averaging' segmentation)."
-                ),
+            widget=self.contextsBox,
+            master=self,
+            value='mode',
+            sendSelectedValue=True,
+            items=[
+                u'No context',
+                u'Sliding window',
+                u'Containing segmentation',
+            ],
+            orientation='horizontal',
+            label=u'Mode:',
+            labelWidth=190,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Context specification mode.\n\n"
+                u"Contexts define the rows of the resulting table.\n\n"
+                u"'No context': simply return the length of the\n"
+                u"'Units' segmentation, or the average length of\n"
+                u"segments in the 'Averaging' segmentation (if any),\n"
+                u"so that the output table contains a single row.\n\n"
+                u"'Sliding window': contexts are defined as all the\n"
+                u"successive, overlapping sequences of n segments\n"
+                u"in the 'Averaging' segmentation; this mode is\n"
+                u"available only if the 'Averaging' box is checked.\n\n"
+                u"'Containing segmentation': contexts are defined\n"
+                u"as the distinct segments occurring in a given\n"
+                u"segmentation (which may or may not be the same\n"
+                u"as the 'Units' and/or 'Averaging' segmentation)."
+            ),
         )
         self.slidingWindowBox = OWGUI.widgetBox(
-                widget              = self.contextsBox,
-                orientation         = 'vertical',
+            widget=self.contextsBox,
+            orientation='vertical',
         )
-        OWGUI.separator(
-                widget              = self.slidingWindowBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.slidingWindowBox, height=3)
         self.windowSizeSpin = OWGUI.spin(
-                widget              = self.slidingWindowBox,
-                master              = self,
-                value               = 'windowSize',
-                min                 = 1,
-                max                 = 1,
-                step                = 1,
-                orientation         = 'horizontal',
-                label               = u'Window size:',
-                labelWidth          = 190,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"The length of segment sequences defining contexts."
-                ),
+            widget=self.slidingWindowBox,
+            master=self,
+            value='windowSize',
+            min=1,
+            max=1,
+            step=1,
+            orientation='horizontal',
+            label=u'Window size:',
+            labelWidth=190,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"The length of segment sequences defining contexts."
+            ),
         )
         self.containingSegmentationBox = OWGUI.widgetBox(
-                widget              = self.contextsBox,
-                orientation         = 'vertical',
+            widget=self.contextsBox,
+            orientation='vertical',
         )
-        OWGUI.separator(
-                widget              = self.containingSegmentationBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
         self.contextSegmentationCombo = OWGUI.comboBox(
-                widget              = self.containingSegmentationBox,
-                master              = self,
-                value               = 'contexts',
-                orientation         = 'horizontal',
-                label               = u'Segmentation:',
-                labelWidth          = 190,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"The segmentation whose segment types define\n"
-                        u"the contexts in which length will be measured."
-                ),
+            widget=self.containingSegmentationBox,
+            master=self,
+            value='_contexts',
+            orientation='horizontal',
+            label=u'Segmentation:',
+            labelWidth=190,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"The segmentation whose segment types define\n"
+                u"the contexts in which length will be measured."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.containingSegmentationBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
         self.contextAnnotationCombo = OWGUI.comboBox(
-                widget              = self.containingSegmentationBox,
-                master              = self,
-                value               = 'contextAnnotationKey',
-                sendSelectedValue   = True,
-                emptyString         = u'(none)',
-                orientation         = 'horizontal',
-                label               = u'Annotation key:',
-                labelWidth          = 190,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Indicate whether context types are defined by\n"
-                        u"the content of segments in the above specified\n"
-                        u"segmentation (value 'none') or by their\n"
-                        u"annotation values for a specific annotation key."
-                ),
+            widget=self.containingSegmentationBox,
+            master=self,
+            value='contextAnnotationKey',
+            sendSelectedValue=True,
+            emptyString=u'(none)',
+            orientation='horizontal',
+            label=u'Annotation key:',
+            labelWidth=190,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Indicate whether context types are defined by\n"
+                u"the content of segments in the above specified\n"
+                u"segmentation (value 'none') or by their\n"
+                u"annotation values for a specific annotation key."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.containingSegmentationBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
         OWGUI.checkBox(
-                widget              = self.containingSegmentationBox,
-                master              = self,
-                value               = 'mergeContexts',
-                label               = u'Merge contexts',
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Check this box if you want to treat all segments\n"
-                        u"of the above specified segmentation as forming\n"
-                        u"a single context (hence the resulting crosstab\n"
-                        u"contains a single row)."
-                ),
+            widget=self.containingSegmentationBox,
+            master=self,
+            value='mergeContexts',
+            label=u'Merge contexts',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Check this box if you want to treat all segments\n"
+                u"of the above specified segmentation as forming\n"
+                u"a single context (hence the resulting crosstab\n"
+                u"contains a single row)."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.contextsBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.contextsBox, height=3)
 
-        # Info box...
-        self.infoBox.draw()
+        OWGUI.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
 
+        # Info box...
+        self.infoBox.draw()
+
         self.sendButton.sendIf()
-
-
+        self.adjustSizeWithTimer()
 
     def inputData(self, newItem, newId=None):
         """Process incoming data."""
         self.closeContext()
         updateMultipleInputs(
-                self.segmentations,
-                newItem,
-                newId,
-                self.onInputRemoval
+            self.segmentations,
+            newItem,
+            newId,
+            self.onInputRemoval
         )
         self.infoBox.inputChanged()
         self.updateGUI()
-
 
     def sendData(self):
 
@@ -350,7 +328,7 @@ class OWTextableLength(OWWidget):
 
         # Check that there's something on input...
         if len(self.segmentations) == 0:
-            self.infoBox.noDataSent(u': no input segmentation.')
+            self.infoBox.setText(u'Widget needs input.', 'warning')
             self.send('Textable table', None)
             return
 
@@ -360,9 +338,7 @@ class OWTextableLength(OWWidget):
         # Averaging parameters...
         if self.computeAverage:
             averaging = {
-                    'segmentation'
-                    :
-                    self.segmentations[self.averagingSegmentation][1]
+                'segmentation':self.segmentations[self.averagingSegmentation][1]
             }
             if self.computeStdev:
                 averaging['std_deviation'] = True
@@ -370,20 +346,20 @@ class OWTextableLength(OWWidget):
                 averaging['std_deviation'] = False
         else:
             averaging = None
-            
+
         # Case 1: sliding window...
         if self.mode == 'Sliding window':
 
             # Compute length...
             progressBar = OWGUI.ProgressBar(
-                    self,
-                    iterations = len(units) - (self.windowSize - 1)
+                self,
+                iterations=len(units) - (self.windowSize - 1)
             )
-            table = self.processor.length_in_window(
-                    units,
-                    averaging           = averaging,
-                    window_size         = self.windowSize,
-                    progress_callback   = progressBar.advance,
+            table = Processor.length_in_window(
+                units,
+                averaging=averaging,
+                window_size=self.windowSize,
+                progress_callback=progressBar.advance,
             )
             progressBar.finish()
 
@@ -393,9 +369,9 @@ class OWTextableLength(OWWidget):
             # Parameters for mode 'Containing segmentation'...
             if self.mode == 'Containing segmentation':
                 contexts = {
-                    'segmentation':     self.segmentations[self.contexts][1],
-                    'annotation_key':   self.contextAnnotationKey or None,
-                    'merge':            self.mergeContexts,
+                    'segmentation': self.segmentations[self._contexts][1],
+                    'annotation_key': self.contextAnnotationKey or None,
+                    'merge': self.mergeContexts,
                 }
                 if contexts['annotation_key'] == u'(none)':
                     contexts['annotation_key'] = None
@@ -407,55 +383,53 @@ class OWTextableLength(OWWidget):
 
             # Compute length...
             progressBar = OWGUI.ProgressBar(
-                    self,
-                    iterations = num_iterations
+                self,
+                iterations=num_iterations
             )
-            table = self.processor.length_in_context(
-                    units,
-                    averaging,
-                    contexts,
-                    progress_callback   = progressBar.advance,
+            table = Processor.length_in_context(
+                units,
+                averaging,
+                contexts,
+                progress_callback=progressBar.advance,
             )
             progressBar.finish()
 
         if not len(table.row_ids):
-            self.infoBox.noDataSent(warning = u'Resulting table is empty.')
+            self.infoBox.setText(u'Resulting table is empty.', 'warning')
             self.send('Textable table', None)
         else:
-            self.infoBox.dataSent()
+            self.infoBox.setText(u'Table sent to output.')
             self.send('Textable table', table)
 
         self.sendButton.resetSettingsChangedFlag()
-
 
     def onInputRemoval(self, index):
         """Handle removal of input with given index"""
         if index < self.units:
             self.units -= 1
-        elif index == self.units and self.units == len(self.segmentations)-1:
+        elif index == self.units and self.units == len(self.segmentations) - 1:
             self.units -= 1
             if self.units < 0:
                 self.units = None
         if self.mode == u'Containing segmentation':
-            if index == self.contexts:
-                self.mode       = u'No context'
-                self.contexts   = None
-            elif index < self.contexts:
-                self.contexts -= 1
-                if self.contexts < 0:
-                    self.mode     = u'No context'
-                    self.contexts = None
-        if          self.computeAverage \
+            if index == self._contexts:
+                self.mode = u'No context'
+                self._contexts = None
+            elif index < self._contexts:
+                self._contexts -= 1
+                if self._contexts < 0:
+                    self.mode = u'No context'
+                    self._contexts = None
+        if self.computeAverage \
                 and self.averagingSegmentation != self.units:
             if index == self.averagingSegmentation:
-                self.computeAverage         = False
-                self.averagingSegmentation  = None
+                self.computeAverage = False
+                self.averagingSegmentation = None
             elif index < self.averagingSegmentation:
                 self.averagingSegmentation -= 1
                 if self.averagingSegmentation < 0:
-                    self.computeAverage         = False
-                    self.averagingSegmentation  = None
-
+                    self.computeAverage = False
+                    self.averagingSegmentation = None
 
     def updateGUI(self):
 
@@ -470,10 +444,10 @@ class OWTextableLength(OWWidget):
             self.slidingWindowBox.setVisible(False)
 
         if len(self.segmentations) == 0:
-            self.units              = None
+            self.units = None
             self.unitsBox.setDisabled(True)
             self.averagingBox.setDisabled(True)
-            self.mode               = 'No context'
+            self.mode = 'No context'
             self.contextsBox.setDisabled(True)
             self.adjustSize()
             return
@@ -507,8 +481,8 @@ class OWTextableLength(OWWidget):
             self.containingSegmentationBox.setVisible(False)
             self.slidingWindowBox.setVisible(True)
             self.windowSizeSpin.control.setRange(
-                    1,
-                    len(self.segmentations[self.units][1])
+                1,
+                len(self.segmentations[self.units][1])
             )
             self.windowSize = self.windowSize or 1
 
@@ -518,10 +492,10 @@ class OWTextableLength(OWWidget):
             self.contextSegmentationCombo.clear()
             for index in range(len(self.segmentations)):
                 self.contextSegmentationCombo.addItem(
-                        self.segmentations[index][1].label
+                    self.segmentations[index][1].label
                 )
-            self.contexts = self.contexts or 0
-            segmentation = self.segmentations[self.contexts]
+            self._contexts = self._contexts or 0
+            segmentation = self.segmentations[self._contexts]
             self.contextAnnotationCombo.clear()
             self.contextAnnotationCombo.addItem(u'(none)')
             contextAnnotationKeys = segmentation[1].get_annotation_keys()
@@ -530,17 +504,18 @@ class OWTextableLength(OWWidget):
             if self.contextAnnotationKey not in contextAnnotationKeys:
                 self.contextAnnotationKey = u'(none)'
             self.contextAnnotationKey = self.contextAnnotationKey
-            
-        self.adjustSize()
 
+        self.adjustSizeWithTimer()
 
+    def adjustSizeWithTimer(self):
+        qApp.processEvents()
+        QTimer.singleShot(50, self.adjustSize)
 
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
         self.openContext("", self.segmentations)
         self.updateGUI()
         self.sendButton.sendIf()
-
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
@@ -556,16 +531,20 @@ class OWTextableLength(OWWidget):
 
 
 if __name__ == '__main__':
-    from LTTL.Segmenter import Segmenter
-    from LTTL.Input     import Input
+    import LTTL.Segmenter as Segmenter
+    from LTTL.Input import Input
+
     appl = QApplication(sys.argv)
-    ow   = OWTextableLength()
+    ow = OWTextableLength()
     seg1 = Input(u'hello world', label=u'text1')
     seg2 = Input(u'wonderful world', label=u'text2')
-    segmenter = Segmenter()
-    seg3 = segmenter.concatenate([seg1, seg2], label=u'corpus')
-    seg4 = segmenter.tokenize(seg3, [(r'\w+(?u)',u'Tokenize',)], label=u'words')
-    seg5 = segmenter.tokenize(seg3, [(r'\w',u'Tokenize',)], label=u'letters')
+    seg3 = Segmenter.concatenate([seg1, seg2], label=u'corpus')
+    seg4 = Segmenter.tokenize(
+        seg3,
+        [(r'\w+(?u)', u'tokenize',)],
+        label=u'words'
+    )
+    seg5 = Segmenter.tokenize(seg3, [(r'\w', u'tokenize',)], label=u'letters')
     ow.inputData(seg3, 1)
     ow.inputData(seg4, 2)
     ow.inputData(seg5, 3)

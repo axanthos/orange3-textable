@@ -1,26 +1,26 @@
-#=============================================================================
-# Class OWTextableSelect
-# Copyright 2012-2015 LangTech Sarl (info@langtech.ch)
-#=============================================================================
-# This file is part of the Textable (v1.5) extension to Orange Canvas.
-#
-# Textable v1.5 is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Textable v1.5 is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Textable v1.5. If not, see <http://www.gnu.org/licenses/>.
-#=============================================================================
+"""
+Class OWTextableSelect
+Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
+-----------------------------------------------------------------------------
+This file is part of the Orange-Textable package v2.0.
+
+Orange-Textable v2.0 is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Orange-Textable v2.0 is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
+"""
 
 from __future__ import division
 
-__version__ = '0.14.1'
+__version__ = '0.14.2'  # TODO change subversion?
 
 """
 <name>Select</name>
@@ -31,19 +31,19 @@ __version__ = '0.14.1'
 
 import re, math
 
-from LTTL.Segmenter    import Segmenter
+import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
-from LTTL.Utils        import iround
+from LTTL.Utils import iround
 
-from TextableUtils      import *
+from TextableUtils import *
 
 from Orange.OrangeWidgets.OWWidget import *
 import OWGUI
 
-class OWTextableSelect(OWWidget):
 
+class OWTextableSelect(OWWidget):
     """Orange widget for segment in-/exclusion based on intrinsic properties"""
-    
+
     contextHandlers = {
         '': SegmentationContextHandler(
             '', [
@@ -57,93 +57,91 @@ class OWTextableSelect(OWWidget):
     }
 
     settingsList = [
-            'regex',
-            'method',
-            'regexMode',
-            'ignoreCase',
-            'unicodeDependent',
-            'multiline',
-            'dotAll',
-            'sampleSizeMode',
-            'sampleSize',
-            'samplingRate',
-            'thresholdMode',
-            'applyMinThreshold',
-            'applyMaxThreshold',
-            'minCount',
-            'maxCount',
-            'minProportion',
-            'maxProportion',
-            'copyAnnotations',
-            'autoSend',
-            'label',
-            'autoNumber',
-            'autoNumberKey',
-            'displayAdvancedSettings',
-            'uuid',
+        'regex',
+        'method',
+        'regexMode',
+        'ignoreCase',
+        'unicodeDependent',
+        'multiline',
+        'dotAll',
+        'sampleSizeMode',
+        'sampleSize',
+        'samplingRate',
+        'thresholdMode',
+        'applyMinThreshold',
+        'applyMaxThreshold',
+        'minCount',
+        'maxCount',
+        'minProportion',
+        'maxProportion',
+        'copyAnnotations',
+        'autoSend',
+        'autoNumber',
+        'autoNumberKey',
+        'displayAdvancedSettings',
+        'uuid',
     ]
 
     def __init__(self, parent=None, signalManager=None):
 
         OWWidget.__init__(
-                self,
-                parent,
-                signalManager,
-                wantMainArea=0,
+            self,
+            parent,
+            signalManager,
+            wantMainArea=0,
+            wantStateInfoWidget=0
         )
 
         # Input and output channels...
-        self.inputs  = [('Segmentation', Segmentation, self.inputData, Single)]
+        self.inputs = [('Segmentation', Segmentation, self.inputData, Single)]
         self.outputs = [
-                ('Selected data', Segmentation, Default),
-                ('Discarded data', Segmentation)
+            ('Selected data', Segmentation, Default),
+            ('Discarded data', Segmentation)
         ]
-        
+
         # Settings...
-        self.method                     = u'Regex'
-        self.copyAnnotations            = True
-        self.autoSend                   = False
-        self.label                      = u'selected_data'
-        self.autoNumber                 = False
-        self.autoNumberKey              = u'num'
-        self.regex                      = r''
-        self.regexMode                  = u'Include'
-        self.ignoreCase                 = False
-        self.unicodeDependent           = True
-        self.multiline                  = False
-        self.dotAll                     = False
-        self.sampleSizeMode             = u'Count'
-        self.sampleSize                 = 1
-        self.samplingRate               = 1
-        self.thresholdMode              = u'Count'
-        self.applyMinThreshold          = True
-        self.applyMaxThreshold          = True
-        self.minCount                   = 1
-        self.maxCount                   = 1
-        self.minProportion              = 1
-        self.maxProportion              = 100
-        self.displayAdvancedSettings    = False
-        self.uuid                       = None
+        self.method = u'Regex'
+        self.copyAnnotations = True
+        self.autoSend = False
+        self.autoNumber = False
+        self.autoNumberKey = u'num'
+        self.regex = r''
+        self.regexMode = u'Include'
+        self.ignoreCase = False
+        self.unicodeDependent = True
+        self.multiline = False
+        self.dotAll = False
+        self.sampleSizeMode = u'Count'
+        self.sampleSize = 1
+        self.samplingRate = 1
+        self.thresholdMode = u'Count'
+        self.applyMinThreshold = True
+        self.applyMaxThreshold = True
+        self.minCount = 1
+        self.maxCount = 1
+        self.minProportion = 1
+        self.maxProportion = 100
+        self.displayAdvancedSettings = False
+        self.uuid = None
         self.loadSettings()
-        self.uuid                       = getWidgetUuid(self)
+        self.uuid = getWidgetUuid(self)
 
         # Other attributes...
-        self.segmenter              = Segmenter()
-        self.segmentation           = None
-        self.regexAnnotationKey     = None
+        self.segmentation = None
+        self.regexAnnotationKey = None
         self.thresholdAnnotationKey = None
-        self.infoBox                = InfoBox(widget=self.controlArea)
-        self.sendButton             = SendButton(
-                widget              = self.controlArea,
-                master              = self,
-                callback            = self.sendData,
-                infoBoxAttribute    = 'infoBox',
-                sendIfPreCallback   = self.updateGUI,
+        self.infoBox = InfoBox(widget=self.controlArea)
+        self.sendButton = SendButton(
+            widget=self.controlArea,
+            master=self,
+            callback=self.sendData,
+            infoBoxAttribute='infoBox',
+            sendIfPreCallback=self.updateGUI,
         )
         self.advancedSettings = AdvancedSettings(
-                widget              = self.controlArea,
-                master              = self,
-                callback            = self.sendButton.settingsChanged,
+            widget=self.controlArea,
+            master=self,
+            callback=self.sendButton.settingsChanged,
         )
 
         # GUI...
@@ -152,533 +150,461 @@ class OWTextableSelect(OWWidget):
 
         # Select box
         self.selectBox = OWGUI.widgetBox(
-                widget              = self.controlArea,
-                box                 = u'Select',
-                orientation         = 'vertical',
+            widget=self.controlArea,
+            box=u'Select',
+            orientation='vertical',
         )
         self.methodCombo = OWGUI.comboBox(
-                widget              = self.selectBox,
-                master              = self,
-                value               = 'method',
-                sendSelectedValue   = True,
-                items               = [u'Regex', u'Sample', u'Threshold'],
-                orientation         = 'horizontal',
-                label               = u'Method:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Selection mode.\n\n"
-                        u"'Regex': segments are selected based on content\n"
-                        u"or annotation pattern matching.\n\n"
-                        u"'Sample': segments are selected based on random\n"
-                        u"or systematic sampling.\n\n"
-                        u"'Threshold': segments are selected based on the\n"
-                        u"frequency of the corresponding type (content or\n"
-                        u"annotation value)."
-                ),
+            widget=self.selectBox,
+            master=self,
+            value='method',
+            sendSelectedValue=True,
+            items=[u'Regex', u'Sample', u'Threshold'],
+            orientation='horizontal',
+            label=u'Method:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Selection mode.\n\n"
+                u"'Regex': segments are selected based on content\n"
+                u"or annotation pattern matching.\n\n"
+                u"'Sample': segments are selected based on random\n"
+                u"or systematic sampling.\n\n"
+                u"'Threshold': segments are selected based on the\n"
+                u"frequency of the corresponding type (content or\n"
+                u"annotation value)."
+            ),
         )
         self.methodCombo.setMinimumWidth(120)
-        OWGUI.separator(
-                widget              = self.selectBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.selectBox, height=3)
         # Regex box...
         self.regexBox = OWGUI.widgetBox(
-                widget              = self.selectBox,
-                orientation         = 'vertical',
+            widget=self.selectBox,
+            orientation='vertical',
         )
         self.regexModeCombo = OWGUI.comboBox(
-                widget              = self.regexBox,
-                master              = self,
-                value               = 'regexMode',
-                sendSelectedValue   = True,
-                items               = [u'Include', u'Exclude'],
-                orientation         = 'horizontal',
-                label               = u'Mode:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Specify whether input segments matching the regex\n"
-                        u"pattern should be included in or excluded from\n"
-                        u"the output segmentation."
-                ),
+            widget=self.regexBox,
+            master=self,
+            value='regexMode',
+            sendSelectedValue=True,
+            items=[u'Include', u'Exclude'],
+            orientation='horizontal',
+            label=u'Mode:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Specify whether input segments matching the regex\n"
+                u"pattern should be included in or excluded from\n"
+                u"the output segmentation."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.regexBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.regexBox, height=3)
         self.regexAnnotationCombo = OWGUI.comboBox(
-                widget              = self.regexBox,
-                master              = self,
-                value               = 'regexAnnotationKey',
-                sendSelectedValue   = True,
-                emptyString         = u'(none)',
-                orientation         = 'horizontal',
-                label               = u'Annotation key:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Indicate whether the regex pattern specified\n"
-                        u"below should be applied to annotation values\n"
-                        u"corresponding to a specific annotation key or\n"
-                        u"directly to the content of input segments (value\n"
-                        u"'none')."
-                ),
+            widget=self.regexBox,
+            master=self,
+            value='regexAnnotationKey',
+            sendSelectedValue=True,
+            emptyString=u'(none)',
+            orientation='horizontal',
+            label=u'Annotation key:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Indicate whether the regex pattern specified\n"
+                u"below should be applied to annotation values\n"
+                u"corresponding to a specific annotation key or\n"
+                u"directly to the content of input segments (value\n"
+                u"'none')."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.regexBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.regexBox, height=3)
         OWGUI.lineEdit(
-                widget              = self.regexBox,
-                master              = self,
-                value               = 'regex',
-                orientation         = 'horizontal',
-                label               = u'Regex:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"The regex pattern that must be matched by input\n"
-                        u"segments content or annotation values in order\n"
-                        u"for the segment to be included in or excluded\n"
-                        u"from the output segmentation."
-                ),
+            widget=self.regexBox,
+            master=self,
+            value='regex',
+            orientation='horizontal',
+            label=u'Regex:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"The regex pattern that must be matched by input\n"
+                u"segments content or annotation values in order\n"
+                u"for the segment to be included in or excluded\n"
+                u"from the output segmentation."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.regexBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.regexBox, height=3)
         regexBoxLine4 = OWGUI.widgetBox(
-                widget              = self.regexBox,
-                box                 = False,
-                orientation         = 'horizontal',
+            widget=self.regexBox,
+            box=False,
+            orientation='horizontal',
         )
         OWGUI.checkBox(
-                widget              = regexBoxLine4,
-                master              = self,
-                value               = 'ignoreCase',
-                label               = u'Ignore case (i)',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Regex pattern is case-insensitive."
-                ),
+            widget=regexBoxLine4,
+            master=self,
+            value='ignoreCase',
+            label=u'Ignore case (i)',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Regex pattern is case-insensitive."
+            ),
         )
         OWGUI.checkBox(
-                widget              = regexBoxLine4,
-                master              = self,
-                value               = 'unicodeDependent',
-                label               = u'Unicode dependent (u)',
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Built-in character classes are Unicode-aware."
-                ),
+            widget=regexBoxLine4,
+            master=self,
+            value='unicodeDependent',
+            label=u'Unicode dependent (u)',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Built-in character classes are Unicode-aware."
+            ),
         )
         regexBoxLine5 = OWGUI.widgetBox(
-                widget              = self.regexBox,
-                box                 = False,
-                orientation         = 'horizontal',
+            widget=self.regexBox,
+            box=False,
+            orientation='horizontal',
         )
         OWGUI.checkBox(
-                widget              = regexBoxLine5,
-                master              = self,
-                value               = 'multiline',
-                label               = u'Multiline (m)',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Anchors '^' and '$' match the beginning and\n"
-                        u"end of each line (rather than just the beginning\n"
-                        u"and end of each input segment)."
-                ),
+            widget=regexBoxLine5,
+            master=self,
+            value='multiline',
+            label=u'Multiline (m)',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Anchors '^' and '$' match the beginning and\n"
+                u"end of each line (rather than just the beginning\n"
+                u"and end of each input segment)."
+            ),
         )
         OWGUI.checkBox(
-                widget              = regexBoxLine5,
-                master              = self,
-                value               = 'dotAll',
-                label               = u'Dot matches all (s)',
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Meta-character '.' matches any character (rather\n"
-                        u"than any character but newline)."
-                ),
+            widget=regexBoxLine5,
+            master=self,
+            value='dotAll',
+            label=u'Dot matches all (s)',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Meta-character '.' matches any character (rather\n"
+                u"than any character but newline)."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.regexBox,
-                height              = 3,
-        )
-        
+        OWGUI.separator(widget=self.regexBox, height=3)
+
         # Sample box...
         self.sampleBox = OWGUI.widgetBox(
-                widget              = self.selectBox,
-                orientation         = 'vertical',
+            widget=self.selectBox,
+            orientation='vertical',
         )
         self.sampleSizeModeCombo = OWGUI.comboBox(
-                widget              = self.sampleBox,
-                master              = self,
-                value               = 'sampleSizeMode',
-                sendSelectedValue   = True,
-                items               = [u'Count', u'Proportion'],
-                orientation         = 'horizontal',
-                label               = u'Sample size expressed as:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Specify whether sample size will be expressed as\n"
-                        u"a number of tokens (value 'Count') or as a given\n"
-                        u"proportion of the input segments ('Proportion')."
-                ),
+            widget=self.sampleBox,
+            master=self,
+            value='sampleSizeMode',
+            sendSelectedValue=True,
+            items=[u'Count', u'Proportion'],
+            orientation='horizontal',
+            label=u'Sample size expressed as:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Specify whether sample size will be expressed as\n"
+                u"a number of tokens (value 'Count') or as a given\n"
+                u"proportion of the input segments ('Proportion')."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.sampleBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.sampleBox, height=3)
         self.sampleSizeSpin = OWGUI.spin(
-                widget              = self.sampleBox,
-                master              = self,
-                value               = 'sampleSize',
-                min                 = 1,
-                max                 = 1,
-                orientation         = 'horizontal',
-                label               = u'Sample size:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"The number of segments that will be sampled."
-                ),
+            widget=self.sampleBox,
+            master=self,
+            value='sampleSize',
+            min=1,
+            max=1,
+            orientation='horizontal',
+            label=u'Sample size:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"The number of segments that will be sampled."
+            ),
         )
         self.samplingRateSpin = OWGUI.spin(
-                widget              = self.sampleBox,
-                master              = self,
-                value               = 'samplingRate',
-                min                 = 1,
-                max                 = 100,
-                orientation         = 'horizontal',
-                label               = u'Sampling rate (%):',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"The proportion of segments that will be sampled."
-                ),
+            widget=self.sampleBox,
+            master=self,
+            value='samplingRate',
+            min=1,
+            max=100,
+            orientation='horizontal',
+            label=u'Sampling rate (%):',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"The proportion of segments that will be sampled."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.sampleBox,
-                height              = 3,
-        )
-        
+        OWGUI.separator(widget=self.sampleBox, height=3)
+
         # Threshold box...
         self.thresholdBox = OWGUI.widgetBox(
-                widget              = self.selectBox,
-                orientation         = 'vertical',
+            widget=self.selectBox,
+            orientation='vertical',
         )
         self.thresholdAnnotationCombo = OWGUI.comboBox(
-                widget              = self.thresholdBox,
-                master              = self,
-                value               = 'thresholdAnnotationKey',
-                sendSelectedValue   = True,
-                emptyString         = u'(none)',
-                orientation         = 'horizontal',
-                label               = u'Annotation key:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Indicate whether the frequency thresholds\n"
-                        u"specified below should be applied to annotation\n"
-                        u"values corresponding to a specific annotation\n"
-                        u"key or directly to the content of input segments\n"
-                        u"(value 'none')."
-                ),
+            widget=self.thresholdBox,
+            master=self,
+            value='thresholdAnnotationKey',
+            sendSelectedValue=True,
+            emptyString=u'(none)',
+            orientation='horizontal',
+            label=u'Annotation key:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Indicate whether the frequency thresholds\n"
+                u"specified below should be applied to annotation\n"
+                u"values corresponding to a specific annotation\n"
+                u"key or directly to the content of input segments\n"
+                u"(value 'none')."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.thresholdBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.thresholdBox, height=3)
         self.thresholdModeCombo = OWGUI.comboBox(
-                widget              = self.thresholdBox,
-                master              = self,
-                value               = 'thresholdMode',
-                sendSelectedValue   = True,
-                items               = [u'Count', u'Proportion'],
-                orientation         = 'horizontal',
-                label               = u'Threshold expressed as:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Specify whether frequency thresholds will be\n"
-                        u"expressed as numbers of tokens (value 'Count')\n"
-                        u"or as relative frequencies (value 'Proportion')."
-                ),
+            widget=self.thresholdBox,
+            master=self,
+            value='thresholdMode',
+            sendSelectedValue=True,
+            items=[u'Count', u'Proportion'],
+            orientation='horizontal',
+            label=u'Threshold expressed as:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Specify whether frequency thresholds will be\n"
+                u"expressed as numbers of tokens (value 'Count')\n"
+                u"or as relative frequencies (value 'Proportion')."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.thresholdBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.thresholdBox, height=3)
         self.minCountLine = OWGUI.widgetBox(
-                widget              = self.thresholdBox,
-                box                 = False,
-                orientation         = 'horizontal',
+            widget=self.thresholdBox,
+            box=False,
+            orientation='horizontal',
         )
         self.minCountSpin = OWGUI.checkWithSpin(
-                widget              = self.minCountLine,
-                master              = self,
-                value               = 'minCount',
-                label               = u'Min. count:',
-                labelWidth          = 180,
-                controlWidth        = None,
-                checked             = 'applyMinThreshold',
-                min                 = 1,
-                max                 = 100,
-                spinCallback        = self.sendButton.settingsChanged,
-                checkCallback       = self.sendButton.settingsChanged,
-                tooltip             = (
-                      u"Minimum count for a type to be selected."
-                ),
+            widget=self.minCountLine,
+            master=self,
+            value='minCount',
+            label=u'Min. count:',
+            labelWidth=180,
+            controlWidth=None,
+            checked='applyMinThreshold',
+            min=1,
+            max=100,
+            spinCallback=self.sendButton.settingsChanged,
+            checkCallback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Minimum count for a type to be selected."
+            ),
         )
         self.minProportionLine = OWGUI.widgetBox(
-                widget              = self.thresholdBox,
-                box                 = False,
-                orientation         = 'horizontal',
+            widget=self.thresholdBox,
+            box=False,
+            orientation='horizontal',
         )
         self.minProportionSpin = OWGUI.checkWithSpin(
-                widget              = self.minProportionLine,
-                master              = self,
-                value               = 'minProportion',
-                label               = u'Min. proportion (%):',
-                labelWidth          = 180,
-                controlWidth        = None,
-                checked             = 'applyMinThreshold',
-                min                 = 1,
-                max                 = 100,
-                spinCallback        = self.sendButton.settingsChanged,
-                checkCallback       = self.sendButton.settingsChanged,
-                tooltip             = (
-                      u"Minimum relative frequency for a type to be selected."
-                ),
+            widget=self.minProportionLine,
+            master=self,
+            value='minProportion',
+            label=u'Min. proportion (%):',
+            labelWidth=180,
+            controlWidth=None,
+            checked='applyMinThreshold',
+            min=1,
+            max=100,
+            spinCallback=self.sendButton.settingsChanged,
+            checkCallback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Minimum relative frequency for a type to be selected."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.thresholdBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.thresholdBox, height=3)
         self.maxCountLine = OWGUI.widgetBox(
-                widget              = self.thresholdBox,
-                box                 = False,
-                orientation         = 'horizontal',
+            widget=self.thresholdBox,
+            box=False,
+            orientation='horizontal',
         )
         self.maxCountSpin = OWGUI.checkWithSpin(
-                widget              = self.maxCountLine,
-                master              = self,
-                value               = 'maxCount',
-                label               = u'Max. count:',
-                labelWidth          = 180,
-                controlWidth        = None,
-                checked             = 'applyMaxThreshold',
-                min                 = 1,
-                max                 = 100,
-                spinCallback        = self.sendButton.settingsChanged,
-                checkCallback       = self.sendButton.settingsChanged,
-                tooltip             = (
-                      u"Maximum count for a type to be selected."
-                ),
+            widget=self.maxCountLine,
+            master=self,
+            value='maxCount',
+            label=u'Max. count:',
+            labelWidth=180,
+            controlWidth=None,
+            checked='applyMaxThreshold',
+            min=1,
+            max=100,
+            spinCallback=self.sendButton.settingsChanged,
+            checkCallback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Maximum count for a type to be selected."
+            ),
         )
         self.maxProportionLine = OWGUI.widgetBox(
-                widget              = self.thresholdBox,
-                box                 = False,
-                orientation         = 'horizontal',
+            widget=self.thresholdBox,
+            box=False,
+            orientation='horizontal',
         )
         self.maxProportionSpin = OWGUI.checkWithSpin(
-                widget              = self.maxProportionLine,
-                master              = self,
-                value               = 'maxProportion',
-                label               = u'Max. proportion (%):',
-                labelWidth          = 180,
-                controlWidth        = None,
-                checked             = 'applyMaxThreshold',
-                min                 = 1,
-                max                 = 100,
-                spinCallback        = self.sendButton.settingsChanged,
-                checkCallback       = self.sendButton.settingsChanged,
-                tooltip             = (
-                      u"Maximum count for a type to be selected."
-                ),
+            widget=self.maxProportionLine,
+            master=self,
+            value='maxProportion',
+            label=u'Max. proportion (%):',
+            labelWidth=180,
+            controlWidth=None,
+            checked='applyMaxThreshold',
+            min=1,
+            max=100,
+            spinCallback=self.sendButton.settingsChanged,
+            checkCallback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Maximum count for a type to be selected."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.thresholdBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.thresholdBox, height=3)
         self.advancedSettings.advancedWidgets.append(self.selectBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
         optionsBox = OWGUI.widgetBox(
-                widget              = self.controlArea,
-                box                 = u'Options',
-                orientation         = 'vertical',
-        )
-        OWGUI.lineEdit(
-                widget              = optionsBox,
-                master              = self,
-                value               = 'label',
-                orientation         = 'horizontal',
-                label               = u'Output segmentation label:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Label of the output segmentation."
-                ),
-        )
-        OWGUI.separator(
-                widget              = optionsBox,
-                height              = 3,
+            widget=self.controlArea,
+            box=u'Options',
+            orientation='vertical',
         )
         optionsBoxLine2 = OWGUI.widgetBox(
-                widget              = optionsBox,
-                box                 = False,
-                orientation         = 'horizontal',
+            widget=optionsBox,
+            box=False,
+            orientation='horizontal',
         )
         OWGUI.checkBox(
-                widget              = optionsBoxLine2,
-                master              = self,
-                value               = 'autoNumber',
-                label               = u'Auto-number with key:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Annotate output segments with increasing numeric\n"
-                        u"indices."
-                ),
+            widget=optionsBoxLine2,
+            master=self,
+            value='autoNumber',
+            label=u'Auto-number with key:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Annotate output segments with increasing numeric\n"
+                u"indices."
+            ),
         )
         self.autoNumberKeyLineEdit = OWGUI.lineEdit(
-                widget              = optionsBoxLine2,
-                master              = self,
-                value               = 'autoNumberKey',
-                orientation         = 'horizontal',
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Annotation key for output segment auto-numbering."
-                ),
+            widget=optionsBoxLine2,
+            master=self,
+            value='autoNumberKey',
+            orientation='horizontal',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Annotation key for output segment auto-numbering."
+            ),
         )
-        OWGUI.separator(
-                widget              = optionsBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=optionsBox, height=3)
         OWGUI.checkBox(
-                widget              = optionsBox,
-                master              = self,
-                value               = 'copyAnnotations',
-                label               = u'Copy annotations',
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Copy all annotations from input to output segments."
-                ),
+            widget=optionsBox,
+            master=self,
+            value='copyAnnotations',
+            label=u'Copy annotations',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Copy all annotations from input to output segments."
+            ),
         )
-        OWGUI.separator(
-                widget              = optionsBox,
-                height              = 2,
-        )
+        OWGUI.separator(widget=optionsBox, height=2)
         self.advancedSettings.advancedWidgets.append(optionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Basic Select box
         self.basicSelectBox = OWGUI.widgetBox(
-                widget              = self.controlArea,
-                box                 = u'Select',
-                orientation         = 'vertical',
+            widget=self.controlArea,
+            box=u'Select',
+            orientation='vertical',
         )
         self.basicRegexModeCombo = OWGUI.comboBox(
-                widget              = self.basicSelectBox,
-                master              = self,
-                value               = 'regexMode',
-                sendSelectedValue   = True,
-                items               = [u'Include', u'Exclude'],
-                orientation         = 'horizontal',
-                label               = u'Mode:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Specify whether input segments matching the regex\n"
-                        u"pattern should be included in or excluded from\n"
-                        u"the output segmentation."
-                ),
+            widget=self.basicSelectBox,
+            master=self,
+            value='regexMode',
+            sendSelectedValue=True,
+            items=[u'Include', u'Exclude'],
+            orientation='horizontal',
+            label=u'Mode:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Specify whether input segments matching the regex\n"
+                u"pattern should be included in or excluded from\n"
+                u"the output segmentation."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.basicSelectBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.basicSelectBox, height=3)
         self.basicRegexAnnotationCombo = OWGUI.comboBox(
-                widget              = self.basicSelectBox,
-                master              = self,
-                value               = 'regexAnnotationKey',
-                sendSelectedValue   = True,
-                emptyString         = u'(none)',
-                orientation         = 'horizontal',
-                label               = u'Annotation key:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"Indicate whether the regex pattern specified\n"
-                        u"below should be applied to annotation values\n"
-                        u"corresponding to a specific annotation key or\n"
-                        u"directly to the content of input segments (value\n"
-                        u"'none')."
-                ),
+            widget=self.basicSelectBox,
+            master=self,
+            value='regexAnnotationKey',
+            sendSelectedValue=True,
+            emptyString=u'(none)',
+            orientation='horizontal',
+            label=u'Annotation key:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Indicate whether the regex pattern specified\n"
+                u"below should be applied to annotation values\n"
+                u"corresponding to a specific annotation key or\n"
+                u"directly to the content of input segments (value\n"
+                u"'none')."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.basicSelectBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.basicSelectBox, height=3)
         OWGUI.lineEdit(
-                widget              = self.basicSelectBox,
-                master              = self,
-                value               = 'regex',
-                orientation         = 'horizontal',
-                label               = u'Regex:',
-                labelWidth          = 180,
-                callback            = self.sendButton.settingsChanged,
-                tooltip             = (
-                        u"The regex pattern that must be matched by input\n"
-                        u"segments content or annotation values in order\n"
-                        u"for the segment to be included in or excluded\n"
-                        u"from the output segmentation."
-                ),
+            widget=self.basicSelectBox,
+            master=self,
+            value='regex',
+            orientation='horizontal',
+            label=u'Regex:',
+            labelWidth=180,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"The regex pattern that must be matched by input\n"
+                u"segments content or annotation values in order\n"
+                u"for the segment to be included in or excluded\n"
+                u"from the output segmentation."
+            ),
         )
-        OWGUI.separator(
-                widget              = self.basicSelectBox,
-                height              = 3,
-        )
+        OWGUI.separator(widget=self.basicSelectBox, height=3)
         self.advancedSettings.basicWidgets.append(self.basicSelectBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
-        # (Basic) options box...
-        basicOptionsBox = BasicOptionsBox(self.controlArea, self)
-        self.advancedSettings.basicWidgets.append(basicOptionsBox)
-        self.advancedSettings.basicWidgetsAppendSeparator()
-
-        # Info box...
-        self.infoBox.draw()
+        OWGUI.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
 
-        self.sendButton.sendIf()
+        # Info box...
+        self.infoBox.draw()
 
+        self.sendButton.sendIf()
+        self.adjustSizeWithTimer()
 
     def sendData(self):
-    
+
         """(Have LTTL.Segmenter) perform the actual selection"""
 
         # Check that there's something on input...
         if not self.segmentation:
-            self.infoBox.noDataSent(u': no input segmentation.')
+            self.infoBox.setText(u'Widget needs input.', 'warning')
             self.send('Selected data', None, self)
-            self.send( 'Discarded data', None, self)
+            self.send('Discarded data', None, self)
             return
 
-        # Check that label is not empty...
-        if not self.label:
-            self.infoBox.noDataSent(warning = u'No label was provided.')
-            self.send('Selected data', None, self)
-            self.send( 'Discarded data', None, self)
-            return
+        # TODO: remove message 'No label was provided.' from docs
 
         # Advanced settings...
         if self.displayAdvancedSettings:
@@ -688,18 +614,18 @@ class OWTextableSelect(OWWidget):
 
                 # Check that regex is not empty...
                 if not self.regex:
-                    self.infoBox.noDataSent(warning = u'No regex defined.')
+                    self.infoBox.setText(u'Please enter a regex.', 'warning')
                     self.send('Selected data', None, self)
-                    self.send( 'Discarded data', None, self)
+                    self.send('Discarded data', None, self)
                     return
 
                 # Prepare regex...
                 regex_string = self.regex
                 if (
-                        self.ignoreCase
-                    or  self.unicodeDependent
-                    or  self.multiline
-                    or  self.dotAll
+                                    self.ignoreCase
+                                or self.unicodeDependent
+                            or self.multiline
+                        or self.dotAll
                 ):
                     flags = ''
                     if self.ignoreCase:
@@ -714,10 +640,11 @@ class OWTextableSelect(OWWidget):
                 try:
                     regex = re.compile(regex_string)
                 except re.error as re_error:
-                    message = u'Regex error: %s.' % re_error.message
-                    self.infoBox.noDataSent(error = message)
+                    message = u'Please enter a valid regex (error: %s).' %    \
+                              re_error.message
+                    self.infoBox.setText(message, 'error')
                     self.send('Selected data', None, self)
-                    self.send( 'Discarded data', None, self)
+                    self.send('Discarded data', None, self)
                     return
 
                 # Get number of iterations...
@@ -729,15 +656,18 @@ class OWTextableSelect(OWWidget):
                 # Get sample size...
                 if self.sampleSizeMode == u'Proportion':
                     sampleSize = iround(
-                            len(self.segmentation)
-                          * (self.samplingRate / 100)
+                        len(self.segmentation)
+                        * (self.samplingRate / 100)
                     )
                 else:
                     sampleSize = self.sampleSize
                 if sampleSize <= 0:
-                    self.infoBox.noDataSent(warning=u'Sample size too small.')
+                    self.infoBox.setText(
+                        message='Please enter a larger sample size',
+                        state="error",
+                    )
                     self.send('Selected data', None, self)
-                    self.send( 'Discarded data', None, self)
+                    self.send('Discarded data', None, self)
                     return
 
                 # Get number of iterations...
@@ -749,16 +679,16 @@ class OWTextableSelect(OWWidget):
                 # Get min and max count...
                 if self.thresholdMode == u'Proportion':
                     minCount = iround(
-                            math.ceil(
-                                    len(self.segmentation)
-                                  * (self.minProportion / 100)
-                            )
+                        math.ceil(
+                            len(self.segmentation)
+                            * (self.minProportion / 100)
+                        )
                     )
                     maxCount = iround(
-                            math.floor(
-                                    len(self.segmentation)
-                                  * (self.maxProportion / 100)
-                            )
+                        math.floor(
+                            len(self.segmentation)
+                            * (self.maxProportion / 100)
+                        )
                     )
                 else:
                     minCount = self.minCount
@@ -774,76 +704,76 @@ class OWTextableSelect(OWWidget):
             # Check that autoNumberKey is not empty (if necessary)...
             if self.autoNumber:
                 if self.autoNumberKey:
-                    autoNumberKey  = self.autoNumberKey
-                    num_iterations *= 2
+                    autoNumberKey = self.autoNumberKey
                 else:
-                    self.infoBox.noDataSent(
-                            warning = u'No annotation key was provided '
-                                      u'for auto-numbering.'
+                    self.infoBox.setText(
+                        u'Please enter an annotation key for auto-numbering.',
+                        'warning'
                     )
                     self.send('Selected data', None, self)
-                    self.send( 'Discarded data', None, self)
+                    self.send('Discarded data', None, self)
                     return
             else:
                 autoNumberKey = None
 
             # Perform selection...
             progressBar = OWGUI.ProgressBar(
-                    self,
-                    iterations = num_iterations
+                self,
+                iterations=num_iterations
             )
             if self.method == u'Regex':
                 regexAnnotationKeyParam = self.regexAnnotationKey
                 if regexAnnotationKeyParam == u'(none)':
                     regexAnnotationKeyParam = None
-                (selected_data, discarded_data) = self.segmenter.select(
-                    segmentation        = self.segmentation,
-                    regex               = regex,
-                    mode                = self.regexMode.lower(),
-                    annotation_key      = regexAnnotationKeyParam or None,
-                    label               = self.label,
-                    copy_annotations    = self.copyAnnotations,
-                    auto_numbering_as   = autoNumberKey,
-                    progress_callback   = progressBar.advance,
+                (selected_data, discarded_data) = Segmenter.select(
+                    segmentation=self.segmentation,
+                    regex=regex,
+                    mode=self.regexMode.lower(),
+                    annotation_key=regexAnnotationKeyParam or None,
+                    label=self.captionTitle,
+                    copy_annotations=self.copyAnnotations,
+                    auto_number_as=autoNumberKey,
+                    progress_callback=progressBar.advance,
                 )
             elif self.method == u'Sample':
-                (selected_data, discarded_data) = self.segmenter.sample(
-                    segmentation        = self.segmentation,
-                    sample_size         = sampleSize,
-                    mode                = 'random',
-                    label               = self.label,
-                    copy_annotations    = self.copyAnnotations,
-                    auto_numbering_as   = autoNumberKey,
-                    progress_callback   = progressBar.advance,
+                (selected_data, discarded_data) = Segmenter.sample(
+                    segmentation=self.segmentation,
+                    sample_size=sampleSize,
+                    mode='random',
+                    label=self.captionTitle,
+                    copy_annotations=self.copyAnnotations,
+                    auto_number_as=autoNumberKey,
+                    progress_callback=progressBar.advance,
                 )
             elif self.method == u'Threshold':
                 if (
-                        (minCount == 1 or not self.applyMinThreshold)
-                    and (
-                            maxCount == len(self.segmentation)
-                         or not self.applyMaxThreshold
+                            (minCount == 1 or not self.applyMinThreshold)
+                        and (
+                                        maxCount == len(self.segmentation)
+                                or not self.applyMaxThreshold
                         )
                 ):
-                    (selected_data, discarded_data) = self.segmenter.bypass(
-                            segmentation    = self.segmentation,
-                            label           = self.label,
+                    selected_data = Segmenter.bypass(
+                        segmentation=self.segmentation,
+                        label=self.captionTitle,
                     )
+                    discarded_data = None
                 else:
                     thresholdAnnotationKeyParam = self.thresholdAnnotationKey
                     if thresholdAnnotationKeyParam == u'(none)':
                         thresholdAnnotationKeyParam = None
-                    (selected_data, discarded_data) = self.segmenter.threshold(
-                        segmentation        = self.segmentation,
-                        annotation_key      = (
-                                thresholdAnnotationKeyParam
-                             or None
+                    (selected_data, discarded_data) = Segmenter.threshold(
+                        segmentation=self.segmentation,
+                        annotation_key=(
+                            thresholdAnnotationKeyParam
+                            or None
                         ),
-                        min_count           = minCount,
-                        max_count           = maxCount,
-                        label               = self.label,
-                        copy_annotations    = self.copyAnnotations,
-                        auto_numbering_as   = autoNumberKey,
-                        progress_callback   = progressBar.advance,
+                        min_count=minCount,
+                        max_count=maxCount,
+                        label=self.captionTitle,
+                        copy_annotations=self.copyAnnotations,
+                        auto_number_as=autoNumberKey,
+                        progress_callback=progressBar.advance,
                     )
 
         # Basic settings:
@@ -851,9 +781,9 @@ class OWTextableSelect(OWWidget):
 
             # Check that regex is not empty...
             if not self.regex:
-                self.infoBox.noDataSent(warning = u'No regex defined.')
+                self.infoBox.setText(u'Please enter a regex.', 'warning')
                 self.send('Selected data', None, self)
-                self.send( 'Discarded data', None, self)
+                self.send('Discarded data', None, self)
                 return
 
             # Get number of iterations...
@@ -861,41 +791,41 @@ class OWTextableSelect(OWWidget):
 
             # Perform selection...
             progressBar = OWGUI.ProgressBar(
-                    self,
-                    iterations = num_iterations
+                self,
+                iterations=num_iterations
             )
             regexAnnotationKeyParam = self.regexAnnotationKey
             if regexAnnotationKeyParam == u'(none)':
                 regexAnnotationKeyParam = None
             try:
-                (selected_data, discarded_data) = self.segmenter.select(
-                    segmentation        = self.segmentation,
-                    regex               = re.compile(self.regex + '(?u)'),
-                    mode                = self.regexMode.lower(),
-                    annotation_key      = regexAnnotationKeyParam or None,
-                    label               = self.label,
-                    copy_annotations    = True,
-                    auto_numbering_as   = None,
-                    progress_callback   = progressBar.advance,
+                (selected_data, discarded_data) = Segmenter.select(
+                    segmentation=self.segmentation,
+                    regex=re.compile(self.regex + '(?u)'),
+                    mode=self.regexMode.lower(),
+                    annotation_key=regexAnnotationKeyParam or None,
+                    label=self.captionTitle,
+                    copy_annotations=True,
+                    auto_number_as=None,
+                    progress_callback=progressBar.advance,
                 )
             except re.error as re_error:
-                message = u'Regex error: %s.' % re_error.message
-                self.infoBox.noDataSent(error = message)
+                message = u'Please enter a valid regex (error: %s).' %    \
+                          re_error.message
+                self.infoBox.setText(message, 'error')
                 self.send('Selected data', None, self)
-                self.send( 'Discarded data', None, self)
+                self.send('Discarded data', None, self)
                 progressBar.finish()
                 return
 
         progressBar.finish()
 
-        message = u'%i segment@p.' % len(selected_data)
+        message = u'%i segment@p sent to output.' % len(selected_data)
         message = pluralize(message, len(selected_data))
-        self.infoBox.dataSent(message)
+        self.infoBox.setText(message)
 
-        self.send( 'Selected data', selected_data, self)
-        self.send( 'Discarded data', discarded_data, self)
+        self.send('Selected data', selected_data, self)
+        self.send('Discarded data', discarded_data, self)
         self.sendButton.resetSettingsChangedFlag()
-
 
     def inputData(self, segmentation):
         """Process incoming segmentation"""
@@ -906,7 +836,6 @@ class OWTextableSelect(OWWidget):
         if segmentation is not None:
             self.openContext("", segmentation)
         self.sendButton.sendIf()
-
 
     def updateGUI(self):
 
@@ -938,12 +867,12 @@ class OWTextableSelect(OWWidget):
                 if self.sampleSizeMode == u'Count':
                     self.samplingRateSpin.setVisible(False)
                     if (
-                            self.segmentation is not None
-                        and len(self.segmentation)
+                                    self.segmentation is not None
+                            and len(self.segmentation)
                     ):
                         self.sampleSizeSpin.control.setRange(
-                                1,
-                                len(self.segmentation),
+                            1,
+                            len(self.segmentation),
                         )
                         if self.sampleSize > len(self.segmentation):
                             self.sampleSize = len(self.segmentation)
@@ -970,20 +899,20 @@ class OWTextableSelect(OWWidget):
                     self.minProportionLine.setVisible(False)
                     self.maxProportionLine.setVisible(False)
                     if (
-                            self.segmentation is not None
-                        and len(self.segmentation)
+                                    self.segmentation is not None
+                            and len(self.segmentation)
                     ):
                         self.maxCount = (
-                                self.maxCount
-                             or len(self.segmentation)
+                            self.maxCount
+                            or len(self.segmentation)
                         )
                         if self.applyMaxThreshold:
                             maxValue = self.maxCount
                         else:
                             maxValue = len(self.segmentation)
                         self.minCountSpin[1].setRange(
-                                1,
-                                maxValue,
+                            1,
+                            maxValue,
                         )
                         self.minCount = self.minCount or 1
                         if self.applyMinThreshold:
@@ -991,8 +920,8 @@ class OWTextableSelect(OWWidget):
                         else:
                             minValue = 1
                         self.maxCountSpin[1].setRange(
-                                minValue,
-                                len(self.segmentation),
+                            minValue,
+                            len(self.segmentation),
                         )
                     else:
                         self.minCountSpin[1].setRange(1, 1)
@@ -1004,16 +933,16 @@ class OWTextableSelect(OWWidget):
                     self.minCountLine.setVisible(False)
                     self.maxCountLine.setVisible(False)
                     if (
-                            self.segmentation is not None
-                        and len(self.segmentation)
+                                    self.segmentation is not None
+                            and len(self.segmentation)
                     ):
                         if self.applyMaxThreshold:
                             maxValue = self.maxProportion
                         else:
                             maxValue = 100
                         self.minProportionSpin[1].setRange(
-                                1,
-                                maxValue,
+                            1,
+                            maxValue,
                         )
                         self.minProportion = self.minProportion or 1
                         if self.applyMinThreshold:
@@ -1021,8 +950,8 @@ class OWTextableSelect(OWWidget):
                         else:
                             minValue = 1
                         self.maxProportionSpin[1].setRange(
-                                minValue,
-                                100,
+                            minValue,
+                            100,
                         )
                         self.maxProportion = self.maxProportion or 100
                     else:
@@ -1043,6 +972,18 @@ class OWTextableSelect(OWWidget):
                 self.regexAnnotationKey = self.regexAnnotationKey
             self.advancedSettings.setVisible(False)
 
+        self.adjustSizeWithTimer()
+
+    def adjustSizeWithTimer(self):
+        qApp.processEvents()
+        QTimer.singleShot(50, self.adjustSize)
+
+    def setCaption(self, title):
+        if 'captionTitle' in dir(self) and title != 'Orange Widget':
+            OWWidget.setCaption(self, title)
+            self.sendButton.settingsChanged()
+        else:
+            OWWidget.setCaption(self, title)
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)
@@ -1057,10 +998,10 @@ class OWTextableSelect(OWWidget):
             OWWidget.setSettings(self, settings)
 
 
-
 if __name__ == '__main__':
     appl = QApplication(sys.argv)
-    ow   = OWTextableSelect()
+    ow = OWTextableSelect()
     ow.show()
     appl.exec_()
     ow.saveSettings()
+
