@@ -61,7 +61,7 @@ KEYWORDS = (
 )
 
 CLASSIFIERS = (
-    'Development Status :: 4 - Beta',
+    'Development Status :: 3 - Alpha',
     'Environment :: X11 Applications :: Qt',
     'Environment :: Plugins',
     'Programming Language :: Python',
@@ -73,7 +73,6 @@ CLASSIFIERS = (
     'Topic :: Software Development :: Libraries :: Python Modules',
     'Intended Audience :: Education',
     'Intended Audience :: Science/Research',
-    'Intended Audience :: Developers',
 )
 
 PACKAGES = find_packages(
@@ -86,7 +85,7 @@ INSTALL_REQUIRES = (
     'Orange >= 2.7.0, < 3.0.0',
     'setuptools',
     'future',
-    'LTTL >= 2.0a0, < 3.0.0',
+    'LTTL >= 2.0a0',
 ),
 
 EXTRAS_REQUIRE = {
