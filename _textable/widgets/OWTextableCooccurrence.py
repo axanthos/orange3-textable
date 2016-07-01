@@ -1,5 +1,5 @@
 """
-Class OWTextableVariety
+Class OWTextableCooccurrence
 Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange-Textable package v2.0.
@@ -18,27 +18,31 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.2'
+__version__ = u'1.0.0'
+__author__ = "Mahtab Mohammadi"
+__maintainer__ = "LangTech Sarl"
 
 """
-<name>Variety</name>
-<description>Measure the variety of segments</description>
-<icon>icons/Variety.png</icon>
-<priority>8004</priority>
+<name>Cooccurrence</name>
+<description>Measure cooccurrence between segment types</description>
+<icon>icons/Cooccurrence.png</icon>
+<priority>8005</priority>
 """
 
-from LTTL.Table import Table
-from LTTL.Segmentation import Segmentation
 import LTTL.Processor as Processor
+from LTTL.Table import IntPivotCrosstab
+from LTTL.Segmentation import Segmentation
 
 from TextableUtils import *
 
 from Orange.OrangeWidgets.OWWidget import *
 import OWGUI
 
+import re
 
-class OWTextableVariety(OWWidget):
-    """Orange widget for mesuring variety of text units"""
+
+class OWTextableCooccurrence(OWWidget):
+    """Orange widget for calculating co-occurrences of text units"""
 
     contextHandlers = {
         '': SegmentationListContextHandler(
@@ -46,13 +50,14 @@ class OWTextableVariety(OWWidget):
                 ContextInputListField('segmentations'),
                 ContextInputIndex('units'),
                 ContextInputIndex('_contexts'),
+                ContextInputIndex('units2'),
                 'mode',
                 'unitAnnotationKey',
-                'categoryAnnotationKey',
+                'unit2AnnotationKey',
                 'contextAnnotationKey',
+                'coocWithUnits2'
                 'sequenceLength',
                 'windowSize',
-                'subsampleSize',
                 'uuid',
             ]
         )
@@ -60,22 +65,15 @@ class OWTextableVariety(OWWidget):
 
     settingsList = [
         'autoSend',
+        'intraSeqDelim',
         'sequenceLength',
-        'measurePerCategory',
-        'mode',
-        'mergeContexts',
         'windowSize',
-        'unitPosMarker',
-        'unitWeighting',
-        'categoryWeighting',
-        'applyResampling',
-        'numSubsamples',
-        'subsampleSize',
+        'coocWithUnits2'
     ]
 
     def __init__(self, parent=None, signalManager=None):
 
-        """Initialize a Variety widget"""
+        """Initialize a Cooccurrence widget"""
 
         OWWidget.__init__(
             self,
@@ -86,32 +84,27 @@ class OWTextableVariety(OWWidget):
         )
 
         self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [('Textable Table', Table)]
+        self.outputs = [('Pivot Crosstab', IntPivotCrosstab)]
 
         # Settings...
         self.autoSend = False
         self.sequenceLength = 1
-        self.mode = u'No context'
-        self.mergeContexts = False
-        self.windowSize = 1
-        self.unitWeighting = False
-        self.measurePerCategory = False
-        self.categoryWeighting = False
-        self.applyResampling = False
-        self.numSubsamples = 100
-        self.subsampleSize = 50
+        self.intraSeqDelim = u'#'
+        self.mode = u'Sliding window'
+        self.coocWithUnits2 = False
+        self.windowSize = 2
+        self.units = None
+        self.unitAnnotationKey = None
+        self.units2 = None
+        self.unit2AnnotationKey = None
+        self._contexts = None
+        self.contextAnnotationKey = None
         self.uuid = None
         self.loadSettings()
         self.uuid = getWidgetUuid(self)
 
         # Other attributes...
         self.segmentations = list()
-        self.units = None
-        self.unitAnnotationKey = None
-        self.categoryAnnotationKey = None
-        self._contexts = None
-        self.contextAnnotationKey = None
-        self.settingsRestored = False
         self.infoBox = InfoBox(
             widget=self.controlArea,
             stringClickSend=u", please click 'Send' when ready.",
@@ -135,7 +128,7 @@ class OWTextableVariety(OWWidget):
             orientation='vertical',
             addSpace=True,
         )
-        self.unitSegmentationCombo = OWGUI.comboBox(
+        self.unitsegmentationCombo = OWGUI.comboBox(
             widget=self.unitsBox,
             master=self,
             value='units',
@@ -144,10 +137,13 @@ class OWTextableVariety(OWWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"The segmentation whose variety will be measured."
+                u"The segmentation for which the co-occurrence of the\n"
+                u"segments will be measured.\n"
+                u"This defines the columns and rows of the resulting\n"
+                u"crosstab."
             ),
         )
-        self.unitSegmentationCombo.setMinimumWidth(120)
+        self.unitsegmentationCombo.setMinimumWidth(120)
         OWGUI.separator(widget=self.unitsBox, height=3)
         self.unitAnnotationCombo = OWGUI.comboBox(
             widget=self.unitsBox,
@@ -160,10 +156,11 @@ class OWTextableVariety(OWWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Indicate whether the variety of the above\n"
-                u"specified segmentation must be measured on the\n"
-                u"segments' content (value 'none') or on their\n"
-                u"annotation values for a specific annotation key."
+                u"Indicate wether the items to be measured the\n"
+                u"cooccurrence in the above specified segmentation\n"
+                u"are defined by the segments' content (value 'none')\n"
+                u"or by their annotation values for a specific\n"
+                u"annotation key."
             ),
         )
         OWGUI.separator(widget=self.unitsBox, height=3)
@@ -179,54 +176,77 @@ class OWTextableVariety(OWWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Indicate whether to measure the variety of\n"
+                u"Indicates whether to measure the co-occurrence of\n"
                 u"single segments or rather of sequences of 2,\n"
                 u"3,... segments (n-grams).\n\n"
                 u"Note that this parameter cannot be set to a\n"
-                u"value larger than 1 if variety is to be\n"
-                u"measured per category."
+                u"value larger than 1 if co-occurrence is to be\n"
+                u"measured with respect to the secondary units."
             ),
         )
         OWGUI.separator(widget=self.unitsBox, height=3)
-        OWGUI.checkBox(
+        self.intraSeqDelimLineEdit = OWGUI.lineEdit(
             widget=self.unitsBox,
             master=self,
-            value='unitWeighting',
-            label=u'Weigh by frequency',
+            value='intraSeqDelim',
+            orientation='horizontal',
+            label=u'Intra-sequence delimiter:',
+            labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Check this box in order to apply unit frequency\n"
-                u"weighting (i.e. use perplexity instead of variety)."
+                u"If 'Sequence length' above is set to a value\n"
+                u"larger than 1, the (possibly empty) string\n"
+                u"specified in this field will be used as a\n"
+                u"delimiter between the successive segments of\n"
+                u"each sequence."
             ),
         )
         OWGUI.separator(widget=self.unitsBox, height=3)
 
-        # Categories box
-        self.categoriesBox = OWGUI.widgetBox(
+        # Secondary unit
+        self.units2Box = OWGUI.widgetBox(
             widget=self.controlArea,
-            box=u'Categories',
+            box=u'Secondary units',
             orientation='vertical',
             addSpace=True,
         )
-        self.measurePerCategoryCheckbox = OWGUI.checkBox(
-            widget=self.categoriesBox,
+        self.coocWithUnits2Checkbox = OWGUI.checkBox(
+            widget=self.units2Box,
             master=self,
-            value='measurePerCategory',
-            label=u'Measure variety per category',
+            value='coocWithUnits2',
+            label=u'Use secondary units',
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Check this box in order to measure the average\n"
-                u"variety per category."
+                u"Check this box to measure the co-occurrence of\n"
+                u"the primary and the secondary units."
             ),
         )
-        OWGUI.separator(widget=self.categoriesBox, height=3)
+        OWGUI.separator(widget=self.units2Box, height=3)
         iBox = OWGUI.indentedBox(
-            widget=self.categoriesBox,
+            widget=self.units2Box,
         )
-        self.categoryAnnotationCombo = OWGUI.comboBox(
+        self.unit2SegmentationCombo = OWGUI.comboBox(
             widget=iBox,
             master=self,
-            value='categoryAnnotationKey',
+            value='units2',
+            emptyString=u'(none)',
+            orientation='horizontal',
+            label=u'Segmentation:',
+            labelWidth=160,
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"The segmentation for which the co-occurrence of the\n"
+                u"segments will be measured with respect to primary units\n"
+                u"This defines the rows of the resulting crosstab, and\n"
+                u"therefor the primary units define only the columns of the\n"
+                u"resulting crosstab."
+            )
+        )
+        OWGUI.separator(widget=iBox, height=3)
+        self.unit2AnnotationCombo = OWGUI.comboBox(
+            widget=iBox,
+            master=self,
+            value='unit2AnnotationKey',
             sendSelectedValue=True,
             emptyString=u'(none)',
             orientation='horizontal',
@@ -234,78 +254,58 @@ class OWTextableVariety(OWWidget):
             labelWidth=160,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Indicate whether categories are defined by the\n"
-                u"segments' content (value 'none') or by their\n"
-                u"annotation values for a specific annotation key."
+                u"Specify the annotation values of the secondary units n"
+                u"for a specific annotation key."
             ),
         )
-        OWGUI.separator(widget=iBox, height=3)
-        OWGUI.checkBox(
-            widget=iBox,
-            master=self,
-            value='categoryWeighting',
-            label=u'Weigh by frequency',
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Check this box in order to apply category\n"
-                u"frequency weighting (i.e. compute a weighted\n"
-                u"rather than unweighted average)."
-            ),
-        )
-        self.measurePerCategoryCheckbox.disables.append(iBox)
-        if self.measurePerCategory:
+        self.coocWithUnits2Checkbox.disables.append(iBox)
+        if self.coocWithUnits2:
             iBox.setDisabled(False)
         else:
             iBox.setDisabled(True)
-        OWGUI.separator(widget=self.categoriesBox, height=3)
+        OWGUI.separator(widget=self.units2Box, height=3)
 
-        # Contexts box...
-        self.contextsBox = OWGUI.widgetBox(
+        # Context box...
+        self._contextsBox = OWGUI.widgetBox(
             widget=self.controlArea,
             box=u'Contexts',
             orientation='vertical',
             addSpace=True,
         )
         self.modeCombo = OWGUI.comboBox(
-            widget=self.contextsBox,
+            widget=self._contextsBox,
             master=self,
             value='mode',
             sendSelectedValue=True,
             items=[
-                u'No context',
                 u'Sliding window',
-                u'Containing segmentation',
+                u'Containing segmentation'
             ],
             orientation='horizontal',
-            label=u'Mode:',
+            label=u'Mode',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 u"Context specification mode.\n\n"
-                u"Contexts define the rows of the resulting\n"
-                u"crosstab.\n\n"
-                u"'No context': variety will be measured\n"
-                u"irrespective of the context (hence the output\n"
-                u"table contains a single row).\n\n"
                 u"'Sliding window': contexts are defined as all the\n"
                 u"successive, overlapping sequences of n segments\n"
-                u"in the 'Units' segmentation.\n\n"
+                u"in the 'units' segmentation.\n\n"
                 u"'Containing segmentation': contexts are defined\n"
                 u"as the distinct segments occurring in a given\n"
-                u"segmentation."
+                u"segmentation.\n"
             ),
         )
         self.slidingWindowBox = OWGUI.widgetBox(
-            widget=self.contextsBox,
-            orientation='vertical',
+            widget=self._contextsBox,
+            orientation='vertical'
         )
         OWGUI.separator(widget=self.slidingWindowBox, height=3)
         self.windowSizeSpin = OWGUI.spin(
             widget=self.slidingWindowBox,
             master=self,
             value='windowSize',
-            min=1,
-            max=1,
+            min=2,
+            max=2,
             step=1,
             orientation='horizontal',
             label=u'Window size:',
@@ -316,7 +316,7 @@ class OWTextableVariety(OWWidget):
             ),
         )
         self.containingSegmentationBox = OWGUI.widgetBox(
-            widget=self.contextsBox,
+            widget=self._contextsBox,
             orientation='vertical',
         )
         OWGUI.separator(widget=self.containingSegmentationBox, height=3)
@@ -330,15 +330,15 @@ class OWTextableVariety(OWWidget):
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 u"The segmentation whose segment types define\n"
-                u"the contexts in which the variety of segments\n"
-                u"in the 'Units' segmentation will be measured."
+                u"the contexts in which the co-occurrence of the \n"
+                u"unit types segmentation will be measured."
             ),
         )
         OWGUI.separator(widget=self.containingSegmentationBox, height=3)
         self.contextAnnotationCombo = OWGUI.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
-            value='contextAnnotationKey',
+            value="contextAnnotationKey",
             sendSelectedValue=True,
             emptyString=u'(none)',
             orientation='horizontal',
@@ -350,83 +350,9 @@ class OWTextableVariety(OWWidget):
                 u"the content of segments in the above specified\n"
                 u"segmentation (value 'none') or by their annotation\n"
                 u"values for a specific annotation key."
-            ),
+            )
         )
         OWGUI.separator(widget=self.containingSegmentationBox, height=3)
-        OWGUI.checkBox(
-            widget=self.containingSegmentationBox,
-            master=self,
-            value='mergeContexts',
-            label=u'Merge contexts',
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Check this box if you want to treat all segments\n"
-                u"of the above specified segmentation as forming\n"
-                u"a single context (hence the resulting crosstab\n"
-                u"contains a single row)."
-            ),
-        )
-        OWGUI.separator(widget=self.contextsBox, height=3)
-
-        # Resampling box...
-        self.resamplingBox = OWGUI.widgetBox(
-            widget=self.controlArea,
-            box=u'Resampling',
-            orientation='vertical',
-            addSpace=True,
-        )
-        applyResamplingCheckBox = OWGUI.checkBox(
-            widget=self.resamplingBox,
-            master=self,
-            value='applyResampling',
-            label=u'Apply Resampling',
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"Check this box if you want to compute the average\n"
-                u"variety per subsample."
-            ),
-        )
-        OWGUI.separator(widget=self.resamplingBox, height=3)
-        iBox2 = OWGUI.indentedBox(
-            widget=self.resamplingBox,
-        )
-        self.subsampleSizeSpin = OWGUI.spin(
-            widget=iBox2,
-            master=self,
-            value='subsampleSize',
-            min=1,
-            max=1,
-            step=1,
-            orientation='horizontal',
-            label=u'Subsample size:',
-            labelWidth=160,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"The number of segments per subsample."
-            ),
-        )
-        OWGUI.separator(widget=iBox2, height=3)
-        self.numSubsampleSpin = OWGUI.spin(
-            widget=iBox2,
-            master=self,
-            value='numSubsamples',
-            min=1,
-            max=100000,
-            step=1,
-            orientation='horizontal',
-            label=u'Number of subsamples:',
-            labelWidth=160,
-            callback=self.sendButton.settingsChanged,
-            tooltip=(
-                u"The number of subsamples (per context)."
-            ),
-        )
-        applyResamplingCheckBox.disables.append(iBox2)
-        if self.applyResampling:
-            iBox2.setDisabled(False)
-        else:
-            iBox2.setDisabled(True)
-        OWGUI.separator(widget=self.resamplingBox, height=3)
 
         OWGUI.rubber(self.controlArea)
 
@@ -459,24 +385,39 @@ class OWTextableVariety(OWWidget):
             self.units -= 1
             if self.units < 0:
                 self.units = None
+        if index < self.units2:
+            self.units2 -= 1
+        elif index == self.units2 and self.units2 == len(
+                self.segmentations) - 1:
+            self.units2 -= 1
+            if self.units2 < 0:
+                self.units2 = None
         if self.mode == u'Containing segmentation':
-            if index == self._contexts:
-                self.mode = u'No context'
-                self._contexts = None
-            elif index < self._contexts:
+            if index < self._contexts:
                 self._contexts -= 1
-                if self._contexts < 0:
-                    self.mode = u'No context'
-                    self._contexts = None
+            elif index == self._contexts:
+                if self._contexts == len(self.segmentations) - 1:
+                    self._contexts -= 1
+                    if self._contexts < 0:
+                        self._contexts = None
+                if self.autoSend:
+                    self.autoSend = False
+                self.infoBox.setText(
+                    u"The selected context segmentation has been removed.\n"
+                    u"'Send automatically' checkbox will be unchecked.\n"
+                    u"Please connect a segmentation to the widget and\n"
+                    u"try again.",
+                    state='warning',
+                )
+                self.send('IntPivotCrosstab', None, self)
 
     def sendData(self):
+        """Check input, compute co-occurrence, then send tabel"""
 
-        """Check input, compute variety, then send table"""
-
-        # Check that there's something on input...
+        # Check if there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Textable Table', None)
+            self.send('Pivot Crosstab', None)
             return
 
         # Units parameter...
@@ -484,94 +425,75 @@ class OWTextableVariety(OWWidget):
             'segmentation': self.segmentations[self.units][1],
             'annotation_key': self.unitAnnotationKey or None,
             'seq_length': self.sequenceLength,
-            'weighting': self.unitWeighting,
+            'intra_seq_delimiter': self.intraSeqDelim,
         }
         if units['annotation_key'] == u'(none)':
             units['annotation_key'] = None
 
-        # Categories parameter...
-        categories = {
-            'annotation_key': self.categoryAnnotationKey or None,
-            'weighting': self.categoryWeighting,
-        }
-        if categories['annotation_key'] == u'(none)':
-            categories['annotation_key'] = None
-
-        # Case 1: sliding window...
+        # Case1: sliding window
         if self.mode == 'Sliding window':
-
-            num_iterations = len(units['segmentation']) - (self.windowSize - 1)
-            if self.applyResampling:
-                num_iterations += num_iterations * self.numSubsamples
-            else:
-                num_iterations *= 2
-
-            # Measure...
             progressBar = OWGUI.ProgressBar(
                 self,
-                iterations=num_iterations
+                iterations=len(units['segmentation']) - (self.windowSize - 1)
             )
-            table = Processor.variety_in_window(
+            # Calculate the co-occurrence...
+            table = Processor.cooc_in_window(
                 units,
-                categories,
-                measure_per_category=self.measurePerCategory,
                 window_size=self.windowSize,
-                apply_resampling=self.applyResampling,
-                subsample_size=self.subsampleSize,
-                num_subsamples=self.numSubsamples,
                 progress_callback=progressBar.advance,
             )
             progressBar.finish()
 
-        # Case 2: Containing segmentation or no context...
-        else:
-
-            # Parameters for mode 'Containing segmentation'...
-            if self.mode == 'Containing segmentation':
-                contexts = {
-                    'segmentation': self.segmentations[self._contexts][1],
-                    'annotation_key': self.contextAnnotationKey or None,
-                    'merge': self.mergeContexts,
+        # Case2: containing segmentation
+        elif self.mode == 'Containing segmentation':
+            contexts = {
+                'segmentation': self.segmentations[self._contexts][1],
+                'annotation_key': self.contextAnnotationKey or None,
+            }
+            if contexts['annotation_key'] == u'(none)':
+                contexts['annotation_key'] = None
+            if self.units2 is not None and self.coocWithUnits2:
+                # Secondary units parameter...
+                units2 = {
+                    'segmentation': self.segmentations[self.units2][1],
+                    'annotation_key': self.unit2AnnotationKey or None,
                 }
-                if contexts['annotation_key'] == u'(none)':
-                    contexts['annotation_key'] = None
-                num_contexts = len(contexts['segmentation'])
-                num_iterations = num_contexts
-            # Parameters for mode 'No context'...
-            else:
-                contexts = None
-                num_iterations = (
-                    len(units['segmentation']) - (self.sequenceLength - 1)
+                if units2['annotation_key'] == u'(none)':
+                    units2['annotation_key'] = None
+                num_iterations = len(contexts['segmentation'])
+                progressBar = OWGUI.ProgressBar(
+                    self,
+                    iterations=num_iterations * 2
                 )
-                num_contexts = 1
-            if self.applyResampling:
-                num_iterations += num_contexts * self.numSubsamples
+                # Calculate the co-occurrence with secondary units...
+                table = Processor.cooc_in_context(
+                    units,
+                    contexts,
+                    units2,
+                    progress_callback=progressBar.advance,
+                )
             else:
-                num_iterations += num_contexts
-
-            # Measure...
-            progressBar = OWGUI.ProgressBar(
-                self,
-                iterations=num_iterations
-            )
-            table = Processor.variety_in_context(
-                units,
-                categories,
-                contexts,
-                measure_per_category=self.measurePerCategory,
-                apply_resampling=self.applyResampling,
-                subsample_size=self.subsampleSize,
-                num_subsamples=self.numSubsamples,
-                progress_callback=progressBar.advance,
-            )
+                num_iterations = (len(contexts['segmentation']))
+                progressBar = OWGUI.ProgressBar(
+                    self,
+                    iterations=num_iterations
+                )
+                # Calculate the co-occurrence without secondary units...
+                table = Processor.cooc_in_context(
+                    units,
+                    contexts,
+                    progress_callback=progressBar.advance,
+                )
             progressBar.finish()
-
-        if not len(table.row_ids):
+        if len(table.row_ids) == 0:
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
-            self.send('Textable Table', None)
+            self.send('Pivot Crosstab', None)
         else:
-            self.infoBox.setText(u'Table sent to output.')
-            self.send('Textable Table', table)
+            total = sum([i for i in table.values.values()])
+            message = u'Table with %i cooccurrence@p sent to output.' % total
+            message = pluralize(message, total)
+            self.infoBox.setText(message)
+            self.send('Pivot Crosstab', table)
 
         self.sendButton.resetSettingsChangedFlag()
 
@@ -579,82 +501,82 @@ class OWTextableVariety(OWWidget):
 
         """Update GUI state"""
 
-        self.unitSegmentationCombo.clear()
+        self.unitsegmentationCombo.clear()
         self.unitAnnotationCombo.clear()
         self.unitAnnotationCombo.addItem(u'(none)')
-        self.categoryAnnotationCombo.clear()
-        self.categoryAnnotationCombo.addItem(u'(none)')
-
-        if self.mode == u'No context':
-            self.containingSegmentationBox.setVisible(False)
-            self.slidingWindowBox.setVisible(False)
+        self.unit2SegmentationCombo.clear()
+        self.unit2AnnotationCombo.clear()
+        self.unit2AnnotationCombo.addItem(u'(none)')
 
         if len(self.segmentations) == 0:
             self.units = None
             self.unitAnnotationKey = u''
             self.unitsBox.setDisabled(True)
-            self.categoryAnnotationKey = u''
-            self.categoriesBox.setDisabled(True)
-            self.mode = 'No context'
-            self.contextsBox.setDisabled(True)
+            self.units2 = None
+            self.unit2AnnotationKey = u''
+            self.units2Box.setDisabled(True)
+            self.mode = 'Sliding window'
+            self._contextsBox.setDisabled(True)
             self.adjustSize()
             return
         else:
             if len(self.segmentations) == 1:
                 self.units = 0
             for segmentation in self.segmentations:
-                self.unitSegmentationCombo.addItem(segmentation[1].label)
+                try:
+                    self.unitsegmentationCombo.addItem(segmentation[1].label)
+                except TypeError:
+                    self.unitsBox.setDisabled(True)
             self.units = self.units
             unitAnnotationKeys \
                 = self.segmentations[self.units][1].get_annotation_keys()
             for k in unitAnnotationKeys:
                 self.unitAnnotationCombo.addItem(k)
-                self.categoryAnnotationCombo.addItem(k)
             if self.unitAnnotationKey not in unitAnnotationKeys:
                 self.unitAnnotationKey = u'(none)'
             self.unitAnnotationKey = self.unitAnnotationKey
-            if self.categoryAnnotationKey not in unitAnnotationKeys:
-                self.categoryAnnotationKey = u'(none)'
-            self.categoryAnnotationKey = self.categoryAnnotationKey
             self.unitsBox.setDisabled(False)
             self.sequenceLengthSpin.control.setRange(
                 1,
                 len(self.segmentations[self.units][1])
             )
-            self.sequenceLength = self.sequenceLength or 1
+            self.sequenceLength = self.sequenceLength
             if self.sequenceLength > 1:
-                self.categoriesBox.setDisabled(True)
+                self.units2Box.setDisabled(True)
             else:
-                self.categoriesBox.setDisabled(False)
-            if self.measurePerCategory:
-                self.sequenceLengthSpin.setDisabled(True)
-            else:
-                self.sequenceLengthSpin.setDisabled(False)
-            self.contextsBox.setDisabled(False)
-            self.subsampleSizeSpin.control.setRange(
-                1,
-                len(self.segmentations[self.units][1])
-            )
-            self.subsampleSize = self.subsampleSize or 1
+                self.units2Box.setDisabled(False)
+            self._contextsBox.setDisabled(False)
 
         if self.mode == u'Sliding window':
+            self.units2 = None
+            self.units2Box.setDisabled(True)
             self.containingSegmentationBox.setVisible(False)
             self.slidingWindowBox.setVisible(True)
+            self.sequenceLengthSpin.setDisabled(False)
 
             self.windowSizeSpin.control.setRange(
-                self.sequenceLength,
+                2,
                 len(self.segmentations[self.units][1])
             )
             self.windowSize = self.windowSize
 
         elif self.mode == u'Containing segmentation':
+            if len(self.segmentations) == 1:
+                self.units2 = None
+                self.unit2AnnotationKey = u''
+                self.units2Box.setDisabled(True)
+            elif len(self.segmentations) >= 2:
+                self.units2Box.setDisabled(False)
             self.slidingWindowBox.setVisible(False)
             self.containingSegmentationBox.setVisible(True)
             self.contextSegmentationCombo.clear()
-            for index in range(len(self.segmentations)):
-                self.contextSegmentationCombo.addItem(
-                    self.segmentations[index][1].label
-                )
+            try:
+                for index in range(len(self.segmentations)):
+                    self.contextSegmentationCombo.addItem(
+                        self.segmentations[index][1].label
+                    )
+            except TypeError:
+                self._contextsBox.setDisabled(True)
             self._contexts = self._contexts or 0
             segmentation = self.segmentations[self._contexts]
             self.contextAnnotationCombo.clear()
@@ -665,6 +587,23 @@ class OWTextableVariety(OWWidget):
             if self.contextAnnotationKey not in contextAnnotationKeys:
                 self.contextAnnotationKey = u'(none)'
             self.contextAnnotationKey = self.contextAnnotationKey
+            if self.coocWithUnits2:
+                try:
+                    for segmentation in self.segmentations:
+                        self.unit2SegmentationCombo.addItem(
+                            segmentation[1].label)
+                except TypeError:
+                    self.units2Box.setDisabled(True)
+                self.units2 = self.units2 or 0
+                unit2AnnotationKeys \
+                    = self.segmentations[self.units2][1].get_annotation_keys()
+                for k in unit2AnnotationKeys:
+                    self.unit2AnnotationCombo.addItem(k)
+                if self.unit2AnnotationKey not in unit2AnnotationKeys:
+                    self.unit2AnnotationKey = u'(none)'
+                self.unit2AnnotationKey = self.unit2AnnotationKey
+                self.sequenceLength = 1
+                self.sequenceLengthSpin.setDisabled(True)
 
         self.adjustSizeWithTimer()
 
@@ -673,7 +612,7 @@ class OWTextableVariety(OWWidget):
         QTimer.singleShot(50, self.adjustSize)
 
     def handleNewSignals(self):
-        """Overridden: called after multiple signals have been added"""
+        """Overridden: called after multiple singnals have been added"""
         self.openContext("", self.segmentations)
         self.updateGUI()
         self.sendButton.sendIf()
@@ -696,37 +635,45 @@ if __name__ == '__main__':
     from LTTL.Input import Input
 
     appl = QApplication(sys.argv)
-    ow = OWTextableVariety()
-    seg1 = Input(u'aabccc', 'text1')
-    seg2 = Input(u'abci', 'text2')
-    seg3 = Segmenter.concatenate(
-        [seg1, seg2],
-        import_labels_as='string',
-        label='corpus'
+    ow = OWTextableCooccurrence()
+    seg1 = Input(u'un texte', label=u'text')
+    seg2 = Segmenter.tokenize(
+        seg1,
+        regexes=[
+            (
+                re.compile(r'\w+'),
+                u'tokenize',
+                {'type': 'W'},
+            )
+        ],
+        label=u'words',
+    )
+    seg3 = Segmenter.tokenize(
+        seg1,
+        regexes=[
+            (
+                re.compile(r'[aeiouy]'),
+                u'tokenize',
+                {'type': 'V'},
+            )
+        ],
+        label=u'vowel',
     )
     seg4 = Segmenter.tokenize(
-        seg3,
-        regexes=[(re.compile(r'\w+'), u'tokenize',)],
+        seg1,
+        regexes=[
+            (
+                re.compile(r'[^aeiouy]'),
+                u'tokenize',
+                {'type2': 'C'},
+            )
+        ],
+        label=u'consonant',
     )
-    seg5 = Segmenter.tokenize(
-        seg4,
-        regexes=[(re.compile(r'[ai]'), u'tokenize',)],
-        label='V'
-    )
-    seg6 = Segmenter.tokenize(
-        seg4,
-        regexes=[(re.compile(r'[bc]'), u'tokenize',)],
-        label='C'
-    )
-    seg7 = Segmenter.concatenate(
-        [seg5, seg6],
-        import_labels_as='category',
-        label='letters',
-        sort=True,
-        merge_duplicates=True,
-    )
-    ow.inputData(seg4, 1)
-    ow.inputData(seg7, 2)
+    ow.inputData(seg3, 1)
+    ow.inputData(seg2, 2)
+    ow.inputData(seg4, 3)
+
     ow.show()
     appl.exec_()
     ow.saveSettings()

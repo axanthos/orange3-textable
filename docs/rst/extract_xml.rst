@@ -262,7 +262,7 @@ Errors
     The regular expression in the *n*-th line of the **Conditions** list is 
     invalid.
     
-*XML parsing error.*
+*XML parsing error (missing closing tag / orphan closing tag).*
     The input XML data couldn't be correctly parsed. Please use an XML
     validator to check the data's well-formedness.
     
