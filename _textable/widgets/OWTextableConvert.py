@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.19.2'
+__version__ = '0.19.3'
 
 """
 <name>Convert</name>
@@ -946,7 +946,6 @@ class OWTextableConvert(OWWidget):
     def onDeleteWidget(self):
         if self.segmentation is not None:
             self.segmentation.clear()
-            self.segmentation.__del__()
 
     def getSettings(self, *args, **kwargs):
         settings = OWWidget.getSettings(self, *args, **kwargs)

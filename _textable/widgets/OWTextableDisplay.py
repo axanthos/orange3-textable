@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.16.3'
+__version__ = '0.16.4'
 
 """
 <name>Display</name>
@@ -503,8 +503,8 @@ class OWTextableDisplay(OWWidget):
         )
 
     def onDeleteWidget(self):
-        self.displayedSegmentation.clear()
-        self.segmentation.__del__()
+        if self.segmentation is not None:
+            self.segmentation.clear()
 
 
     def adjustSizeWithTimer(self):

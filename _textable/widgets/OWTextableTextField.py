@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.2'      # TODO change subversion?
+__version__ = '0.13.3'
 
 """
 <name>Text Field</name>
@@ -174,8 +174,8 @@ class OWTextableTextField(OWWidget):
             OWWidget.setCaption(self, title)
 
     def onDeleteWidget(self):
-        self.segmentation.clear()
-        self.segmentation.__del__()
+        if self.segmentation is not None:
+            self.segmentation.clear()
 
     def adjustSizeWithTimer(self):
         qApp.processEvents()
