@@ -250,7 +250,7 @@ class OWTextableMerge(OWWidget):
             label=self.captionTitle,
             copy_annotations=self.copyAnnotations,
             import_labels_as=labelKey,
-            sort=True,
+            sort=True,  # TODO: document
             auto_number_as=autoNumberKey,
             merge_duplicates=self.mergeDuplicates,
             progress_callback=progressBar.advance,
