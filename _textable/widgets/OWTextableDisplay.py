@@ -503,9 +503,8 @@ class OWTextableDisplay(OWWidget):
         )
 
     def onDeleteWidget(self):
-        if self.segmentation is not None:
-            self.segmentation.clear()
-
+        if self.displayedSegmentation is not None:
+            self.displayedSegmentation.clear()
 
     def adjustSizeWithTimer(self):
         qApp.processEvents()
