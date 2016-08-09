@@ -20,73 +20,56 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.15.2'
 
-"""
-<name>Extract XML</name>
-<description>Create a new segmentation based on XML markup</description>
-<icon>icons/ExtractXML.png</icon>
-<priority>4005</priority>
-"""
-
 import re
+
+from PyQt4.QtGui import QFont
 
 import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler,
+    pluralize,SendButton, InfoBox, AdvancedSettings
+)
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from Orange.widgets import widget, gui, settings
 
 
-class OWTextableExtractXML(OWWidget):
+class OWTextableExtractXML(OWTextableBaseWidget):
     """Orange widget for xml markup extraction"""
 
-    settingsList = [
-        'conditions',
-        'element',
-        'importElementAs',
-        'mergeDuplicates',
-        'preserveLeaves',
-        'deleteMarkup',
-        'importAnnotations',
-        'autoSend',
-        'autoNumber',
-        'autoNumberKey',
-        'displayAdvancedSettings',
-        'uuid',
-    ]
+    name = "Extract XML"
+    description = "Create a new segmentation based on XML markup"
+    icon = "icons/ExtractXML.png"
+    priority = 4005
 
-    def __init__(self, parent=None, signalManager=None):
+    # Input and output channels...
+    inputs = [('Segmentation', Segmentation, "inputData", widget.Single)]
+    outputs = [('Extracted data', Segmentation)]
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.split(".")[:2]
+    )
+    # Settings...
+    conditions = settings.Setting([])
+    importAnnotations = settings.Setting(True)
+    autoNumber = settings.Setting(False)
+    autoNumberKey = settings.Setting(u'num')
+    element = settings.Setting(u'')
+    importElementAs = settings.Setting(u'')
+    mergeDuplicates = settings.Setting(False)
+    preserveLeaves = settings.Setting(False)
+    deleteMarkup = settings.Setting(False)
+    displayAdvancedSettings = settings.Setting(False)
 
-        # Input and output channels...
-        self.inputs = [('Segmentation', Segmentation, self.inputData, Single)]
-        self.outputs = [('Extracted data', Segmentation)]
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
 
-        # Settings...
-        self.conditions = list()
-        self.importAnnotations = True
-        self.autoSend = True
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
         self.label = u'extracted_xml'
-        self.autoNumber = False
-        self.autoNumberKey = u'num'
-        self.element = u''
         self.importElement = False
-        self.importElementAs = u''
-        self.mergeDuplicates = False
-        self.preserveLeaves = False
-        self.deleteMarkup = False
-        self.displayAdvancedSettings = False
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
 
         # Other attributes...
         self.inputSegmentation = None
@@ -117,12 +100,12 @@ class OWTextableExtractXML(OWWidget):
         self.advancedSettings.draw()
 
         # XML extraction box
-        xmlExtractionBox = OWGUI.widgetBox(
+        xmlExtractionBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'XML Extraction',
             orientation='vertical',
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=xmlExtractionBox,
             master=self,
             value='element',
@@ -135,14 +118,14 @@ class OWTextableExtractXML(OWWidget):
                 u"input segmentation."
             ),
         )
-        OWGUI.separator(widget=xmlExtractionBox, height=3)
-        xmlExtractionBoxLine2 = OWGUI.widgetBox(
+        gui.separator(widget=xmlExtractionBox, height=3)
+        xmlExtractionBoxLine2 = gui.widgetBox(
             widget=xmlExtractionBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=xmlExtractionBoxLine2,
             master=self,
             value='importElement',
@@ -154,7 +137,7 @@ class OWTextableExtractXML(OWWidget):
                 u"whose value is the above specified XML element."
             ),
         )
-        self.importElementAsLineEdit = OWGUI.lineEdit(
+        self.importElementAsLineEdit = gui.lineEdit(
             widget=xmlExtractionBoxLine2,
             master=self,
             value='importElementAs',
@@ -164,7 +147,7 @@ class OWTextableExtractXML(OWWidget):
                 u"Annotation key for the XML element."
             ),
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=xmlExtractionBox,
             master=self,
             value='deleteMarkup',
@@ -175,8 +158,8 @@ class OWTextableExtractXML(OWWidget):
                 u"within the above specified XML element."
             ),
         )
-        OWGUI.separator(widget=xmlExtractionBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=xmlExtractionBox, height=3)
+        gui.checkBox(
             widget=xmlExtractionBox,
             master=self,
             value='preserveLeaves',
@@ -194,19 +177,19 @@ class OWTextableExtractXML(OWWidget):
                 u"shallow element."
             ),
         )
-        OWGUI.separator(widget=xmlExtractionBox, height=3)
-        conditionsBox = OWGUI.widgetBox(
+        gui.separator(widget=xmlExtractionBox, height=3)
+        conditionsBox = gui.widgetBox(
             widget=xmlExtractionBox,
             box=u'Conditions',
             orientation='vertical',
         )
-        xmlExtractionBoxLine4 = OWGUI.widgetBox(
+        xmlExtractionBoxLine4 = gui.widgetBox(
             widget=conditionsBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
         )
-        self.conditionsListbox = OWGUI.listBox(
+        self.conditionsListbox = gui.listBox(
             widget=xmlExtractionBoxLine4,
             master=self,
             value='selectedConditionsLabels',
@@ -229,11 +212,11 @@ class OWTextableExtractXML(OWWidget):
         font.setStyleHint(QFont.Courier)
         font.setPixelSize(12)
         self.conditionsListbox.setFont(font)
-        xmlExtractionBoxCol2 = OWGUI.widgetBox(
+        xmlExtractionBoxCol2 = gui.widgetBox(
             widget=xmlExtractionBoxLine4,
             orientation='vertical',
         )
-        self.removeButton = OWGUI.button(
+        self.removeButton = gui.button(
             widget=xmlExtractionBoxCol2,
             master=self,
             label=u'Remove',
@@ -242,7 +225,7 @@ class OWTextableExtractXML(OWWidget):
                 u"Remove the selected condition from the list."
             ),
         )
-        self.clearAllButton = OWGUI.button(
+        self.clearAllButton = gui.button(
             widget=xmlExtractionBoxCol2,
             master=self,
             label=u'Clear All',
@@ -251,18 +234,18 @@ class OWTextableExtractXML(OWWidget):
                 u"Remove all conditions from the list."
             ),
         )
-        xmlExtractionBoxLine5 = OWGUI.widgetBox(
+        xmlExtractionBoxLine5 = gui.widgetBox(
             widget=conditionsBox,
             box=False,
             orientation='vertical',
         )
         # Add condition box
-        addConditionBox = OWGUI.widgetBox(
+        addConditionBox = gui.widgetBox(
             widget=xmlExtractionBoxLine5,
             box=False,
             orientation='vertical',
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=addConditionBox,
             master=self,
             value='newConditionAttribute',
@@ -275,8 +258,8 @@ class OWTextableExtractXML(OWWidget):
                 u"be added to the list when button 'Add' is clicked."
             ),
         )
-        OWGUI.separator(widget=addConditionBox, height=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=addConditionBox, height=3)
+        gui.lineEdit(
             widget=addConditionBox,
             master=self,
             value='newConditionRegex',
@@ -290,13 +273,13 @@ class OWTextableExtractXML(OWWidget):
                 u"is clicked."
             ),
         )
-        OWGUI.separator(widget=addConditionBox, height=3)
-        addConditionBoxLine3 = OWGUI.widgetBox(
+        gui.separator(widget=addConditionBox, height=3)
+        addConditionBoxLine3 = gui.widgetBox(
             widget=addConditionBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addConditionBoxLine3,
             master=self,
             value='ignoreCase',
@@ -307,7 +290,7 @@ class OWTextableExtractXML(OWWidget):
                 u"Regex pattern is case-insensitive."
             ),
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addConditionBoxLine3,
             master=self,
             value='unicodeDependent',
@@ -317,12 +300,12 @@ class OWTextableExtractXML(OWWidget):
                 u"Built-in character classes are Unicode-aware."
             ),
         )
-        addConditionBoxLine4 = OWGUI.widgetBox(
+        addConditionBoxLine4 = gui.widgetBox(
             widget=addConditionBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addConditionBoxLine4,
             master=self,
             value='multiline',
@@ -335,7 +318,7 @@ class OWTextableExtractXML(OWWidget):
                 u"and end of each input segment)."
             ),
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addConditionBoxLine4,
             master=self,
             value='dotAll',
@@ -346,8 +329,8 @@ class OWTextableExtractXML(OWWidget):
                 u"than any character but newline)."
             ),
         )
-        OWGUI.separator(widget=addConditionBox, height=3)
-        self.addButton = OWGUI.button(
+        gui.separator(widget=addConditionBox, height=3)
+        self.addButton = gui.button(
             widget=addConditionBox,
             master=self,
             label=u'Add',
@@ -360,18 +343,18 @@ class OWTextableExtractXML(OWWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
-        optionsBox = OWGUI.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
         )
-        optionsBoxLine2 = OWGUI.widgetBox(
+        optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumber',
@@ -383,7 +366,7 @@ class OWTextableExtractXML(OWWidget):
                 u"indices."
             ),
         )
-        self.autoNumberKeyLineEdit = OWGUI.lineEdit(
+        self.autoNumberKeyLineEdit = gui.lineEdit(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumberKey',
@@ -393,7 +376,7 @@ class OWTextableExtractXML(OWWidget):
                 u"Annotation key for output segment auto-numbering."
             ),
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBox,
             master=self,
             value='importAnnotations',
@@ -405,8 +388,8 @@ class OWTextableExtractXML(OWWidget):
                 u"input segment."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=optionsBox, height=3)
+        gui.checkBox(
             widget=optionsBox,
             master=self,
             value='mergeDuplicates',
@@ -420,17 +403,17 @@ class OWTextableExtractXML(OWWidget):
                 u"the value of the last one will be kept."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=2)
+        gui.separator(widget=optionsBox, height=2)
         self.advancedSettings.advancedWidgets.append(optionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Basic) XML extraction box
-        basicXmlExtractionBox = OWGUI.widgetBox(
+        basicXmlExtractionBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'XML Extraction',
             orientation='vertical',
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=basicXmlExtractionBox,
             master=self,
             value='element',
@@ -443,8 +426,8 @@ class OWTextableExtractXML(OWWidget):
                 u"input segmentation."
             ),
         )
-        OWGUI.separator(widget=basicXmlExtractionBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=basicXmlExtractionBox, height=3)
+        gui.checkBox(
             widget=basicXmlExtractionBox,
             master=self,
             value='deleteMarkup',
@@ -455,11 +438,11 @@ class OWTextableExtractXML(OWWidget):
                 u"within the above specified XML element."
             ),
         )
-        OWGUI.separator(widget=basicXmlExtractionBox, height=2)
+        gui.separator(widget=basicXmlExtractionBox, height=2)
         self.advancedSettings.basicWidgets.append(basicXmlExtractionBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -522,7 +505,7 @@ class OWTextableExtractXML(OWWidget):
         # Prepare conditions...
         conditions = dict()
         if self.displayAdvancedSettings:
-            for condition_idx in xrange(len(self.conditions)):
+            for condition_idx in range(len(self.conditions)):
                 condition = self.conditions[condition_idx]
                 attribute = condition[0]
                 regex_string = condition[1]
@@ -565,7 +548,7 @@ class OWTextableExtractXML(OWWidget):
             preserveLeaves = False
 
         # Perform tokenization...
-        progressBar = OWGUI.ProgressBar(
+        progressBar = gui.ProgressBar(
             self,
             iterations=num_iterations
         )
@@ -642,9 +625,9 @@ class OWTextableExtractXML(OWWidget):
                 maxAttrLen = max([len(a) for a in attrs])
                 maxRegexLen = max([len(r) for r in regexes])
                 for index in range(len(self.conditions)):
-                    format = u'%-' + unicode(maxAttrLen + 2) + u's'
+                    format = u'%-' + str(maxAttrLen + 2) + u's'
                     label = format % attrs[index]
-                    format = u'%-' + unicode(maxRegexLen + 2) + u's'
+                    format = u'%-' + str(maxRegexLen + 2) + u's'
                     label += format % regexes[index]
                     flags = list()
                     if self.conditions[index][2]:
@@ -694,31 +677,18 @@ class OWTextableExtractXML(OWWidget):
         else:
             self.clearAllButton.setDisabled(True)
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
             self.sendButton.settingsChanged()
         else:
-            OWWidget.setCaption(self, title)
-
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
+            super().setCaption(title)
 
 
 if __name__ == '__main__':
+    import sys
+    from PyQt4.QtGui import QApplication
+
     appl = QApplication(sys.argv)
     ow = OWTextableExtractXML()
     ow.show()
