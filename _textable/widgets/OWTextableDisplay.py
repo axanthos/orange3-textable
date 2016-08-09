@@ -20,77 +20,63 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.16.4'
 
-"""
-<name>Display</name>
-<description>Display or export the details of a segmentation</description>
-<icon>icons/Display.png</icon>
-<priority>6001</priority>
-"""
-
+import sys
+import os
 import codecs
+
+from PyQt4.QtGui import QTextBrowser, QFileDialog, QMessageBox, QApplication
+from PyQt4.QtCore import QUrl
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler,
+    SendButton, InfoBox, getPredefinedEncodings, pluralize,
+    normalizeCarriageReturns
+)
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from Orange.widgets import widget, gui, settings
 
 
-class OWTextableDisplay(OWWidget):
+class OWTextableDisplay(OWTextableBaseWidget):
     """A widget for displaying segmentations"""
+    name = "Display"
+    description = "Display or export the details of a segmentation"
+    icon = "icons/Display.png"
+    priority = 6001
 
-    settingsList = [
-        'displayAdvancedSettings',
-        'autoSend',
-        'customFormatting',
-        'customFormat',
-        'segmentDelimiter',
-        'header',
-        'footer',
-        'encoding',
-        'lastLocation',
-        'uuid',
+    inputs = [('Segmentation', Segmentation, "inputData", widget.Single)]
+    outputs = [
+        ('Bypassed segmentation', Segmentation, widget.Default),
+        ('Displayed segmentation', Segmentation)
     ]
+
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.split(".")[:2]
+    )
+    # Settings...
+    displayAdvancedSettings = settings.Setting(False)
+    customFormatting = settings.Setting(False)
+    customFormat = settings.Setting(u'%(__content__)s')
+    segmentDelimiter = settings.Setting(u'\\n')
+    header = settings.Setting(u'')
+    footer = settings.Setting(u'')
+    encoding = settings.Setting('utf-8')
+    lastLocation = settings.Setting('.')
 
     # Predefined list of available encodings...
     encodings = getPredefinedEncodings()
 
-    def __init__(self, parent=None, signalManager=None):
+    want_main_area = True
 
+    # TODO: wantStateInfoWidget = False
+
+    def __init__(self, *args, **kwargs):
         """Initialize a Display widget"""
+        super().__init__(*args, **kwargs)
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=1,
-            wantStateInfoWidget=0,
-        )
-
-        self.inputs = [('Segmentation', Segmentation, self.inputData, Single)]
-        self.outputs = [
-            ('Bypassed segmentation', Segmentation, Default),
-            ('Displayed segmentation', Segmentation)
-        ]
-
-        # Settings...
-        self.displayAdvancedSettings = False
-        self.customFormatting = False
-        self.customFormat = u'%(__content__)s'
-        self.segmentDelimiter = ur'\n'
-        self.header = u''
-        self.footer = u''
-        self.encoding = 'utf-8'
-        self.lastLocation = '.'
-        self.autoSend = True
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
-
-        # Other attributes...
         self.segmentation = None
         self.displayedSegmentation = Input(
             label=u'displayed_segmentation',
@@ -113,7 +99,7 @@ class OWTextableDisplay(OWWidget):
         # TextableUtils. Note also that there are two copies of the checkbox
         # controlling the same attribute, to simulate its moving from one
         # side of the widget to the other...
-        self.advancedSettingsCheckBoxLeft = OWGUI.checkBox(
+        self.advancedSettingsCheckBoxLeft = gui.checkBox(
             widget=self.controlArea,
             master=self,
             value='displayAdvancedSettings',
@@ -123,16 +109,16 @@ class OWTextableDisplay(OWWidget):
                 u"Toggle advanced settings on and off."
             ),
         )
-        OWGUI.separator(widget=self.controlArea, height=3)
+        gui.separator(widget=self.controlArea, height=3)
 
         # Custom formatting box...
-        formattingBox = OWGUI.widgetBox(
+        formattingBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Formatting',
             orientation='vertical',
             addSpace=True,
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=formattingBox,
             master=self,
             value='customFormatting',
@@ -142,11 +128,11 @@ class OWTextableDisplay(OWWidget):
                 u"Check this box to apply custom formatting."
             ),
         )
-        OWGUI.separator(widget=formattingBox, height=3)
-        self.formattingIndentedBox = OWGUI.indentedBox(
+        gui.separator(widget=formattingBox, height=3)
+        self.formattingIndentedBox = gui.indentedBox(
             widget=formattingBox,
         )
-        headerLineEdit = OWGUI.lineEdit(
+        headerLineEdit = gui.lineEdit(
             widget=self.formattingIndentedBox,
             master=self,
             value='header',
@@ -160,8 +146,8 @@ class OWTextableDisplay(OWWidget):
             ),
         )
         headerLineEdit.setMinimumWidth(200)
-        OWGUI.separator(widget=self.formattingIndentedBox, height=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=self.formattingIndentedBox, height=3)
+        gui.lineEdit(
             widget=self.formattingIndentedBox,
             master=self,
             value='customFormat',
@@ -174,8 +160,8 @@ class OWTextableDisplay(OWWidget):
                 u"See user guide for detailed instructions."
             ),
         )
-        OWGUI.separator(widget=self.formattingIndentedBox, height=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=self.formattingIndentedBox, height=3)
+        gui.lineEdit(
             widget=self.formattingIndentedBox,
             master=self,
             value='segmentDelimiter',
@@ -189,8 +175,8 @@ class OWTextableDisplay(OWWidget):
                 u"'\\t' for tabulation."
             ),
         )
-        OWGUI.separator(widget=self.formattingIndentedBox, height=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=self.formattingIndentedBox, height=3)
+        gui.lineEdit(
             widget=self.formattingIndentedBox,
             master=self,
             value='footer',
@@ -204,16 +190,16 @@ class OWTextableDisplay(OWWidget):
             ),
         )
         headerLineEdit.setMinimumWidth(200)
-        OWGUI.separator(widget=self.formattingIndentedBox, height=3)
+        gui.separator(widget=self.formattingIndentedBox, height=3)
 
         # Export box
-        self.exportBox = OWGUI.widgetBox(
+        self.exportBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Export',
             orientation='vertical',
             addSpace=True,
         )
-        encodingCombo = OWGUI.comboBox(
+        encodingCombo = gui.comboBox(
             widget=self.exportBox,
             master=self,
             value='encoding',
@@ -232,12 +218,12 @@ class OWTextableDisplay(OWWidget):
                 u"in utf-8."
             ),
         )
-        OWGUI.separator(widget=self.exportBox, height=3)
-        exportBoxLine2 = OWGUI.widgetBox(
+        gui.separator(widget=self.exportBox, height=3)
+        exportBoxLine2 = gui.widgetBox(
             widget=self.exportBox,
             orientation='horizontal',
         )
-        exportButton = OWGUI.button(
+        exportButton = gui.button(
             widget=exportBoxLine2,
             master=self,
             label=u'Export to file',
@@ -247,7 +233,7 @@ class OWTextableDisplay(OWWidget):
                 u"which the displayed segmentation will be saved."
             ),
         )
-        self.copyButton = OWGUI.button(
+        self.copyButton = gui.button(
             widget=exportBoxLine2,
             master=self,
             label=u'Copy to clipboard',
@@ -259,7 +245,7 @@ class OWTextableDisplay(OWWidget):
             ),
         )
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button and checkbox
         self.sendButton.draw()
@@ -268,11 +254,11 @@ class OWTextableDisplay(OWWidget):
 
         # NB: This is the second copy of the advanced settings checkbox,
         # see above...
-        self.advancedSettingsRightBox = OWGUI.widgetBox(
+        self.advancedSettingsRightBox = gui.widgetBox(
             widget=self.mainArea,
             orientation='vertical',
         )
-        self.advancedSettingsCheckBoxRight = OWGUI.checkBox(
+        self.advancedSettingsCheckBoxRight = gui.checkBox(
             widget=self.advancedSettingsRightBox,
             master=self,
             value='displayAdvancedSettings',
@@ -282,25 +268,25 @@ class OWTextableDisplay(OWWidget):
                 u"Toggle advanced settings on and off."
             ),
         )
-        OWGUI.separator(widget=self.advancedSettingsRightBox, height=3)
+        gui.separator(widget=self.advancedSettingsRightBox, height=3)
 
-        self.advancedSettingsCheckBoxRightPlaceholder = OWGUI.separator(
+        self.advancedSettingsCheckBoxRightPlaceholder = gui.separator(
             widget=self.mainArea,
             height=25,
         )
 
-        self.navigationBox = OWGUI.widgetBox(
+        self.navigationBox = gui.widgetBox(
             widget=self.mainArea,
             orientation='vertical',
             box=u'Navigation',
             addSpace=True,
         )
-        self.gotoSpin = OWGUI.spin(
+        self.gotoSpin = gui.spin(
             widget=self.navigationBox,
             master=self,
             value='goto',
-            min=1,
-            max=1,
+            minv=1,
+            maxv=1,
             orientation='horizontal',
             label=u'Go to segment:',
             labelWidth=180,
@@ -309,7 +295,7 @@ class OWTextableDisplay(OWWidget):
                 u"Jump to a specific segment number."
             ),
         )
-        OWGUI.separator(widget=self.navigationBox, height=3)
+        gui.separator(widget=self.navigationBox, height=3)
         self.mainArea.layout().addWidget(self.browser)
 
         # Info box...
@@ -330,36 +316,42 @@ class OWTextableDisplay(OWWidget):
             self.send('Bypassed segmentation', None, self)
             self.send('Displayed segmentation', None, self)
             return
+
         self.send(
             'Bypassed segmentation',
             Segmenter.bypass(self.segmentation, self.captionTitle),
             self
         )
-        if (
-            (
-                0 in self.widgetState['Warning'] and
-                'format' in self.widgetState['Warning'][0]
-            )
-            or
-            (
-                0 in self.widgetState['Error'] and
-                'format' in self.widgetState['Error'][0]
-            )
-        ):
-            self.send('Displayed segmentation', None, self)
-            return
+        # TODO: ...
+        # if (
+        #     (
+        #         0 in self.widgetState['Warning'] and
+        #         'format' in self.widgetState['Warning'][0]
+        #     )
+        #     or
+        #     (
+        #         0 in self.widgetState['Error'] and
+        #         'format' in self.widgetState['Error'][0]
+        #     )
+        # ):
+        #     self.send('Displayed segmentation', None, self)
+        #     return
         if len(self.displayedSegmentation[0].get_content()) > 0:
             self.send(
                 'Displayed segmentation',
                 self.displayedSegmentation,
                 self
             )
-        else:
-            self.send('Displayed segmentation', None, self)
-        if 'Format' not in self.widgetState['Error'].get(0, u''):
             message = u'%i segment@p sent to output.' % len(self.segmentation)
             message = pluralize(message, len(self.segmentation))
             self.infoBox.setText(message)
+        else:
+            self.send('Displayed segmentation', None, self)
+
+        # if 'Format' not in self.widgetState['Error'].get(0, u''):
+        #     message = u'%i segment@p sent to output.' % len(self.segmentation)
+        #     message = pluralize(message, len(self.segmentation))
+        #     self.infoBox.setText(message)
         self.sendButton.resetSettingsChangedFlag()
 
     def updateGUI(self):
@@ -386,23 +378,23 @@ class OWTextableDisplay(OWWidget):
                 self.exportBox.setDisabled(True)
                 self.formattingIndentedBox.setDisabled(False)
                 displayedString = u''
-                progressBar = OWGUI.ProgressBar(
+                progressBar = gui.ProgressBar(
                     self,
                     iterations=len(self.segmentation)
                 )
                 try:
                     displayedString = self.segmentation.to_string(
-                        self.customFormat.decode('string_escape'),
-                        self.segmentDelimiter.decode('string_escape'),
-                        self.header.decode('string_escape'),
-                        self.footer.decode('string_escape'),
+                        codecs.decode(self.customFormat, 'unicode_escape'),
+                        codecs.decode(self.segmentDelimiter, 'unicode_escape'),
+                        codecs.decode(self.header, 'unicode_escape'),
+                        codecs.decode(self.footer, 'unicode_escape'),
                         True,
                         progress_callback=progressBar.advance,
                     )
                     self.infoBox.settingsChanged()
                     self.exportBox.setDisabled(False)
-                    self.warning(0)
-                    self.error(0)
+                    self.warning()
+                    self.error()
                 except TypeError as type_error:
                     self.infoBox.setText(type_error.message, 'error')
                 except KeyError:
@@ -420,9 +412,9 @@ class OWTextableDisplay(OWWidget):
                 progressBar.finish()
             else:
                 self.formattingIndentedBox.setDisabled(True)
-                self.warning(0)
-                self.error(0)
-                progressBar = OWGUI.ProgressBar(
+                self.warning()
+                self.error()
+                progressBar = gui.ProgressBar(
                     self,
                     iterations=len(self.segmentation)
                 )
@@ -436,7 +428,7 @@ class OWTextableDisplay(OWWidget):
                     label=self.captionTitle,
                 )
                 self.navigationBox.setDisabled(False)
-                self.gotoSpin.control.setRange(1, len(self.segmentation))
+                self.gotoSpin.setRange(1, len(self.segmentation))
                 if self.goto:
                     self.browser.setSource(QUrl("#%i" % self.goto))
                 else:
@@ -460,12 +452,10 @@ class OWTextableDisplay(OWWidget):
 
     def exportFile(self):
         """Display a FileDialog and export segmentation to file"""
-        filePath = unicode(
-            QFileDialog.getSaveFileName(
-                self,
-                u'Export segmentation to File',
-                self.lastLocation,
-            )
+        filePath = QFileDialog.getSaveFileName(
+            self,
+            u'Export segmentation to File',
+            self.lastLocation,
         )
         if filePath:
             self.lastLocation = os.path.dirname(filePath)
@@ -506,28 +496,12 @@ class OWTextableDisplay(OWWidget):
         if self.displayedSegmentation is not None:
             self.displayedSegmentation.clear()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
             self.sendButton.settingsChanged()
         else:
-            OWWidget.setCaption(self, title)
-
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
+            super().setCaption(title)
 
 
 if __name__ == '__main__':
