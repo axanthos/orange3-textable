@@ -20,68 +20,55 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.13.2'  # TODO change subversion?
 
-"""
-<name>Recode</name>
-<description>Custom text recoding using regular expressions</description>
-<icon>icons/Recode.png</icon>
-<priority>2002</priority>
-"""
+import os, re, codecs, json
 
-import re, codecs, json
+from PyQt4.QtGui import QFont
+from PyQt4.QtGui import QFileDialog, QMessageBox
 
 import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler, JSONMessage,
+    InfoBox, SendButton, AdvancedSettings, pluralize, normalizeCarriageReturns
+)
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from Orange.widgets import gui, settings
 
 
-class OWTextableRecode(OWWidget):
+class OWTextableRecode(OWTextableBaseWidget):
     """Orange widget for regex-based recoding"""
 
-    settingsList = [
-        'substitutions',
-        'copyAnnotations',
-        'autoSend',
-        'displayAdvancedSettings',
-        'lastLocation',
-        'regex',
-        'replString',
-        'uuid',
-    ]
+    name= "Recode"
+    description = "Custom text recoding using regular expressions"
+    icon = "icons/Recode.png"
+    priority = 2002
 
-    def __init__(self, parent=None, signalManager=None):
+    # Input and output channels...
+    inputs = [
+        ('Segmentation', Segmentation, "inputData"),
+        ('Message', JSONMessage, "inputMessage")
+    ]
+    outputs = [('Recoded data', Segmentation)]
+
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.split(".")[:2]
+    )
+    # Settings...
+    substitutions = settings.Setting([])
+    copyAnnotations = settings.Setting(True)
+    displayAdvancedSettings = settings.Setting(False)
+    lastLocation = settings.Setting('.')
+    regex = settings.Setting(u'')
+    replString = settings.Setting(u'')
+
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
+
+    def __init__(self, *args, **kwargs):
 
         """Initialize a Recode widget"""
-
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
-
-        # Input and output channels...
-        self.inputs = [
-            ('Segmentation', Segmentation, self.inputData, Single),
-            ('Message', JSONMessage, self.inputMessage, Single)
-        ]
-        self.outputs = [('Recoded data', Segmentation)]
-
-        # Settings...
-        self.substitutions = list()
-        self.copyAnnotations = True
-        self.autoSend = True
-        self.displayAdvancedSettings = False
-        self.lastLocation = '.'
-        self.regex = u''
-        self.replString = u''
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
+        super().__init__(*args, **kwargs)
 
         # Other attributes...
         self.createdInputIndices = list()
@@ -113,18 +100,18 @@ class OWTextableRecode(OWWidget):
         self.advancedSettings.draw()
 
         # Substitutions box
-        substBox = OWGUI.widgetBox(
+        substBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Substitutions',
             orientation='vertical',
         )
-        substBoxLine1 = OWGUI.widgetBox(
+        substBoxLine1 = gui.widgetBox(
             widget=substBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
         )
-        self.substListbox = OWGUI.listBox(
+        self.substListbox = gui.listBox(
             widget=substBoxLine1,
             master=self,
             value='selectedSubstLabels',
@@ -146,11 +133,11 @@ class OWTextableRecode(OWWidget):
         font.setStyleHint(QFont.Courier)
         font.setPixelSize(12)
         self.substListbox.setFont(font)
-        substBoxCol2 = OWGUI.widgetBox(
+        substBoxCol2 = gui.widgetBox(
             widget=substBoxLine1,
             orientation='vertical',
         )
-        self.moveUpButton = OWGUI.button(
+        self.moveUpButton = gui.button(
             widget=substBoxCol2,
             master=self,
             label=u'Move Up',
@@ -159,7 +146,7 @@ class OWTextableRecode(OWWidget):
                 u"Move the selected substitution upward in the list."
             ),
         )
-        self.moveDownButton = OWGUI.button(
+        self.moveDownButton = gui.button(
             widget=substBoxCol2,
             master=self,
             label=u'Move Down',
@@ -168,7 +155,7 @@ class OWTextableRecode(OWWidget):
                 u"Move the selected substitution downward in the list."
             ),
         )
-        self.removeButton = OWGUI.button(
+        self.removeButton = gui.button(
             widget=substBoxCol2,
             master=self,
             label=u'Remove',
@@ -177,7 +164,7 @@ class OWTextableRecode(OWWidget):
                 u"Remove the selected substitution from the list."
             ),
         )
-        self.clearAllButton = OWGUI.button(
+        self.clearAllButton = gui.button(
             widget=substBoxCol2,
             master=self,
             label=u'Clear All',
@@ -186,7 +173,7 @@ class OWTextableRecode(OWWidget):
                 u"Remove all substitutions from the list."
             ),
         )
-        self.exportButton = OWGUI.button(
+        self.exportButton = gui.button(
             widget=substBoxCol2,
             master=self,
             label=u'Export List',
@@ -196,7 +183,7 @@ class OWTextableRecode(OWWidget):
                 u"substitution list can be exported in JSON format."
             ),
         )
-        self.importButton = OWGUI.button(
+        self.importButton = gui.button(
             widget=substBoxCol2,
             master=self,
             label=u'Import List',
@@ -207,18 +194,18 @@ class OWTextableRecode(OWWidget):
                 u"this list will be added to the existing ones."
             ),
         )
-        substBoxLine2 = OWGUI.widgetBox(
+        substBoxLine2 = gui.widgetBox(
             widget=substBox,
             box=False,
             orientation='vertical',
         )
         # Add regex box
-        addSubstBox = OWGUI.widgetBox(
+        addSubstBox = gui.widgetBox(
             widget=substBoxLine2,
             box=True,
             orientation='vertical',
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=addSubstBox,
             master=self,
             value='newRegex',
@@ -231,8 +218,8 @@ class OWTextableRecode(OWWidget):
                 u"when button 'Add' is clicked."
             ),
         )
-        OWGUI.separator(widget=addSubstBox, height=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=addSubstBox, height=3)
+        gui.lineEdit(
             widget=addSubstBox,
             master=self,
             value='newReplString',
@@ -252,13 +239,13 @@ class OWTextableRecode(OWWidget):
 
             ),
         )
-        OWGUI.separator(widget=addSubstBox, height=3)
-        addSubstBoxLine3 = OWGUI.widgetBox(
+        gui.separator(widget=addSubstBox, height=3)
+        addSubstBoxLine3 = gui.widgetBox(
             widget=addSubstBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addSubstBoxLine3,
             master=self,
             value='ignoreCase',
@@ -269,7 +256,7 @@ class OWTextableRecode(OWWidget):
                 u"Regex pattern is case-insensitive."
             ),
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addSubstBoxLine3,
             master=self,
             value='unicodeDependent',
@@ -279,12 +266,12 @@ class OWTextableRecode(OWWidget):
                 u"Built-in character classes are Unicode-aware."
             ),
         )
-        addSubstBoxLine4 = OWGUI.widgetBox(
+        addSubstBoxLine4 = gui.widgetBox(
             widget=addSubstBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addSubstBoxLine4,
             master=self,
             value='multiline',
@@ -297,7 +284,7 @@ class OWTextableRecode(OWWidget):
                 u"and end of each input segment)."
             ),
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addSubstBoxLine4,
             master=self,
             value='dotAll',
@@ -308,8 +295,8 @@ class OWTextableRecode(OWWidget):
                 u"than any character but newline)."
             ),
         )
-        OWGUI.separator(widget=addSubstBox, height=3)
-        self.addButton = OWGUI.button(
+        gui.separator(widget=addSubstBox, height=3)
+        self.addButton = gui.button(
             widget=addSubstBox,
             master=self,
             label=u'Add',
@@ -322,12 +309,12 @@ class OWTextableRecode(OWWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Advanced) Options box...
-        optionsBox = OWGUI.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBox,
             master=self,
             value='copyAnnotations',
@@ -337,17 +324,17 @@ class OWTextableRecode(OWWidget):
                 u"Copy all annotations from input to output segments."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=2)
+        gui.separator(widget=optionsBox, height=2)
         self.advancedSettings.advancedWidgets.append(optionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Basic) Substitution box...
-        basicSubstBox = OWGUI.widgetBox(
+        basicSubstBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Substitution',
             orientation='vertical',
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=basicSubstBox,
             master=self,
             value='regex',
@@ -360,8 +347,8 @@ class OWTextableRecode(OWWidget):
                 u"the input segmentation."
             ),
         )
-        OWGUI.separator(widget=basicSubstBox, height=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=basicSubstBox, height=3)
+        gui.lineEdit(
             widget=basicSubstBox,
             master=self,
             value='replString',
@@ -374,11 +361,11 @@ class OWTextableRecode(OWWidget):
                 u"match of the above regex in the input segmentation."
             ),
         )
-        OWGUI.separator(widget=basicSubstBox, height=3)
+        gui.separator(widget=basicSubstBox, height=3)
         self.advancedSettings.basicWidgets.append(basicSubstBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -392,7 +379,7 @@ class OWTextableRecode(OWWidget):
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
         if not message:
-            self.warning(0)
+            self.warning()
             self.sendButton.settingsChanged()
             return
         self.displayAdvancedSettings = True
@@ -479,7 +466,7 @@ class OWTextableRecode(OWWidget):
 
         # Prepare regexes...
         substitutions = list()
-        for subst_idx in xrange(len(mySubstitutions)):
+        for subst_idx in range(len(mySubstitutions)):
             subst = mySubstitutions[subst_idx]
             regex_string = subst[0]
             if subst[2] or subst[3] or subst[4] or subst[5]:
@@ -510,7 +497,7 @@ class OWTextableRecode(OWWidget):
         # Perform recoding...
         self.clearCreatedInputIndices()
         previousNumInputs = len(Segmentation.data)
-        progressBar = OWGUI.ProgressBar(
+        progressBar = gui.ProgressBar(
             self,
             iterations=len(self.segmentation)
         )
@@ -553,13 +540,11 @@ class OWTextableRecode(OWWidget):
 
     def importList(self):
         """Display a FileDialog and import substitution list"""
-        filePath = unicode(
-            QFileDialog.getOpenFileName(
-                self,
-                u'Import Regex List',
-                self.lastLocation,
-                u'Text files (*)'
-            )
+        filePath = QFileDialog.getOpenFileName(
+            self,
+            u'Import Regex List',
+            self.lastLocation,
+            u'Text files (*)'
         )
         if not filePath:
             return
@@ -633,12 +618,10 @@ class OWTextableRecode(OWWidget):
                 toDump[-1]['multiline'] = substitution[4]
             if substitution[5]:
                 toDump[-1]['dot_all'] = substitution[5]
-        filePath = unicode(
-            QFileDialog.getSaveFileName(
-                self,
-                u'Export Substitution List',
-                self.lastLocation,
-            )
+        filePath = QFileDialog.getSaveFileName(
+            self,
+            u'Export Substitution List',
+            self.lastLocation,
         )
         if filePath:
             self.lastLocation = os.path.dirname(filePath)
@@ -727,9 +710,9 @@ class OWTextableRecode(OWWidget):
                 maxRegexLen = max([len(r) for r in regexes])
                 maxReplStringLen = max([len(r) for r in replStrings])
                 for index in range(len(self.substitutions)):
-                    format = u'%-' + unicode(maxRegexLen + 2) + u's'
+                    format = u'%-' + str(maxRegexLen + 2) + u's'
                     substLabel = format % regexes[index]
-                    format = u'%-' + unicode(maxReplStringLen + 2) + u's'
+                    format = u'%-' + str(maxReplStringLen + 2) + u's'
                     substLabel += format % replStrings[index]
                     flags = list()
                     if self.substitutions[index][2]:
@@ -787,31 +770,17 @@ class OWTextableRecode(OWWidget):
     def onDeleteWidget(self):
         self.clearCreatedInputIndices()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
             self.sendButton.settingsChanged()
         else:
-            OWWidget.setCaption(self, title)
-
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
+            super().setCaption(title)
 
 
 if __name__ == '__main__':
+    import sys
+    from PyQt4.QtGui import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableRecode()
     ow.show()
