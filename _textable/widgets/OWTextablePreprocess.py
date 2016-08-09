@@ -20,58 +20,45 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.11.0'
 
-"""
-<name>Preprocess</name>
-<description>Basic text preprocessing</description>
-<icon>icons/Preprocess.png</icon>
-<priority>2001</priority>
-"""
 
 import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler,
+    InfoBox, SendButton, pluralize
+)
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from Orange.widgets import gui, settings
 
 
-class OWTextablePreprocess(OWWidget):
+class OWTextablePreprocess(OWTextableBaseWidget):
     """Orange widget for standard text preprocessing"""
 
-    settingsList = [
-        'copyAnnotations',
-        'applyCaseTransform',
-        'caseTransform',
-        'removeAccents',
-        'autoSend',
-        'uuid',
-    ]
+    name = "Preprocess"
+    description = "Basic text preprocessing"
+    icon = "icons/Preprocess.png"
+    priority = 2001
 
-    def __init__(self, parent=None, signalManager=None):
+    inputs = [('Segmentation', Segmentation, "inputData",)]
+    outputs = [('Preprocessed data', Segmentation)]
 
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.split(".")[:2]
+    )
+
+    # Settings...
+    copyAnnotations = settings.Setting(True)
+    applyCaseTransform = settings.Setting(False)
+    caseTransform = settings.Setting('to lower')
+    removeAccents = settings.Setting(False)
+
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
+
+    def __init__(self, *args, **kwargs):
         """Initialize a Preprocess widget"""
-
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
-
-        self.inputs = [('Segmentation', Segmentation, self.inputData, Single)]
-        self.outputs = [('Preprocessed data', Segmentation)]
-
-        # Settings...
-        self.copyAnnotations = True
-        self.applyCaseTransform = False
-        self.caseTransform = 'to lower'
-        self.removeAccents = False
-        self.autoSend = True
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
+        super().__init__(*args, **kwargs)
 
         # Other attributes...
         self.createdInputIndices = list()
@@ -88,17 +75,17 @@ class OWTextablePreprocess(OWWidget):
         # GUI...
 
         # Options box
-        optionsBox = OWGUI.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
             addSpace=True,
         )
-        self.preprocessingBoxLine1 = OWGUI.widgetBox(
+        self.preprocessingBoxLine1 = gui.widgetBox(
             widget=optionsBox,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=self.preprocessingBoxLine1,
             master=self,
             value='applyCaseTransform',
@@ -109,7 +96,7 @@ class OWTextablePreprocess(OWWidget):
                 u"Apply systematic case conversion."
             ),
         )
-        self.caseTransformCombo = OWGUI.comboBox(
+        self.caseTransformCombo = gui.comboBox(
             widget=self.preprocessingBoxLine1,
             master=self,
             value='caseTransform',
@@ -121,8 +108,8 @@ class OWTextablePreprocess(OWWidget):
             ),
         )
         self.caseTransformCombo.setMinimumWidth(120)
-        OWGUI.separator(widget=optionsBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=optionsBox, height=3)
+        gui.checkBox(
             widget=optionsBox,
             master=self,
             value='removeAccents',
@@ -132,8 +119,8 @@ class OWTextablePreprocess(OWWidget):
                 u"Replace accented characters with non-accented ones."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=optionsBox, height=3)
+        gui.checkBox(
             widget=optionsBox,
             master=self,
             value='copyAnnotations',
@@ -143,9 +130,9 @@ class OWTextablePreprocess(OWWidget):
                 u"Copy all annotations from input to output segments."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=2)
+        gui.separator(widget=optionsBox, height=2)
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -185,7 +172,7 @@ class OWTextablePreprocess(OWWidget):
             case = None
         self.clearCreatedInputIndices()
         previousNumInputs = len(Segmentation.data)
-        progressBar = OWGUI.ProgressBar(
+        progressBar = gui.ProgressBar(
             self,
             iterations=len(self.segmentation)
         )
@@ -218,34 +205,20 @@ class OWTextablePreprocess(OWWidget):
             self.caseTransformCombo.setDisabled(True)
         self.adjustSizeWithTimer()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
             self.sendButton.settingsChanged()
         else:
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
 
     def onDeleteWidget(self):
         self.clearCreatedInputIndices()
 
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
-
 
 if __name__ == '__main__':
+    import sys
+    from PyQt4.QtGui import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextablePreprocess()
     ow.show()
