@@ -20,82 +20,57 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.15.0'
 
-"""
-<name>Intersect</name>
-<description>In-/exclude segments based on another segmentation</description>
-<icon>icons/Intersect.png</icon>
-<priority>4004</priority>
-"""
 
 import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, InfoBox, SendButton, AdvancedSettings,
+    pluralize, updateMultipleInputs, SegmentationListContextHandler,
+    SegmentationsInputList
+)
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from Orange.widgets import widget, gui, settings
 
 
-class OWTextableIntersect(OWWidget):
+class OWTextableIntersect(OWTextableBaseWidget):
     """Orange widget for segment in-/exclusion based on other segmentation"""
 
-    contextHandlers = {
-        '': SegmentationListContextHandler(
-            '', [
-                ContextInputListField('segmentations'),
-                ContextInputIndex('source'),
-                ContextInputIndex('filtering'),
-                'sourceAnnotationKey',
-                'filteringAnnotationKey',
-            ]
-        )
-    }
+    name = "Intersect"
+    description = "In-/exclude segments based on another segmentation"
+    icon = "icons/Intersect.png"
+    priority = 4004
 
-    settingsList = [
-        'mode',
-        'copyAnnotations',
-        'autoSend',
-        'autoNumber',
-        'autoNumberKey',
-        'displayAdvancedSettings',
-        'uuid',
+    # Input and output channels...
+    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
+    outputs = [
+        ('Selected data', Segmentation, widget.Default),
+        ('Discarded data', Segmentation)
     ]
 
-    def __init__(self, parent=None, signalManager=None):
+    settingsHandler = SegmentationListContextHandler(
+        version=__version__.split(".")[:2]
+    )
+    segmentations = SegmentationsInputList()  # type: list
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
+    # Settings...
+    copyAnnotations = settings.Setting(True)
+    mode = settings.Setting(u'Include')
+    autoNumber = settings.Setting(False)
+    autoNumberKey = settings.Setting('num')
+    displayAdvancedSettings = settings.Setting(False)
 
-        # Input and output channels...
-        self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [
-            ('Selected data', Segmentation, Default),
-            ('Discarded data', Segmentation)
-        ]
+    source = settings.ContextSetting(0)
+    filtering = settings.ContextSetting(0)
+    sourceAnnotationKey = settings.ContextSetting(0)
+    filteringAnnotationKey = settings.ContextSetting(0)
 
-        # Settings...
-        self.copyAnnotations = True
-        self.autoSend = False
-        self.mode = u'Include'
-        self.autoNumber = False
-        self.autoNumberKey = u'num'
-        self.displayAdvancedSettings = False
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
 
-        # Other attributes...
-        self.segmentations = list()
-        self.source = None
-        self.sourceAnnotationKey = None
-        self.filtering = None
-        self.filteringAnnotationKey = None
-        self.settingsRestored = False
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
             widget=self.controlArea,
@@ -117,12 +92,12 @@ class OWTextableIntersect(OWWidget):
         self.advancedSettings.draw()
 
         # Intersect box
-        self.intersectBox = OWGUI.widgetBox(
+        self.intersectBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Intersect',
             orientation='vertical',
         )
-        self.modeCombo = OWGUI.comboBox(
+        self.modeCombo = gui.comboBox(
             widget=self.intersectBox,
             master=self,
             value='mode',
@@ -140,8 +115,8 @@ class OWTextableIntersect(OWWidget):
             ),
         )
         self.modeCombo.setMinimumWidth(140)
-        OWGUI.separator(widget=self.intersectBox, height=3)
-        self.sourceCombo = OWGUI.comboBox(
+        gui.separator(widget=self.intersectBox, height=3)
+        self.sourceCombo = gui.comboBox(
             widget=self.intersectBox,
             master=self,
             value='source',
@@ -154,8 +129,8 @@ class OWTextableIntersect(OWWidget):
                 u"will be selected to build the output segmentation."
             ),
         )
-        OWGUI.separator(widget=self.intersectBox, height=3)
-        self.sourceAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.intersectBox, height=3)
+        self.sourceAnnotationCombo = gui.comboBox(
             widget=self.intersectBox,
             master=self,
             value='sourceAnnotationKey',
@@ -172,8 +147,8 @@ class OWTextableIntersect(OWWidget):
                 u"(value 'none')."
             ),
         )
-        OWGUI.separator(widget=self.intersectBox, height=3)
-        self.filteringCombo = OWGUI.comboBox(
+        gui.separator(widget=self.intersectBox, height=3)
+        self.filteringCombo = gui.comboBox(
             widget=self.intersectBox,
             master=self,
             value='filtering',
@@ -187,8 +162,8 @@ class OWTextableIntersect(OWWidget):
                 u"the output segmentation."
             ),
         )
-        OWGUI.separator(widget=self.intersectBox, height=3)
-        self.filteringAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.intersectBox, height=3)
+        self.filteringAnnotationCombo = gui.comboBox(
             widget=self.intersectBox,
             master=self,
             value='filteringAnnotationKey',
@@ -205,23 +180,23 @@ class OWTextableIntersect(OWWidget):
                 u"(value 'none')."
             ),
         )
-        OWGUI.separator(widget=self.intersectBox, height=3)
+        gui.separator(widget=self.intersectBox, height=3)
         self.advancedSettings.advancedWidgets.append(self.intersectBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
-        optionsBox = OWGUI.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
         )
-        optionsBoxLine2 = OWGUI.widgetBox(
+        optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumber',
@@ -233,7 +208,7 @@ class OWTextableIntersect(OWWidget):
                 u"indices."
             ),
         )
-        self.autoNumberKeyLineEdit = OWGUI.lineEdit(
+        self.autoNumberKeyLineEdit = gui.lineEdit(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumberKey',
@@ -243,7 +218,7 @@ class OWTextableIntersect(OWWidget):
                 u"Annotation key for output segment auto-numbering."
             ),
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBox,
             master=self,
             value='copyAnnotations',
@@ -253,17 +228,17 @@ class OWTextableIntersect(OWWidget):
                 u"Copy all annotations from input to output segments."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=2)
+        gui.separator(widget=optionsBox, height=2)
         self.advancedSettings.advancedWidgets.append(optionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Basic intersect box
-        self.basicIntersectBox = OWGUI.widgetBox(
+        self.basicIntersectBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Intersect',
             orientation='vertical',
         )
-        self.basicModeCombo = OWGUI.comboBox(
+        self.basicModeCombo = gui.comboBox(
             widget=self.basicIntersectBox,
             master=self,
             value='mode',
@@ -281,8 +256,8 @@ class OWTextableIntersect(OWWidget):
             ),
         )
         self.basicModeCombo.setMinimumWidth(140)
-        OWGUI.separator(widget=self.basicIntersectBox, height=3)
-        self.basicSourceCombo = OWGUI.comboBox(
+        gui.separator(widget=self.basicIntersectBox, height=3)
+        self.basicSourceCombo = gui.comboBox(
             widget=self.basicIntersectBox,
             master=self,
             value='source',
@@ -295,8 +270,8 @@ class OWTextableIntersect(OWWidget):
                 u"will be selected to build the output segmentation."
             ),
         )
-        OWGUI.separator(widget=self.basicIntersectBox, height=3)
-        self.basicFilteringCombo = OWGUI.comboBox(
+        gui.separator(widget=self.basicIntersectBox, height=3)
+        self.basicFilteringCombo = gui.comboBox(
             widget=self.basicIntersectBox,
             master=self,
             value='filtering',
@@ -310,11 +285,11 @@ class OWTextableIntersect(OWWidget):
                 u"the output segmentation."
             ),
         )
-        OWGUI.separator(widget=self.basicIntersectBox, height=3)
+        gui.separator(widget=self.basicIntersectBox, height=3)
         self.advancedSettings.basicWidgets.append(self.basicIntersectBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -376,7 +351,7 @@ class OWTextableIntersect(OWWidget):
             copyAnnotations = True
 
         # Perform filtering...
-        progressBar = OWGUI.ProgressBar(
+        progressBar = gui.ProgressBar(
             self,
             iterations=num_iterations
         )
@@ -481,37 +456,25 @@ class OWTextableIntersect(OWWidget):
         self.adjustSize()
         self.adjustSizeWithTimer()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
             self.sendButton.settingsChanged()
         else:
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
 
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        self.openContext("", self.segmentations)
+        self.openContext(self.uuid, self.segmentations)
         self.updateGUI()
         self.sendButton.sendIf()
 
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
-
 
 if __name__ == '__main__':
+    import sys
+    import re
+
+    from PyQt4.QtGui import QApplication
     from LTTL.Input import Input
 
     appl = QApplication(sys.argv)
