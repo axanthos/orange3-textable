@@ -24,87 +24,55 @@ from LTTL.Table import Table
 from LTTL.Segmentation import Segmentation
 import LTTL.Processor as Processor
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget,
+    InfoBox, SendButton, updateMultipleInputs, SegmentationListContextHandler,
+    SegmentationsInputList
+)
+import Orange.data
+from Orange.widgets import widget, gui, settings
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
 
-
-class OWTextableContext(OWWidget):
+class OWTextableContext(OWTextableBaseWidget):
     """Orange widget for building concordances and studying collocations"""
+    name = "Context"
+    description = "Explore the context of segments"
+    icon = "icons/Context.png"
+    priority = 8001
 
-    contextHandlers = {
-        '': SegmentationListContextHandler(
-            '', [
-                ContextInputListField('segmentations'),
-                ContextInputIndex('units'),
-                ContextInputIndex('_contexts'),
-                'unitAnnotationKey',
-                'unitAnnotationKey',
-                'contextAnnotationKey',
-                'separateAnnotation',
-                'maxDistance',
-                'minFrequency',
-                'uuid',
-            ]
-        )
-    }
+    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
+    outputs = [('Textable table', Table, widget.Default),
+               ('Orange table', Orange.data.Table)]
 
-    settingsList = [
-        'autoSend',
-        'mode',
-        'separateAnnotation',
-        'applyMaxLength',
-        'maxLength',
-        'applyMaxDistance',
-        'maxDistance',
-        'useCollocationFormat',
-        'minFrequency',
-        'mergeStrings',
-    ]
+    settingsHandler = SegmentationListContextHandler(
+        version=__version__.split(".")[:2],
+    )
+    segmentations = SegmentationsInputList()  # type: list
 
-    def __init__(self, parent=None, signalManager=None):
+    # Settings...
+    mode = settings.Setting(u'Neighboring segments')
+    separateAnnotation = settings.ContextSetting(False)
+    maxLength = settings.Setting(25)
+    maxDistance = settings.ContextSetting(5)
+    minFrequency = settings.ContextSetting(1)
+    applyMaxLength = settings.Setting(True)
+    applyMaxDistance = settings.Setting(True)
+    useCollocationFormat = settings.Setting(False)
+    mergeStrings = settings.Setting(False)
 
+    # Other attributes...
+    units = settings.ContextSetting(0)
+    unitAnnotationKey = settings.ContextSetting(u'(none)')
+    _contexts = settings.ContextSetting(0)
+    contextAnnotationKey = settings.ContextSetting(u'(none)')
+
+    want_main_area = False
+    # TODO: wantStateInfoWidget = False
+
+    def __init__(self):
         """Initialize a Context widget"""
+        super().__init__()
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
-
-        # TODO: document second channel
-
-        self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [
-            ('Textable table', Table, Default),
-            ('Orange table', Orange.data.Table),
-        ]
-
-        # Settings...
-        self.autoSend = False
-        self.mode = u'Neighboring segments'
-        self.separateAnnotation = False
-        self.maxLength = 25
-        self.maxDistance = 5
-        self.minFrequency = 1
-        self.applyMaxLength = True
-        self.applyMaxDistance = True
-        self.useCollocationFormat = False
-        self.mergeStrings = False
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
-
-        # Other attributes...
-        self.segmentations = list()
-        self.units = None
-        self.unitAnnotationKey = None
-        self._contexts = None
-        self.contextAnnotationKey = None
-        self.settingsRestored = False
         self.infoBox = InfoBox(
             widget=self.controlArea,
             stringClickSend=u", please click 'Send' when ready.",
@@ -122,13 +90,13 @@ class OWTextableContext(OWWidget):
         # GUI...
 
         # Units box
-        self.unitsBox = OWGUI.widgetBox(
+        self.unitsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Units',
             orientation='vertical',
             addSpace=True,
         )
-        self.unitSegmentationCombo = OWGUI.comboBox(
+        self.unitSegmentationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
             value='units',
@@ -142,13 +110,13 @@ class OWTextableContext(OWWidget):
             ),
         )
         self.unitSegmentationCombo.setMinimumWidth(120)
-        OWGUI.separator(widget=self.unitsBox, height=3)
+        gui.separator(widget=self.unitsBox, height=3)
 
-        self.unitsSubBox = OWGUI.widgetBox(
+        self.unitsSubBox = gui.widgetBox(
             widget=self.unitsBox,
             orientation='vertical',
         )
-        self.unitAnnotationCombo = OWGUI.comboBox(
+        self.unitAnnotationCombo = gui.comboBox(
             widget=self.unitsSubBox,
             master=self,
             value='unitAnnotationKey',
@@ -165,8 +133,8 @@ class OWTextableContext(OWWidget):
                 u"segmentation."
             ),
         )
-        OWGUI.separator(widget=self.unitsSubBox, height=3)
-        self.separateAnnotationCheckBox = OWGUI.checkBox(
+        gui.separator(widget=self.unitsSubBox, height=3)
+        self.separateAnnotationCheckBox = gui.checkBox(
             widget=self.unitsSubBox,
             master=self,
             value='separateAnnotation',
@@ -180,13 +148,13 @@ class OWTextableContext(OWWidget):
         )
 
         # Contexts box...
-        self.contextsBox = OWGUI.widgetBox(
+        self.contextsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Contexts',
             orientation='vertical',
             addSpace=True,
         )
-        self.modeCombo = OWGUI.comboBox(
+        self.modeCombo = gui.comboBox(
             widget=self.contextsBox,
             master=self,
             value='mode',
@@ -212,8 +180,8 @@ class OWTextableContext(OWWidget):
                 u"output table usually contains 3 columns)."
             ),
         )
-        OWGUI.separator(widget=self.contextsBox, height=3)
-        self.contextSegmentationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.contextsBox, height=3)
+        self.contextSegmentationCombo = gui.comboBox(
             widget=self.contextsBox,
             master=self,
             value='_contexts',
@@ -226,8 +194,8 @@ class OWTextableContext(OWWidget):
                 u"is based."
             ),
         )
-        OWGUI.separator(widget=self.contextsBox, height=3)
-        self.contextAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.contextsBox, height=3)
+        self.contextAnnotationCombo = gui.comboBox(
             widget=self.contextsBox,
             master=self,
             value='contextAnnotationKey',
@@ -247,17 +215,17 @@ class OWTextableContext(OWWidget):
                 u"should be displayed in a separate column."
             ),
         )
-        self.neighboringSegmentsBox = OWGUI.widgetBox(
+        self.neighboringSegmentsBox = gui.widgetBox(
             widget=self.contextsBox,
             orientation='vertical',
         )
-        OWGUI.separator(widget=self.neighboringSegmentsBox, height=3)
-        self.maxDistanceLine = OWGUI.widgetBox(
+        gui.separator(widget=self.neighboringSegmentsBox, height=3)
+        self.maxDistanceLine = gui.widgetBox(
             widget=self.neighboringSegmentsBox,
             box=False,
             orientation='horizontal',
         )
-        self.maxDistanceSpin = OWGUI.checkWithSpin(
+        self.maxDistanceSpin = gui.spin(
             widget=self.maxDistanceLine,
             master=self,
             value='maxDistance',
@@ -265,16 +233,16 @@ class OWTextableContext(OWWidget):
             labelWidth=180,
             controlWidth=None,
             checked='applyMaxDistance',
-            min=1,
-            max=100,
-            spinCallback=self.sendButton.settingsChanged,
+            minv=1,
+            maxv=100,
+            callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
             tooltip=(
                 u"Maximal distance between 'key' and context segments."
             ),
         )
-        OWGUI.separator(widget=self.neighboringSegmentsBox, height=3)
-        self.useCollocationFormatCheckbox = OWGUI.checkBox(
+        gui.separator(widget=self.neighboringSegmentsBox, height=3)
+        self.useCollocationFormatCheckbox = gui.checkBox(
             widget=self.neighboringSegmentsBox,
             master=self,
             value='useCollocationFormat',
@@ -286,16 +254,16 @@ class OWTextableContext(OWWidget):
                 u"occurrence."
             ),
         )
-        OWGUI.separator(widget=self.neighboringSegmentsBox, height=3)
-        iBox = OWGUI.indentedBox(
+        gui.separator(widget=self.neighboringSegmentsBox, height=3)
+        iBox = gui.indentedBox(
             widget=self.neighboringSegmentsBox,
         )
-        self.minFrequencySpin = OWGUI.spin(
+        self.minFrequencySpin = gui.spin(
             widget=iBox,
             master=self,
             value='minFrequency',
-            min=1,
-            max=1,
+            minv=1,
+            maxv=1,
             step=1,
             orientation='horizontal',
             label=u'Min. frequency:',
@@ -305,17 +273,17 @@ class OWTextableContext(OWWidget):
                 u"The minimum frequency of context segment types."
             ),
         )
-        self.containingSegmentationBox = OWGUI.widgetBox(
+        self.containingSegmentationBox = gui.widgetBox(
             widget=self.contextsBox,
             orientation='vertical',
         )
-        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
-        self.maxLengthLine = OWGUI.widgetBox(
+        gui.separator(widget=self.containingSegmentationBox, height=3)
+        self.maxLengthLine = gui.widgetBox(
             widget=self.containingSegmentationBox,
             box=False,
             orientation='horizontal',
         )
-        self.maxLengthSpin = OWGUI.checkWithSpin(
+        self.maxLengthSpin = gui.spin(
             widget=self.maxLengthLine,
             master=self,
             value='maxLength',
@@ -323,17 +291,18 @@ class OWTextableContext(OWWidget):
             labelWidth=180,
             controlWidth=None,
             checked='applyMaxLength',
-            min=1,
-            max=100,
-            spinCallback=self.sendButton.settingsChanged,
+            minv=1,
+            maxv=100,
+            callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
             tooltip=(
                 u"Maximal number of characters in immediate left\n"
                 u"and right contexts."
             ),
         )
-        OWGUI.separator(widget=self.neighboringSegmentsBox, height=3)
-        OWGUI.checkBox(
+
+        gui.separator(widget=self.neighboringSegmentsBox, height=3)
+        gui.checkBox(
             widget=self.neighboringSegmentsBox,
             master=self,
             value='mergeStrings',
@@ -345,9 +314,9 @@ class OWTextableContext(OWWidget):
                 u"each string is adjacent to the beginning of the next string."
             ),
         )
-        OWGUI.separator(widget=self.contextsBox, height=3)
+        gui.separator(widget=self.contextsBox, height=3)
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -397,7 +366,7 @@ class OWTextableContext(OWWidget):
             self.send('Orange table', None)
             return
 
-        progressBar = OWGUI.ProgressBar(
+        progressBar = gui.ProgressBar(
             self,
             iterations=len(self.segmentations[self._contexts][1]),
         )
@@ -568,7 +537,7 @@ class OWTextableContext(OWWidget):
                         )
                 if self.useCollocationFormat:
                     self.unitsSubBox.setDisabled(True)
-                    self.minFrequencySpin.control.setRange(
+                    self.minFrequencySpin.setRange(
                         1,
                         len(segmentation),
                     )
@@ -591,30 +560,16 @@ class OWTextableContext(OWWidget):
 
         self.adjustSizeWithTimer()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        self.openContext("", self.segmentations)
+        self.openContext(self.uuid, self.segmentations)
         self.updateGUI()
         self.sendButton.sendIf()
 
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
-
 
 if __name__ == '__main__':
+    import sys, re
+    from PyQt4.QtGui import QApplication
     import LTTL.Segmenter as Segmenter
     from LTTL.Input import Input
 
@@ -659,6 +614,9 @@ if __name__ == '__main__':
     ow.inputData(seg2, 1)
     ow.inputData(seg6, 2)
     ow.inputData(seg7, 3)
+    ow.handleNewSignals()
+    ow.inputData(seg2, 1)
+    ow.handleNewSignals()
     ow.show()
     appl.exec_()
     ow.saveSettings()
