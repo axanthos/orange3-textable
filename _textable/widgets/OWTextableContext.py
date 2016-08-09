@@ -20,13 +20,6 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.10.4'
 
-"""
-<name>Context</name>
-<description>Explore the context of segments</description>
-<icon>icons/Context.png</icon>
-<priority>8001</priority>
-"""
-
 from LTTL.Table import Table
 from LTTL.Segmentation import Segmentation
 import LTTL.Processor as Processor
