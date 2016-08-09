@@ -22,94 +22,59 @@ __version__ = u'1.0.1'
 __author__ = "Mahtab Mohammadi"
 __maintainer__ = "LangTech Sarl"
 
-"""
-<name>Cooccurrence</name>
-<description>Measure cooccurrence between segment types</description>
-<icon>icons/Cooccurrence.png</icon>
-<priority>8005</priority>
-"""
 
 import LTTL.Processor as Processor
 from LTTL.Table import IntPivotCrosstab
 from LTTL.Segmentation import Segmentation
 
-from TextableUtils import *
-
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from .TextableUtils import (
+    OWTextableBaseWidget,
+    InfoBox, SendButton, updateMultipleInputs, pluralize,
+    SegmentationListContextHandler, SegmentationsInputList,
+)
+import Orange.data
+from Orange.widgets import widget, gui, settings
 
 import re
 
 
-class OWTextableCooccurrence(OWWidget):
+class OWTextableCooccurrence(OWTextableBaseWidget):
     """Orange widget for calculating co-occurrences of text units"""
 
-    contextHandlers = {
-        '': SegmentationListContextHandler(
-            '', [
-                ContextInputListField('segmentations'),
-                ContextInputIndex('units'),
-                ContextInputIndex('_contexts'),
-                ContextInputIndex('units2'),
-                'mode',
-                'unitAnnotationKey',
-                'unit2AnnotationKey',
-                'contextAnnotationKey',
-                'coocWithUnits2'
-                'sequenceLength',
-                'windowSize',
-                'uuid',
-            ]
-        )
-    }
+    name = "Cooccurrence"
+    description = "Measure cooccurrence between segment types"
+    icon = "icons/Cooccurrence.png"
+    priority = 8005
 
-    settingsList = [
-        'autoSend',
-        'intraSeqDelim',
-        'sequenceLength',
-        'windowSize',
-        'coocWithUnits2'
-    ]
+    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
+    outputs = [('Textable pivot crosstab', IntPivotCrosstab, widget.Default),
+               ('Orange table', Orange.data.Table)]
 
-    def __init__(self, parent=None, signalManager=None):
+    settingsHandler = SegmentationListContextHandler(
+        version=__version__.split(".")[:2]
+    )
+    segmentations = SegmentationsInputList()  # type: list
 
+    # Settings...
+    intraSeqDelim = settings.Setting(u'#')
+    units = settings.ContextSetting(-1)
+    _contexts = settings.ContextSetting(-1)
+    units2 = settings.ContextSetting(-1)
+    mode = settings.ContextSetting(u'Sliding window')
+    unitAnnotationKey = settings.ContextSetting(-1)
+    unit2AnnotationKey = settings.ContextSetting(-1)
+    contextAnnotationKey = settings.ContextSetting(-1)
+    coocWithUnits2 = settings.ContextSetting(False)
+    sequenceLength = settings.ContextSetting(1)
+    windowSize = settings.ContextSetting(2)
+
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
+
+    def __init__(self):
         """Initialize a Cooccurrence widget"""
+        super().__init__()
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
-
-        # TODO: document second channel
-
-        self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [
-            ('Textable pivot crosstab', IntPivotCrosstab, Default),
-            ('Orange table', Orange.data.Table),
-        ]
-
-        # Settings...
-        self.autoSend = False
-        self.sequenceLength = 1
-        self.intraSeqDelim = u'#'
-        self.mode = u'Sliding window'
-        self.coocWithUnits2 = False
-        self.windowSize = 2
-        self.units = None
-        self.unitAnnotationKey = None
-        self.units2 = None
-        self.unit2AnnotationKey = None
-        self._contexts = None
-        self.contextAnnotationKey = None
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
-
-        # Other attributes...
-        self.segmentations = list()
         self.infoBox = InfoBox(
             widget=self.controlArea,
             stringClickSend=u", please click 'Send' when ready.",
@@ -127,13 +92,13 @@ class OWTextableCooccurrence(OWWidget):
         # GUI...
 
         # Units box
-        self.unitsBox = OWGUI.widgetBox(
+        self.unitsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Units',
             orientation='vertical',
             addSpace=True,
         )
-        self.unitsegmentationCombo = OWGUI.comboBox(
+        self.unitsegmentationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
             value='units',
@@ -149,8 +114,8 @@ class OWTextableCooccurrence(OWWidget):
             ),
         )
         self.unitsegmentationCombo.setMinimumWidth(120)
-        OWGUI.separator(widget=self.unitsBox, height=3)
-        self.unitAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.unitsBox, height=3)
+        self.unitAnnotationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
             value='unitAnnotationKey',
@@ -168,13 +133,13 @@ class OWTextableCooccurrence(OWWidget):
                 u"annotation key."
             ),
         )
-        OWGUI.separator(widget=self.unitsBox, height=3)
-        self.sequenceLengthSpin = OWGUI.spin(
+        gui.separator(widget=self.unitsBox, height=3)
+        self.sequenceLengthSpin = gui.spin(
             widget=self.unitsBox,
             master=self,
             value='sequenceLength',
-            min=1,
-            max=1,
+            minv=1,
+            maxv=1,
             step=1,
             orientation='horizontal',
             label=u'Sequence length:',
@@ -189,8 +154,8 @@ class OWTextableCooccurrence(OWWidget):
                 u"counted between primary and secondary units."
             ),
         )
-        OWGUI.separator(widget=self.unitsBox, height=3)
-        self.intraSeqDelimLineEdit = OWGUI.lineEdit(
+        gui.separator(widget=self.unitsBox, height=3)
+        self.intraSeqDelimLineEdit = gui.lineEdit(
             widget=self.unitsBox,
             master=self,
             value='intraSeqDelim',
@@ -206,16 +171,16 @@ class OWTextableCooccurrence(OWWidget):
                 u"each sequence."
             ),
         )
-        OWGUI.separator(widget=self.unitsBox, height=3)
+        gui.separator(widget=self.unitsBox, height=3)
 
         # Secondary unit
-        self.units2Box = OWGUI.widgetBox(
+        self.units2Box = gui.widgetBox(
             widget=self.controlArea,
             box=u'Secondary units',
             orientation='vertical',
             addSpace=True,
         )
-        self.coocWithUnits2Checkbox = OWGUI.checkBox(
+        self.coocWithUnits2Checkbox = gui.checkBox(
             widget=self.units2Box,
             master=self,
             value='coocWithUnits2',
@@ -226,11 +191,11 @@ class OWTextableCooccurrence(OWWidget):
                 u"primary and secondary units."
             ),
         )
-        OWGUI.separator(widget=self.units2Box, height=3)
-        iBox = OWGUI.indentedBox(
+        gui.separator(widget=self.units2Box, height=3)
+        iBox = gui.indentedBox(
             widget=self.units2Box,
         )
-        self.unit2SegmentationCombo = OWGUI.comboBox(
+        self.unit2SegmentationCombo = gui.comboBox(
             widget=iBox,
             master=self,
             value='units2',
@@ -247,8 +212,8 @@ class OWTextableCooccurrence(OWWidget):
                 u"resulting crosstab."
             )
         )
-        OWGUI.separator(widget=iBox, height=3)
-        self.unit2AnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=iBox, height=3)
+        self.unit2AnnotationCombo = gui.comboBox(
             widget=iBox,
             master=self,
             value='unit2AnnotationKey',
@@ -271,16 +236,16 @@ class OWTextableCooccurrence(OWWidget):
             iBox.setDisabled(False)
         else:
             iBox.setDisabled(True)
-        OWGUI.separator(widget=self.units2Box, height=3)
+        gui.separator(widget=self.units2Box, height=3)
 
         # Context box...
-        self._contextsBox = OWGUI.widgetBox(
+        self._contextsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Contexts',
             orientation='vertical',
             addSpace=True,
         )
-        self.modeCombo = OWGUI.comboBox(
+        self.modeCombo = gui.comboBox(
             widget=self._contextsBox,
             master=self,
             value='mode',
@@ -303,17 +268,17 @@ class OWTextableCooccurrence(OWWidget):
                 u"segmentation.\n"
             ),
         )
-        self.slidingWindowBox = OWGUI.widgetBox(
+        self.slidingWindowBox = gui.widgetBox(
             widget=self._contextsBox,
             orientation='vertical'
         )
-        OWGUI.separator(widget=self.slidingWindowBox, height=3)
-        self.windowSizeSpin = OWGUI.spin(
+        gui.separator(widget=self.slidingWindowBox, height=3)
+        self.windowSizeSpin = gui.spin(
             widget=self.slidingWindowBox,
             master=self,
             value='windowSize',
-            min=2,
-            max=2,
+            minv=2,
+            maxv=2,
             step=1,
             orientation='horizontal',
             label=u'Window size:',
@@ -323,12 +288,12 @@ class OWTextableCooccurrence(OWWidget):
                 u"The length of segment sequences defining contexts."
             ),
         )
-        self.containingSegmentationBox = OWGUI.widgetBox(
+        self.containingSegmentationBox = gui.widgetBox(
             widget=self._contextsBox,
             orientation='vertical',
         )
-        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
-        self.contextSegmentationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.containingSegmentationBox, height=3)
+        self.contextSegmentationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
             value='_contexts',
@@ -341,8 +306,8 @@ class OWTextableCooccurrence(OWWidget):
                 u"the contexts in which co-occurrences will be counted."
             ),
         )
-        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
-        self.contextAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.containingSegmentationBox, height=3)
+        self.contextAnnotationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
             value="contextAnnotationKey",
@@ -359,9 +324,9 @@ class OWTextableCooccurrence(OWWidget):
                 u"values for a specific annotation key."
             )
         )
-        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
+        gui.separator(widget=self.containingSegmentationBox, height=3)
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -441,7 +406,7 @@ class OWTextableCooccurrence(OWWidget):
 
         # Case1: sliding window
         if self.mode == 'Sliding window':
-            progressBar = OWGUI.ProgressBar(
+            progressBar = gui.ProgressBar(
                 self,
                 iterations=len(units['segmentation']) - (self.windowSize - 1)
             )
@@ -470,7 +435,7 @@ class OWTextableCooccurrence(OWWidget):
                 if units2['annotation_key'] == u'(none)':
                     units2['annotation_key'] = None
                 num_iterations = len(contexts['segmentation'])
-                progressBar = OWGUI.ProgressBar(
+                progressBar = gui.ProgressBar(
                     self,
                     iterations=num_iterations * 2
                 )
@@ -483,7 +448,7 @@ class OWTextableCooccurrence(OWWidget):
                 )
             else:
                 num_iterations = (len(contexts['segmentation']))
-                progressBar = OWGUI.ProgressBar(
+                progressBar = gui.ProgressBar(
                     self,
                     iterations=num_iterations
                 )
@@ -547,7 +512,7 @@ class OWTextableCooccurrence(OWWidget):
                 self.unitAnnotationKey = u'(none)'
             self.unitAnnotationKey = self.unitAnnotationKey
             self.unitsBox.setDisabled(False)
-            self.sequenceLengthSpin.control.setRange(
+            self.sequenceLengthSpin.setRange(
                 1,
                 len(self.segmentations[self.units][1])
             )
@@ -565,7 +530,7 @@ class OWTextableCooccurrence(OWWidget):
             self.slidingWindowBox.setVisible(True)
             self.sequenceLengthSpin.setDisabled(False)
 
-            self.windowSizeSpin.control.setRange(
+            self.windowSizeSpin.setRange(
                 2,
                 len(self.segmentations[self.units][1])
             )
@@ -618,30 +583,16 @@ class OWTextableCooccurrence(OWWidget):
 
         self.adjustSizeWithTimer()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def handleNewSignals(self):
         """Overridden: called after multiple singnals have been added"""
-        self.openContext("", self.segmentations)
+        self.openContext(self.uuid, self.segmentations)
         self.updateGUI()
         self.sendButton.sendIf()
 
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
-
 
 if __name__ == '__main__':
+    import sys
+    from PyQt4.QtGui import QApplication
     import LTTL.Segmenter as Segmenter
     from LTTL.Input import Input
 
