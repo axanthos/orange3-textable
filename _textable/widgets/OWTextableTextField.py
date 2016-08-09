@@ -18,61 +18,53 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.3'
-
-"""
-<name>Text Field</name>
-<description>Import text data from keyboard input</description>
-<icon>icons/TextField.png</icon>
-<priority>1</priority>
-"""
+__version__ = '0.13.2'      # TODO change subversion?
 
 from unicodedata import normalize
-from PyQt4 import QtCore
+
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 
-from TextableUtils import *
+from PyQt4.QtGui import QPlainTextEdit
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from .TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler,
+    getPredefinedEncodings, pluralize,
+    InfoBox, SendButton
+)
+from Orange.widgets import widget, gui, settings
 
 
-class OWTextableTextField(OWWidget):
+class OWTextableTextField(OWTextableBaseWidget):
     """Orange widget for typing text data"""
 
-    settingsList = [
-        'textFieldContent',
-        'encoding',
-        'autoSend',
-        'uuid',
-    ]
+    name = "Text Field"
+    description = "Import text data from keyboard input"
+    icon = "icons/TextField.png"
+    priority = 1
+
+    # Input and output channels...
+    inputs = [('Text data', Segmentation, "inputTextData", widget.Single)]
+    outputs = [('Text data', Segmentation)]
+
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.split(".")[:2]
+    )
+
+    # Settings ...
+    textFieldContent = settings.Setting(u''.encode('utf-8'))
+    encoding = settings.Setting(u'utf-8')
 
     # Predefined list of available encodings...
     encodings = getPredefinedEncodings()
 
-    def __init__(self, parent=None, signalManager=None):
+    want_main_area = False
+    # TODO: wantStateInfoWidget=0
+
+    def __init__(self):
         """Initialize a Text File widget"""
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0
-        )
-
-        # Input and output channels...
-        self.inputs = [('Text data', Segmentation, self.inputTextData, Single)]
-        self.outputs = [('Text data', Segmentation)]
-
-        # Settings...
-        self.textFieldContent = u''.encode('utf-8')
-        self.encoding = u'utf-8'
-        self.autoSend = True
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
+        super().__init__()
 
         # Other attributes...
         self.infoBox = InfoBox(widget=self.controlArea)
@@ -90,19 +82,15 @@ class OWTextableTextField(OWWidget):
         # GUI...
 
         # Text Field...
-        OWGUI.separator(
+        gui.separator(
             widget=self.controlArea,
             height=3,
         )
         self.editor = QPlainTextEdit()
         self.editor.setPlainText(self.textFieldContent.decode('utf-8'))
         self.controlArea.layout().addWidget(self.editor)
-        self.connect(
-            self.editor,
-            SIGNAL('textChanged()'),
-            self.sendButton.settingsChanged
-        )
-        OWGUI.separator(
+        self.editor.textChanged.connect(self.sendButton.settingsChanged)
+        gui.separator(
             widget=self.controlArea,
             height=3,
         )
@@ -116,7 +104,6 @@ class OWTextableTextField(OWWidget):
 
         self.sendButton.sendIf()
 
-
     def inputTextData(self, segmentation):
         """Handle text data on input connection"""
         self.segmentation.clear()
@@ -129,14 +116,7 @@ class OWTextableTextField(OWWidget):
 
     def sendData(self):
         """Normalize content, then create and send segmentation"""
-
-        # Get, convert and normalize field content...
-        textFieldContent = unicode(
-            QtCore.QTextCodec.codecForName('UTF-16').fromUnicode(
-                self.editor.toPlainText()
-            ),
-            'UTF-16'
-        )
+        textFieldContent = self.editor.toPlainText()
         self.textFieldContent = textFieldContent.encode('utf-8')
         textFieldContent \
             = textFieldContent.replace('\r\n', '\n').replace('\r', '\n')
@@ -168,34 +148,19 @@ class OWTextableTextField(OWWidget):
 
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
             self.sendButton.settingsChanged()
         else:
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
 
     def onDeleteWidget(self):
-        if self.segmentation is not None:
-            self.segmentation.clear()
-
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
-
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
+        self.segmentation.clear()
+        self.segmentation.__del__()
 
 
 if __name__ == '__main__':
+    import sys
+    from PyQt4.QtGui import  QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableTextField()
     ow.show()
