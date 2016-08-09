@@ -20,90 +20,58 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.12.3'
 
-"""
-<name>Category</name>
-<description>Build a table with categories defined by segments' content or
-annotations.</description>
-<icon>icons/Category.png</icon>
-<priority>8006</priority>
-"""
-
 from LTTL.Table import Table
 from LTTL.Segmentation import Segmentation
 import LTTL.Processor as Processor
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget,
+    InfoBox, SendButton, updateMultipleInputs, SegmentationListContextHandler,
+    SegmentationsInputList
+)
+import Orange.data
+from Orange.widgets import widget, gui, settings
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
 
-
-class OWTextableCategory(OWWidget):
+class OWTextableCategory(OWTextableBaseWidget):
     """Orange widget for extracting content or annotation information"""
 
-    contextHandlers = {
-        '': SegmentationListContextHandler(
-            '', [
-                ContextInputListField('segmentations'),
-                ContextInputIndex('units'),
-                ContextInputIndex('_contexts'),
-                'unitAnnotationKey',
-                'contextAnnotationKey',
-                'sequenceLength',
-                'uuid',
-            ]
-        )
-    }
+    name = "Category"
+    description = "Build a table with categories defined by segments' " \
+                  "content or annotations."
+    icon = "icons/Category.png"
+    priority = 8006
 
-    settingsList = [
-        'autoSend',
-        'intraSeqDelim',
-        'sortOrder',
-        'sortReverse',
-        'keepOnlyFirst',
-        'valueDelimiter',
-        'sequenceLength',
-    ]
+    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
+    outputs = [('Textable table', Table, widget.Default),
+               ('Orange table', Orange.data.Table)]
 
-    def __init__(self, parent=None, signalManager=None):
+    settingsHandler = SegmentationListContextHandler(
+        version=__version__.split(".")[:2]
+    )
+    segmentations = SegmentationsInputList()  # type: list
+
+    intraSeqDelim = settings.Setting(u'#')
+    sortOrder = settings.Setting(u'Frequency')
+    sortReverse = settings.Setting(True)
+    keepOnlyFirst = settings.Setting(True)
+    valueDelimiter = settings.Setting(u'|')
+
+    units = settings.ContextSetting(-1)
+    _contexts = settings.ContextSetting(-1)
+    unitAnnotationKey = settings.ContextSetting(-1)
+    contextAnnotationKey = settings.ContextSetting(-1)
+    sequenceLength = settings.ContextSetting(1)
+
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
+
+    def __init__(self):
 
         """Initialize a Category widget"""
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
+        super().__init__()
 
-        # TODO: document second channel
-
-        self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [
-            ('Textable table', Table, Default),
-            ('Orange table', Orange.data.Table),
-        ]
-
-        # Settings...
-        self.autoSend = False
-        self.sequenceLength = 1
-        self.intraSeqDelim = u'#'
-        self.sortOrder = u'Frequency'
-        self.sortReverse = True
-        self.keepOnlyFirst = True
-        self.valueDelimiter = u'|'
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
-
-        # Other attributes...
-        self.segmentations = list()
-        self.units = None
-        self.unitAnnotationKey = None
-        self._contexts = None
-        self.contextAnnotationKey = None
-        self.settingsRestored = False
         self.infoBox = InfoBox(
             widget=self.controlArea,
             stringClickSend=u", please click 'Send' when ready.",
@@ -121,13 +89,13 @@ class OWTextableCategory(OWWidget):
         # GUI...
 
         # Units box
-        self.unitsBox = OWGUI.widgetBox(
+        self.unitsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Units',
             orientation='vertical',
             addSpace=True,
         )
-        self.unitSegmentationCombo = OWGUI.comboBox(
+        self.unitSegmentationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
             value='units',
@@ -141,8 +109,8 @@ class OWTextableCategory(OWWidget):
             ),
         )
         self.unitSegmentationCombo.setMinimumWidth(120)
-        OWGUI.separator(widget=self.unitsBox, height=3)
-        self.unitAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.unitsBox, height=3)
+        self.unitAnnotationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
             value='unitAnnotationKey',
@@ -158,13 +126,13 @@ class OWTextableCategory(OWWidget):
                 u"annotation values for a specific annotation key."
             ),
         )
-        OWGUI.separator(widget=self.unitsBox, height=3)
-        self.sequenceLengthSpin = OWGUI.spin(
+        gui.separator(widget=self.unitsBox, height=3)
+        self.sequenceLengthSpin = gui.spin(
             widget=self.unitsBox,
             master=self,
             value='sequenceLength',
-            min=1,
-            max=1,
+            minv=1,
+            maxv=1,
             step=1,
             orientation='horizontal',
             label=u'Sequence length:',
@@ -176,8 +144,8 @@ class OWTextableCategory(OWWidget):
                 u"category extraction."
             ),
         )
-        OWGUI.separator(widget=self.unitsBox, height=3)
-        self.intraSeqDelimLineEdit = OWGUI.lineEdit(
+        gui.separator(widget=self.unitsBox, height=3)
+        self.intraSeqDelimLineEdit = gui.lineEdit(
             widget=self.unitsBox,
             master=self,
             value='intraSeqDelim',
@@ -193,16 +161,16 @@ class OWTextableCategory(OWWidget):
                 u"each sequence."
             ),
         )
-        OWGUI.separator(widget=self.unitsBox, height=3)
+        gui.separator(widget=self.unitsBox, height=3)
 
         # Multiple Values box
-        self.multipleValuesBox = OWGUI.widgetBox(
+        self.multipleValuesBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Multiple Values',
             orientation='vertical',
             addSpace=True,
         )
-        self.sortOrderCombo = OWGUI.comboBox(
+        self.sortOrderCombo = gui.comboBox(
             widget=self.multipleValuesBox,
             master=self,
             value='sortOrder',
@@ -217,8 +185,8 @@ class OWTextableCategory(OWWidget):
             ),
         )
         self.sortOrderCombo.setMinimumWidth(120)
-        OWGUI.separator(widget=self.multipleValuesBox, height=3)
-        self.sortReverseCheckBox = OWGUI.checkBox(
+        gui.separator(widget=self.multipleValuesBox, height=3)
+        self.sortReverseCheckBox = gui.checkBox(
             widget=self.multipleValuesBox,
             master=self,
             value='sortReverse',
@@ -228,8 +196,8 @@ class OWTextableCategory(OWWidget):
                 u"Sort in reverse (i.e. decreasing) order."
             ),
         )
-        OWGUI.separator(widget=self.multipleValuesBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=self.multipleValuesBox, height=3)
+        gui.checkBox(
             widget=self.multipleValuesBox,
             master=self,
             value='keepOnlyFirst',
@@ -240,8 +208,8 @@ class OWTextableCategory(OWWidget):
                 u"(after sorting)."
             ),
         )
-        OWGUI.separator(widget=self.multipleValuesBox, height=3)
-        self.multipleValuesDelimLineEdit = OWGUI.lineEdit(
+        gui.separator(widget=self.multipleValuesBox, height=3)
+        self.multipleValuesDelimLineEdit = gui.lineEdit(
             widget=self.multipleValuesBox,
             master=self,
             value='valueDelimiter',
@@ -256,16 +224,16 @@ class OWTextableCategory(OWWidget):
                 u"used as a delimiter between them."
             ),
         )
-        OWGUI.separator(widget=self.multipleValuesBox, height=3)
+        gui.separator(widget=self.multipleValuesBox, height=3)
 
         # Contexts box...
-        self.contextsBox = OWGUI.widgetBox(
+        self.contextsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Contexts',
             orientation='vertical',
             addSpace=True,
         )
-        self.contextSegmentationCombo = OWGUI.comboBox(
+        self.contextSegmentationCombo = gui.comboBox(
             widget=self.contextsBox,
             master=self,
             value='_contexts',
@@ -279,8 +247,8 @@ class OWTextableCategory(OWWidget):
                 u"assigned."
             ),
         )
-        OWGUI.separator(widget=self.contextsBox, height=3)
-        self.contextAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.contextsBox, height=3)
+        self.contextAnnotationCombo = gui.comboBox(
             widget=self.contextsBox,
             master=self,
             value='contextAnnotationKey',
@@ -297,9 +265,9 @@ class OWTextableCategory(OWWidget):
                 u"annotation values for a specific annotation key."
             ),
         )
-        OWGUI.separator(widget=self.contextsBox, height=3)
+        gui.separator(widget=self.contextsBox, height=3)
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -377,7 +345,7 @@ class OWTextableCategory(OWWidget):
             contexts['annotation_key'] = None
 
         # Count...
-        progressBar = OWGUI.ProgressBar(
+        progressBar = gui.ProgressBar(
             self,
             iterations=len(contexts['segmentation'])
         )
@@ -429,7 +397,7 @@ class OWTextableCategory(OWWidget):
                 self.unitAnnotationKey = u'(none)'
             self.unitAnnotationKey = self.unitAnnotationKey
             self.unitsBox.setDisabled(False)
-            self.sequenceLengthSpin.control.setRange(
+            self.sequenceLengthSpin.setRange(
                 1,
                 len(self.segmentations[self.units][1])
             )
@@ -453,39 +421,25 @@ class OWTextableCategory(OWWidget):
 
         self.adjustSizeWithTimer()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        self.openContext("", self.segmentations)
+        self.openContext(self.uuid, self.segmentations)
         self.updateGUI()
         self.sendButton.sendIf()
 
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
-
 
 if __name__ == '__main__':
-    from LTTL.Input import Input
-    from LTTL.Segmenter import Segmenter
+    import sys
     import re
+    from PyQt4.QtGui import  QApplication
+    from LTTL.Input import Input
+    from LTTL import Segmenter as segmenter
 
     appl = QApplication(sys.argv)
     ow = OWTextableCategory()
     seg1 = Input(u'aaabc', 'text1')
     seg2 = Input(u'abbc', 'text2')
-    segmenter = Segmenter()
+    # segmenter = Segmenter()
     seg3 = segmenter.concatenate(
         [seg1, seg2],
         import_labels_as='string',
@@ -493,16 +447,16 @@ if __name__ == '__main__':
     )
     seg4 = segmenter.tokenize(
         seg3,
-        regexes=[(re.compile(r'\w+'), u'Tokenize',)],
+        regexes=[(re.compile(r'\w+'), u'tokenize',)],
     )
     seg5 = segmenter.tokenize(
         seg4,
-        regexes=[(re.compile(r'[ai]'), u'Tokenize',)],
+        regexes=[(re.compile(r'[ai]'), u'tokenize',)],
         label='V'
     )
     seg6 = segmenter.tokenize(
         seg4,
-        regexes=[(re.compile(r'[bc]'), u'Tokenize',)],
+        regexes=[(re.compile(r'[bc]'), u'tokenize',)],
         label='C'
     )
     seg7 = segmenter.concatenate(
