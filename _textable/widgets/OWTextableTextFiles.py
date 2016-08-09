@@ -20,76 +20,63 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.17.3'
 
-"""
-<name>Text Files</name>
-<description>Import data from raw text files</description>
-<icon>icons/TextFiles.png</icon>
-<priority>2</priority>
-"""
 
 import codecs, io, os, re, json
 from unicodedata import normalize
+
+from PyQt4.QtGui import QFileDialog, QMessageBox
+from PyQt4.QtGui import QFont
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler,
+    JSONMessage, InfoBox, SendButton, AdvancedSettings,
+    getPredefinedEncodings, normalizeCarriageReturns, pluralize
+)
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from Orange.widgets import widget, gui, settings
 
 CHUNK_LENGTH = 1000000
 CHUNK_NUM = 100
 
 
-class OWTextableTextFiles(OWWidget):
+class OWTextableTextFiles(OWTextableBaseWidget):
     """Orange widget for loading text files"""
 
-    settingsList = [
-        'files',
-        'encoding',
-        'autoSend',
-        'autoNumber',
-        'autoNumberKey',
-        'importFilenames',
-        'importFilenamesKey',
-        'lastLocation',
-        'displayAdvancedSettings',
-        'file',
-        'uuid',
+    name = "Text Files"
+    description = "Import data from raw text files"
+    icon = "icons/TextFiles.png"
+    priority = 2
+
+    # Input and output channels...
+    inputs = [
+        ('Message', JSONMessage, "inputMessage", widget.Single)
     ]
+    outputs = [('Text data', Segmentation)]
 
-    def __init__(self, parent=None, signalManager=None):
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.split(".")[:2]
+    )
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
+    # Settings...
+    files = settings.Setting([])
+    encoding = settings.Setting('iso-8859-1')
+    autoNumber = settings.Setting(False)
+    autoNumberKey = settings.Setting(u'num')
+    importFilenames = settings.Setting(True)
+    importFilenamesKey = settings.Setting(u'filename')
+    lastLocation = settings.Setting('.')
+    displayAdvancedSettings = settings.Setting(False)
+    file = settings.Setting(u'')
 
-        # Input and output channels...
-        self.inputs = [
-            ('Message', JSONMessage, self.inputMessage, Single)
-        ]
-        self.outputs = [('Text data', Segmentation)]
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
 
-        # Settings...
-        self.files = list()
-        self.encoding = 'iso-8859-1'
-        self.autoSend = True
-        self.autoNumber = False
-        self.autoNumberKey = u'num'
-        self.importFilenames = True
-        self.importFilenamesKey = u'filename'
-        self.lastLocation = '.'
-        self.displayAdvancedSettings = False
-        self.file = u''
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         # Other attributes...
         self.segmentation = None
@@ -121,17 +108,17 @@ class OWTextableTextFiles(OWWidget):
         # BASIC GUI...
 
         # Basic file box
-        basicFileBox = OWGUI.widgetBox(
+        basicFileBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Source',
             orientation='vertical',
         )
-        basicFileBoxLine1 = OWGUI.widgetBox(
+        basicFileBoxLine1 = gui.widgetBox(
             widget=basicFileBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=basicFileBoxLine1,
             master=self,
             value='file',
@@ -143,8 +130,8 @@ class OWTextableTextFiles(OWWidget):
                 u"The path of the file."
             ),
         )
-        OWGUI.separator(widget=basicFileBoxLine1, width=5)
-        OWGUI.button(
+        gui.separator(widget=basicFileBoxLine1, width=5)
+        gui.button(
             widget=basicFileBoxLine1,
             master=self,
             label=u'Browse',
@@ -153,8 +140,8 @@ class OWTextableTextFiles(OWWidget):
                 u"Open a dialog for selecting file."
             ),
         )
-        OWGUI.separator(widget=basicFileBox, width=3)
-        OWGUI.comboBox(
+        gui.separator(widget=basicFileBox, width=3)
+        gui.comboBox(
             widget=basicFileBox,
             master=self,
             value='encoding',
@@ -168,25 +155,25 @@ class OWTextableTextFiles(OWWidget):
                 u"Select input file(s) encoding."
             ),
         )
-        OWGUI.separator(widget=basicFileBox, width=3)
+        gui.separator(widget=basicFileBox, width=3)
         self.advancedSettings.basicWidgets.append(basicFileBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
         # ADVANCED GUI...
 
         # File box
-        fileBox = OWGUI.widgetBox(
+        fileBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Sources',
             orientation='vertical',
         )
-        fileBoxLine1 = OWGUI.widgetBox(
+        fileBoxLine1 = gui.widgetBox(
             widget=fileBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
         )
-        self.fileListbox = OWGUI.listBox(
+        self.fileListbox = gui.listBox(
             widget=fileBoxLine1,
             master=self,
             value='selectedFileLabels',
@@ -206,11 +193,11 @@ class OWTextableTextFiles(OWWidget):
         font.setStyleHint(QFont.Courier)
         font.setPixelSize(12)
         self.fileListbox.setFont(font)
-        fileBoxCol2 = OWGUI.widgetBox(
+        fileBoxCol2 = gui.widgetBox(
             widget=fileBoxLine1,
             orientation='vertical',
         )
-        self.moveUpButton = OWGUI.button(
+        self.moveUpButton = gui.button(
             widget=fileBoxCol2,
             master=self,
             label=u'Move Up',
@@ -219,7 +206,7 @@ class OWTextableTextFiles(OWWidget):
                 u"Move the selected file upward in the list."
             ),
         )
-        self.moveDownButton = OWGUI.button(
+        self.moveDownButton = gui.button(
             widget=fileBoxCol2,
             master=self,
             label=u'Move Down',
@@ -228,7 +215,7 @@ class OWTextableTextFiles(OWWidget):
                 u"Move the selected file downward in the list."
             ),
         )
-        self.removeButton = OWGUI.button(
+        self.removeButton = gui.button(
             widget=fileBoxCol2,
             master=self,
             label=u'Remove',
@@ -237,7 +224,7 @@ class OWTextableTextFiles(OWWidget):
                 u"Remove the selected file from the list."
             ),
         )
-        self.clearAllButton = OWGUI.button(
+        self.clearAllButton = gui.button(
             widget=fileBoxCol2,
             master=self,
             label=u'Clear All',
@@ -246,7 +233,7 @@ class OWTextableTextFiles(OWWidget):
                 u"Remove all files from the list."
             ),
         )
-        self.exportButton = OWGUI.button(
+        self.exportButton = gui.button(
             widget=fileBoxCol2,
             master=self,
             label=u'Export List',
@@ -256,7 +243,7 @@ class OWTextableTextFiles(OWWidget):
                 u"list can be exported in JSON format."
             ),
         )
-        self.importButton = OWGUI.button(
+        self.importButton = gui.button(
             widget=fileBoxCol2,
             master=self,
             label=u'Import List',
@@ -267,22 +254,22 @@ class OWTextableTextFiles(OWWidget):
                 u"will be added to those already imported."
             ),
         )
-        fileBoxLine2 = OWGUI.widgetBox(
+        fileBoxLine2 = gui.widgetBox(
             widget=fileBox,
             box=False,
             orientation='vertical',
         )
         # Add file box
-        addFileBox = OWGUI.widgetBox(
+        addFileBox = gui.widgetBox(
             widget=fileBoxLine2,
             box=True,
             orientation='vertical',
         )
-        addFileBoxLine1 = OWGUI.widgetBox(
+        addFileBoxLine1 = gui.widgetBox(
             widget=addFileBox,
             orientation='horizontal',
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=addFileBoxLine1,
             master=self,
             value='newFiles',
@@ -298,8 +285,8 @@ class OWTextableTextFiles(OWWidget):
                 u"the list will be the same as in this field."
             ),
         )
-        OWGUI.separator(widget=addFileBoxLine1, width=5)
-        OWGUI.button(
+        gui.separator(widget=addFileBoxLine1, width=5)
+        gui.button(
             widget=addFileBoxLine1,
             master=self,
             label=u'Browse',
@@ -314,8 +301,8 @@ class OWTextableTextFiles(OWWidget):
                 u"added to the list when button 'Add' is clicked."
             ),
         )
-        OWGUI.separator(widget=addFileBox, width=3)
-        OWGUI.comboBox(
+        gui.separator(widget=addFileBox, width=3)
+        gui.comboBox(
             widget=addFileBox,
             master=self,
             value='encoding',
@@ -329,8 +316,8 @@ class OWTextableTextFiles(OWWidget):
                 u"Select input file(s) encoding."
             ),
         )
-        OWGUI.separator(widget=addFileBox, width=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=addFileBox, width=3)
+        gui.lineEdit(
             widget=addFileBox,
             master=self,
             value='newAnnotationKey',
@@ -344,8 +331,8 @@ class OWTextableTextFiles(OWWidget):
                 u"added to the list."
             ),
         )
-        OWGUI.separator(widget=addFileBox, width=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=addFileBox, width=3)
+        gui.lineEdit(
             widget=addFileBox,
             master=self,
             value='newAnnotationValue',
@@ -358,8 +345,8 @@ class OWTextableTextFiles(OWWidget):
                 u"associated with the above annotation key."
             ),
         )
-        OWGUI.separator(widget=addFileBox, width=3)
-        self.addButton = OWGUI.button(
+        gui.separator(widget=addFileBox, width=3)
+        self.addButton = gui.button(
             widget=addFileBox,
             master=self,
             label=u'Add',
@@ -377,17 +364,17 @@ class OWTextableTextFiles(OWWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
-        optionsBox = OWGUI.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
         )
-        optionsBoxLine1 = OWGUI.widgetBox(
+        optionsBoxLine1 = gui.widgetBox(
             widget=optionsBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBoxLine1,
             master=self,
             value='importFilenames',
@@ -398,7 +385,7 @@ class OWTextableTextFiles(OWWidget):
                 u"Import file names as annotations."
             ),
         )
-        self.importFilenamesKeyLineEdit = OWGUI.lineEdit(
+        self.importFilenamesKeyLineEdit = gui.lineEdit(
             widget=optionsBoxLine1,
             master=self,
             value='importFilenamesKey',
@@ -408,13 +395,13 @@ class OWTextableTextFiles(OWWidget):
                 u"Annotation key for importing file names."
             ),
         )
-        OWGUI.separator(widget=optionsBox, width=3)
-        optionsBoxLine2 = OWGUI.widgetBox(
+        gui.separator(widget=optionsBox, width=3)
+        optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumber',
@@ -425,7 +412,7 @@ class OWTextableTextFiles(OWWidget):
                 u"Annotate files with increasing numeric indices."
             ),
         )
-        self.autoNumberKeyLineEdit = OWGUI.lineEdit(
+        self.autoNumberKeyLineEdit = gui.lineEdit(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumberKey',
@@ -435,11 +422,11 @@ class OWTextableTextFiles(OWWidget):
                 u"Annotation key for file auto-numbering."
             ),
         )
-        OWGUI.separator(widget=optionsBox, width=3)
+        gui.separator(widget=optionsBox, width=3)
         self.advancedSettings.advancedWidgets.append(optionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -529,7 +516,7 @@ class OWTextableTextFiles(OWWidget):
         else:
             myFiles = [[self.file, self.encoding, u'', u'']]
 
-        progressBar = OWGUI.ProgressBar(
+        progressBar = gui.ProgressBar(
             self,
             iterations=len(myFiles)
         )
@@ -584,7 +571,7 @@ class OWTextableTextFiles(OWWidget):
             # Remove utf-8 BOM if necessary...
             if encoding == u'utf-8':
                 fileContent = fileContent.lstrip(
-                    unicode(codecs.BOM_UTF8, 'utf-8')
+                    codecs.BOM_UTF8.decode('utf-8')
                 )
 
             # Normalize text (canonical decomposition then composition)...
@@ -611,7 +598,7 @@ class OWTextableTextFiles(OWWidget):
             label = self.captionTitle
         else:
             label = None
-        for index in xrange(len(fileContents)):
+        for index in range(len(fileContents)):
             myInput = Input(fileContents[index], label)
             segment = myInput[0]
             segment.annotations.update(annotations[index])
@@ -655,13 +642,11 @@ class OWTextableTextFiles(OWWidget):
 
     def importList(self):
         """Display a FileDialog and import file list"""
-        filePath = unicode(
-            QFileDialog.getOpenFileName(
-                self,
-                u'Import File List',
-                self.lastLocation,
-                u'Text files (*)'
-            )
+        filePath = QFileDialog.getOpenFileName(
+            self,
+            u'Import File List',
+            self.lastLocation,
+            u'Text files (*)'
         )
         if not filePath:
             return
@@ -726,13 +711,12 @@ class OWTextableTextFiles(OWWidget):
             if myfile[2] and myfile[3]:
                 toDump[-1]['annotation_key'] = myfile[2]
                 toDump[-1]['annotation_value'] = myfile[3]
-        filePath = unicode(
-            QFileDialog.getSaveFileName(
-                self,
-                u'Export File List',
-                self.lastLocation,
-            )
+        filePath =QFileDialog.getSaveFileName(
+            self,
+            u'Export File List',
+            self.lastLocation,
         )
+
         if filePath:
             self.lastLocation = os.path.dirname(filePath)
             outputFile = codecs.open(
@@ -765,18 +749,16 @@ class OWTextableTextFiles(OWWidget):
             )
             if not filePathList:
                 return
-            filePathList = [os.path.normpath(unicode(f)) for f in filePathList]
+            filePathList = [os.path.normpath(f) for f in filePathList]
             self.newFiles = u' / '.join(filePathList)
             self.lastLocation = os.path.dirname(filePathList[-1])
             self.updateGUI()
         else:
-            filePath = unicode(
-                QFileDialog.getOpenFileName(
-                    self,
-                    u'Open Text File',
-                    self.lastLocation,
-                    u'Text files (*)'
-                )
+            filePath = QFileDialog.getOpenFileName(
+                self,
+                u'Open Text File',
+                self.lastLocation,
+                u'Text files (*)'
             )
             if not filePath:
                 return
@@ -848,12 +830,12 @@ class OWTextableTextFiles(OWWidget):
                 annotations = ['{%s: %s}' % (f[2], f[3]) for f in self.files]
                 maxFilenameLen = max([len(n) for n in filenames])
                 maxAnnoLen = max([len(a) for a in annotations])
-                for index in xrange(len(self.files)):
-                    format = u'%-' + unicode(maxFilenameLen + 2) + u's'
+                for index in range(len(self.files)):
+                    format = u'%-' + str(maxFilenameLen + 2) + u's'
                     fileLabel = format % filenames[index]
                     if maxAnnoLen > 4:
                         if len(annotations[index]) > 4:
-                            format = u'%-' + unicode(maxAnnoLen + 2) + u's'
+                            format = u'%-' + str(maxAnnoLen + 2) + u's'
                             fileLabel += format % annotations[index]
                         else:
                             fileLabel += u' ' * (maxAnnoLen + 2)
@@ -913,34 +895,20 @@ class OWTextableTextFiles(OWWidget):
             self.clearAllButton.setDisabled(True)
             self.exportButton.setDisabled(True)
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
             self.sendButton.settingsChanged()
         else:
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
 
     def onDeleteWidget(self):
         self.clearCreatedInputs()
 
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
-
 
 if __name__ == '__main__':
+    import sys
+    from PyQt4.QtGui import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableTextFiles()
     ow.show()
