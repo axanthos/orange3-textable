@@ -22,114 +22,72 @@ from __future__ import division
 
 __version__ = '0.14.2'  # TODO change subversion?
 
-"""
-<name>Select</name>
-<description>Select a subset of segments in a segmentation</description>
-<icon>icons/Select.png</icon>
-<priority>4003</priority>
-"""
-
 import re, math
 
 import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 from LTTL.Utils import iround
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, SegmentationContextHandler,
+    InfoBox, SendButton, AdvancedSettings, pluralize
+)
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from Orange.widgets import widget, gui, settings
 
 
-class OWTextableSelect(OWWidget):
+class OWTextableSelect(OWTextableBaseWidget):
     """Orange widget for segment in-/exclusion based on intrinsic properties"""
 
-    contextHandlers = {
-        '': SegmentationContextHandler(
-            '', [
-                'regexAnnotationKey',
-                'thresholdAnnotationKey'
-                'sampleSize',
-                'minCount',
-                'maxCount',
-            ],
-        )
-    }
+    name = "Select"
+    description = "Select a subset of segments in a segmentation"
+    icon = "icons/Select.png"
+    priority = 4003
 
-    settingsList = [
-        'regex',
-        'method',
-        'regexMode',
-        'ignoreCase',
-        'unicodeDependent',
-        'multiline',
-        'dotAll',
-        'sampleSizeMode',
-        'sampleSize',
-        'samplingRate',
-        'thresholdMode',
-        'applyMinThreshold',
-        'applyMaxThreshold',
-        'minCount',
-        'maxCount',
-        'minProportion',
-        'maxProportion',
-        'copyAnnotations',
-        'autoSend',
-        'autoNumber',
-        'autoNumberKey',
-        'displayAdvancedSettings',
-        'uuid',
+    # Input and output channels...
+    inputs = [('Segmentation', Segmentation, "inputData",)]
+    outputs = [
+        ('Selected data', Segmentation, widget.Default),
+        ('Discarded data', Segmentation)
     ]
 
-    def __init__(self, parent=None, signalManager=None):
+    settingsHandler = SegmentationContextHandler(
+        version=__version__.split(".")[:2]
+    )
+    # Settings...
+    method = settings.Setting(u'Regex')
+    copyAnnotations = settings.Setting(True)
+    autoNumber = settings.Setting(False)
+    autoNumberKey = settings.Setting(u'num')
+    regex = settings.Setting(r'')
+    regexMode = settings.Setting(u'Include')
+    ignoreCase = settings.Setting(False)
+    unicodeDependent = settings.Setting(True)
+    multiline = settings.Setting(False)
+    dotAll = settings.Setting(False)
+    sampleSizeMode = settings.Setting(u'Count')
+    sampleSize = settings.ContextSetting(1)
+    samplingRate = settings.Setting(1)
+    thresholdMode = settings.Setting(u'Count')
+    applyMinThreshold = settings.Setting(True)
+    applyMaxThreshold = settings.Setting(True)
+    minCount = settings.ContextSetting(1)
+    maxCount = settings.ContextSetting(1)
+    minProportion = settings.Setting(1)
+    maxProportion = settings.Setting(100)
+    displayAdvancedSettings = settings.Setting(False)
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0
-        )
+    regexAnnotationKey = settings.ContextSetting(-1)  # None
+    thresholdAnnotationKey = settings.ContextSetting(-1)  # None
 
-        # Input and output channels...
-        self.inputs = [('Segmentation', Segmentation, self.inputData, Single)]
-        self.outputs = [
-            ('Selected data', Segmentation, Default),
-            ('Discarded data', Segmentation)
-        ]
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
 
-        # Settings...
-        self.method = u'Regex'
-        self.copyAnnotations = True
-        self.autoSend = False
-        self.autoNumber = False
-        self.autoNumberKey = u'num'
-        self.regex = r''
-        self.regexMode = u'Include'
-        self.ignoreCase = False
-        self.unicodeDependent = True
-        self.multiline = False
-        self.dotAll = False
-        self.sampleSizeMode = u'Count'
-        self.sampleSize = 1
-        self.samplingRate = 1
-        self.thresholdMode = u'Count'
-        self.applyMinThreshold = True
-        self.applyMaxThreshold = True
-        self.minCount = 1
-        self.maxCount = 1
-        self.minProportion = 1
-        self.maxProportion = 100
-        self.displayAdvancedSettings = False
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        # Other attributes...
         self.segmentation = None
-        self.regexAnnotationKey = None
-        self.thresholdAnnotationKey = None
+
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
             widget=self.controlArea,
@@ -149,12 +107,12 @@ class OWTextableSelect(OWWidget):
         self.advancedSettings.draw()
 
         # Select box
-        self.selectBox = OWGUI.widgetBox(
+        self.selectBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Select',
             orientation='vertical',
         )
-        self.methodCombo = OWGUI.comboBox(
+        self.methodCombo = gui.comboBox(
             widget=self.selectBox,
             master=self,
             value='method',
@@ -176,13 +134,13 @@ class OWTextableSelect(OWWidget):
             ),
         )
         self.methodCombo.setMinimumWidth(120)
-        OWGUI.separator(widget=self.selectBox, height=3)
+        gui.separator(widget=self.selectBox, height=3)
         # Regex box...
-        self.regexBox = OWGUI.widgetBox(
+        self.regexBox = gui.widgetBox(
             widget=self.selectBox,
             orientation='vertical',
         )
-        self.regexModeCombo = OWGUI.comboBox(
+        self.regexModeCombo = gui.comboBox(
             widget=self.regexBox,
             master=self,
             value='regexMode',
@@ -198,8 +156,8 @@ class OWTextableSelect(OWWidget):
                 u"the output segmentation."
             ),
         )
-        OWGUI.separator(widget=self.regexBox, height=3)
-        self.regexAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.regexBox, height=3)
+        self.regexAnnotationCombo = gui.comboBox(
             widget=self.regexBox,
             master=self,
             value='regexAnnotationKey',
@@ -217,8 +175,8 @@ class OWTextableSelect(OWWidget):
                 u"'none')."
             ),
         )
-        OWGUI.separator(widget=self.regexBox, height=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=self.regexBox, height=3)
+        gui.lineEdit(
             widget=self.regexBox,
             master=self,
             value='regex',
@@ -233,13 +191,13 @@ class OWTextableSelect(OWWidget):
                 u"from the output segmentation."
             ),
         )
-        OWGUI.separator(widget=self.regexBox, height=3)
-        regexBoxLine4 = OWGUI.widgetBox(
+        gui.separator(widget=self.regexBox, height=3)
+        regexBoxLine4 = gui.widgetBox(
             widget=self.regexBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=regexBoxLine4,
             master=self,
             value='ignoreCase',
@@ -250,7 +208,7 @@ class OWTextableSelect(OWWidget):
                 u"Regex pattern is case-insensitive."
             ),
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=regexBoxLine4,
             master=self,
             value='unicodeDependent',
@@ -260,12 +218,12 @@ class OWTextableSelect(OWWidget):
                 u"Built-in character classes are Unicode-aware."
             ),
         )
-        regexBoxLine5 = OWGUI.widgetBox(
+        regexBoxLine5 = gui.widgetBox(
             widget=self.regexBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=regexBoxLine5,
             master=self,
             value='multiline',
@@ -278,7 +236,7 @@ class OWTextableSelect(OWWidget):
                 u"and end of each input segment)."
             ),
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=regexBoxLine5,
             master=self,
             value='dotAll',
@@ -289,14 +247,14 @@ class OWTextableSelect(OWWidget):
                 u"than any character but newline)."
             ),
         )
-        OWGUI.separator(widget=self.regexBox, height=3)
+        gui.separator(widget=self.regexBox, height=3)
 
         # Sample box...
-        self.sampleBox = OWGUI.widgetBox(
+        self.sampleBox = gui.widgetBox(
             widget=self.selectBox,
             orientation='vertical',
         )
-        self.sampleSizeModeCombo = OWGUI.comboBox(
+        self.sampleSizeModeCombo = gui.comboBox(
             widget=self.sampleBox,
             master=self,
             value='sampleSizeMode',
@@ -312,13 +270,13 @@ class OWTextableSelect(OWWidget):
                 u"proportion of the input segments ('Proportion')."
             ),
         )
-        OWGUI.separator(widget=self.sampleBox, height=3)
-        self.sampleSizeSpin = OWGUI.spin(
+        gui.separator(widget=self.sampleBox, height=3)
+        self.sampleSizeSpin = gui.spin(
             widget=self.sampleBox,
             master=self,
             value='sampleSize',
-            min=1,
-            max=1,
+            minv=1,
+            maxv=1,
             orientation='horizontal',
             label=u'Sample size:',
             labelWidth=180,
@@ -327,12 +285,12 @@ class OWTextableSelect(OWWidget):
                 u"The number of segments that will be sampled."
             ),
         )
-        self.samplingRateSpin = OWGUI.spin(
+        self.samplingRateSpin = gui.spin(
             widget=self.sampleBox,
             master=self,
             value='samplingRate',
-            min=1,
-            max=100,
+            minv=1,
+            maxv=100,
             orientation='horizontal',
             label=u'Sampling rate (%):',
             labelWidth=180,
@@ -341,14 +299,14 @@ class OWTextableSelect(OWWidget):
                 u"The proportion of segments that will be sampled."
             ),
         )
-        OWGUI.separator(widget=self.sampleBox, height=3)
+        gui.separator(widget=self.sampleBox, height=3)
 
         # Threshold box...
-        self.thresholdBox = OWGUI.widgetBox(
+        self.thresholdBox = gui.widgetBox(
             widget=self.selectBox,
             orientation='vertical',
         )
-        self.thresholdAnnotationCombo = OWGUI.comboBox(
+        self.thresholdAnnotationCombo = gui.comboBox(
             widget=self.thresholdBox,
             master=self,
             value='thresholdAnnotationKey',
@@ -366,8 +324,8 @@ class OWTextableSelect(OWWidget):
                 u"(value 'none')."
             ),
         )
-        OWGUI.separator(widget=self.thresholdBox, height=3)
-        self.thresholdModeCombo = OWGUI.comboBox(
+        gui.separator(widget=self.thresholdBox, height=3)
+        self.thresholdModeCombo = gui.comboBox(
             widget=self.thresholdBox,
             master=self,
             value='thresholdMode',
@@ -383,13 +341,13 @@ class OWTextableSelect(OWWidget):
                 u"or as relative frequencies (value 'Proportion')."
             ),
         )
-        OWGUI.separator(widget=self.thresholdBox, height=3)
-        self.minCountLine = OWGUI.widgetBox(
+        gui.separator(widget=self.thresholdBox, height=3)
+        self.minCountLine = gui.widgetBox(
             widget=self.thresholdBox,
             box=False,
             orientation='horizontal',
         )
-        self.minCountSpin = OWGUI.checkWithSpin(
+        self.minCountSpin = gui.spin(
             widget=self.minCountLine,
             master=self,
             value='minCount',
@@ -397,20 +355,20 @@ class OWTextableSelect(OWWidget):
             labelWidth=180,
             controlWidth=None,
             checked='applyMinThreshold',
-            min=1,
-            max=100,
-            spinCallback=self.sendButton.settingsChanged,
+            minv=1,
+            maxv=100,
+            callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
             tooltip=(
                 u"Minimum count for a type to be selected."
             ),
         )
-        self.minProportionLine = OWGUI.widgetBox(
+        self.minProportionLine = gui.widgetBox(
             widget=self.thresholdBox,
             box=False,
             orientation='horizontal',
         )
-        self.minProportionSpin = OWGUI.checkWithSpin(
+        self.minProportionSpin = gui.spin(
             widget=self.minProportionLine,
             master=self,
             value='minProportion',
@@ -418,21 +376,21 @@ class OWTextableSelect(OWWidget):
             labelWidth=180,
             controlWidth=None,
             checked='applyMinThreshold',
-            min=1,
-            max=100,
-            spinCallback=self.sendButton.settingsChanged,
+            minv=1,
+            maxv=100,
+            callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
             tooltip=(
                 u"Minimum relative frequency for a type to be selected."
             ),
         )
-        OWGUI.separator(widget=self.thresholdBox, height=3)
-        self.maxCountLine = OWGUI.widgetBox(
+        gui.separator(widget=self.thresholdBox, height=3)
+        self.maxCountLine = gui.widgetBox(
             widget=self.thresholdBox,
             box=False,
             orientation='horizontal',
         )
-        self.maxCountSpin = OWGUI.checkWithSpin(
+        self.maxCountSpin = gui.spin(
             widget=self.maxCountLine,
             master=self,
             value='maxCount',
@@ -440,20 +398,20 @@ class OWTextableSelect(OWWidget):
             labelWidth=180,
             controlWidth=None,
             checked='applyMaxThreshold',
-            min=1,
-            max=100,
-            spinCallback=self.sendButton.settingsChanged,
+            minv=1,
+            maxv=100,
+            callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
             tooltip=(
                 u"Maximum count for a type to be selected."
             ),
         )
-        self.maxProportionLine = OWGUI.widgetBox(
+        self.maxProportionLine = gui.widgetBox(
             widget=self.thresholdBox,
             box=False,
             orientation='horizontal',
         )
-        self.maxProportionSpin = OWGUI.checkWithSpin(
+        self.maxProportionSpin = gui.spin(
             widget=self.maxProportionLine,
             master=self,
             value='maxProportion',
@@ -461,30 +419,30 @@ class OWTextableSelect(OWWidget):
             labelWidth=180,
             controlWidth=None,
             checked='applyMaxThreshold',
-            min=1,
-            max=100,
-            spinCallback=self.sendButton.settingsChanged,
+            minv=1,
+            maxv=100,
+            callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
             tooltip=(
                 u"Maximum count for a type to be selected."
             ),
         )
-        OWGUI.separator(widget=self.thresholdBox, height=3)
+        gui.separator(widget=self.thresholdBox, height=3)
         self.advancedSettings.advancedWidgets.append(self.selectBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
-        optionsBox = OWGUI.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
         )
-        optionsBoxLine2 = OWGUI.widgetBox(
+        optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumber',
@@ -496,7 +454,7 @@ class OWTextableSelect(OWWidget):
                 u"indices."
             ),
         )
-        self.autoNumberKeyLineEdit = OWGUI.lineEdit(
+        self.autoNumberKeyLineEdit = gui.lineEdit(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumberKey',
@@ -506,8 +464,8 @@ class OWTextableSelect(OWWidget):
                 u"Annotation key for output segment auto-numbering."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=optionsBox, height=3)
+        gui.checkBox(
             widget=optionsBox,
             master=self,
             value='copyAnnotations',
@@ -517,17 +475,17 @@ class OWTextableSelect(OWWidget):
                 u"Copy all annotations from input to output segments."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=2)
+        gui.separator(widget=optionsBox, height=2)
         self.advancedSettings.advancedWidgets.append(optionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Basic Select box
-        self.basicSelectBox = OWGUI.widgetBox(
+        self.basicSelectBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Select',
             orientation='vertical',
         )
-        self.basicRegexModeCombo = OWGUI.comboBox(
+        self.basicRegexModeCombo = gui.comboBox(
             widget=self.basicSelectBox,
             master=self,
             value='regexMode',
@@ -543,8 +501,8 @@ class OWTextableSelect(OWWidget):
                 u"the output segmentation."
             ),
         )
-        OWGUI.separator(widget=self.basicSelectBox, height=3)
-        self.basicRegexAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.basicSelectBox, height=3)
+        self.basicRegexAnnotationCombo = gui.comboBox(
             widget=self.basicSelectBox,
             master=self,
             value='regexAnnotationKey',
@@ -562,8 +520,8 @@ class OWTextableSelect(OWWidget):
                 u"'none')."
             ),
         )
-        OWGUI.separator(widget=self.basicSelectBox, height=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=self.basicSelectBox, height=3)
+        gui.lineEdit(
             widget=self.basicSelectBox,
             master=self,
             value='regex',
@@ -578,11 +536,11 @@ class OWTextableSelect(OWWidget):
                 u"from the output segmentation."
             ),
         )
-        OWGUI.separator(widget=self.basicSelectBox, height=3)
+        gui.separator(widget=self.basicSelectBox, height=3)
         self.advancedSettings.basicWidgets.append(self.basicSelectBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -717,7 +675,7 @@ class OWTextableSelect(OWWidget):
                 autoNumberKey = None
 
             # Perform selection...
-            progressBar = OWGUI.ProgressBar(
+            progressBar = gui.ProgressBar(
                 self,
                 iterations=num_iterations
             )
@@ -790,7 +748,7 @@ class OWTextableSelect(OWWidget):
             num_iterations = len(self.segmentation)
 
             # Perform selection...
-            progressBar = OWGUI.ProgressBar(
+            progressBar = gui.ProgressBar(
                 self,
                 iterations=num_iterations
             )
@@ -834,7 +792,7 @@ class OWTextableSelect(OWWidget):
         self.infoBox.inputChanged()
         self.updateGUI()
         if segmentation is not None:
-            self.openContext("", segmentation)
+            self.openContext(segmentation)
         self.sendButton.sendIf()
 
     def updateGUI(self):
@@ -870,14 +828,14 @@ class OWTextableSelect(OWWidget):
                                     self.segmentation is not None
                             and len(self.segmentation)
                     ):
-                        self.sampleSizeSpin.control.setRange(
+                        self.sampleSizeSpin.setRange(
                             1,
                             len(self.segmentation),
                         )
                         if self.sampleSize > len(self.segmentation):
                             self.sampleSize = len(self.segmentation)
                     else:
-                        self.sampleSizeSpin.control.setRange(1, 1)
+                        self.sampleSizeSpin.setRange(1, 1)
                     self.sampleSize = self.sampleSize or 1
                     self.sampleSizeSpin.setVisible(True)
                 elif self.sampleSizeMode == u'Proportion':
@@ -974,31 +932,17 @@ class OWTextableSelect(OWWidget):
 
         self.adjustSizeWithTimer()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
             self.sendButton.settingsChanged()
         else:
-            OWWidget.setCaption(self, title)
-
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
+            super().setCaption(title)
 
 
 if __name__ == '__main__':
+    import sys
+    from PyQt4.QtGui import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableSelect()
     ow.show()
