@@ -20,103 +20,62 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.13.3'
 
-"""
-<name>Variety</name>
-<description>Measure the variety of segments</description>
-<icon>icons/Variety.png</icon>
-<priority>8004</priority>
-"""
 
 from LTTL.Table import Table
 from LTTL.Segmentation import Segmentation
 import LTTL.Processor as Processor
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, SegmentationListContextHandler,
+    SegmentationsInputList, InfoBox, SendButton, updateMultipleInputs
+)
+import Orange.data
+from Orange.widgets import widget, gui, settings
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
 
-
-class OWTextableVariety(OWWidget):
+class OWTextableVariety(OWTextableBaseWidget):
     """Orange widget for mesuring variety of text units"""
 
-    contextHandlers = {
-        '': SegmentationListContextHandler(
-            '', [
-                ContextInputListField('segmentations'),
-                ContextInputIndex('units'),
-                ContextInputIndex('_contexts'),
-                'mode',
-                'unitAnnotationKey',
-                'categoryAnnotationKey',
-                'contextAnnotationKey',
-                'sequenceLength',
-                'windowSize',
-                'subsampleSize',
-                'uuid',
-            ]
-        )
-    }
+    name = "Variety"
+    description = "Measure the variety of segments"
+    icon = "icons/Variety.png"
+    priority = 8004
 
-    settingsList = [
-        'autoSend',
-        'sequenceLength',
-        'measurePerCategory',
-        'mode',
-        'mergeContexts',
-        'windowSize',
-        'unitPosMarker',
-        'unitWeighting',
-        'categoryWeighting',
-        'applyResampling',
-        'numSubsamples',
-        'subsampleSize',
-    ]
+    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
+    outputs = [('Textable table', Table, widget.Default),
+               ('Orange table', Orange.data.Table)]
 
-    def __init__(self, parent=None, signalManager=None):
+    settingsHandler = SegmentationListContextHandler(
+        version=__version__.split(".")[:2]
+    )
+    segmentations = SegmentationsInputList()
 
+    # Settings...
+    sequenceLength = settings.ContextSetting(1)
+    mode = settings.ContextSetting(u'No context')
+    mergeContexts = settings.Setting(False)
+    windowSize = settings.ContextSetting(1)
+    unitWeighting = settings.Setting(False)
+    measurePerCategory = settings.Setting(False)
+    categoryWeighting = settings.Setting(False)
+    applyResampling = settings.Setting(False)
+    numSubsamples = settings.Setting(100)
+    subsampleSize = settings.ContextSetting(50)
+
+    units = settings.ContextSetting(-1)
+    _contexts = settings.ContextSetting(-1)
+    unitAnnotationKey = settings.ContextSetting(-1)
+    categoryAnnotationKey = settings.ContextSetting(-1)
+    contextAnnotationKey = settings.ContextSetting(-1)
+
+    want_main_area = False
+    # TODO: wantStateInfoWidget = False
+
+    def __init__(self, *args, **kwargs):
         """Initialize a Variety widget"""
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
+        super().__init__(*args, **kwargs)
 
-        # TODO: document second channel
-
-        self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [
-            ('Textable table', Table, Default),
-            ('Orange table', Orange.data.Table),
-        ]
-
-        # Settings...
-        self.autoSend = False
-        self.sequenceLength = 1
-        self.mode = u'No context'
-        self.mergeContexts = False
-        self.windowSize = 1
-        self.unitWeighting = False
-        self.measurePerCategory = False
-        self.categoryWeighting = False
-        self.applyResampling = False
-        self.numSubsamples = 100
-        self.subsampleSize = 50
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
-
-        # Other attributes...
-        self.segmentations = list()
-        self.units = None
-        self.unitAnnotationKey = None
-        self.categoryAnnotationKey = None
-        self._contexts = None
-        self.contextAnnotationKey = None
-        self.settingsRestored = False
         self.infoBox = InfoBox(
             widget=self.controlArea,
             stringClickSend=u", please click 'Send' when ready.",
@@ -134,13 +93,13 @@ class OWTextableVariety(OWWidget):
         # GUI...
 
         # Units box
-        self.unitsBox = OWGUI.widgetBox(
+        self.unitsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Units',
             orientation='vertical',
             addSpace=True,
         )
-        self.unitSegmentationCombo = OWGUI.comboBox(
+        self.unitSegmentationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
             value='units',
@@ -153,8 +112,8 @@ class OWTextableVariety(OWWidget):
             ),
         )
         self.unitSegmentationCombo.setMinimumWidth(120)
-        OWGUI.separator(widget=self.unitsBox, height=3)
-        self.unitAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.unitsBox, height=3)
+        self.unitAnnotationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
             value='unitAnnotationKey',
@@ -171,13 +130,13 @@ class OWTextableVariety(OWWidget):
                 u"annotation values for a specific annotation key."
             ),
         )
-        OWGUI.separator(widget=self.unitsBox, height=3)
-        self.sequenceLengthSpin = OWGUI.spin(
+        gui.separator(widget=self.unitsBox, height=3)
+        self.sequenceLengthSpin = gui.spin(
             widget=self.unitsBox,
             master=self,
             value='sequenceLength',
-            min=1,
-            max=1,
+            minv=1,
+            maxv=1,
             step=1,
             orientation='horizontal',
             label=u'Sequence length:',
@@ -192,8 +151,8 @@ class OWTextableVariety(OWWidget):
                 u"measured per category."
             ),
         )
-        OWGUI.separator(widget=self.unitsBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=self.unitsBox, height=3)
+        gui.checkBox(
             widget=self.unitsBox,
             master=self,
             value='unitWeighting',
@@ -204,16 +163,16 @@ class OWTextableVariety(OWWidget):
                 u"weighting (i.e. use perplexity instead of variety)."
             ),
         )
-        OWGUI.separator(widget=self.unitsBox, height=3)
+        gui.separator(widget=self.unitsBox, height=3)
 
         # Categories box
-        self.categoriesBox = OWGUI.widgetBox(
+        self.categoriesBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Categories',
             orientation='vertical',
             addSpace=True,
         )
-        self.measurePerCategoryCheckbox = OWGUI.checkBox(
+        self.measurePerCategoryCheckbox = gui.checkBox(
             widget=self.categoriesBox,
             master=self,
             value='measurePerCategory',
@@ -224,11 +183,11 @@ class OWTextableVariety(OWWidget):
                 u"variety per category."
             ),
         )
-        OWGUI.separator(widget=self.categoriesBox, height=3)
-        iBox = OWGUI.indentedBox(
+        gui.separator(widget=self.categoriesBox, height=3)
+        iBox = gui.indentedBox(
             widget=self.categoriesBox,
         )
-        self.categoryAnnotationCombo = OWGUI.comboBox(
+        self.categoryAnnotationCombo = gui.comboBox(
             widget=iBox,
             master=self,
             value='categoryAnnotationKey',
@@ -244,8 +203,8 @@ class OWTextableVariety(OWWidget):
                 u"annotation values for a specific annotation key."
             ),
         )
-        OWGUI.separator(widget=iBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=iBox, height=3)
+        gui.checkBox(
             widget=iBox,
             master=self,
             value='categoryWeighting',
@@ -262,16 +221,16 @@ class OWTextableVariety(OWWidget):
             iBox.setDisabled(False)
         else:
             iBox.setDisabled(True)
-        OWGUI.separator(widget=self.categoriesBox, height=3)
+        gui.separator(widget=self.categoriesBox, height=3)
 
         # Contexts box...
-        self.contextsBox = OWGUI.widgetBox(
+        self.contextsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Contexts',
             orientation='vertical',
             addSpace=True,
         )
-        self.modeCombo = OWGUI.comboBox(
+        self.modeCombo = gui.comboBox(
             widget=self.contextsBox,
             master=self,
             value='mode',
@@ -300,17 +259,17 @@ class OWTextableVariety(OWWidget):
                 u"segmentation."
             ),
         )
-        self.slidingWindowBox = OWGUI.widgetBox(
+        self.slidingWindowBox = gui.widgetBox(
             widget=self.contextsBox,
             orientation='vertical',
         )
-        OWGUI.separator(widget=self.slidingWindowBox, height=3)
-        self.windowSizeSpin = OWGUI.spin(
+        gui.separator(widget=self.slidingWindowBox, height=3)
+        self.windowSizeSpin = gui.spin(
             widget=self.slidingWindowBox,
             master=self,
             value='windowSize',
-            min=1,
-            max=1,
+            minv=1,
+            maxv=1,
             step=1,
             orientation='horizontal',
             label=u'Window size:',
@@ -320,12 +279,12 @@ class OWTextableVariety(OWWidget):
                 u"The length of segment sequences defining contexts."
             ),
         )
-        self.containingSegmentationBox = OWGUI.widgetBox(
+        self.containingSegmentationBox = gui.widgetBox(
             widget=self.contextsBox,
             orientation='vertical',
         )
-        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
-        self.contextSegmentationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.containingSegmentationBox, height=3)
+        self.contextSegmentationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
             value='_contexts',
@@ -339,8 +298,8 @@ class OWTextableVariety(OWWidget):
                 u"in the 'Units' segmentation will be measured."
             ),
         )
-        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
-        self.contextAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.containingSegmentationBox, height=3)
+        self.contextAnnotationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
             value='contextAnnotationKey',
@@ -357,8 +316,8 @@ class OWTextableVariety(OWWidget):
                 u"values for a specific annotation key."
             ),
         )
-        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=self.containingSegmentationBox, height=3)
+        gui.checkBox(
             widget=self.containingSegmentationBox,
             master=self,
             value='mergeContexts',
@@ -371,16 +330,16 @@ class OWTextableVariety(OWWidget):
                 u"contains a single row)."
             ),
         )
-        OWGUI.separator(widget=self.contextsBox, height=3)
+        gui.separator(widget=self.contextsBox, height=3)
 
         # Resampling box...
-        self.resamplingBox = OWGUI.widgetBox(
+        self.resamplingBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Resampling',
             orientation='vertical',
             addSpace=True,
         )
-        applyResamplingCheckBox = OWGUI.checkBox(
+        applyResamplingCheckBox = gui.checkBox(
             widget=self.resamplingBox,
             master=self,
             value='applyResampling',
@@ -391,16 +350,16 @@ class OWTextableVariety(OWWidget):
                 u"variety per subsample."
             ),
         )
-        OWGUI.separator(widget=self.resamplingBox, height=3)
-        iBox2 = OWGUI.indentedBox(
+        gui.separator(widget=self.resamplingBox, height=3)
+        iBox2 = gui.indentedBox(
             widget=self.resamplingBox,
         )
-        self.subsampleSizeSpin = OWGUI.spin(
+        self.subsampleSizeSpin = gui.spin(
             widget=iBox2,
             master=self,
             value='subsampleSize',
-            min=1,
-            max=1,
+            minv=1,
+            maxv=1,
             step=1,
             orientation='horizontal',
             label=u'Subsample size:',
@@ -410,13 +369,13 @@ class OWTextableVariety(OWWidget):
                 u"The number of segments per subsample."
             ),
         )
-        OWGUI.separator(widget=iBox2, height=3)
-        self.numSubsampleSpin = OWGUI.spin(
+        gui.separator(widget=iBox2, height=3)
+        self.numSubsampleSpin = gui.spin(
             widget=iBox2,
             master=self,
             value='numSubsamples',
-            min=1,
-            max=100000,
+            minv=1,
+            maxv=100000,
             step=1,
             orientation='horizontal',
             label=u'Number of subsamples:',
@@ -431,9 +390,9 @@ class OWTextableVariety(OWWidget):
             iBox2.setDisabled(False)
         else:
             iBox2.setDisabled(True)
-        OWGUI.separator(widget=self.resamplingBox, height=3)
+        gui.separator(widget=self.resamplingBox, height=3)
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -513,7 +472,7 @@ class OWTextableVariety(OWWidget):
                 num_iterations *= 2
 
             # Measure...
-            progressBar = OWGUI.ProgressBar(
+            progressBar = gui.ProgressBar(
                 self,
                 iterations=num_iterations
             )
@@ -556,7 +515,7 @@ class OWTextableVariety(OWWidget):
                 num_iterations += num_contexts
 
             # Measure...
-            progressBar = OWGUI.ProgressBar(
+            progressBar = gui.ProgressBar(
                 self,
                 iterations=num_iterations
             )
@@ -625,7 +584,7 @@ class OWTextableVariety(OWWidget):
                 self.categoryAnnotationKey = u'(none)'
             self.categoryAnnotationKey = self.categoryAnnotationKey
             self.unitsBox.setDisabled(False)
-            self.sequenceLengthSpin.control.setRange(
+            self.sequenceLengthSpin.setRange(
                 1,
                 len(self.segmentations[self.units][1])
             )
@@ -639,7 +598,7 @@ class OWTextableVariety(OWWidget):
             else:
                 self.sequenceLengthSpin.setDisabled(False)
             self.contextsBox.setDisabled(False)
-            self.subsampleSizeSpin.control.setRange(
+            self.subsampleSizeSpin.setRange(
                 1,
                 len(self.segmentations[self.units][1])
             )
@@ -649,7 +608,7 @@ class OWTextableVariety(OWWidget):
             self.containingSegmentationBox.setVisible(False)
             self.slidingWindowBox.setVisible(True)
 
-            self.windowSizeSpin.control.setRange(
+            self.windowSizeSpin.setRange(
                 self.sequenceLength,
                 len(self.segmentations[self.units][1])
             )
@@ -676,30 +635,16 @@ class OWTextableVariety(OWWidget):
 
         self.adjustSizeWithTimer()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        self.openContext("", self.segmentations)
+        self.openContext(self.uuid, self.segmentations)
         self.updateGUI()
         self.sendButton.sendIf()
 
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
-
 
 if __name__ == '__main__':
+    import sys, re
+    from PyQt4.QtGui import  QApplication
     import LTTL.Segmenter as Segmenter
     from LTTL.Input import Input
 
