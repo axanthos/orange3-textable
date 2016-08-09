@@ -20,65 +20,48 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.21.0'
 
-"""
-<name>Merge</name>
-<description>Merge two or more segmentations</description>
-<icon>icons/Merge.png</icon>
-<priority>4001</priority>
-"""
 
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler,
+    updateMultipleInputs, InfoBox, SendButton, pluralize,
+)
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from Orange.widgets import widget, gui, settings
 
 
-class OWTextableMerge(OWWidget):
+class OWTextableMerge(OWTextableBaseWidget):
     """Orange widget for merging segmentations"""
 
-    settingsList = [
-        'autoSend',
-        'copyAnnotations',
-        'importLabels',
-        'labelKey',
-        'autoNumber',
-        'autoNumberKey',
-        'mergeDuplicates',
-        'uuid',
-    ]
+    name = "Merge"
+    description = "Merge two or more segmentations"
+    icon = "icons/Merge.png"
+    priority = 4001
 
-    def __init__(self, parent=None, signalManager=None):
+    # Input and output channels...
+    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
+    outputs = [('Merged data', Segmentation)]
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.split(".")[:2]
+    )
+    # Settings...
+    importLabels = settings.Setting(True)
+    labelKey = settings.Setting(u'input_label')     # TODO update docs
+    autoNumber = settings.Setting(False)
+    autoNumberKey = settings.Setting(u'num')
+    copyAnnotations = settings.Setting(True)
+    mergeDuplicates = settings.Setting(False)
 
-        # Input and output channels...
-        self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [('Merged data', Segmentation)]
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
 
-        # Settings...
-        self.autoSend = True
-        self.importLabels = True
-        self.labelKey = u'input_label'     # TODO update docs
-        self.autoNumber = False
-        self.autoNumberKey = u'num'
-        self.copyAnnotations = True
-        self.mergeDuplicates = False
-        self.savedSenderUuidOrder = list()
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        # Other attributes...
-        self.texts = list();
+        self.texts = list()
         self.infoBox = InfoBox(widget=self.controlArea)
         self.sendButton = SendButton(
             widget=self.controlArea,
@@ -91,17 +74,17 @@ class OWTextableMerge(OWWidget):
         # GUI...
 
         # Options box...
-        optionsBox = OWGUI.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
         )
-        optionsBoxLine1 = OWGUI.widgetBox(
+        optionsBoxLine1 = gui.widgetBox(
             widget=optionsBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBoxLine1,
             master=self,
             value='importLabels',
@@ -112,7 +95,7 @@ class OWTextableMerge(OWWidget):
                 u"Import labels of input segmentations as annotations."
             ),
         )
-        self.labelKeyLineEdit = OWGUI.lineEdit(
+        self.labelKeyLineEdit = gui.lineEdit(
             widget=optionsBoxLine1,
             master=self,
             value='labelKey',
@@ -123,13 +106,13 @@ class OWTextableMerge(OWWidget):
                 u"labels."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=3)
-        optionsBoxLine2 = OWGUI.widgetBox(
+        gui.separator(widget=optionsBox, height=3)
+        optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumber',
@@ -143,7 +126,7 @@ class OWTextableMerge(OWWidget):
                 u"each segment of each input segmentation."
             ),
         )
-        self.autoNumberKeyLineEdit = OWGUI.lineEdit(
+        self.autoNumberKeyLineEdit = gui.lineEdit(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumberKey',
@@ -153,8 +136,8 @@ class OWTextableMerge(OWWidget):
                 u"Annotation key for input segment auto-numbering."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=optionsBox, height=3)
+        gui.checkBox(
             widget=optionsBox,
             master=self,
             value='copyAnnotations',
@@ -164,8 +147,8 @@ class OWTextableMerge(OWWidget):
                 u"Copy all annotations from input to output segments."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=optionsBox, height=3)
+        gui.checkBox(
             widget=optionsBox,
             master=self,
             value='mergeDuplicates',
@@ -180,10 +163,10 @@ class OWTextableMerge(OWWidget):
                 u"will be kept."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=2)
-        OWGUI.separator(widget=self.controlArea, height=3)
+        gui.separator(widget=optionsBox, height=2)
+        gui.separator(widget=self.controlArea, height=3)
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -239,7 +222,7 @@ class OWTextableMerge(OWWidget):
             autoNumberKey = None
 
         # Initialize progress bar...
-        progressBar = OWGUI.ProgressBar(
+        progressBar = gui.ProgressBar(
             self,
             iterations=num_segments
         )
@@ -281,36 +264,22 @@ class OWTextableMerge(OWWidget):
             self.autoNumberKeyLineEdit.setDisabled(True)
         self.adjustSizeWithTimer()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
             self.sendButton.settingsChanged()
         else:
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
 
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
         self.updateGUI()
         self.sendButton.sendIf()
 
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
-
 
 if __name__ == '__main__':
+    import sys
+    from PyQt4.QtGui import QApplication
     from LTTL.Input import Input
 
     appl = QApplication(sys.argv)
@@ -326,4 +295,3 @@ if __name__ == '__main__':
     ow.show()
     appl.exec_()
     ow.saveSettings()
-    QMessageBox()
