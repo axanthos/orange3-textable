@@ -20,98 +20,79 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.19.4'
 
-"""
-<name>Convert</name>
-<description>Convert, transform, or export Orange Textable tables</description>
-<icon>icons/Convert.png</icon>
-<priority>10001</priority>
-"""
-
+import os
 import codecs
 
-from LTTL.Table import *
+from PyQt4.QtGui import QMessageBox, QApplication, QFileDialog
+import Orange.data
+from Orange.widgets import widget, gui, settings
+
+from LTTL.Table import Table, PivotCrosstab, IntPivotCrosstab, Crosstab
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
-from TextableUtils import *
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from .TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler,
+    InfoBox, SendButton, AdvancedSettings, pluralize, getPredefinedEncodings
+)
 
 
-class OWTextableConvert(OWWidget):
+class OWTextableConvert(OWTextableBaseWidget):
     """Orange widget for converting a Textable table to an Orange table"""
 
-    settingsList = [
-        'conversionEncoding',
-        'exportEncoding',
-        'colDelimiter',
-        'includeOrangeHeaders',
-        'sortRows',
-        'sortRowsReverse',
-        'sortCols',
-        'sortColsReverse',
-        'normalize',
-        'normalizeMode',
-        'normalizeType',
-        'convert',
-        'conversionType',
-        'associationBias',
-        'transpose',
-        'reformat',
-        'unweighted',
-        'autoSend',
-        'lastLocation',
-        'displayAdvancedSettings',
+    name = "Convert"
+    description = "Convert, transform, or export Orange Textable tables."
+    icon = "icons/Convert.png"
+    priority = 10001
+
+    inputs = [('Textable table', Table, "inputData", widget.Single)]
+    outputs = [
+        ('Orange table', Orange.data.Table, widget.Default),
+        ('Textable table', Table),
+        ('Segmentation', Segmentation)
     ]
+
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.split(".")[:2]
+    )
+    # Settings...
+    conversionEncoding = settings.Setting('iso-8859-15')
+    exportEncoding = settings.Setting('utf-8')
+    colDelimiter = settings.Setting(u'\t')
+    includeOrangeHeaders = settings.Setting(False)
+
+    sortRows = settings.Setting(False)
+    sortRowsReverse = settings.Setting(False)
+    sortCols = settings.Setting(False)
+    sortColsReverse = settings.Setting(False)
+    normalize = settings.Setting(False)
+    normalizeMode = settings.Setting('rows')
+    normalizeType = settings.Setting('l1')
+
+    convert = settings.Setting(False)
+    conversionType = settings.Setting('association matrix')
+    associationBias = settings.Setting('none')
+    transpose = settings.Setting(False)
+    reformat = settings.Setting(False)
+    unweighted = settings.Setting(False)
+
+    lastLocation = settings.Setting('.')
+    displayAdvancedSettings = settings.Setting(False)
 
     # Predefined list of available encodings...
     encodings = getPredefinedEncodings()
 
-    def __init__(self, parent=None, signalManager=None):
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
+
+    def __init__(self, *args, **kwargs):
 
         """Initialize a Convert widget"""
-
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
-
-        self.inputs = [('Textable table', Table, self.inputData, Single)]
-        self.outputs = [
-            ('Orange table', Orange.data.Table, Default),
-            ('Textable table', Table),
-            ('Segmentation', Segmentation)
-        ]
-
-        # Settings...
-        self.sortRows = False
-        self.sortRowsReverse = False
-        self.sortCols = False
-        self.sortColsReverse = False
-        self.normalize = False
-        self.normalizeMode = 'rows'
-        self.normalizeType = 'l1'
-        self.convert = False
-        self.conversionType = 'association matrix'
-        self.associationBias = 'none'
-        self.transpose = False
-        self.reformat = False
-        self.unweighted = False
-        self.autoSend = True
-        self.conversionEncoding = 'iso-8859-15'
-        self.exportEncoding = 'utf-8'
-        self.colDelimiter = u'\t'
-        self.includeOrangeHeaders = False
-        self.lastLocation = '.'
-        self.displayAdvancedSettings = False
-        self.loadSettings()
+        super().__init__(*args, **kwargs)
 
         # Other attributes...
-        self.sortRowsKeyId = None
-        self.sortColsKeyId = None
+        self.sortRowsKeyId = 0  # None
+        self.sortColsKeyId = 0  # None
         self.table = None
         self.segmentation = None
         self.infoBox = InfoBox(widget=self.controlArea)
@@ -134,16 +115,16 @@ class OWTextableConvert(OWWidget):
         self.advancedSettings.draw()
 
         # Transform box
-        self.transformBox = OWGUI.widgetBox(
+        self.transformBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Transform',
             orientation='vertical',
         )
-        self.transformBoxLine1 = OWGUI.widgetBox(
+        self.transformBoxLine1 = gui.widgetBox(
             widget=self.transformBox,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=self.transformBoxLine1,
             master=self,
             value='sortRows',
@@ -154,7 +135,7 @@ class OWTextableConvert(OWWidget):
                 u"Sort table rows."
             ),
         )
-        self.sortRowsKeyIdCombo = OWGUI.comboBox(
+        self.sortRowsKeyIdCombo = gui.comboBox(
             widget=self.transformBoxLine1,
             master=self,
             value='sortRowsKeyId',
@@ -165,8 +146,8 @@ class OWTextableConvert(OWWidget):
             ),
         )
         self.sortRowsKeyIdCombo.setMinimumWidth(150)
-        OWGUI.separator(widget=self.transformBoxLine1, width=5)
-        self.sortRowsReverseCheckBox = OWGUI.checkBox(
+        gui.separator(widget=self.transformBoxLine1, width=5)
+        self.sortRowsReverseCheckBox = gui.checkBox(
             widget=self.transformBoxLine1,
             master=self,
             value='sortRowsReverse',
@@ -176,12 +157,12 @@ class OWTextableConvert(OWWidget):
                 u"Sort rows in reverse (i.e. decreasing) order."
             ),
         )
-        OWGUI.separator(widget=self.transformBox, height=3)
-        self.transformBoxLine2 = OWGUI.widgetBox(
+        gui.separator(widget=self.transformBox, height=3)
+        self.transformBoxLine2 = gui.widgetBox(
             widget=self.transformBox,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=self.transformBoxLine2,
             master=self,
             value='sortCols',
@@ -192,7 +173,7 @@ class OWTextableConvert(OWWidget):
                 u"Sort table columns."
             ),
         )
-        self.sortColsKeyIdCombo = OWGUI.comboBox(
+        self.sortColsKeyIdCombo = gui.comboBox(
             widget=self.transformBoxLine2,
             master=self,
             value='sortColsKeyId',
@@ -203,8 +184,8 @@ class OWTextableConvert(OWWidget):
             ),
         )
         self.sortColsKeyIdCombo.setMinimumWidth(150)
-        OWGUI.separator(widget=self.transformBoxLine2, width=5)
-        self.sortColsReverseCheckBox = OWGUI.checkBox(
+        gui.separator(widget=self.transformBoxLine2, width=5)
+        self.sortColsReverseCheckBox = gui.checkBox(
             widget=self.transformBoxLine2,
             master=self,
             value='sortColsReverse',
@@ -214,8 +195,8 @@ class OWTextableConvert(OWWidget):
                 u"Sort columns in reverse (i.e. decreasing) order."
             ),
         )
-        OWGUI.separator(widget=self.transformBox, height=3)
-        self.transposeCheckBox = OWGUI.checkBox(
+        gui.separator(widget=self.transformBox, height=3)
+        self.transposeCheckBox = gui.checkBox(
             widget=self.transformBox,
             master=self,
             value='transpose',
@@ -225,12 +206,12 @@ class OWTextableConvert(OWWidget):
                 u"Transpose table (i.e. exchange rows and columns)."
             ),
         )
-        OWGUI.separator(widget=self.transformBox, height=3)
-        self.transformBoxLine4 = OWGUI.widgetBox(
+        gui.separator(widget=self.transformBox, height=3)
+        self.transformBoxLine4 = gui.widgetBox(
             widget=self.transformBox,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=self.transformBoxLine4,
             master=self,
             value='normalize',
@@ -241,7 +222,7 @@ class OWTextableConvert(OWWidget):
                 u"Normalize table."
             ),
         )
-        self.normalizeModeCombo = OWGUI.comboBox(
+        self.normalizeModeCombo = gui.comboBox(
             widget=self.transformBoxLine4,
             master=self,
             value='normalizeMode',
@@ -273,8 +254,8 @@ class OWTextableConvert(OWWidget):
             ),
         )
         self.normalizeModeCombo.setMinimumWidth(150)
-        OWGUI.separator(widget=self.transformBoxLine4, width=5)
-        self.normalizeTypeCombo = OWGUI.comboBox(
+        gui.separator(widget=self.transformBoxLine4, width=5)
+        self.normalizeTypeCombo = gui.comboBox(
             widget=self.transformBoxLine4,
             master=self,
             orientation='horizontal',
@@ -293,12 +274,12 @@ class OWTextableConvert(OWWidget):
             ),
         )
         self.normalizeTypeCombo.setMinimumWidth(70)
-        OWGUI.separator(widget=self.transformBox, height=3)
-        self.transformBoxLine5 = OWGUI.widgetBox(
+        gui.separator(widget=self.transformBox, height=3)
+        self.transformBoxLine5 = gui.widgetBox(
             widget=self.transformBox,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=self.transformBoxLine5,
             master=self,
             value='convert',
@@ -309,7 +290,7 @@ class OWTextableConvert(OWWidget):
                 u"Apply crosstab conversions."
             ),
         )
-        self.conversionTypeCombo = OWGUI.comboBox(
+        self.conversionTypeCombo = gui.comboBox(
             widget=self.transformBoxLine5,
             master=self,
             value='conversionType',
@@ -334,8 +315,8 @@ class OWTextableConvert(OWWidget):
             ),
         )
         self.conversionTypeCombo.setMinimumWidth(150)
-        OWGUI.separator(widget=self.transformBoxLine5, width=5)
-        self.associationBiasCombo = OWGUI.comboBox(
+        gui.separator(widget=self.transformBoxLine5, width=5)
+        self.associationBiasCombo = gui.comboBox(
             widget=self.transformBoxLine5,
             master=self,
             orientation='horizontal',
@@ -359,12 +340,12 @@ class OWTextableConvert(OWWidget):
             ),
         )
         self.associationBiasCombo.setMinimumWidth(70)
-        OWGUI.separator(widget=self.transformBox, height=3)
-        self.transformBoxLine6 = OWGUI.widgetBox(
+        gui.separator(widget=self.transformBox, height=3)
+        self.transformBoxLine6 = gui.widgetBox(
             widget=self.transformBox,
             orientation='vertical',
         )
-        self.reformatCheckbox = OWGUI.checkBox(
+        self.reformatCheckbox = gui.checkBox(
             widget=self.transformBoxLine6,
             master=self,
             value='reformat',
@@ -376,11 +357,11 @@ class OWTextableConvert(OWWidget):
                 u"original crosstab."
             ),
         )
-        OWGUI.separator(widget=self.transformBoxLine6, height=3)
-        iBox = OWGUI.indentedBox(
+        gui.separator(widget=self.transformBoxLine6, height=3)
+        iBox = gui.indentedBox(
             widget=self.transformBoxLine6,
         )
-        self.unweightedCheckbox = OWGUI.checkBox(
+        self.unweightedCheckbox = gui.checkBox(
             widget=iBox,
             master=self,
             value='unweighted',
@@ -397,7 +378,7 @@ class OWTextableConvert(OWWidget):
                 u"in a separate column with label '__weight__'.\n"
             ),
         )
-        OWGUI.separator(widget=self.transformBox, height=3)
+        gui.separator(widget=self.transformBox, height=3)
         self.advancedSettings.advancedWidgets.append(self.transformBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
@@ -405,29 +386,29 @@ class OWTextableConvert(OWWidget):
         # appears just below the Advanced Settings checkbox. It is necessary
         # for the widget's size to adjust properly when switching between
         # modes...
-        dummyBox = OWGUI.widgetBox(
+        dummyBox = gui.widgetBox(
             widget=self.controlArea,
             addSpace=False,
         )
         self.advancedSettings.basicWidgets.append(dummyBox)
 
         # Conversion box
-        encodingBox = OWGUI.widgetBox(
+        encodingBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Encoding',
             orientation='vertical',
             addSpace=True,
         )
-        encodingBoxLine1 = OWGUI.widgetBox(
+        encodingBoxLine1 = gui.widgetBox(
             widget=encodingBox,
             orientation='horizontal',
         )
-        OWGUI.widgetLabel(
+        gui.widgetLabel(
             widget=encodingBoxLine1,
             labelWidth=180,
             label=u'Orange table:',
         )
-        conversionEncodingCombo = OWGUI.comboBox(
+        conversionEncodingCombo = gui.comboBox(
             widget=encodingBoxLine1,
             master=self,
             value='conversionEncoding',
@@ -444,22 +425,22 @@ class OWTextableConvert(OWWidget):
             ),
         )
         conversionEncodingCombo.setMinimumWidth(150)
-        OWGUI.separator(widget=encodingBoxLine1, width=5)
-        OWGUI.widgetLabel(
+        gui.separator(widget=encodingBoxLine1, width=5)
+        gui.widgetLabel(
             widget=encodingBoxLine1,
             label='',
         )
-        OWGUI.separator(widget=encodingBox, height=3)
-        encodingBoxLine2 = OWGUI.widgetBox(
+        gui.separator(widget=encodingBox, height=3)
+        encodingBoxLine2 = gui.widgetBox(
             widget=encodingBox,
             orientation='horizontal',
         )
-        OWGUI.widgetLabel(
+        gui.widgetLabel(
             widget=encodingBoxLine2,
             labelWidth=180,
             label=u'Output file:',
         )
-        conversionEncodingCombo = OWGUI.comboBox(
+        conversionEncodingCombo = gui.comboBox(
             widget=encodingBoxLine2,
             master=self,
             value='exportEncoding',
@@ -477,30 +458,30 @@ class OWTextableConvert(OWWidget):
             ),
         )
         conversionEncodingCombo.setMinimumWidth(150)
-        OWGUI.separator(widget=encodingBoxLine2, width=5)
-        OWGUI.widgetLabel(
+        gui.separator(widget=encodingBoxLine2, width=5)
+        gui.widgetLabel(
             widget=encodingBoxLine2,
             label='',
         )
-        OWGUI.separator(widget=encodingBox, height=3)
+        gui.separator(widget=encodingBox, height=3)
 
         # Export box
-        exportBox = OWGUI.widgetBox(
+        exportBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Export',
             orientation='vertical',
             addSpace=False,
         )
-        exportBoxLine2 = OWGUI.widgetBox(
+        exportBoxLine2 = gui.widgetBox(
             widget=exportBox,
             orientation='horizontal',
         )
-        OWGUI.widgetLabel(
+        gui.widgetLabel(
             widget=exportBoxLine2,
             labelWidth=180,
             label=u'Column delimiter:',
         )
-        colDelimiterCombo = OWGUI.comboBox(
+        colDelimiterCombo = gui.comboBox(
             widget=exportBoxLine2,
             master=self,
             value='colDelimiter',
@@ -522,13 +503,13 @@ class OWTextableConvert(OWWidget):
             ),
         )
         colDelimiterCombo.setMinimumWidth(150)
-        OWGUI.separator(widget=exportBoxLine2, width=5)
-        dummyLabel = OWGUI.widgetLabel(
+        gui.separator(widget=exportBoxLine2, width=5)
+        dummyLabel = gui.widgetLabel(
             widget=exportBoxLine2,
             label='',
         )
-        OWGUI.separator(widget=exportBox, height=2)
-        OWGUI.checkBox(
+        gui.separator(widget=exportBox, height=2)
+        gui.checkBox(
             widget=exportBox,
             master=self,
             value='includeOrangeHeaders',
@@ -537,12 +518,12 @@ class OWTextableConvert(OWWidget):
                 u"Include Orange table headers in output file."
             ),
         )
-        OWGUI.separator(widget=exportBox, height=2)
-        exportBoxLine3 = OWGUI.widgetBox(
+        gui.separator(widget=exportBox, height=2)
+        exportBoxLine3 = gui.widgetBox(
             widget=exportBox,
             orientation='horizontal',
         )
-        self.exportButton = OWGUI.button(
+        self.exportButton = gui.button(
             widget=exportBoxLine3,
             master=self,
             label=u'Export to file',
@@ -552,7 +533,7 @@ class OWTextableConvert(OWWidget):
                 u"which the table will be saved."
             ),
         )
-        self.copyButton = OWGUI.button(
+        self.copyButton = gui.button(
             widget=exportBoxLine3,
             master=self,
             label=u'Copy to clipboard',
@@ -563,21 +544,21 @@ class OWTextableConvert(OWWidget):
                 u"\n\nNote that the only possible encoding is utf-8."
             ),
         )
-        OWGUI.separator(widget=exportBox, height=2)
+        gui.separator(widget=exportBox, height=2)
         self.advancedSettings.advancedWidgets.append(exportBox)
 
         # Export box
-        basicExportBox = OWGUI.widgetBox(
+        basicExportBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Export',
             orientation='vertical',
             addSpace=True,
         )
-        basicExportBoxLine1 = OWGUI.widgetBox(
+        basicExportBoxLine1 = gui.widgetBox(
             widget=basicExportBox,
             orientation='horizontal',
         )
-        self.basicExportButton = OWGUI.button(
+        self.basicExportButton = gui.button(
             widget=basicExportBoxLine1,
             master=self,
             label=u'Export to file',
@@ -587,7 +568,7 @@ class OWTextableConvert(OWWidget):
                 u"which the table will be saved."
             ),
         )
-        self.basicCopyButton = OWGUI.button(
+        self.basicCopyButton = gui.button(
             widget=basicExportBoxLine1,
             master=self,
             label=u'Copy to clipboard',
@@ -598,10 +579,10 @@ class OWTextableConvert(OWWidget):
                 u"\n\nNote that the only possible encoding is utf-8."
             ),
         )
-        OWGUI.separator(widget=basicExportBox, height=2)
+        gui.separator(widget=basicExportBox, height=2)
         self.advancedSettings.basicWidgets.append(basicExportBox)
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -660,7 +641,7 @@ class OWTextableConvert(OWWidget):
                 numIterations += num_cols
             if self.reformat:
                 numIterations += num_rows
-            progressBar = OWGUI.ProgressBar(self, numIterations)
+            progressBar = gui.ProgressBar(self, numIterations)
 
             # Sort if needed...
             if self.sortRows or self.sortCols:
@@ -769,12 +750,10 @@ class OWTextableConvert(OWWidget):
                 QMessageBox.Ok
             )
             return
-        filePath = unicode(
-            QFileDialog.getSaveFileName(
-                self,
-                u'Export Table to File',
-                self.lastLocation,
-            )
+        filePath = QFileDialog.getSaveFileName(
+            self,
+            u'Export Table to File',
+            self.lastLocation,
         )
         if filePath:
             self.lastLocation = os.path.dirname(filePath)
@@ -838,14 +817,14 @@ class OWTextableConvert(OWWidget):
                 if self.sortRows:
                     self.sortRowsKeyIdCombo.clear()
                     self.sortRowsKeyIdCombo.addItem(
-                        unicode(self.table.header_col_id)
+                        str(self.table.header_col_id)
                     )
-                    if isinstance(self.table.col_ids[0], (int, long)):
-                        tableColIds = [unicode(i) for i in self.table.col_ids]
+                    if isinstance(self.table.col_ids[0], int):
+                        tableColIds = [str(i) for i in self.table.col_ids]
                     else:
                         tableColIds = self.table.col_ids
                     for col_id in tableColIds:
-                        self.sortRowsKeyIdCombo.addItem(unicode(col_id))
+                        self.sortRowsKeyIdCombo.addItem(str(col_id))
                     self.sortRowsKeyId = self.sortRowsKeyId or 0
                     self.sortRowsKeyIdCombo.setDisabled(False)
                     self.sortRowsReverseCheckBox.setDisabled(False)
@@ -857,14 +836,14 @@ class OWTextableConvert(OWWidget):
                 if self.sortCols:
                     self.sortColsKeyIdCombo.clear()
                     self.sortColsKeyIdCombo.addItem(
-                        unicode(self.table.header_row_id)
+                        str(self.table.header_row_id)
                     )
-                    if isinstance(self.table.row_ids[0], (int, long)):
-                        tableRowIds = [unicode(i) for i in self.table.row_ids]
+                    if isinstance(self.table.row_ids[0], int):
+                        tableRowIds = [str(i) for i in self.table.row_ids]
                     else:
                         tableRowIds = self.table.row_ids
                     for row_id in tableRowIds:
-                        self.sortColsKeyIdCombo.addItem(unicode(row_id))
+                        self.sortColsKeyIdCombo.addItem(str(row_id))
                     self.sortColsKeyId = self.sortColsKeyId or 0
                     self.sortColsKeyIdCombo.setDisabled(False)
                     self.sortColsReverseCheckBox.setDisabled(False)
@@ -943,28 +922,13 @@ class OWTextableConvert(OWWidget):
 
         self.adjustSizeWithTimer()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def onDeleteWidget(self):
         if self.segmentation is not None:
             self.segmentation.clear()
 
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
-
 
 if __name__ == '__main__':
+    import sys
     appl = QApplication(sys.argv)
     ow = OWTextableConvert()
     ow.show()
