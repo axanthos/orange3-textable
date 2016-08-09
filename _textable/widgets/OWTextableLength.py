@@ -20,86 +20,57 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.14.3'
 
-"""
-<name>Length</name>
-<description>Compute the (average) length of segments</description>
-<icon>icons/Length.png</icon>
-<priority>8003</priority>
-"""
 
 from LTTL.Table import Table
 from LTTL.Segmentation import Segmentation
 import LTTL.Processor as Processor
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, SegmentationListContextHandler,
+    SegmentationsInputList, InfoBox, SendButton, updateMultipleInputs
+)
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+import Orange.data
+from Orange.widgets import widget, gui, settings
 
 
-class OWTextableLength(OWWidget):
+class OWTextableLength(OWTextableBaseWidget):
     """Orange widget for length computation"""
 
-    contextHandlers = {
-        '': SegmentationListContextHandler(
-            '', [
-                ContextInputListField('segmentations'),
-                ContextInputIndex('units'),
-                ContextInputIndex('averagingSegmentation'),
-                ContextInputIndex('_contexts'),
-                'mode',
-                'unitAnnotationKey',
-                'contextAnnotationKey',
-                'sequenceLength',
-            ]
-        )
-    }
+    name = "Length"
+    description = "Compute the (average) length of segments"
+    icon = "icons/Length.png"
+    priority = 8003
 
-    settingsList = [
-        'autoSend',
-        'computeStdev',
-        'mergeContexts',
-        'computeAverage',
-        'sequenceLength',
-    ]
+    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
+    outputs = [('Textable table', Table, widget.Default),
+               ('Orange table', Orange.data.Table)]
 
-    def __init__(self, parent=None, signalManager=None):
+    settingsHandler = SegmentationListContextHandler(
+        version=__version__.split(".")[:2]
+    )
+    segmentations = SegmentationsInputList()  # type: list
 
+    # Settings...
+    computeAverage = settings.Setting(False)
+    computeStdev = settings.Setting(False)
+    mergeContexts = settings.Setting(False)
+
+    units = settings.ContextSetting(-1)
+    averagingSegmentation = settings.ContextSetting(-1)
+    _contexts = settings.ContextSetting(-1)
+    mode = settings.ContextSetting(u'No context')
+    contextAnnotationKey = settings.ContextSetting(-1)
+
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
+
+    def __init__(self, *args, **kwargs):
         """Initialize a Length widget"""
+        super().__init__(*args, **kwargs)
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
-
-        # TODO: document second channel
-
-        self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [
-            ('Textable table', Table, Default),
-            ('Orange table', Orange.data.Table),
-        ]
-
-        # Settings...
-        self.autoSend = False
-        self.computeAverage = False
-        self.computeStdev = False
-        self.autoSend = False
-        self.mode = u'No context'
-        self.mergeContexts = False
         self.windowSize = 1
-        self.loadSettings()
 
-        # Other attributes...
-        self.segmentations = list()
-        self.units = None
-        self.averagingSegmentation = None
-        self._contexts = None
-        self.contextAnnotationKey = None
-        self.settingsRestored = False
         self.infoBox = InfoBox(
             widget=self.controlArea,
             stringClickSend=u", please click 'Send' when ready.",
@@ -117,13 +88,13 @@ class OWTextableLength(OWWidget):
         # GUI...
 
         # Units box
-        self.unitsBox = OWGUI.widgetBox(
+        self.unitsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Units',
             orientation='vertical',
             addSpace=True,
         )
-        self.unitSegmentationCombo = OWGUI.comboBox(
+        self.unitSegmentationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
             value='units',
@@ -137,22 +108,22 @@ class OWTextableLength(OWWidget):
             ),
         )
         self.unitSegmentationCombo.setMinimumWidth(120)
-        OWGUI.separator(widget=self.unitsBox, height=3)
+        gui.separator(widget=self.unitsBox, height=3)
 
         # Averaging box...
-        self.averagingBox = OWGUI.widgetBox(
+        self.averagingBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Averaging',
             orientation='vertical',
             addSpace=True,
         )
-        averagingBoxLine1 = OWGUI.widgetBox(
+        averagingBoxLine1 = gui.widgetBox(
             widget=self.averagingBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=averagingBoxLine1,
             master=self,
             value='computeAverage',
@@ -166,7 +137,7 @@ class OWTextableLength(OWWidget):
                 u"averaging will take place."
             ),
         )
-        self.averagingSegmentationCombo = OWGUI.comboBox(
+        self.averagingSegmentationCombo = gui.comboBox(
             widget=averagingBoxLine1,
             master=self,
             value='averagingSegmentation',
@@ -178,7 +149,7 @@ class OWTextableLength(OWWidget):
                 u"is checked)."
             ),
         )
-        self.computeStdevCheckBox = OWGUI.checkBox(
+        self.computeStdevCheckBox = gui.checkBox(
             widget=self.averagingBox,
             master=self,
             value='computeStdev',
@@ -192,16 +163,16 @@ class OWTextableLength(OWWidget):
                 u"lengthy operation for large segmentations."
             ),
         )
-        OWGUI.separator(widget=self.averagingBox, height=2)
+        gui.separator(widget=self.averagingBox, height=2)
 
         # Contexts box...
-        self.contextsBox = OWGUI.widgetBox(
+        self.contextsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Contexts',
             orientation='vertical',
             addSpace=True,
         )
-        self.modeCombo = OWGUI.comboBox(
+        self.modeCombo = gui.comboBox(
             widget=self.contextsBox,
             master=self,
             value='mode',
@@ -232,17 +203,17 @@ class OWTextableLength(OWWidget):
                 u"as the 'Units' and/or 'Averaging' segmentation)."
             ),
         )
-        self.slidingWindowBox = OWGUI.widgetBox(
+        self.slidingWindowBox = gui.widgetBox(
             widget=self.contextsBox,
             orientation='vertical',
         )
-        OWGUI.separator(widget=self.slidingWindowBox, height=3)
-        self.windowSizeSpin = OWGUI.spin(
+        gui.separator(widget=self.slidingWindowBox, height=3)
+        self.windowSizeSpin = gui.spin(
             widget=self.slidingWindowBox,
             master=self,
             value='windowSize',
-            min=1,
-            max=1,
+            minv=1,
+            maxv=1,
             step=1,
             orientation='horizontal',
             label=u'Window size:',
@@ -252,12 +223,12 @@ class OWTextableLength(OWWidget):
                 u"The length of segment sequences defining contexts."
             ),
         )
-        self.containingSegmentationBox = OWGUI.widgetBox(
+        self.containingSegmentationBox = gui.widgetBox(
             widget=self.contextsBox,
             orientation='vertical',
         )
-        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
-        self.contextSegmentationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.containingSegmentationBox, height=3)
+        self.contextSegmentationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
             value='_contexts',
@@ -270,8 +241,8 @@ class OWTextableLength(OWWidget):
                 u"the contexts in which length will be measured."
             ),
         )
-        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
-        self.contextAnnotationCombo = OWGUI.comboBox(
+        gui.separator(widget=self.containingSegmentationBox, height=3)
+        self.contextAnnotationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
             value='contextAnnotationKey',
@@ -288,8 +259,8 @@ class OWTextableLength(OWWidget):
                 u"annotation values for a specific annotation key."
             ),
         )
-        OWGUI.separator(widget=self.containingSegmentationBox, height=3)
-        OWGUI.checkBox(
+        gui.separator(widget=self.containingSegmentationBox, height=3)
+        gui.checkBox(
             widget=self.containingSegmentationBox,
             master=self,
             value='mergeContexts',
@@ -302,9 +273,9 @@ class OWTextableLength(OWWidget):
                 u"contains a single row)."
             ),
         )
-        OWGUI.separator(widget=self.contextsBox, height=3)
+        gui.separator(widget=self.contextsBox, height=3)
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -357,7 +328,7 @@ class OWTextableLength(OWWidget):
         if self.mode == 'Sliding window':
 
             # Compute length...
-            progressBar = OWGUI.ProgressBar(
+            progressBar = gui.ProgressBar(
                 self,
                 iterations=len(units) - (self.windowSize - 1)
             )
@@ -388,7 +359,7 @@ class OWTextableLength(OWWidget):
                 num_iterations = 1
 
             # Compute length...
-            progressBar = OWGUI.ProgressBar(
+            progressBar = gui.ProgressBar(
                 self,
                 iterations=num_iterations
             )
@@ -488,7 +459,7 @@ class OWTextableLength(OWWidget):
         if self.mode == 'Sliding window':
             self.containingSegmentationBox.setVisible(False)
             self.slidingWindowBox.setVisible(True)
-            self.windowSizeSpin.control.setRange(
+            self.windowSizeSpin.setRange(
                 1,
                 len(self.segmentations[self.units][1])
             )
@@ -515,30 +486,16 @@ class OWTextableLength(OWWidget):
 
         self.adjustSizeWithTimer()
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
-        self.openContext("", self.segmentations)
+        self.openContext(self.uuid, self.segmentations)
         self.updateGUI()
         self.sendButton.sendIf()
 
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
-
 
 if __name__ == '__main__':
+    import sys
+    from PyQt4.QtGui import QApplication
     import LTTL.Segmenter as Segmenter
     from LTTL.Input import Input
 
