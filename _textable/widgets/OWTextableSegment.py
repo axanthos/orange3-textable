@@ -20,76 +20,58 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.21.4'
 
-"""
-<name>Segment</name>
-<description>Subdivide a segmentation using regular expressions</description>
-<icon>icons/Segment.png</icon>
-<priority>4002</priority>
-"""
+import os, re, codecs, json
 
-import re, codecs, json
-
+from PyQt4.QtGui import QFont
+from PyQt4.QtGui import QFileDialog, QMessageBox
 import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler,
+    JSONMessage, InfoBox, SendButton, AdvancedSettings,
+    normalizeCarriageReturns, pluralize
+)
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from Orange.widgets import widget, gui, settings
 
 
-class OWTextableSegment(OWWidget):
+class OWTextableSegment(OWTextableBaseWidget):
     """Orange widget for regex-based tokenization"""
 
-    settingsList = [
-        'regexes',
-        'importAnnotations',
-        'mergeDuplicates',
-        'autoSend',
-        'autoNumber',
-        'autoNumberKey',
-        'displayAdvancedSettings',
-        'regex',
-        'lastLocation',
-        'mode',
-        'segmentType',
-        'uuid',
+    name = "Segment"
+    description = "Subdivide a segmentation using regular expressions"
+    icon = "icons/Segment.png"
+    priority = 4002
+
+    # Input and output channels...
+    inputs = [
+        ('Segmentation', Segmentation, "inputData",),
+        ('Message', JSONMessage, "inputMessage",)
     ]
+    outputs = [('Segmented data', Segmentation)]
 
-    def __init__(self, parent=None, signalManager=None):
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.split(".")[:2]
+    )
+    # Settings...
+    regexes = settings.Setting([])
+    segmentType = settings.Setting(u'Segment into words')
+    importAnnotations = settings.Setting(True)
+    mergeDuplicates = settings.Setting(False)
+    autoNumber = settings.Setting(False)
+    autoNumberKey = settings.Setting(u'num')
+    displayAdvancedSettings = settings.Setting(False)
+    lastLocation = settings.Setting('.')
+    regex = settings.Setting(u'')
+    mode = settings.Setting(u'Tokenize')
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0
-        )
+    want_main_area = False
+    # TODO: wantStateInfoWidget = 0
 
-        # Input and output channels...
-        self.inputs = [
-            ('Segmentation', Segmentation, self.inputData, Single),
-            ('Message', JSONMessage, self.inputMessage, Single)
-        ]
-        self.outputs = [('Segmented data', Segmentation)]
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        # Settings...
-        self.regexes = list()
-        self.segmentType = u'Segment into words'
-        self.importAnnotations = True
-        self.mergeDuplicates = False
-        self.autoSend = True
-        self.autoNumber = False
-        self.autoNumberKey = u'num'
-        self.displayAdvancedSettings = False
-        self.lastLocation = '.'
-        self.regex = u''
-        self.mode = u'Tokenize'
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
-
-        # Other attributes...
         self.inputSegmentation = None
         self.regexLabels = list()
         self.selectedRegexLabels = list()
@@ -119,18 +101,18 @@ class OWTextableSegment(OWWidget):
         self.advancedSettings.draw()
 
         # Regexes box
-        regexBox = OWGUI.widgetBox(
+        regexBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Regexes',
             orientation='vertical',
         )
-        regexBoxLine1 = OWGUI.widgetBox(
+        regexBoxLine1 = gui.widgetBox(
             widget=regexBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
         )
-        self.regexListbox = OWGUI.listBox(
+        self.regexListbox = gui.listBox(
             widget=regexBoxLine1,
             master=self,
             value='selectedRegexLabels',
@@ -152,11 +134,11 @@ class OWTextableSegment(OWWidget):
         font.setStyleHint(QFont.Courier)
         font.setPixelSize(12)
         self.regexListbox.setFont(font)
-        regexBoxCol2 = OWGUI.widgetBox(
+        regexBoxCol2 = gui.widgetBox(
             widget=regexBoxLine1,
             orientation='vertical',
         )
-        self.moveUpButton = OWGUI.button(
+        self.moveUpButton = gui.button(
             widget=regexBoxCol2,
             master=self,
             label=u'Move Up',
@@ -165,7 +147,7 @@ class OWTextableSegment(OWWidget):
                 u"Move the selected regex upward in the list."
             ),
         )
-        self.moveDownButton = OWGUI.button(
+        self.moveDownButton = gui.button(
             widget=regexBoxCol2,
             master=self,
             label=u'Move Down',
@@ -174,7 +156,7 @@ class OWTextableSegment(OWWidget):
                 u"Move the selected regex downward in the list."
             ),
         )
-        self.removeButton = OWGUI.button(
+        self.removeButton = gui.button(
             widget=regexBoxCol2,
             master=self,
             label=u'Remove',
@@ -183,7 +165,7 @@ class OWTextableSegment(OWWidget):
                 u"Remove the selected regex from the list."
             ),
         )
-        self.clearAllButton = OWGUI.button(
+        self.clearAllButton = gui.button(
             widget=regexBoxCol2,
             master=self,
             label=u'Clear All',
@@ -192,7 +174,7 @@ class OWTextableSegment(OWWidget):
                 u"Remove all regexes from the list."
             ),
         )
-        self.exportButton = OWGUI.button(
+        self.exportButton = gui.button(
             widget=regexBoxCol2,
             master=self,
             label=u'Export List',
@@ -202,7 +184,7 @@ class OWTextableSegment(OWWidget):
                 u"regex list can be exported in JSON format."
             ),
         )
-        self.importButton = OWGUI.button(
+        self.importButton = gui.button(
             widget=regexBoxCol2,
             master=self,
             label=u'Import List',
@@ -213,18 +195,18 @@ class OWTextableSegment(OWWidget):
                 u"will be added to the existing ones."
             ),
         )
-        regexBoxLine2 = OWGUI.widgetBox(
+        regexBoxLine2 = gui.widgetBox(
             widget=regexBox,
             box=False,
             orientation='vertical',
         )
         # Add regex box
-        addRegexBox = OWGUI.widgetBox(
+        addRegexBox = gui.widgetBox(
             widget=regexBoxLine2,
             box=True,
             orientation='vertical',
         )
-        self.modeCombo = OWGUI.comboBox(
+        self.modeCombo = gui.comboBox(
             widget=addRegexBox,
             master=self,
             value='mode',
@@ -243,11 +225,11 @@ class OWTextableSegment(OWWidget):
             ),
         )
         self.modeCombo.setMinimumWidth(120)
-        OWGUI.separator(
+        gui.separator(
             widget=addRegexBox,
             height=3,
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=addRegexBox,
             master=self,
             value='newRegex',
@@ -266,11 +248,11 @@ class OWTextableSegment(OWWidget):
                 u"and so on."
             ),
         )
-        OWGUI.separator(
+        gui.separator(
             widget=addRegexBox,
             height=3,
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=addRegexBox,
             master=self,
             value='newAnnotationKey',
@@ -289,11 +271,11 @@ class OWTextableSegment(OWWidget):
                 u"captured group number (e.g. '&1', '&2', etc.)."
             ),
         )
-        OWGUI.separator(
+        gui.separator(
             widget=addRegexBox,
             height=3,
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=addRegexBox,
             master=self,
             value='newAnnotationValue',
@@ -312,16 +294,16 @@ class OWTextableSegment(OWWidget):
                 u"captured group number (e.g. '&1', '&2', etc.)."
             ),
         )
-        OWGUI.separator(
+        gui.separator(
             widget=addRegexBox,
             height=3,
         )
-        addRegexBoxLine1 = OWGUI.widgetBox(
+        addRegexBoxLine1 = gui.widgetBox(
             widget=addRegexBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addRegexBoxLine1,
             master=self,
             value='ignoreCase',
@@ -332,7 +314,7 @@ class OWTextableSegment(OWWidget):
                 u"Regex pattern is case-insensitive."
             ),
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addRegexBoxLine1,
             master=self,
             value='unicodeDependent',
@@ -342,12 +324,12 @@ class OWTextableSegment(OWWidget):
                 u"Built-in character classes are Unicode-aware."
             ),
         )
-        addRegexBoxLine2 = OWGUI.widgetBox(
+        addRegexBoxLine2 = gui.widgetBox(
             widget=addRegexBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addRegexBoxLine2,
             master=self,
             value='multiline',
@@ -360,7 +342,7 @@ class OWTextableSegment(OWWidget):
                 u"and end of each input segment)."
             ),
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=addRegexBoxLine2,
             master=self,
             value='dotAll',
@@ -371,11 +353,11 @@ class OWTextableSegment(OWWidget):
                 u"than any character but newline)."
             ),
         )
-        OWGUI.separator(
+        gui.separator(
             widget=addRegexBox,
             height=3,
         )
-        self.addButton = OWGUI.button(
+        self.addButton = gui.button(
             widget=addRegexBox,
             master=self,
             label=u'Add',
@@ -389,17 +371,17 @@ class OWTextableSegment(OWWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Advanced) options box...
-        optionsBox = OWGUI.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
         )
-        optionsBoxLine2 = OWGUI.widgetBox(
+        optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumber',
@@ -411,7 +393,7 @@ class OWTextableSegment(OWWidget):
                 u"indices."
             ),
         )
-        self.autoNumberKeyLineEdit = OWGUI.lineEdit(
+        self.autoNumberKeyLineEdit = gui.lineEdit(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumberKey',
@@ -421,11 +403,11 @@ class OWTextableSegment(OWWidget):
                 u"Annotation key for output segment auto-numbering."
             ),
         )
-        OWGUI.separator(
+        gui.separator(
             widget=optionsBox,
             height=3,
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBox,
             master=self,
             value='importAnnotations',
@@ -437,11 +419,11 @@ class OWTextableSegment(OWWidget):
                 u"input segment."
             ),
         )
-        OWGUI.separator(
+        gui.separator(
             widget=optionsBox,
             height=3,
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBox,
             master=self,
             value='mergeDuplicates',
@@ -456,7 +438,7 @@ class OWTextableSegment(OWWidget):
                 u"application) will be kept."
             ),
         )
-        OWGUI.separator(
+        gui.separator(
             widget=optionsBox,
             height=2,
         )
@@ -464,12 +446,12 @@ class OWTextableSegment(OWWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Basic) Regex box...
-        basicRegexBox = OWGUI.widgetBox(
+        basicRegexBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Segment type',
             orientation='vertical',
         )
-        self.segmentTypeCombo = OWGUI.comboBox(
+        self.segmentTypeCombo = gui.comboBox(
             widget=basicRegexBox,
             master=self,
             value='segmentType',
@@ -488,16 +470,16 @@ class OWTextableSegment(OWWidget):
                 u"units defined using a regular expression)."
             ),
         )
-        self.basicRegexFieldBox = OWGUI.widgetBox(
+        self.basicRegexFieldBox = gui.widgetBox(
             widget=basicRegexBox,
             box=False,
             orientation='vertical',
         )
-        OWGUI.separator(
+        gui.separator(
             widget=self.basicRegexFieldBox,
             height=2,
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=self.basicRegexFieldBox,
             master=self,
             value='regex',
@@ -510,14 +492,14 @@ class OWTextableSegment(OWWidget):
                 u"which the data will be segmented."
             ),
         )
-        OWGUI.separator(
+        gui.separator(
             widget=basicRegexBox,
             height=3,
         )
         self.advancedSettings.basicWidgets.append(basicRegexBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -531,7 +513,7 @@ class OWTextableSegment(OWWidget):
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
         if not message:
-            self.warning(0)
+            self.warning()
             self.sendButton.settingsChanged()
             return
         self.displayAdvancedSettings = True
@@ -603,9 +585,9 @@ class OWTextableSegment(OWWidget):
 
         # Get regexes from basic or advanced settings...
         regexForType = {
-            u'Segment into letters': ur'\w',
-            u'Segment into words': ur'\w+',
-            u'Segment into lines': ur'.+',
+            u'Segment into letters': r'\w',
+            u'Segment into words': r'\w+',
+            u'Segment into lines': r'.+',
         }
         if self.displayAdvancedSettings:
             myRegexes = self.regexes
@@ -659,7 +641,7 @@ class OWTextableSegment(OWWidget):
 
         # Prepare regexes...
         regexes = list()
-        for regex_idx in xrange(len(myRegexes)):
+        for regex_idx in range(len(myRegexes)):
             regex = myRegexes[regex_idx]
             regex_string = regex[0]
             if regex[3] or regex[4] or regex[5] or regex[6]:
@@ -695,12 +677,12 @@ class OWTextableSegment(OWWidget):
                 return
 
         # Perform tokenization...
-        progressBar = OWGUI.ProgressBar(
+        progressBar = gui.ProgressBar(
             self,
             iterations=len(self.inputSegmentation) * len(myRegexes)
         )
-        self.warning(0)
-        self.error(0)
+        self.warning()
+        self.error()
         try:
             segmented_data = Segmenter.tokenize(
                 segmentation=self.inputSegmentation,
@@ -732,13 +714,11 @@ class OWTextableSegment(OWWidget):
 
     def importList(self):
         """Display a FileDialog and import regex list"""
-        filePath = unicode(
-            QFileDialog.getOpenFileName(
-                self,
-                u'Import Regex List',
-                self.lastLocation,
-                u'Text files (*)'
-            )
+        filePath = QFileDialog.getOpenFileName(
+            self,
+            u'Import Regex List',
+            self.lastLocation,
+            u'Text files (*)'
         )
         if not filePath:
             return
@@ -821,12 +801,10 @@ class OWTextableSegment(OWWidget):
                 toDump[-1]['multiline'] = regex[5]
             if regex[6]:
                 toDump[-1]['dot_all'] = regex[6]
-        filePath = unicode(
-            QFileDialog.getSaveFileName(
-                self,
-                u'Export Regex List',
-                self.lastLocation,
-            )
+        filePath = QFileDialog.getSaveFileName(
+            self,
+            u'Export Regex List',
+            self.lastLocation,
         )
         if filePath:
             self.lastLocation = os.path.dirname(filePath)
@@ -916,11 +894,11 @@ class OWTextableSegment(OWWidget):
                 maxAnnoLen = max([len(a) for a in annotations])
                 for index in range(len(self.regexes)):
                     regexLabel = u'(%s)  ' % self.regexes[index][7][0].lower()
-                    format = u'%-' + unicode(maxRegexLen + 2) + u's'
+                    format = u'%-' + str(maxRegexLen + 2) + u's'
                     regexLabel += format % regexes[index]
                     if maxAnnoLen > 4:
                         if len(annotations[index]) > 4:
-                            format = u'%-' + unicode(maxAnnoLen + 2) + u's'
+                            format = u'%-' + str(maxAnnoLen + 2) + u's'
                             regexLabel += format % annotations[index]
                         else:
                             regexLabel += u' ' * (maxAnnoLen + 2)
@@ -989,31 +967,17 @@ class OWTextableSegment(OWWidget):
             self.clearAllButton.setDisabled(True)
             self.exportButton.setDisabled(True)
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
             self.sendButton.settingsChanged()
         else:
-            OWWidget.setCaption(self, title)
-
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
+            super().setCaption(title)
 
 
 if __name__ == '__main__':
+    import sys
+    from PyQt4.QtGui import QApplication
     from LTTL.Input import Input
 
     appl = QApplication(sys.argv)
