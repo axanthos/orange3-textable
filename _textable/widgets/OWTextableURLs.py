@@ -20,73 +20,57 @@ along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 
 __version__ = '0.14.2'
 
-"""
-<name>URLs</name>
-<description>Fetch text data online</description>
-<icon>icons/URLs.png</icon>
-<priority>3</priority>
-"""
-
-import codecs, urllib, re, json
+import os, codecs, re, json
 from unicodedata import normalize
+from urllib.request import urlopen
 
+from PyQt4.QtGui import QFont
+from PyQt4.QtGui import QMessageBox, QFileDialog
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
 
-from TextableUtils import *
+from .TextableUtils import (
+    OWTextableBaseWidget, VersionedSettingsHandler,
+    JSONMessage, InfoBox, SendButton, AdvancedSettings,
+    normalizeCarriageReturns, getPredefinedEncodings, pluralize
+)
 
-from Orange.OrangeWidgets.OWWidget import *
-import OWGUI
+from Orange.widgets import widget, gui, settings
 
 
-class OWTextableURLs(OWWidget):
+class OWTextableURLs(OWTextableBaseWidget):
     """Orange widget for fetching text from URLs"""
 
-    settingsList = [
-        'URLs',
-        'encoding',
-        'autoSend',
-        'autoNumber',
-        'autoNumberKey',
-        'importURLs',
-        'importURLsKey',
-        'displayAdvancedSettings',
-        'lastLocation',
-        'URL',
-        'uuid',
+    name = "URLs"
+    description = "Fetch text data online"
+    icon = "icons/URLs.png"
+    priority = 3
+
+    inputs = [
+        ('Message', JSONMessage, "inputMessage", widget.Single)
     ]
+    outputs = [('Text data', Segmentation)]
 
-    def __init__(self, parent=None, signalManager=None):
+    settingsHandler = VersionedSettingsHandler(
+        version=__version__.split(".")[:2]
+    )
+    # Settings...
+    URLs = settings.Setting([])
+    encoding = settings.Setting('utf-8')
+    autoNumber = settings.Setting(False)
+    autoNumberKey = settings.Setting(u'num')
+    importURLs = settings.Setting(True)
+    importURLsKey = settings.Setting(u'url')
+    lastLocation = settings.Setting('.')
+    displayAdvancedSettings = settings.Setting(False)
+    URL = settings.Setting(u'')
 
-        OWWidget.__init__(
-            self,
-            parent,
-            signalManager,
-            wantMainArea=0,
-            wantStateInfoWidget=0,
-        )
+    want_main_area = False
+    # TODO: wantStateInfoWidget = False
 
-        # Input and output channels...
-        self.inputs = [
-            ('Message', JSONMessage, self.inputMessage, Single)
-        ]
-        self.outputs = [('Text data', Segmentation)]
-
-        # Settings...
-        self.URLs = list()
-        self.encoding = 'utf-8'
-        self.autoSend = True
-        self.autoNumber = False
-        self.autoNumberKey = u'num'
-        self.importURLs = True
-        self.importURLsKey = u'url'
-        self.lastLocation = '.'
-        self.displayAdvancedSettings = False
-        self.URL = u''
-        self.uuid = None
-        self.loadSettings()
-        self.uuid = getWidgetUuid(self)
+    def __init__(self):
+        super().__init__()
 
         # Other attributes...
         self.segmentation = None
@@ -118,17 +102,17 @@ class OWTextableURLs(OWWidget):
         # BASIC GUI...
 
         # Basic URL box
-        basicURLBox = OWGUI.widgetBox(
+        basicURLBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Source',
             orientation='vertical',
         )
-        basicURLBoxLine1 = OWGUI.widgetBox(
+        basicURLBoxLine1 = gui.widgetBox(
             widget=basicURLBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=basicURLBoxLine1,
             master=self,
             value='URL',
@@ -140,8 +124,8 @@ class OWTextableURLs(OWWidget):
                 u"The URL whose content will be imported."
             ),
         )
-        OWGUI.separator(widget=basicURLBox, height=3)
-        OWGUI.comboBox(
+        gui.separator(widget=basicURLBox, height=3)
+        gui.comboBox(
             widget=basicURLBox,
             master=self,
             value='encoding',
@@ -155,25 +139,25 @@ class OWTextableURLs(OWWidget):
                 u"Select URL's encoding."
             ),
         )
-        OWGUI.separator(widget=basicURLBox, height=3)
+        gui.separator(widget=basicURLBox, height=3)
         self.advancedSettings.basicWidgets.append(basicURLBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
         # ADVANCED GUI...
 
         # URL box
-        URLBox = OWGUI.widgetBox(
+        URLBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Sources',
             orientation='vertical',
         )
-        URLBoxLine1 = OWGUI.widgetBox(
+        URLBoxLine1 = gui.widgetBox(
             widget=URLBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
         )
-        self.fileListbox = OWGUI.listBox(
+        self.fileListbox = gui.listBox(
             widget=URLBoxLine1,
             master=self,
             value='selectedURLLabel',
@@ -193,11 +177,11 @@ class OWTextableURLs(OWWidget):
         font.setStyleHint(QFont.Courier)
         font.setPixelSize(12)
         self.fileListbox.setFont(font)
-        URLBoxCol2 = OWGUI.widgetBox(
+        URLBoxCol2 = gui.widgetBox(
             widget=URLBoxLine1,
             orientation='vertical',
         )
-        self.moveUpButton = OWGUI.button(
+        self.moveUpButton = gui.button(
             widget=URLBoxCol2,
             master=self,
             label=u'Move Up',
@@ -206,7 +190,7 @@ class OWTextableURLs(OWWidget):
                 u"Move the selected URL upward in the list."
             ),
         )
-        self.moveDownButton = OWGUI.button(
+        self.moveDownButton = gui.button(
             widget=URLBoxCol2,
             master=self,
             label=u'Move Down',
@@ -215,7 +199,7 @@ class OWTextableURLs(OWWidget):
                 u"Move the selected URL downward in the list."
             ),
         )
-        self.removeButton = OWGUI.button(
+        self.removeButton = gui.button(
             widget=URLBoxCol2,
             master=self,
             label=u'Remove',
@@ -224,7 +208,7 @@ class OWTextableURLs(OWWidget):
                 u"Remove the selected URL from the list."
             ),
         )
-        self.clearAllButton = OWGUI.button(
+        self.clearAllButton = gui.button(
             widget=URLBoxCol2,
             master=self,
             label=u'Clear All',
@@ -233,7 +217,7 @@ class OWTextableURLs(OWWidget):
                 u"Remove all URLs from the list."
             ),
         )
-        self.exportButton = OWGUI.button(
+        self.exportButton = gui.button(
             widget=URLBoxCol2,
             master=self,
             label=u'Export List',
@@ -243,7 +227,7 @@ class OWTextableURLs(OWWidget):
                 u"list can be exported in JSON format."
             ),
         )
-        self.importButton = OWGUI.button(
+        self.importButton = gui.button(
             widget=URLBoxCol2,
             master=self,
             label=u'Import List',
@@ -254,18 +238,18 @@ class OWTextableURLs(OWWidget):
                 u"be added to those already imported."
             ),
         )
-        URLBoxLine2 = OWGUI.widgetBox(
+        URLBoxLine2 = gui.widgetBox(
             widget=URLBox,
             box=False,
             orientation='vertical',
         )
         # Add URL box
-        addURLBox = OWGUI.widgetBox(
+        addURLBox = gui.widgetBox(
             widget=URLBoxLine2,
             box=True,
             orientation='vertical',
         )
-        OWGUI.lineEdit(
+        gui.lineEdit(
             widget=addURLBox,
             master=self,
             value='newURL',
@@ -281,8 +265,8 @@ class OWTextableURLs(OWWidget):
                 u" will be the same as in this field."
             ),
         )
-        OWGUI.separator(widget=addURLBox, height=3)
-        OWGUI.comboBox(
+        gui.separator(widget=addURLBox, height=3)
+        gui.comboBox(
             widget=addURLBox,
             master=self,
             value='encoding',
@@ -296,8 +280,8 @@ class OWTextableURLs(OWWidget):
                 u"Select URL's encoding."
             ),
         )
-        OWGUI.separator(widget=addURLBox, height=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=addURLBox, height=3)
+        gui.lineEdit(
             widget=addURLBox,
             master=self,
             value='newAnnotationKey',
@@ -311,8 +295,8 @@ class OWTextableURLs(OWWidget):
                 u"added to the list."
             ),
         )
-        OWGUI.separator(widget=addURLBox, height=3)
-        OWGUI.lineEdit(
+        gui.separator(widget=addURLBox, height=3)
+        gui.lineEdit(
             widget=addURLBox,
             master=self,
             value='newAnnotationValue',
@@ -325,8 +309,8 @@ class OWTextableURLs(OWWidget):
                 u"associated with the above annotation key."
             ),
         )
-        OWGUI.separator(widget=addURLBox, height=3)
-        self.addButton = OWGUI.button(
+        gui.separator(widget=addURLBox, height=3)
+        self.addButton = gui.button(
             widget=addURLBox,
             master=self,
             label=u'Add',
@@ -340,17 +324,17 @@ class OWTextableURLs(OWWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
-        optionsBox = OWGUI.widgetBox(
+        optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
         )
-        optionsBoxLine1 = OWGUI.widgetBox(
+        optionsBoxLine1 = gui.widgetBox(
             widget=optionsBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBoxLine1,
             master=self,
             value='importURLs',
@@ -361,7 +345,7 @@ class OWTextableURLs(OWWidget):
                 u"Import URLs as annotations."
             ),
         )
-        self.importURLsKeyLineEdit = OWGUI.lineEdit(
+        self.importURLsKeyLineEdit = gui.lineEdit(
             widget=optionsBoxLine1,
             master=self,
             value='importURLsKey',
@@ -371,13 +355,13 @@ class OWTextableURLs(OWWidget):
                 u"Annotation key for importing URLs."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=3)
-        optionsBoxLine2 = OWGUI.widgetBox(
+        gui.separator(widget=optionsBox, height=3)
+        optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
             box=False,
             orientation='horizontal',
         )
-        OWGUI.checkBox(
+        gui.checkBox(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumber',
@@ -388,7 +372,7 @@ class OWTextableURLs(OWWidget):
                 u"Annotate URLs with increasing numeric indices."
             ),
         )
-        self.autoNumberKeyLineEdit = OWGUI.lineEdit(
+        self.autoNumberKeyLineEdit = gui.lineEdit(
             widget=optionsBoxLine2,
             master=self,
             value='autoNumberKey',
@@ -398,11 +382,11 @@ class OWTextableURLs(OWWidget):
                 u"Annotation key for URL auto-numbering."
             ),
         )
-        OWGUI.separator(widget=optionsBox, height=3)
+        gui.separator(widget=optionsBox, height=3)
         self.advancedSettings.advancedWidgets.append(optionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
-        OWGUI.rubber(self.controlArea)
+        gui.rubber(self.controlArea)
 
         # Send button...
         self.sendButton.draw()
@@ -492,7 +476,7 @@ class OWTextableURLs(OWWidget):
         else:
             myURLs = [[self.URL, self.encoding, u'', u'']]
 
-        progressBar = OWGUI.ProgressBar(
+        progressBar = gui.ProgressBar(
             self,
             iterations=len(myURLs)
         )
@@ -508,7 +492,7 @@ class OWTextableURLs(OWWidget):
             # Try to fetch URL content...
             self.error()
             try:
-                URLHandle = urllib.urlopen(URL)
+                URLHandle = urlopen(URL)
                 try:
                     URLContent = URLHandle.read().decode(encoding)
                 except UnicodeError:
@@ -542,7 +526,7 @@ class OWTextableURLs(OWWidget):
             # Remove utf-8 BOM if necessary...
             if encoding == u'utf-8':
                 URLContent = URLContent.lstrip(
-                    unicode(codecs.BOM_UTF8, 'utf-8')
+                    codecs.BOM_UTF8.decode('utf-8')
                 )
 
             # Normalize text (canonical decomposition then composition)...
@@ -568,7 +552,7 @@ class OWTextableURLs(OWWidget):
             label = self.captionTitle
         else:
             label = None
-        for index in xrange(len(URLContents)):
+        for index in range(len(URLContents)):
             myInput = Input(URLContents[index], label)
             segment = myInput[0]
             segment.annotations.update(annotations[index])
@@ -612,16 +596,15 @@ class OWTextableURLs(OWWidget):
 
     def importList(self):
         """Display a FileDialog and import URL list"""
-        filePath = unicode(
-            QFileDialog.getOpenFileName(
-                self,
-                u'Import URL List',
-                self.lastLocation,
-                u'Text files (*)'
-            )
+        filePath = QFileDialog.getOpenFileName(
+            self,
+            u'Import URL List',
+            self.lastLocation,
+            u'Text files (*)'
         )
         if not filePath:
             return
+
         self.file = os.path.normpath(filePath)
         self.lastLocation = os.path.dirname(filePath)
         self.error()
@@ -683,13 +666,12 @@ class OWTextableURLs(OWWidget):
             if URL[2] and URL[3]:
                 toDump[-1]['annotation_key'] = URL[2]
                 toDump[-1]['annotation_value'] = URL[3]
-        filePath = unicode(
-            QFileDialog.getSaveFileName(
-                self,
-                u'Export URL List',
-                self.lastLocation,
-            )
+        filePath = QFileDialog.getSaveFileName(
+            self,
+            u'Export URL List',
+            self.lastLocation,
         )
+
         if filePath:
             self.lastLocation = os.path.dirname(filePath)
             outputFile = codecs.open(
@@ -773,12 +755,12 @@ class OWTextableURLs(OWWidget):
                 annotations = ['{%s: %s}' % (f[2], f[3]) for f in self.URLs]
                 maxURLLen = max([len(n) for n in URLs])
                 maxAnnoLen = max([len(a) for a in annotations])
-                for index in xrange(len(self.URLs)):
-                    format = u'%-' + unicode(maxURLLen + 2) + u's'
+                for index in range(len(self.URLs)):
+                    format = u'%-' + str(maxURLLen + 2) + u's'
                     URLLabel = format % URLs[index]
                     if maxAnnoLen > 4:
                         if len(annotations[index]) > 4:
-                            format = u'%-' + unicode(maxAnnoLen + 2) + u's'
+                            format = u'%-' + str(maxAnnoLen + 2) + u's'
                             URLLabel += format % annotations[index]
                         else:
                             URLLabel += u' ' * (maxAnnoLen + 2)
@@ -836,34 +818,20 @@ class OWTextableURLs(OWWidget):
             self.clearAllButton.setDisabled(True)
             self.exportButton.setDisabled(True)
 
-    def adjustSizeWithTimer(self):
-        qApp.processEvents()
-        QTimer.singleShot(50, self.adjustSize)
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self) and title != 'Orange Widget':
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
             self.sendButton.settingsChanged()
         else:
-            OWWidget.setCaption(self, title)
+            super().setCaption(title)
 
     def onDeleteWidget(self):
         self.clearCreatedInputs()
 
-    def getSettings(self, *args, **kwargs):
-        settings = OWWidget.getSettings(self, *args, **kwargs)
-        settings["settingsDataVersion"] = __version__.split('.')[:2]
-        return settings
-
-    def setSettings(self, settings):
-        if settings.get("settingsDataVersion", None) \
-                == __version__.split('.')[:2]:
-            settings = settings.copy()
-            del settings["settingsDataVersion"]
-            OWWidget.setSettings(self, settings)
-
 
 if __name__ == '__main__':
+    import sys
+    from PyQt4.QtGui import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableURLs()
     ow.show()
