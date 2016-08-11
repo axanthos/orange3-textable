@@ -49,7 +49,7 @@ LONG_DESCRIPTION = open(
 AUTHOR = 'LangTech Sarl'
 AUTHOR_EMAIL = 'info@langtech.ch'
 URL = 'http://langtech.ch/textable'
-DOWNLOAD_URL = 'https://bitbucket.org/langtech/orange-textable/get/v2.0a0.zip'
+DOWNLOAD_URL = 'https://bitbucket.org/langtech/orange-textable/get/v2.0a2.zip'
 LICENSE = 'GPLv3'
 
 KEYWORDS = (
