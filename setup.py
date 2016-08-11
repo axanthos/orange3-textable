@@ -35,12 +35,12 @@ except ImportError:
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.1"   # file version
+__version__ = "1.0.2"   # file version
 
 NAME = 'Orange-Textable'
 DOCUMENTATION_NAME = 'Orange Textable'
 
-VERSION = '2.0a1'  # package version
+VERSION = '2.0a2'  # package version
 
 DESCRIPTION = 'Orange Textable add-on for Orange data mining software package.'
 LONG_DESCRIPTION = open(
@@ -85,7 +85,7 @@ INSTALL_REQUIRES = (
     'Orange >= 2.7.0, < 3.0.0',
     'setuptools',
     'future',
-    'LTTL >= 2.0a1',
+    'LTTL >= 2.0a3',
 ),
 
 EXTRAS_REQUIRE = {

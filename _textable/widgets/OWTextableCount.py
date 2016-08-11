@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.3'
+__version__ = '0.21.4'
 
 """
 <name>Count</name>
@@ -81,8 +81,13 @@ class OWTextableCount(OWWidget):
             wantStateInfoWidget=0,
         )
 
+        # TODO: document second channel
+
         self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [('Pivot Crosstab', IntPivotCrosstab)]
+        self.outputs = [
+            ('Textable pivot crosstab', IntPivotCrosstab, Default),
+            ('Orange table', Orange.data.Table),
+        ]
 
         # Settings...
         self.autoSend = False
@@ -414,7 +419,8 @@ class OWTextableCount(OWWidget):
         # Check that there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Pivot Crosstab', None)
+            self.send('Textable pivot crosstab', None)
+            self.send('Orange table', None)
             return
 
         # Units parameter...
@@ -503,9 +509,22 @@ class OWTextableCount(OWWidget):
         total = sum([i for i in table.values.values()])
         if total == 0:
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
-            self.send('Pivot Crosstab', None)
+            self.send('Textable pivot crosstab', None)
+            self.send('Orange table', None)
         else:
-            self.send('Pivot Crosstab', table)
+            if len(table.row_ids) == 1:
+                sortedTransposedTable = table.to_transposed().to_sorted(
+                    key_col_id=table.row_ids[0],
+                    reverse_rows=True,
+                )
+                self.send('Textable pivot crosstab', sortedTransposedTable)
+                self.send(
+                    'Orange table',
+                    sortedTransposedTable.to_orange_table()
+                )
+            else:
+                self.send('Textable pivot crosstab', table)
+                self.send('Orange table', table.to_orange_table())
             message = u'Table with %i occurrence@p sent to output.' % total
             message = pluralize(message, total)
             self.infoBox.setText(message)

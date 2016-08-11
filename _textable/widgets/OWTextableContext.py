@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.10.2'
+__version__ = '0.10.3'
 
 """
 <name>Context</name>
@@ -81,8 +81,13 @@ class OWTextableContext(OWWidget):
             wantStateInfoWidget=0,
         )
 
+        # TODO: document second channel
+
         self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [('Textable Table', Table)]
+        self.outputs = [
+            ('Textable table', Table, Default),
+            ('Orange table', Orange.data.Table),
+        ]
 
         # Settings...
         self.autoSend = False
@@ -380,7 +385,8 @@ class OWTextableContext(OWWidget):
         # Check that there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Textable Table', None)
+            self.send('Textable table', None)
+            self.send('Orange table', None)
             return
 
         progressBar = OWGUI.ProgressBar(
@@ -472,9 +478,11 @@ class OWTextableContext(OWWidget):
 
         if not len(table.row_ids):
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
-            self.send('Textable Table', None)
+            self.send('Textable table', None)
+            self.send('Orange table', None)
         else:
-            self.send('Textable Table', table)
+            self.send('Textable table', table)
+            self.send('Orange table', table.to_orange_table())
             self.infoBox.setText(u'Table sent to output.')
 
         self.sendButton.resetSettingsChangedFlag()

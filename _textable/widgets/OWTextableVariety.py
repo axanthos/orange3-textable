@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.2'
+__version__ = '0.13.3'
 
 """
 <name>Variety</name>
@@ -85,8 +85,13 @@ class OWTextableVariety(OWWidget):
             wantStateInfoWidget=0,
         )
 
+        # TODO: document second channel
+
         self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [('Textable Table', Table)]
+        self.outputs = [
+            ('Textable table', Table, Default),
+            ('Orange table', Orange.data.Table),
+        ]
 
         # Settings...
         self.autoSend = False
@@ -283,7 +288,7 @@ class OWTextableVariety(OWWidget):
             tooltip=(
                 u"Context specification mode.\n\n"
                 u"Contexts define the rows of the resulting\n"
-                u"crosstab.\n\n"
+                u"table.\n\n"
                 u"'No context': variety will be measured\n"
                 u"irrespective of the context (hence the output\n"
                 u"table contains a single row).\n\n"
@@ -362,7 +367,7 @@ class OWTextableVariety(OWWidget):
             tooltip=(
                 u"Check this box if you want to treat all segments\n"
                 u"of the above specified segmentation as forming\n"
-                u"a single context (hence the resulting crosstab\n"
+                u"a single context (hence the resulting table\n"
                 u"contains a single row)."
             ),
         )
@@ -476,7 +481,8 @@ class OWTextableVariety(OWWidget):
         # Check that there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Textable Table', None)
+            self.send('Textable table', None)
+            self.send('Orange table', None)
             return
 
         # Units parameter...
@@ -568,10 +574,12 @@ class OWTextableVariety(OWWidget):
 
         if not len(table.row_ids):
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
-            self.send('Textable Table', None)
+            self.send('Textable table', None)
+            self.send('Orange table', None)
         else:
             self.infoBox.setText(u'Table sent to output.')
-            self.send('Textable Table', table)
+            self.send('Textable table', table)
+            self.send('Orange table', table.to_orange_table())
 
         self.sendButton.resetSettingsChangedFlag()
 

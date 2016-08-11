@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.12.2'
+__version__ = '0.12.3'
 
 """
 <name>Category</name>
@@ -77,8 +77,13 @@ class OWTextableCategory(OWWidget):
             wantStateInfoWidget=0,
         )
 
+        # TODO: document second channel
+
         self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [('Textable table', Table)]
+        self.outputs = [
+            ('Textable table', Table, Default),
+            ('Orange table', Orange.data.Table),
+        ]
 
         # Settings...
         self.autoSend = False
@@ -342,6 +347,7 @@ class OWTextableCategory(OWWidget):
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
             self.send('Textable table', None)
+            self.send('Orange table', None)
             return
 
         # Units parameter...
@@ -386,9 +392,11 @@ class OWTextableCategory(OWWidget):
         if not len(table.row_ids):
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
             self.send('Textable table', None)
+            self.send('Orange table', None)
         else:
             self.infoBox.setText(u'Table sent to output.')
             self.send('Textable table', table)
+            self.send('Orange table', table.to_orange_table())
 
         self.sendButton.resetSettingsChangedFlag()
 

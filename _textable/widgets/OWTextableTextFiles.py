@@ -526,6 +526,11 @@ class OWTextableTextFiles(OWWidget):
         else:
             myFiles = [[self.file, self.encoding, u'', u'']]
 
+        progressBar = OWGUI.ProgressBar(
+            self,
+            iterations=len(myFiles)
+        )
+
         # Open and process each file successively...
         for myFile in myFiles:
             filePath = myFile[0]
@@ -541,6 +546,7 @@ class OWTextableTextFiles(OWWidget):
                 try:
                     fileContent = fileHandle.read()
                 except UnicodeError:
+                    progressBar.finish()
                     if len(myFiles) > 1:
                         message = u"Please select another encoding "    \
                                   + u"for file %s." % filePath
@@ -552,6 +558,7 @@ class OWTextableTextFiles(OWWidget):
                 finally:
                     fileHandle.close()
             except IOError:
+                progressBar.finish()
                 if len(myFiles) > 1:
                     message = u"Couldn't open file '%s'." % filePath
                 else:
@@ -589,6 +596,7 @@ class OWTextableTextFiles(OWWidget):
                     annotation[self.autoNumberKey] = counter
                     counter += 1
             annotations.append(annotation)
+            progressBar.advance()
 
         # Create an LTTL.Input for each file...
         if len(fileContents) == 1:
@@ -627,6 +635,7 @@ class OWTextableTextFiles(OWWidget):
         message += u'(%i character@p).' % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
+        progressBar.finish()
 
         self.send('Text data', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()

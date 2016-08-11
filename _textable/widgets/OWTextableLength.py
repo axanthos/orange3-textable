@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.14.2'
+__version__ = '0.14.3'
 
 """
 <name>Length</name>
@@ -75,8 +75,13 @@ class OWTextableLength(OWWidget):
             wantStateInfoWidget=0,
         )
 
+        # TODO: document second channel
+
         self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [('Textable table', Table)]
+        self.outputs = [
+            ('Textable table', Table, Default),
+            ('Orange table', Orange.data.Table),
+        ]
 
         # Settings...
         self.autoSend = False
@@ -293,7 +298,7 @@ class OWTextableLength(OWWidget):
             tooltip=(
                 u"Check this box if you want to treat all segments\n"
                 u"of the above specified segmentation as forming\n"
-                u"a single context (hence the resulting crosstab\n"
+                u"a single context (hence the resulting table\n"
                 u"contains a single row)."
             ),
         )
@@ -330,6 +335,7 @@ class OWTextableLength(OWWidget):
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
             self.send('Textable table', None)
+            self.send('Orange table', None)
             return
 
         # Units parameter...
@@ -397,9 +403,11 @@ class OWTextableLength(OWWidget):
         if not len(table.row_ids):
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
             self.send('Textable table', None)
+            self.send('Orange table', None)
         else:
             self.infoBox.setText(u'Table sent to output.')
             self.send('Textable table', table)
+            self.send('Orange table', table.to_orange_table())
 
         self.sendButton.resetSettingsChangedFlag()
 

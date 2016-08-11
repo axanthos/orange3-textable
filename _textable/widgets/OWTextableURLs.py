@@ -492,6 +492,11 @@ class OWTextableURLs(OWWidget):
         else:
             myURLs = [[self.URL, self.encoding, u'', u'']]
 
+        progressBar = OWGUI.ProgressBar(
+            self,
+            iterations=len(myURLs)
+        )
+
         # Process each URL successively...
         for myURL in myURLs:
 
@@ -507,6 +512,7 @@ class OWTextableURLs(OWWidget):
                 try:
                     URLContent = URLHandle.read().decode(encoding)
                 except UnicodeError:
+                    progressBar.finish()
                     if len(myURLs) > 1:
                         message = u"Please select another encoding "    \
                                   + u"for URL %s." % URL
@@ -518,6 +524,7 @@ class OWTextableURLs(OWWidget):
                 finally:
                     URLHandle.close()
             except IOError:
+                progressBar.finish()
                 if len(myURLs) > 1:
                     message = u"Couldn't retrieve %s." % URL
                 else:
@@ -554,6 +561,7 @@ class OWTextableURLs(OWWidget):
                     annotation[self.autoNumberKey] = counter
                     counter += 1
             annotations.append(annotation)
+            progressBar.advance()
 
         # Create an LTTL.Input for each URL...
         if len(URLContents) == 1:
@@ -592,6 +600,7 @@ class OWTextableURLs(OWWidget):
         message += u'(%i character@p).' % numChars
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
+        progressBar.finish()
 
         self.send('Text data', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()

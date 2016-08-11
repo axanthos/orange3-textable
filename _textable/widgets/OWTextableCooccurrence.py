@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u'1.0.0'
+__version__ = u'1.0.1'
 __author__ = "Mahtab Mohammadi"
 __maintainer__ = "LangTech Sarl"
 
@@ -83,8 +83,13 @@ class OWTextableCooccurrence(OWWidget):
             wantStateInfoWidget=0,
         )
 
+        # TODO: document second channel
+
         self.inputs = [('Segmentation', Segmentation, self.inputData, Multiple)]
-        self.outputs = [('Pivot Crosstab', IntPivotCrosstab)]
+        self.outputs = [
+            ('Textable pivot crosstab', IntPivotCrosstab, Default),
+            ('Orange table', Orange.data.Table),
+        ]
 
         # Settings...
         self.autoSend = False
@@ -137,10 +142,10 @@ class OWTextableCooccurrence(OWWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"The segmentation for which the co-occurrence of the\n"
-                u"segments will be measured.\n"
-                u"This defines the columns and rows of the resulting\n"
-                u"crosstab."
+                u"The segmentation for which the co-occurrences of\n"
+                u"segments will be counted.\n"
+                u"This defines the columns of the resulting crosstab,\n"
+                u"as well as its rows if no secondary units are being used."
             ),
         )
         self.unitsegmentationCombo.setMinimumWidth(120)
@@ -156,8 +161,8 @@ class OWTextableCooccurrence(OWWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Indicate wether the items to be measured the\n"
-                u"cooccurrence in the above specified segmentation\n"
+                u"Indicates whether the items whose co-occurrences will be\n"
+                u"counted in the above specified segmentation\n"
                 u"are defined by the segments' content (value 'none')\n"
                 u"or by their annotation values for a specific\n"
                 u"annotation key."
@@ -176,12 +181,12 @@ class OWTextableCooccurrence(OWWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Indicates whether to measure the co-occurrence of\n"
+                u"Indicates whether to count the co-occurrences of\n"
                 u"single segments or rather of sequences of 2,\n"
-                u"3,... segments (n-grams).\n\n"
+                u"3, ... segments (n-grams).\n\n"
                 u"Note that this parameter cannot be set to a\n"
-                u"value larger than 1 if co-occurrence is to be\n"
-                u"measured with respect to the secondary units."
+                u"value larger than 1 if co-occurrences are to be\n"
+                u"counted between primary and secondary units."
             ),
         )
         OWGUI.separator(widget=self.unitsBox, height=3)
@@ -217,8 +222,8 @@ class OWTextableCooccurrence(OWWidget):
             label=u'Use secondary units',
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Check this box to measure the co-occurrence of\n"
-                u"the primary and the secondary units."
+                u"Check this box to count the co-occurrences of\n"
+                u"primary and secondary units."
             ),
         )
         OWGUI.separator(widget=self.units2Box, height=3)
@@ -235,10 +240,10 @@ class OWTextableCooccurrence(OWWidget):
             labelWidth=160,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"The segmentation for which the co-occurrence of the\n"
-                u"segments will be measured with respect to primary units\n"
+                u"The segmentation for which the co-occurrences of\n"
+                u"segments will be counted with respect to primary units\n"
                 u"This defines the rows of the resulting crosstab, and\n"
-                u"therefor the primary units define only the columns of the\n"
+                u"therefore the primary units define only the columns of the\n"
                 u"resulting crosstab."
             )
         )
@@ -254,8 +259,11 @@ class OWTextableCooccurrence(OWWidget):
             labelWidth=160,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Specify the annotation values of the secondary units n"
-                u"for a specific annotation key."
+                u"Indicate whether the items of the secondary unit\n"
+                u"segmentation whose co-occurrences will be counted\n"
+                u"are defined by the segments' content (value 'none')\n"
+                u"or by their annotation values for a specific\n"
+                u"annotation key."
             ),
         )
         self.coocWithUnits2Checkbox.disables.append(iBox)
@@ -330,8 +338,7 @@ class OWTextableCooccurrence(OWWidget):
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 u"The segmentation whose segment types define\n"
-                u"the contexts in which the co-occurrence of the \n"
-                u"unit types segmentation will be measured."
+                u"the contexts in which co-occurrences will be counted."
             ),
         )
         OWGUI.separator(widget=self.containingSegmentationBox, height=3)
@@ -346,7 +353,7 @@ class OWTextableCooccurrence(OWWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Indicate whether context types are defined by\n"
+                u"Indicates whether context types are defined by\n"
                 u"the content of segments in the above specified\n"
                 u"segmentation (value 'none') or by their annotation\n"
                 u"values for a specific annotation key."
@@ -409,7 +416,8 @@ class OWTextableCooccurrence(OWWidget):
                     u"try again.",
                     state='warning',
                 )
-                self.send('IntPivotCrosstab', None, self)
+                self.send('Textable pivot crosstab', None)
+                self.send('Orange table', None)
 
     def sendData(self):
         """Check input, compute co-occurrence, then send tabel"""
@@ -417,7 +425,8 @@ class OWTextableCooccurrence(OWWidget):
         # Check if there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Pivot Crosstab', None)
+            self.send('Textable pivot crosstab', None)
+            self.send('Orange table', None)
             return
 
         # Units parameter...
@@ -487,13 +496,15 @@ class OWTextableCooccurrence(OWWidget):
             progressBar.finish()
         if len(table.row_ids) == 0:
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
-            self.send('Pivot Crosstab', None)
+            self.send('Textable pivot crosstab', None)
+            self.send('Orange table', None)
         else:
             total = sum([i for i in table.values.values()])
             message = u'Table with %i cooccurrence@p sent to output.' % total
             message = pluralize(message, total)
             self.infoBox.setText(message)
-            self.send('Pivot Crosstab', table)
+            self.send('Textable pivot crosstab', table)
+            self.send('Orange table', table.to_orange_table())
 
         self.sendButton.resetSettingsChangedFlag()
 
