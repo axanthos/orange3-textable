@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.10.3'
+__version__ = '0.10.4'
 
 """
 <name>Context</name>
@@ -67,6 +67,7 @@ class OWTextableContext(OWWidget):
         'maxDistance',
         'useCollocationFormat',
         'minFrequency',
+        'mergeStrings',
     ]
 
     def __init__(self, parent=None, signalManager=None):
@@ -99,6 +100,7 @@ class OWTextableContext(OWWidget):
         self.applyMaxLength = True
         self.applyMaxDistance = True
         self.useCollocationFormat = False
+        self.mergeStrings = False
         self.uuid = None
         self.loadSettings()
         self.uuid = getWidgetUuid(self)
@@ -337,6 +339,19 @@ class OWTextableContext(OWWidget):
                 u"and right contexts."
             ),
         )
+        OWGUI.separator(widget=self.neighboringSegmentsBox, height=3)
+        OWGUI.checkBox(
+            widget=self.neighboringSegmentsBox,
+            master=self,
+            value='mergeStrings',
+            label=u'Treat distinct strings as contiguous',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Check this box if you want to treat separate strings\n"
+                u"as if they were actually contiguous, so that the end of\n"
+                u"each string is adjacent to the beginning of the next string."
+            ),
+        )
         OWGUI.separator(widget=self.contextsBox, height=3)
 
         OWGUI.rubber(self.controlArea)
@@ -401,6 +416,7 @@ class OWTextableContext(OWWidget):
             contexts = {
                 'segmentation': self.segmentations[self._contexts][1],
                 'annotation_key': self.contextAnnotationKey or None,
+                'merge_strings': self.mergeStrings,
             }
             if contexts['annotation_key'] == u'(none)':
                 contexts['annotation_key'] = None
@@ -435,6 +451,7 @@ class OWTextableContext(OWWidget):
 
                 # Contexts parameter...
                 contexts['min_frequency'] = self.minFrequency
+                contexts['merge_strings'] = self.mergeStrings
 
                 # Process...
                 table = Processor.collocations(
@@ -611,7 +628,7 @@ if __name__ == '__main__':
     appl = QApplication(sys.argv)
     ow = OWTextableContext()
     seg1 = Input(u'hello world', 'text')
-    seg2 = segmenter.tokenize(
+    seg2 = Segmenter.tokenize(
         seg1,
         [
             (re.compile(r'hello'), u'tokenize', {'tag': 'interj'}),

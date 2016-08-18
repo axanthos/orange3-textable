@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.4'
+__version__ = '0.21.5'
 
 """
 <name>Count</name>
@@ -67,6 +67,7 @@ class OWTextableCount(OWWidget):
         'windowSize',
         'leftContextSize',
         'rightContextSize',
+        'mergeStrings',
     ]
 
     def __init__(self, parent=None, signalManager=None):
@@ -98,6 +99,7 @@ class OWTextableCount(OWWidget):
         self.windowSize = 1
         self.leftContextSize = 0
         self.rightContextSize = 0
+        self.mergeStrings = False
         self.unitPosMarker = u'_'
         self.uuid = None
         self.loadSettings()
@@ -315,6 +317,19 @@ class OWTextableCount(OWWidget):
                 u"context sides."
             ),
         )
+        OWGUI.separator(widget=self.leftRightNeighborhoodBox, height=3)
+        OWGUI.checkBox(
+            widget=self.leftRightNeighborhoodBox,
+            master=self,
+            value='mergeStrings',
+            label=u'Treat distinct strings as contiguous',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Check this box if you want to treat separate strings\n"
+                u"as if they were actually contiguous, so that the end of\n"
+                u"each string is adjacent to the beginning of the next string."
+            ),
+        )
         self.containingSegmentationBox = OWGUI.widgetBox(
             widget=self.contextsBox,
             orientation='vertical',
@@ -469,6 +484,7 @@ class OWTextableCount(OWWidget):
                     'left_size': self.leftContextSize,
                     'right_size': self.rightContextSize,
                     'unit_pos_marker': self.unitPosMarker,
+                    'merge_strings': self.mergeStrings,
                 },
                 progress_callback=progressBar.advance,
             )
