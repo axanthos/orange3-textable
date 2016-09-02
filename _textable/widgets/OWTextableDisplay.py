@@ -76,6 +76,10 @@ class OWTextableDisplay(OWTextableBaseWidget):
     def __init__(self, *args, **kwargs):
         """Initialize a Display widget"""
         super().__init__(*args, **kwargs)
+        # Current general warning and error messages (as submited
+        # through self.error(text) and self.warning(text)
+        self._currentErrorMessage = ""
+        self._currentWarningMessage = ""
 
         self.segmentation = None
         self.displayedSegmentation = Input(
@@ -322,36 +326,25 @@ class OWTextableDisplay(OWTextableBaseWidget):
             Segmenter.bypass(self.segmentation, self.captionTitle),
             self
         )
-        # TODO: ...
-        # if (
-        #     (
-        #         0 in self.widgetState['Warning'] and
-        #         'format' in self.widgetState['Warning'][0]
-        #     )
-        #     or
-        #     (
-        #         0 in self.widgetState['Error'] and
-        #         'format' in self.widgetState['Error'][0]
-        #     )
-        # ):
-        #     self.send('Displayed segmentation', None, self)
-        #     return
+        # TODO: Check if this is correct replacement for textable v1.*, v2.*
+        if 'format' in self._currentWarningMessage or \
+                'format' in self._currentErrorMessage:
+            self.send('Displayed segmentation', None, self)
+            return
         if len(self.displayedSegmentation[0].get_content()) > 0:
             self.send(
                 'Displayed segmentation',
                 self.displayedSegmentation,
                 self
             )
+        else:
+            self.send('Displayed segmentation', None, self)
+        # TODO: Differes only in capitalization with a check before
+        #       Is this intentional?
+        if "Format" not in self._currentErrorMessage:
             message = u'%i segment@p sent to output.' % len(self.segmentation)
             message = pluralize(message, len(self.segmentation))
             self.infoBox.setText(message)
-        else:
-            self.send('Displayed segmentation', None, self)
-
-        # if 'Format' not in self.widgetState['Error'].get(0, u''):
-        #     message = u'%i segment@p sent to output.' % len(self.segmentation)
-        #     message = pluralize(message, len(self.segmentation))
-        #     self.infoBox.setText(message)
         self.sendButton.resetSettingsChangedFlag()
 
     def updateGUI(self):
@@ -502,6 +495,28 @@ class OWTextableDisplay(OWTextableBaseWidget):
             self.sendButton.settingsChanged()
         else:
             super().setCaption(title)
+
+    def error(self, *args, **kwargs):
+        # Reimplemented to track the current active error message
+        if args:
+            text_or_id = args[0]
+        else:
+            text_or_id = kwargs.get("text_or_id", None)
+
+        if isinstance(text_or_id, str) or text_or_id is None:
+            self._currentErrorMessage = text_or_id or ""
+        return super().error(*args, **kwargs)
+
+    def warning(self, *args, **kwargs):
+        # Reimplemented to track the current active warning message
+        if args:
+            text_or_id = args[0]
+        else:
+            text_or_id = kwargs.get("text_or_id", None)
+
+        if isinstance(text_or_id, str) or text_or_id is None:
+            self._currentWarningMessage = text_or_id or ""
+        return super().warning(*args, **kwargs)
 
 
 if __name__ == '__main__':
