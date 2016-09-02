@@ -738,9 +738,9 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
         return 0
 
     def _permutation(self, seq1, seq2):
-        assert len(seq1) == len(seq2) and \
-               set(seq1) == set(seq2) and \
-               len(set(seq1)) == len(seq2)
+        if not (len(seq1) == len(seq2) and set(seq1) == set(seq2) and
+                len(set(seq1)) == len(seq2)):
+            raise ValueError
         return [seq1.index(el) for el in seq2]
 
     def settings_to_widget(self, widget):
@@ -767,8 +767,11 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
             # NOTE: Match on widget uuids only.
             # LTTL.Input.Input can change it's 'label' in place on user
             # interaction.
+            try:
+                permutation = self._permutation(uuids(encoded), uuids(stored))
+            except ValueError:
+                permutation = range(len(inputs))
 
-            permutation = self._permutation(uuids(encoded), uuids(stored))
             permuted = [inputs[p] for p in permutation]
 
             # Restore the stored order in the widget.
