@@ -386,11 +386,6 @@ def updateMultipleInputs(
 ):
     """Process input when the widget can take multiple ones"""
     ids = [x[0] for x in itemList]
-
-    def pformat(itemid, value):
-        return "({}, {!r}, 0x{:x})".format(*itemid[:2], id(itemid[2]))
-
-    # print("Items list before", [pformat(*item) for item in itemList])
     if not newItem:  # remove
         if not ids.count(newId):
             return  # no such item, removed before
@@ -404,8 +399,6 @@ def updateMultipleInputs(
             itemList[index] = (newId, newItem)
         else:  # add new
             itemList.append((newId, newItem))
-    assert len(itemList) == len(set(itemId for itemId, _ in itemList))
-    # print("Items list after", [pformat(*item) for item in itemList])
 
 
 def normalizeCarriageReturns(string):
