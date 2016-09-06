@@ -73,45 +73,35 @@ class SendButton(object):
 
     def draw(self):
         """Draw the send button and stopper on window"""
-        # sendButton = gui.button(
-        #     widget=self.widget,
-        #     master=self.master,
-        #     label=self.buttonLabel,
-        #     callback=self.callback,
-        #     tooltip=u"Process input data and send results to output.",
-        # )
-        # autoSendCheckbox = gui.checkBox(
-        #     widget=self.widget,
-        #     master=self.master,
-        #     value=self.checkboxValue,
-        #     label=self.checkboxLabel,
-        #     tooltip=u"Process and send data whenever settings change.",
-        # )
-        # OWGUI.setStopper(
-        #     master=self.master,
-        #     sendButton=sendButton,
-        #     stopCheckbox=autoSendCheckbox,
-        #     changedFlag=self.changedFlag,
-        #     callback=self.callback,
-        # )
-        # TODO: Check auto_commit implementation
-        gui.auto_commit(
+        sendButton = gui.button(
             widget=self.widget,
             master=self.master,
-            # value=self.changedFlag,
-            value=self.checkboxValue,
             label=self.buttonLabel,
-            checkbox_label=self.checkboxLabel,
-            # callback=self.callback,
-            commit=self.callback
+            callback=self.callback,
+            tooltip=u"Process input data and send results to output.",
         )
+        autoSendCheckbox = gui.checkBox(
+            widget=self.widget,
+            master=self.master,
+            value=self.checkboxValue,
+            label=self.checkboxLabel,
+            tooltip=u"Process and send data whenever settings change.",
+        )
+        autoSendCheckbox.disables.append((-1, sendButton))
+        sendButton.setDisabled(autoSendCheckbox.isChecked())
+
+        def sendOnToogle(state):
+            if state and getattr(self.master, self.changedFlag, True):
+                self.callback()
+        autoSendCheckbox.toggled[bool].connect(sendOnToogle)
+
         self.resetSettingsChangedFlag()
 
     def sendIf(self):
         """Send data if autoSend is on, else register setting change"""
         if self.sendIfPreCallback is not None:
             self.sendIfPreCallback()
-        if self.master.autoSend:  # TODO: Check `auto_commit` implementation
+        if self.master.autoSend:
             self.callback()
         else:
             setattr(self.master, self.changedFlag, True)
