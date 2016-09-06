@@ -63,7 +63,6 @@ class OWTextableLength(OWTextableBaseWidget):
     contextAnnotationKey = settings.ContextSetting(-1)
 
     want_main_area = False
-    # TODO: wantStateInfoWidget = 0
 
     def __init__(self, *args, **kwargs):
         """Initialize a Length widget"""

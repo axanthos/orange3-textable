@@ -69,7 +69,6 @@ class OWTextableURLs(OWTextableBaseWidget):
     URL = settings.Setting(u'')
 
     want_main_area = False
-    # TODO: wantStateInfoWidget = False
 
     def __init__(self):
         super().__init__()

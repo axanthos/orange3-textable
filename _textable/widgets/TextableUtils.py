@@ -839,6 +839,10 @@ class OWTextableBaseWidget(widget.OWWidget):
     #: restored from a saved workflow) a new unique id is issued.
     uuid = settings.Setting(None, schema_only=True)  # type: str
 
+    # Disable default OWWidget message bar
+    # All in widget messages are delegated to InfoBox ??
+    want_message_bar = False
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # uuid is None -> a new widget, otherwise it was restored from a
@@ -850,3 +854,12 @@ class OWTextableBaseWidget(widget.OWWidget):
         self.ensurePolished()
         QCoreApplication.sendPostedEvents(self, QEvent.LayoutRequest)
         QTimer.singleShot(0, self.adjustSize)
+
+    def update_message_state(self):
+        """
+        Reimplemented.
+
+        Disable the default OWWidget's message bar.
+        """
+        if self.want_message_bar:
+            super().update_message_state()

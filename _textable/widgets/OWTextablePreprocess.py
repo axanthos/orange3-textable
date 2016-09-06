@@ -54,7 +54,6 @@ class OWTextablePreprocess(OWTextableBaseWidget):
     removeAccents = settings.Setting(False)
 
     want_main_area = False
-    # TODO: wantStateInfoWidget = 0
 
     def __init__(self, *args, **kwargs):
         """Initialize a Preprocess widget"""

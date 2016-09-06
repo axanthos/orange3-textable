@@ -66,7 +66,6 @@ class OWTextableIntersect(OWTextableBaseWidget):
     filteringAnnotationKey = settings.ContextSetting(0)
 
     want_main_area = False
-    # TODO: wantStateInfoWidget = 0
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

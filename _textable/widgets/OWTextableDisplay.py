@@ -71,8 +71,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
 
     want_main_area = True
 
-    # TODO: wantStateInfoWidget = False
-
     def __init__(self, *args, **kwargs):
         """Initialize a Display widget"""
         super().__init__(*args, **kwargs)

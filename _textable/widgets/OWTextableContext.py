@@ -67,7 +67,6 @@ class OWTextableContext(OWTextableBaseWidget):
     contextAnnotationKey = settings.ContextSetting(u'(none)')
 
     want_main_area = False
-    # TODO: wantStateInfoWidget = False
 
     def __init__(self):
         """Initialize a Context widget"""
