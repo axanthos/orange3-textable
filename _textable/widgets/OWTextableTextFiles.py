@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.17.2'
+__version__ = '0.17.3'
 
 """
 <name>Text Files</name>
@@ -38,6 +38,9 @@ from TextableUtils import *
 
 from Orange.OrangeWidgets.OWWidget import *
 import OWGUI
+
+CHUNK_LENGTH = 1000000
+CHUNK_NUM = 100
 
 
 class OWTextableTextFiles(OWWidget):
@@ -542,9 +545,20 @@ class OWTextableTextFiles(OWWidget):
             self.error()
             try:
                 # simply open in Python 3?
-                fileHandle = io.open(filePath, mode='rU', encoding=encoding)
+                fh = io.open(filePath, mode='rU', encoding=encoding)
                 try:
-                    fileContent = fileHandle.read()
+                    fileContent = ""
+                    i = 0
+                    chunks = list()
+                    for chunk in iter(lambda: fh.read(CHUNK_LENGTH), ""):
+                        chunks.append('\n'.join(chunk.splitlines()))
+                        i += CHUNK_LENGTH
+                        if i % (CHUNK_NUM * CHUNK_LENGTH) == 0:
+                            fileContent += "".join(chunks)
+                            chunks = list()
+                    if len(chunks):
+                        fileContent += "".join(chunks)
+                    del chunks
                 except UnicodeError:
                     progressBar.finish()
                     if len(myFiles) > 1:
@@ -556,7 +570,7 @@ class OWTextableTextFiles(OWWidget):
                     self.send('Text data', None, self)
                     return
                 finally:
-                    fileHandle.close()
+                    fh.close()
             except IOError:
                 progressBar.finish()
                 if len(myFiles) > 1:
@@ -566,12 +580,6 @@ class OWTextableTextFiles(OWWidget):
                 self.infoBox.setText(message, 'error')
                 self.send('Text data', None, self)
                 return
-
-            # Replace newlines with '\n'...
-            # fileContent = fileContent.replace('\r\n', '\n').replace('\r', '\n')
-
-            # TODO: check if this is more efficient than replace above...
-            fileContent = '\n'.join(fileContent.splitlines())
 
             # Remove utf-8 BOM if necessary...
             if encoding == u'utf-8':
