@@ -56,4 +56,4 @@ relationship offers new evidence with which to evaluate the strategy and
 structure of Melville's novel.
     
 .. [#] The schema can be downloaded from :download:`here
-       <schemas/moby_dick_for_textable_v1.5.2.ows>`.
+       <schemas/moby_dick_for_textable_v2.0a3.ows>`.
