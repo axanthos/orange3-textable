@@ -706,17 +706,20 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
         other.
 
         """
-        # widget_uuid, inputs = encoded
         _, inputs = self.encode(None, inputsegmentations)
         stored_uuid, stored_inputs = context.encoded
         if stored_uuid != widget_uuid:
             # Receiving widget uuid does not match the stored context
             return 0
 
-        if len(stored_inputs) == len(inputs):
-            if set(stored_inputs) == set(inputs):
-                # Perfect match on the inputs
-                return 2
+        try:
+            _ = self._permutation(stored_inputs, inputs)
+        except ValueError:
+            pass
+        else:
+            # Perfect match on the inputs
+            return 2
+
         # No match
         return 0
 
@@ -741,7 +744,6 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
             # the stored one
             inputs = widgetutils.getdeepattr(widget, self.inputListFieldName)
             _, encoded = self.encode(widget, inputs)
-            # _, stored = context.values[self.inputListField.name]
             _, stored = context.encoded
 
             def uuids(seq):
@@ -749,7 +751,7 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
 
             # NOTE: Match on widget uuids only.
             # LTTL.Input.Input can change it's 'label' in place on user
-            # interaction.
+            # interaction (where?, why?).
             try:
                 permutation = self._permutation(uuids(encoded), uuids(stored))
             except ValueError:
