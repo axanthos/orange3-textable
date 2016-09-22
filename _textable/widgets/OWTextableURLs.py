@@ -24,8 +24,10 @@ import os, codecs, re, json
 from unicodedata import normalize
 from urllib.request import urlopen
 
+from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QFont
 from PyQt4.QtGui import QMessageBox, QFileDialog
+
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
@@ -394,8 +396,8 @@ class OWTextableURLs(OWTextableBaseWidget):
         # Info box...
         self.infoBox.draw()
 
-        self.sendButton.sendIf()
         self.adjustSizeWithTimer()
+        QTimer.singleShot(0, self.sendButton.sendIf)
 
     def inputMessage(self, message):
         """Handle JSON message on input connection"""

@@ -24,6 +24,7 @@ __version__ = '0.17.3'
 import codecs, io, os, re, json
 from unicodedata import normalize
 
+from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QFileDialog, QMessageBox
 from PyQt4.QtGui import QFont
 
@@ -434,8 +435,8 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         # Info box...
         self.infoBox.draw()
 
-        self.sendButton.sendIf()
         self.adjustSizeWithTimer()
+        QTimer.singleShot(0, self.sendButton.sendIf)
 
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
