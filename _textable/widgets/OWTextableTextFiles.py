@@ -896,9 +896,11 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             self.exportButton.setDisabled(True)
 
     def setCaption(self, title):
-        if 'captionTitle' in dir(self) and title != 'Orange Widget':
+        if 'captionTitle' in dir(self):
+            changed = title != self.captionTitle
             super().setCaption(title)
-            self.sendButton.settingsChanged()
+            if changed:
+                self.sendButton.settingsChanged()
         else:
             super().setCaption(title)
 
