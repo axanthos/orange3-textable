@@ -24,23 +24,17 @@ from __future__ import unicode_literals
 import os
 import sys
 
-try:
-    if sys.version < '3':
-        import distribute_setup
-        distribute_setup.use_setuptools()
-except ImportError:
-    # For documentation we load setup.py to get version
-    # so it does not matter if importing fails
-    pass
+if sys.version_info < (3, ):
+    raise RuntimeError("Orange3-Textable requires Python 3")
 
 from setuptools import setup, find_packages
 
 __version__ = "1.0.4"   # file version
 
-NAME = 'Orange-Textable'
-DOCUMENTATION_NAME = 'Orange Textable'
+NAME = 'Orange3-Textable'
+DOCUMENTATION_NAME = 'Orange3 Textable'
 
-VERSION = '2.0b1'  # package version
+VERSION = '3.0a1'  # package version
 
 DESCRIPTION = 'Orange Textable add-on for Orange data mining software package.'
 LONG_DESCRIPTION = open(
@@ -56,15 +50,15 @@ KEYWORDS = (
     'text mining',
     'text analysis',
     'textable',
-    'orange',
-    'orange add-on',
+    'orange3',
+    'orange3 add-on',
 )
 
 CLASSIFIERS = (
     'Development Status :: 4 - Beta',
     'Environment :: X11 Applications :: Qt',
     'Environment :: Plugins',
-    'Programming Language :: Python',
+    'Programming Language :: Python :: 3 :: Only',
     'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
     'Operating System :: OS Independent',
     'Topic :: Scientific/Engineering :: Information Analysis',
@@ -82,10 +76,10 @@ PACKAGE_DATA = {
 }
 
 INSTALL_REQUIRES = (
-    'Orange >= 2.7.0, < 3.0.0',
+    'Orange3 >= 3.3.8',
     'setuptools',
     'future',
-    'LTTL >= 2.0b1',
+    'LTTL >= 2.0b2',
 ),
 
 EXTRAS_REQUIRE = {
