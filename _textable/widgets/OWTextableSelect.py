@@ -822,7 +822,7 @@ class OWTextableSelect(OWTextableBaseWidget):
                 self.regexBox.setVisible(False)
                 self.thresholdBox.setVisible(False)
                 if self.sampleSizeMode == u'Count':
-                    self.samplingRateSpin.setVisible(False)
+                    self.samplingRateSpin.box.setVisible(False)
                     if (
                                     self.segmentation is not None
                             and len(self.segmentation)
@@ -836,11 +836,11 @@ class OWTextableSelect(OWTextableBaseWidget):
                     else:
                         self.sampleSizeSpin.setRange(1, 1)
                     self.sampleSize = self.sampleSize or 1
-                    self.sampleSizeSpin.setVisible(True)
+                    self.sampleSizeSpin.box.setVisible(True)
                 elif self.sampleSizeMode == u'Proportion':
-                    self.sampleSizeSpin.setVisible(False)
+                    self.sampleSizeSpin.box.setVisible(False)
                     self.samplingRate = self.samplingRate or 1
-                    self.samplingRateSpin.setVisible(True)
+                    self.samplingRateSpin.box.setVisible(True)
                 self.sampleBox.setVisible(True)
 
             elif self.method == u'Threshold':
