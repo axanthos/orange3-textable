@@ -65,9 +65,9 @@ class OWTextableCount(OWTextableBaseWidget):
     unitPosMarker = settings.Setting(u'_')
 
     units = settings.ContextSetting(-1)
-    unitAnnotationKey = settings.ContextSetting(-1)
+    unitAnnotationKey = settings.ContextSetting(u'(none)')
     _contexts = settings.ContextSetting(-1)
-    contextAnnotationKey = settings.ContextSetting(-1)
+    contextAnnotationKey = settings.ContextSetting(u'(none)')
 
     want_main_area = False
 
@@ -383,17 +383,14 @@ class OWTextableCount(OWTextableBaseWidget):
             self.units -= 1
         elif index == self.units and self.units == len(self.segmentations) - 1:
             self.units -= 1
-            if self.units < 0:
-                self.units = None
         if self.mode == u'Containing segmentation':
             if index == self._contexts:
                 self.mode = u'No context'
-                self._contexts = None
+                self._contexts = -1
             elif index < self._contexts:
                 self._contexts -= 1
                 if self._contexts < 0:
                     self.mode = u'No context'
-                    self._contexts = None
 
     def sendData(self):
 
@@ -463,6 +460,7 @@ class OWTextableCount(OWTextableBaseWidget):
 
             # Parameters for mode 'Containing segmentation'...
             if self.mode == 'Containing segmentation':
+                assert self._contexts >= 0
                 contexts = {
                     'segmentation': self.segmentations[self._contexts][1],
                     'annotation_key': self.contextAnnotationKey or None,
@@ -529,7 +527,7 @@ class OWTextableCount(OWTextableBaseWidget):
             self.slidingWindowBox.setVisible(False)
 
         if len(self.segmentations) == 0:
-            self.units = None
+            self.units = -1
             self.unitAnnotationKey = u''
             self.unitsBox.setDisabled(True)
             self.mode = 'No context'
@@ -595,7 +593,7 @@ class OWTextableCount(OWTextableBaseWidget):
                 self.contextSegmentationCombo.addItem(
                     self.segmentations[index][1].label
                 )
-            self._contexts = self._contexts or 0
+            self._contexts = max(self._contexts, 0)
             segmentation = self.segmentations[self._contexts]
             self.contextAnnotationCombo.clear()
             self.contextAnnotationCombo.addItem(u'(none)')

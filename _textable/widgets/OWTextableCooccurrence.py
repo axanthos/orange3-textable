@@ -61,9 +61,9 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
     _contexts = settings.ContextSetting(-1)
     units2 = settings.ContextSetting(-1)
     mode = settings.ContextSetting(u'Sliding window')
-    unitAnnotationKey = settings.ContextSetting(-1)
-    unit2AnnotationKey = settings.ContextSetting(-1)
-    contextAnnotationKey = settings.ContextSetting(-1)
+    unitAnnotationKey = settings.ContextSetting(u'(none)')
+    unit2AnnotationKey = settings.ContextSetting(u'(none)')
+    contextAnnotationKey = settings.ContextSetting(u'(none)')
     coocWithUnits2 = settings.ContextSetting(False)
     sequenceLength = settings.ContextSetting(1)
     windowSize = settings.ContextSetting(2)
@@ -356,23 +356,17 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             self.units -= 1
         elif index == self.units and self.units == len(self.segmentations) - 1:
             self.units -= 1
-            if self.units < 0:
-                self.units = None
         if index < self.units2:
             self.units2 -= 1
         elif index == self.units2 and self.units2 == len(
                 self.segmentations) - 1:
             self.units2 -= 1
-            if self.units2 < 0:
-                self.units2 = None
         if self.mode == u'Containing segmentation':
             if index < self._contexts:
                 self._contexts -= 1
             elif index == self._contexts:
                 if self._contexts == len(self.segmentations) - 1:
                     self._contexts -= 1
-                    if self._contexts < 0:
-                        self._contexts = None
                 if self.autoSend:
                     self.autoSend = False
                 self.infoBox.setText(
@@ -395,6 +389,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             self.send('Orange table', None)
             return
 
+        assert self.units >= 0
         # Units parameter...
         units = {
             'segmentation': self.segmentations[self.units][1],
@@ -421,13 +416,14 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
 
         # Case2: containing segmentation
         elif self.mode == 'Containing segmentation':
+            assert self._contexts >= 0
             contexts = {
                 'segmentation': self.segmentations[self._contexts][1],
                 'annotation_key': self.contextAnnotationKey or None,
             }
             if contexts['annotation_key'] == u'(none)':
                 contexts['annotation_key'] = None
-            if self.units2 is not None and self.coocWithUnits2:
+            if self.units2 >= 0 and self.coocWithUnits2:
                 # Secondary units parameter...
                 units2 = {
                     'segmentation': self.segmentations[self.units2][1],
@@ -486,10 +482,10 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         self.unit2AnnotationCombo.addItem(u'(none)')
 
         if len(self.segmentations) == 0:
-            self.units = None
+            self.units = -1
             self.unitAnnotationKey = u''
             self.unitsBox.setDisabled(True)
-            self.units2 = None
+            self.units2 = -1
             self.unit2AnnotationKey = u''
             self.units2Box.setDisabled(True)
             self.mode = 'Sliding window'
@@ -504,7 +500,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                     self.unitsegmentationCombo.addItem(segmentation[1].label)
                 except TypeError:
                     self.unitsBox.setDisabled(True)
-            self.units = self.units
+            self.units = max(self.units, 0)
             unitAnnotationKeys \
                 = self.segmentations[self.units][1].get_annotation_keys()
             for k in unitAnnotationKeys:
@@ -525,7 +521,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             self._contextsBox.setDisabled(False)
 
         if self.mode == u'Sliding window':
-            self.units2 = None
+            self.units2 = -1
             self.units2Box.setDisabled(True)
             self.containingSegmentationBox.setVisible(False)
             self.slidingWindowBox.setVisible(True)
@@ -539,7 +535,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
 
         elif self.mode == u'Containing segmentation':
             if len(self.segmentations) == 1:
-                self.units2 = None
+                self.units2 = -1
                 self.unit2AnnotationKey = u''
                 self.units2Box.setDisabled(True)
             elif len(self.segmentations) >= 2:
@@ -554,7 +550,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                     )
             except TypeError:
                 self._contextsBox.setDisabled(True)
-            self._contexts = self._contexts or 0
+            self._contexts = max(self._contexts, 0)
             segmentation = self.segmentations[self._contexts]
             self.contextAnnotationCombo.clear()
             self.contextAnnotationCombo.addItem(u'(none)')
@@ -571,7 +567,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                             segmentation[1].label)
                 except TypeError:
                     self.units2Box.setDisabled(True)
-                self.units2 = self.units2 or 0
+                self.units2 = max(self.units2, 0)
                 unit2AnnotationKeys \
                     = self.segmentations[self.units2][1].get_annotation_keys()
                 for k in unit2AnnotationKeys:

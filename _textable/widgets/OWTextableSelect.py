@@ -77,8 +77,8 @@ class OWTextableSelect(OWTextableBaseWidget):
     maxProportion = settings.Setting(100)
     displayAdvancedSettings = settings.Setting(False)
 
-    regexAnnotationKey = settings.ContextSetting(-1)  # None
-    thresholdAnnotationKey = settings.ContextSetting(-1)  # None
+    regexAnnotationKey = settings.ContextSetting(u'(none)')
+    thresholdAnnotationKey = settings.ContextSetting(u'(none)')
 
     want_main_area = False
 

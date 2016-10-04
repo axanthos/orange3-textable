@@ -64,9 +64,9 @@ class OWTextableVariety(OWTextableBaseWidget):
 
     units = settings.ContextSetting(-1)
     _contexts = settings.ContextSetting(-1)
-    unitAnnotationKey = settings.ContextSetting(-1)
-    categoryAnnotationKey = settings.ContextSetting(-1)
-    contextAnnotationKey = settings.ContextSetting(-1)
+    unitAnnotationKey = settings.ContextSetting(u'(none)')
+    categoryAnnotationKey = settings.ContextSetting(u'(none)')
+    contextAnnotationKey = settings.ContextSetting(u'(none)')
 
     want_main_area = False
 
@@ -424,17 +424,14 @@ class OWTextableVariety(OWTextableBaseWidget):
             self.units -= 1
         elif index == self.units and self.units == len(self.segmentations) - 1:
             self.units -= 1
-            if self.units < 0:
-                self.units = None
         if self.mode == u'Containing segmentation':
             if index == self._contexts:
                 self.mode = u'No context'
-                self._contexts = None
+                self._contexts = -1
             elif index < self._contexts:
                 self._contexts -= 1
                 if self._contexts < 0:
                     self.mode = u'No context'
-                    self._contexts = None
 
     def sendData(self):
 
@@ -446,7 +443,7 @@ class OWTextableVariety(OWTextableBaseWidget):
             self.send('Textable table', None)
             self.send('Orange table', None)
             return
-
+        assert self.units >= 0
         # Units parameter...
         units = {
             'segmentation': self.segmentations[self.units][1],
@@ -496,6 +493,7 @@ class OWTextableVariety(OWTextableBaseWidget):
 
             # Parameters for mode 'Containing segmentation'...
             if self.mode == 'Containing segmentation':
+                assert self._contexts >= 0
                 contexts = {
                     'segmentation': self.segmentations[self._contexts][1],
                     'annotation_key': self.contextAnnotationKey or None,
@@ -560,7 +558,7 @@ class OWTextableVariety(OWTextableBaseWidget):
             self.slidingWindowBox.setVisible(False)
 
         if len(self.segmentations) == 0:
-            self.units = None
+            self.units = -1
             self.unitAnnotationKey = u''
             self.unitsBox.setDisabled(True)
             self.categoryAnnotationKey = u''
@@ -574,7 +572,7 @@ class OWTextableVariety(OWTextableBaseWidget):
                 self.units = 0
             for segmentation in self.segmentations:
                 self.unitSegmentationCombo.addItem(segmentation[1].label)
-            self.units = self.units
+            self.units = max(self.units, 0)
             unitAnnotationKeys \
                 = self.segmentations[self.units][1].get_annotation_keys()
             for k in unitAnnotationKeys:
@@ -625,7 +623,7 @@ class OWTextableVariety(OWTextableBaseWidget):
                 self.contextSegmentationCombo.addItem(
                     self.segmentations[index][1].label
                 )
-            self._contexts = self._contexts or 0
+            self._contexts = max(self._contexts, 0)
             segmentation = self.segmentations[self._contexts]
             self.contextAnnotationCombo.clear()
             self.contextAnnotationCombo.addItem(u'(none)')

@@ -62,8 +62,8 @@ class OWTextableIntersect(OWTextableBaseWidget):
 
     source = settings.ContextSetting(0)
     filtering = settings.ContextSetting(0)
-    sourceAnnotationKey = settings.ContextSetting(0)
-    filteringAnnotationKey = settings.ContextSetting(0)
+    sourceAnnotationKey = settings.ContextSetting(u'(none)')
+    filteringAnnotationKey = settings.ContextSetting(u'(none)')
 
     want_main_area = False
 
@@ -312,6 +312,9 @@ class OWTextableIntersect(OWTextableBaseWidget):
             self.send('Discarded data', None, self)
             return
 
+        assert self.source >= 0
+        assert self.filtering >= 0
+
         # TODO: remove message 'No label was provided.' from docs
 
         # Source and filtering parameter...
@@ -395,15 +398,11 @@ class OWTextableIntersect(OWTextableBaseWidget):
         elif index == self.source \
                 and self.source == len(self.segmentations) - 1:
             self.source -= 1
-            if self.source < 0:
-                self.source = None
         if index < self.filtering:
             self.filtering -= 1
         elif index == self.filtering \
                 and self.filtering == len(self.segmentations) - 1:
             self.filtering -= 1
-            if self.filtering < 0:
-                self.filtering = None
 
     def updateGUI(self):
         """Update GUI state"""
@@ -420,7 +419,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
         self.sourceAnnotationCombo.addItem(u'(none)')
         self.advancedSettings.setVisible(self.displayAdvancedSettings)
         if len(self.segmentations) == 0:
-            self.source = None
+            self.source = -1
             self.sourceAnnotationKey = u''
             intersectBox.setDisabled(True)
             self.adjustSize()
@@ -430,7 +429,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
                 self.source = 0
             for segmentation in self.segmentations:
                 sourceCombo.addItem(segmentation[1].label)
-            self.source = self.source
+            self.source = max(self.source, 0)
             sourceAnnotationKeys \
                 = self.segmentations[self.source][1].get_annotation_keys()
             for k in sourceAnnotationKeys:
@@ -443,7 +442,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
         filteringCombo.clear()
         for index in range(len(self.segmentations)):
             filteringCombo.addItem(self.segmentations[index][1].label)
-        self.filtering = self.filtering or 0
+        self.filtering = max(self.filtering, 0)
         segmentation = self.segmentations[self.filtering]
         if self.displayAdvancedSettings:
             self.filteringAnnotationCombo.clear()

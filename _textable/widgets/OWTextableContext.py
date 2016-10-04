@@ -61,10 +61,10 @@ class OWTextableContext(OWTextableBaseWidget):
     mergeStrings = settings.Setting(False)
 
     # Other attributes...
-    units = settings.ContextSetting(0)
-    unitAnnotationKey = settings.ContextSetting(u'(none)')
-    _contexts = settings.ContextSetting(0)
-    contextAnnotationKey = settings.ContextSetting(u'(none)')
+    units = settings.ContextSetting(-1)  # type: int
+    unitAnnotationKey = settings.ContextSetting(u'(none)')  # type: str
+    _contexts = settings.ContextSetting(-1)  # type: int
+    contextAnnotationKey = settings.ContextSetting(u'(none)')  # type: str
 
     want_main_area = False
 
@@ -347,15 +347,11 @@ class OWTextableContext(OWTextableBaseWidget):
             self.units -= 1
         elif index == self.units and self.units == len(self.segmentations) - 1:
             self.units -= 1
-            if self.units < 0:
-                self.units = None
         if index < self._contexts:
             self._contexts -= 1
         elif index == self._contexts \
                 and self._contexts == len(self.segmentations) - 1:
             self._contexts -= 1
-            if self._contexts < 0:
-                self._contexts = None
 
     def sendData(self):
 
@@ -368,6 +364,8 @@ class OWTextableContext(OWTextableBaseWidget):
             self.send('Orange table', None)
             return
 
+        assert self.units >= 0
+        assert self._contexts >= 0
         progressBar = gui.ProgressBar(
             self,
             iterations=len(self.segmentations[self._contexts][1]),
@@ -480,7 +478,7 @@ class OWTextableContext(OWTextableBaseWidget):
         self.contextAnnotationCombo.addItem(u'(none)')
 
         if len(self.segmentations) == 0:
-            self.units = None
+            self.units = -1
             self.unitAnnotationKey = u''
             self.unitsBox.setDisabled(True)
             self.contextsBox.setDisabled(True)
@@ -492,7 +490,7 @@ class OWTextableContext(OWTextableBaseWidget):
                 self._contexts = 0
             for segmentation in self.segmentations:
                 self.unitSegmentationCombo.addItem(segmentation[1].label)
-            self.units = self.units
+            self.units = max(self.units, 0)
             unitAnnotationKeys \
                 = self.segmentations[self.units][1].get_annotation_keys()
             for k in unitAnnotationKeys:
@@ -510,7 +508,7 @@ class OWTextableContext(OWTextableBaseWidget):
                 self.contextSegmentationCombo.addItem(
                     self.segmentations[index][1].label
                 )
-            self._contexts = self._contexts or 0
+            self._contexts = max(self._contexts, 0)
             self.contextsBox.setDisabled(False)
             segmentation = self.segmentations[self._contexts][1]
             self.contextAnnotationCombo.clear()
