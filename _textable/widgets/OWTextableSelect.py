@@ -110,6 +110,7 @@ class OWTextableSelect(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Select',
             orientation='vertical',
+            addSpace=False,
         )
         self.methodCombo = gui.comboBox(
             widget=self.selectBox,
@@ -441,6 +442,7 @@ class OWTextableSelect(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
+            addSpace=False,
         )
         optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
@@ -489,6 +491,7 @@ class OWTextableSelect(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Select',
             orientation='vertical',
+            addSpace=False,
         )
         self.basicRegexModeCombo = gui.comboBox(
             widget=self.basicSelectBox,

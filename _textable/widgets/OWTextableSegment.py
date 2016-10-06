@@ -104,6 +104,7 @@ class OWTextableSegment(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Regexes',
             orientation='vertical',
+            addSpace=False,
         )
         regexBoxLine1 = gui.widgetBox(
             widget=regexBox,
@@ -204,6 +205,7 @@ class OWTextableSegment(OWTextableBaseWidget):
             widget=regexBoxLine2,
             box=True,
             orientation='vertical',
+            addSpace=False,
         )
         self.modeCombo = gui.comboBox(
             widget=addRegexBox,
@@ -374,6 +376,7 @@ class OWTextableSegment(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
+            addSpace=False,
         )
         optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
@@ -449,6 +452,7 @@ class OWTextableSegment(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Segment type',
             orientation='vertical',
+            addSpace=False,
         )
         self.segmentTypeCombo = gui.comboBox(
             widget=basicRegexBox,

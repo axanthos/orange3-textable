@@ -107,6 +107,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Source',
             orientation='vertical',
+            addSpace=False,
         )
         basicURLBoxLine1 = gui.widgetBox(
             widget=basicURLBox,
@@ -151,6 +152,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Sources',
             orientation='vertical',
+            addSpace=False,
         )
         URLBoxLine1 = gui.widgetBox(
             widget=URLBox,
@@ -249,6 +251,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             widget=URLBoxLine2,
             box=True,
             orientation='vertical',
+            addSpace=False,
         )
         gui.lineEdit(
             widget=addURLBox,
@@ -329,6 +332,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
+            addSpace=False,
         )
         optionsBoxLine1 = gui.widgetBox(
             widget=optionsBox,

@@ -118,6 +118,7 @@ class OWTextableConvert(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Transform',
             orientation='vertical',
+            addSpace=False,
         )
         self.transformBoxLine1 = gui.widgetBox(
             widget=self.transformBox,

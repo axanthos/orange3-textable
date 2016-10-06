@@ -346,6 +346,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
+            addSpace=False,
         )
         optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,
@@ -411,6 +412,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'XML Extraction',
             orientation='vertical',
+            addSpace=False,
         )
         gui.lineEdit(
             widget=basicXmlExtractionBox,

@@ -77,6 +77,7 @@ class OWTextableMerge(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
+            addSpace=False,
         )
         optionsBoxLine1 = gui.widgetBox(
             widget=optionsBox,

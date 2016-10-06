@@ -95,6 +95,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Intersect',
             orientation='vertical',
+            addSpace=False,
         )
         self.modeCombo = gui.comboBox(
             widget=self.intersectBox,
@@ -188,6 +189,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
+            addSpace=False
         )
         optionsBoxLine2 = gui.widgetBox(
             widget=optionsBox,

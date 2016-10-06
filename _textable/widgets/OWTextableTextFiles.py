@@ -112,6 +112,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Source',
             orientation='vertical',
+            addSpace=False,
         )
         basicFileBoxLine1 = gui.widgetBox(
             widget=basicFileBox,
@@ -166,6 +167,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Sources',
             orientation='vertical',
+            addSpace=False,
         )
         fileBoxLine1 = gui.widgetBox(
             widget=fileBox,
@@ -368,6 +370,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
+            addSpace=False,
         )
         optionsBoxLine1 = gui.widgetBox(
             widget=optionsBox,

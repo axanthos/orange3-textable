@@ -103,6 +103,7 @@ class OWTextableRecode(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Substitutions',
             orientation='vertical',
+            addSpace=False,
         )
         substBoxLine1 = gui.widgetBox(
             widget=substBox,
@@ -312,6 +313,7 @@ class OWTextableRecode(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
+            addSpace=False,
         )
         gui.checkBox(
             widget=optionsBox,
@@ -332,6 +334,7 @@ class OWTextableRecode(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Substitution',
             orientation='vertical',
+            addSpace=False,
         )
         gui.lineEdit(
             widget=basicSubstBox,
