@@ -142,6 +142,7 @@ class OWTextableCount(OWTextableBaseWidget):
             label=u'Sequence length:',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"Indicate whether to count single segments or\n"
                 u"rather sequences of 2, 3, ... segments (n-grams)."
@@ -224,6 +225,7 @@ class OWTextableCount(OWTextableBaseWidget):
             label=u'Window size:',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"The length of segment sequences defining contexts."
             ),
@@ -244,6 +246,7 @@ class OWTextableCount(OWTextableBaseWidget):
             label=u'Left context size:',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"The length of segment sequences defining the\n"
                 u"left side of contexts."
@@ -261,6 +264,7 @@ class OWTextableCount(OWTextableBaseWidget):
             label=u'Right context size:',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"The length of segment sequences defining the\n"
                 u"right side of contexts."

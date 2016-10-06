@@ -218,6 +218,7 @@ class OWTextableLength(OWTextableBaseWidget):
             label=u'Window size:',
             labelWidth=190,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"The length of segment sequences defining contexts."
             ),

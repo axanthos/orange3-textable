@@ -280,6 +280,7 @@ class OWTextableSelect(OWTextableBaseWidget):
             label=u'Sample size:',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"The number of segments that will be sampled."
             ),
@@ -294,6 +295,7 @@ class OWTextableSelect(OWTextableBaseWidget):
             label=u'Sampling rate (%):',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"The proportion of segments that will be sampled."
             ),
@@ -358,6 +360,7 @@ class OWTextableSelect(OWTextableBaseWidget):
             maxv=100,
             callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"Minimum count for a type to be selected."
             ),
@@ -379,6 +382,7 @@ class OWTextableSelect(OWTextableBaseWidget):
             maxv=100,
             callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"Minimum relative frequency for a type to be selected."
             ),
@@ -401,6 +405,7 @@ class OWTextableSelect(OWTextableBaseWidget):
             maxv=100,
             callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"Maximum count for a type to be selected."
             ),
@@ -422,6 +427,7 @@ class OWTextableSelect(OWTextableBaseWidget):
             maxv=100,
             callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"Maximum count for a type to be selected."
             ),

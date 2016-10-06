@@ -236,6 +236,7 @@ class OWTextableContext(OWTextableBaseWidget):
             maxv=100,
             callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"Maximal distance between 'key' and context segments."
             ),
@@ -268,6 +269,7 @@ class OWTextableContext(OWTextableBaseWidget):
             label=u'Min. frequency:',
             labelWidth=160,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"The minimum frequency of context segment types."
             ),
@@ -294,6 +296,7 @@ class OWTextableContext(OWTextableBaseWidget):
             maxv=100,
             callback=self.sendButton.settingsChanged,
             checkCallback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"Maximal number of characters in immediate left\n"
                 u"and right contexts."

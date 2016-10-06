@@ -137,6 +137,7 @@ class OWTextableCategory(OWTextableBaseWidget):
             label=u'Sequence length:',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"Indicate whether to use single segments or rather\n"
                 u"sequences of 2, 3, ... segments (n-grams) for\n"

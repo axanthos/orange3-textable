@@ -141,6 +141,7 @@ class OWTextableVariety(OWTextableBaseWidget):
             label=u'Sequence length:',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"Indicate whether to measure the variety of\n"
                 u"single segments or rather of sequences of 2,\n"
@@ -274,6 +275,7 @@ class OWTextableVariety(OWTextableBaseWidget):
             label=u'Window size:',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"The length of segment sequences defining contexts."
             ),
@@ -364,6 +366,7 @@ class OWTextableVariety(OWTextableBaseWidget):
             label=u'Subsample size:',
             labelWidth=160,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"The number of segments per subsample."
             ),
@@ -380,6 +383,7 @@ class OWTextableVariety(OWTextableBaseWidget):
             label=u'Number of subsamples:',
             labelWidth=160,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"The number of subsamples (per context)."
             ),

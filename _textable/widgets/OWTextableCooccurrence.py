@@ -144,6 +144,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             label=u'Sequence length:',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"Indicates whether to count the co-occurrences of\n"
                 u"single segments or rather of sequences of 2,\n"
@@ -283,6 +284,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             label=u'Window size:',
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
+            keyboardTracking=False,
             tooltip=(
                 u"The length of segment sequences defining contexts."
             ),
