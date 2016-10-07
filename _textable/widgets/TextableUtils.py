@@ -78,6 +78,7 @@ class SendButton(object):
             master=self.master,
             label=self.buttonLabel,
             callback=self.callback,
+            default=True,
             tooltip=u"Process input data and send results to output.",
         )
         autoSendCheckbox = gui.checkBox(
