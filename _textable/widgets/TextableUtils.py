@@ -822,7 +822,7 @@ class SegmentationContextHandler(VersionedSettingsHandlerMixin,
 
 
 from Orange.widgets import widget
-from PyQt4.QtCore import QCoreApplication, QEvent, QTimer
+from PyQt4.QtCore import QTimer
 
 
 class OWTextableBaseWidget(widget.OWWidget):
@@ -850,11 +850,21 @@ class OWTextableBaseWidget(widget.OWWidget):
         # saved workflow
         if self.uuid is None:
             self.uuid = str(uuid.uuid4())
+        self.__firstShowPending = True
 
     def adjustSizeWithTimer(self):
         self.ensurePolished()
-        QCoreApplication.sendPostedEvents(self, QEvent.LayoutRequest)
+        if self.layout():
+            self.layout().activate()
         QTimer.singleShot(0, self.adjustSize)
+
+    def showEvent(self, event):
+        if self.__firstShowPending:
+            # Adjust to reasonable size at first show. Doing this here
+            # ensures that 'AdvancedSettings' widgets get proper size/layout.
+            self.__firstShowPending = False
+            self.adjustSize()
+        super().showEvent(event)
 
     def update_message_state(self):
         """
