@@ -243,7 +243,7 @@ class InfoBox(object):
             widget=box,
             label=u'',
         )
-        self.stateLabel.setWordWrap(True)
+        self.stateLabel.setWordWrap(False)
         self.initialMessage()
 
     def setText(self, message='', state='ok'):
