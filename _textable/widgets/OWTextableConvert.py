@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v2.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.19.3'
+__version__ = '0.19.4'
 
 """
 <name>Convert</name>
@@ -838,10 +838,14 @@ class OWTextableConvert(OWWidget):
                 if self.sortRows:
                     self.sortRowsKeyIdCombo.clear()
                     self.sortRowsKeyIdCombo.addItem(
-                        self.table.header_col_id
+                        unicode(self.table.header_col_id)
                     )
-                    for col_id in self.table.col_ids:
-                        self.sortRowsKeyIdCombo.addItem(col_id)
+                    if isinstance(self.table.col_ids[0], (int, long)):
+                        tableColIds = [unicode(i) for i in self.table.col_ids]
+                    else:
+                        tableColIds = self.table.col_ids
+                    for col_id in tableColIds:
+                        self.sortRowsKeyIdCombo.addItem(unicode(col_id))
                     self.sortRowsKeyId = self.sortRowsKeyId or 0
                     self.sortRowsKeyIdCombo.setDisabled(False)
                     self.sortRowsReverseCheckBox.setDisabled(False)
@@ -853,14 +857,14 @@ class OWTextableConvert(OWWidget):
                 if self.sortCols:
                     self.sortColsKeyIdCombo.clear()
                     self.sortColsKeyIdCombo.addItem(
-                        self.table.header_row_id
+                        unicode(self.table.header_row_id)
                     )
                     if isinstance(self.table.row_ids[0], (int, long)):
-                        tableRowIds = [str(i) for i in self.table.row_ids]
+                        tableRowIds = [unicode(i) for i in self.table.row_ids]
                     else:
                         tableRowIds = self.table.row_ids
                     for row_id in tableRowIds:
-                        self.sortColsKeyIdCombo.addItem(row_id)
+                        self.sortColsKeyIdCombo.addItem(unicode(row_id))
                     self.sortColsKeyId = self.sortColsKeyId or 0
                     self.sortColsKeyIdCombo.setDisabled(False)
                     self.sortColsReverseCheckBox.setDisabled(False)
