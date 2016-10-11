@@ -243,7 +243,10 @@ class InfoBox(object):
             widget=box,
             label=u'',
         )
-        self.stateLabel.setWordWrap(False)
+        self.stateLabel.setSizePolicy(QSizePolicy.Minimum,
+                                      QSizePolicy.Preferred)
+        self.stateLabel.setWordWrap(True)
+
         self.initialMessage()
 
     def setText(self, message='', state='ok'):
@@ -822,6 +825,7 @@ class SegmentationContextHandler(VersionedSettingsHandlerMixin,
 
 
 from Orange.widgets import widget
+from PyQt4.QtGui import QSizePolicy
 from PyQt4.QtCore import QTimer
 
 
@@ -851,6 +855,11 @@ class OWTextableBaseWidget(widget.OWWidget):
         if self.uuid is None:
             self.uuid = str(uuid.uuid4())
         self.__firstShowPending = True
+        # set size policy to Minimum to ensure that InfoBox statusLabel
+        # receives enough space when its text is wrapped. A workaround
+        # for OWWidget's layout not propagating `heightForWidth` size hints
+        self.controlArea.setSizePolicy(QSizePolicy.Minimum,
+                                       QSizePolicy.Minimum)
 
     def adjustSizeWithTimer(self):
         self.ensurePolished()
