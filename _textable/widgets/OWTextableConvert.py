@@ -56,7 +56,6 @@ class OWTextableConvert(OWTextableBaseWidget):
         version=__version__.split(".")[:2]
     )
     # Settings...
-    conversionEncoding = settings.Setting('iso-8859-15')
     exportEncoding = settings.Setting('utf-8')
     colDelimiter = settings.Setting(u'\t')
     includeOrangeHeaders = settings.Setting(False)
@@ -396,52 +395,16 @@ class OWTextableConvert(OWTextableBaseWidget):
         encodingBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Encoding',
-            orientation='vertical',
-            addSpace=True,
+            orientation='horizontal',
+            addSpace=False,
         )
-        encodingBoxLine1 = gui.widgetBox(
+        gui.widgetLabel(
             widget=encodingBox,
-            orientation='horizontal',
-        )
-        gui.widgetLabel(
-            widget=encodingBoxLine1,
-            labelWidth=180,
-            label=u'Orange table:',
-        )
-        conversionEncodingCombo = gui.comboBox(
-            widget=encodingBoxLine1,
-            master=self,
-            value='conversionEncoding',
-            items=type(self).encodings,
-            sendSelectedValue=True,
-            callback=self.sendButton.settingsChanged,
-            orientation='horizontal',
-            tooltip=(
-                u"Select the encoding of the Orange table that is\n"
-                u"sent on the widget's output connections.\n\n"
-                u"Note that utf-8 and other variants of Unicode are\n"
-                u"usually not well supported by standard Orange\n"
-                u"widgets."
-            ),
-        )
-        conversionEncodingCombo.setMinimumWidth(150)
-        gui.separator(widget=encodingBoxLine1, width=5)
-        gui.widgetLabel(
-            widget=encodingBoxLine1,
-            label='',
-        )
-        gui.separator(widget=encodingBox, height=3)
-        encodingBoxLine2 = gui.widgetBox(
-            widget=encodingBox,
-            orientation='horizontal',
-        )
-        gui.widgetLabel(
-            widget=encodingBoxLine2,
             labelWidth=180,
             label=u'Output file:',
         )
         conversionEncodingCombo = gui.comboBox(
-            widget=encodingBoxLine2,
+            widget=encodingBox,
             master=self,
             value='exportEncoding',
             items=type(self).encodings,
@@ -458,12 +421,11 @@ class OWTextableConvert(OWTextableBaseWidget):
             ),
         )
         conversionEncodingCombo.setMinimumWidth(150)
-        gui.separator(widget=encodingBoxLine2, width=5)
+        gui.separator(widget=encodingBox, width=5)
         gui.widgetLabel(
-            widget=encodingBoxLine2,
+            widget=encodingBox,
             label='',
         )
-        gui.separator(widget=encodingBox, height=3)
 
         # Export box
         exportBox = gui.widgetBox(
@@ -709,9 +671,7 @@ class OWTextableConvert(OWTextableBaseWidget):
 
         self.transformed_table = transformed_table
 
-        orangeTable = transformed_table.to_orange_table(
-            encoding=self.conversionEncoding,
-        )
+        orangeTable = transformed_table.to_orange_table()
 
         self.send('Orange table', orangeTable)
         self.send('Textable table', transformed_table)
