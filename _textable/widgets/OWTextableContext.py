@@ -45,7 +45,7 @@ class OWTextableContext(OWTextableBaseWidget):
                ('Orange table', Orange.data.Table)]
 
     settingsHandler = SegmentationListContextHandler(
-        version=__version__.split(".")[:2],
+        version=__version__.rsplit(".", 1)[0],
     )
     segmentations = SegmentationsInputList()  # type: list
 

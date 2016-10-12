@@ -59,7 +59,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
     outputs = [('Text data', Segmentation)]
 
     settingsHandler = VersionedSettingsHandler(
-        version=__version__.split(".")[:2]
+        version=__version__.rsplit(".", 1)[0]
     )
 
     # Settings...

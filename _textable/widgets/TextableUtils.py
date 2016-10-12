@@ -522,8 +522,8 @@ class VersionedSettingsHandlerMixin(object):
 
     Parameters
     ----------
-    version : str (keyword only parameter)
-        A version string matching a `re.compile(r'(\d+)(.\d+)+')` pattern
+    version : Optional[str]
+        A version string matching a `re.compile(r'^(\d+)(\.\d+)+$')` pattern.
 
     Example
     -------
@@ -532,11 +532,16 @@ class VersionedSettingsHandlerMixin(object):
     ...     pass
 
     """
-    VERSION_KEY = "__settings_version__"
+    VERSION_KEY = "_TextableUtils_settings_version__"
 
     def __init__(self, *args, version=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__version = version  # type: Optional[str]
+        if version is not None:
+            if re.match(r"^(\d+)(\.\d+)+$", version):
+                version = tuple(int(d) for d in version.split("."))
+            else:
+                raise ValueError("Invalid version string '{}'".format(version))
+        self.__version = version  # type: Optional[Tuple[int, ...]]
 
     def pack_data(self, widget, *args, **kwargs):
         data = super().pack_data(widget, *args, **kwargs)
