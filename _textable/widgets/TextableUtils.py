@@ -593,12 +593,18 @@ class VersionedSettingsHandler(VersionedSettingsHandlerMixin,
 
 
 class SegmentationsInputList(object):
+    """
+    A property descriptor for annotating a segmentations input list in a
+    Textable widget.
+
+    This class is used along with a SegmentationListContextHandler
+    """
     def __init__(self):
+        # name is filled in by SegmentationListContextHandler when it is
+        # bound to the widget class.
         self.name = None
 
     def __get__(self, obj, objtype):
-        # type: (Any, Optional[type]) -> List[(Any, Segmentation)]
-
         if obj is not None:
             return obj.__dict__.setdefault("__segmentations", [])
         else:
@@ -615,12 +621,23 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
 
     This Context handler matches settings on a list of
     (inputid, Segmentation) tuples as managed by :func:`updateMultipleInputs`.
+
+    A class using this handler must define a single SegmentationsInputList
+    property in its class namespace.
+
+    Example
+    -------
+    >>> class Widget(OWTextableBaseWidget):
+    ...     name = "Widget"
+    ...     settingsHandler = SegmentationListContextHandler()
+    ...     segmentations = SegmentationsInputList()
+    ...
     """
 
-    def __init__(self, inputListField="segmentations", **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.inputListFieldName = inputListField
-        self.inputListField = object()
+        self.inputListFieldName = None
+        self.inputListField = None
 
     def bind(self, widget_class):
         """
@@ -636,9 +653,6 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
 
         # Search for a single instance of SegmentationsInputList in the
         # widget_class namespace and store it (also update/set it's name)
-
-        # This is f.u., segmentationlist really should be instance attribute
-
         segmentationlist = []
         for name in dir(widget_class):
             val = getattr(widget_class, name, None)
@@ -653,7 +667,7 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
                 "namespace (found {s},: {s})"
                 .format(len(names), ", ".join(names))
             )
-        elif len(segmentationlist) == 0: # and False:
+        elif len(segmentationlist) == 0:
             raise TypeError(
                 "A widget utilizing a SegmentationListContextHandler"
                 "must declare a SegmentationsInputList in it's class "
@@ -760,7 +774,7 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
 
             # NOTE: Match on widget uuids only.
             # LTTL.Input.Input can change it's 'label' in place on user
-            # interaction (where?, why?).
+            # interaction
             try:
                 permutation = self._permutation(uuids(encoded), uuids(stored))
             except ValueError:
