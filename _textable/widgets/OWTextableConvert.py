@@ -36,6 +36,11 @@ from .TextableUtils import (
     InfoBox, SendButton, AdvancedSettings, pluralize, getPredefinedEncodings
 )
 
+ColumnDelimiters = [
+    ('tabulation (\\t)', u'\t'),
+    ('comma (,)',  u','),
+    ('semi-colon (;)', u';'),
+]
 
 class OWTextableConvert(OWTextableBaseWidget):
     """Orange widget for converting a Textable table to an Orange table"""
@@ -57,7 +62,8 @@ class OWTextableConvert(OWTextableBaseWidget):
     )
     # Settings...
     exportEncoding = settings.Setting('utf-8')
-    colDelimiter = settings.Setting(u'\t')
+    colDelimiter_idx = settings.Setting(0)
+
     includeOrangeHeaders = settings.Setting(False)
 
     sortRows = settings.Setting(False)
@@ -82,6 +88,11 @@ class OWTextableConvert(OWTextableBaseWidget):
     encodings = getPredefinedEncodings()
 
     want_main_area = False
+
+    @property
+    def colDelimiter(self):
+        _, delimiter = ColumnDelimiters[self.colDelimiter_idx]
+        return delimiter
 
     def __init__(self, *args, **kwargs):
 
@@ -446,20 +457,10 @@ class OWTextableConvert(OWTextableBaseWidget):
         colDelimiterCombo = gui.comboBox(
             widget=exportBoxLine2,
             master=self,
-            value='colDelimiter',
+            value='colDelimiter_idx',
             callback=self.sendButton.settingsChanged,
             orientation='horizontal',
-            items=[
-                u'tabulation (\\t)',
-                u'comma (,)',
-                u'semi-colon (;)',
-            ],
-            sendSelectedValue=True,
-            control2attributeDict={
-                'tabulation (\\t)': u'\t',
-                'comma (,)': u',',
-                'semi-colon (;)': u';',
-            },
+            items=[text for text, _ in ColumnDelimiters],
             tooltip=(
                 u"Select the character used for delimiting columns."
             ),
