@@ -41,6 +41,7 @@ __version__ = '0.12'
 import re, os, uuid
 
 from Orange.widgets import gui, settings, utils as widgetutils
+from Orange.widgets.utils.buttons import VariableTextPushButton
 
 
 class SendButton(object):
@@ -73,28 +74,46 @@ class SendButton(object):
 
     def draw(self):
         """Draw the send button and stopper on window"""
-        sendButton = gui.button(
-            widget=self.widget,
-            master=self.master,
-            label=self.buttonLabel,
-            callback=self.callback,
-            default=True,
-            tooltip=u"Process input data and send results to output.",
-        )
+        box = gui.hBox(self.widget, box=True, addSpace=False)
         autoSendCheckbox = gui.checkBox(
-            widget=self.widget,
+            widget=box,
             master=self.master,
             value=self.checkboxValue,
-            label=self.checkboxLabel,
+            label="",
             tooltip=u"Process and send data whenever settings change.",
         )
+        autoSendCheckbox.setSizePolicy(QSizePolicy.Fixed,
+                                       QSizePolicy.Fixed)
+        box.layout().addSpacing(10)
+        sendButton = VariableTextPushButton(
+            text=self.buttonLabel,
+            default=True,
+            toolTip=u"Process input data and send results to output.",
+            textChoiceList=[self.buttonLabel, self.checkboxLabel],
+        )
+
+        if getattr(self.master, self.checkboxValue):
+            sendButton.setText(self.checkboxLabel)
+
+        sendButton.clicked.connect(self.callback)
+
+        box.layout().addWidget(sendButton)
+
         autoSendCheckbox.disables.append((-1, sendButton))
         sendButton.setDisabled(autoSendCheckbox.isChecked())
 
-        def sendOnToogle(state):
+        def sendOnToggle(state):
+            # invoke send callback when autoSend checkbox is checked
+            # and the master has the changed flag set
             if state and getattr(self.master, self.changedFlag, True):
                 self.callback()
-        autoSendCheckbox.toggled[bool].connect(sendOnToogle)
+
+        def updateTextOnToggle(state):
+            sendButton.setText(
+                self.checkboxLabel if state else self.buttonLabel)
+
+        autoSendCheckbox.toggled[bool].connect(sendOnToggle)
+        autoSendCheckbox.toggled[bool].connect(updateTextOnToggle)
 
         self.resetSettingsChangedFlag()
 
