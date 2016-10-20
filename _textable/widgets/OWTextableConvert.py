@@ -61,6 +61,7 @@ class OWTextableConvert(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
+    autoSend = settings.Setting(True)
     exportEncoding = settings.Setting('utf-8')
     colDelimiter_idx = settings.Setting(0)
 

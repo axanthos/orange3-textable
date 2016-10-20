@@ -58,6 +58,7 @@ class OWTextableURLs(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
+    autoSend = settings.Setting(True)
     URLs = settings.Setting([])
     encoding = settings.Setting('utf-8')
     autoNumber = settings.Setting(False)

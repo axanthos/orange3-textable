@@ -48,6 +48,7 @@ class OWTextablePreprocess(OWTextableBaseWidget):
     )
 
     # Settings...
+    autoSend = settings.Setting(True)
     copyAnnotations = settings.Setting(True)
     applyCaseTransform = settings.Setting(False)
     caseTransform = settings.Setting('to lower')

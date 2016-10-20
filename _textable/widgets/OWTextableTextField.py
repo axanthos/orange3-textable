@@ -52,6 +52,7 @@ class OWTextableTextField(OWTextableBaseWidget):
     )
 
     # Settings ...
+    autoSend = settings.Setting(True)
     textFieldContent = settings.Setting(u''.encode('utf-8'))
     encoding = settings.Setting(u'utf-8')
 

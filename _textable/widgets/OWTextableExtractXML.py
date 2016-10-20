@@ -51,6 +51,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
+    autoSend = settings.Setting(True)
     conditions = settings.Setting([])
     importAnnotations = settings.Setting(True)
     autoNumber = settings.Setting(False)

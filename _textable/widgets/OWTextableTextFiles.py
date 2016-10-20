@@ -63,6 +63,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
     )
 
     # Settings...
+    autoSend = settings.Setting(True)
     files = settings.Setting([])
     encoding = settings.Setting('iso-8859-1')
     autoNumber = settings.Setting(False)

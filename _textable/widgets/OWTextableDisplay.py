@@ -57,6 +57,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
+    autoSend = settings.Setting(True)
     displayAdvancedSettings = settings.Setting(False)
     customFormatting = settings.Setting(False)
     customFormat = settings.Setting(u'%(__content__)s')

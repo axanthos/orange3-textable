@@ -55,6 +55,7 @@ class OWTextableRecode(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
+    autoSend = settings.Setting(True)
     substitutions = settings.Setting([])
     copyAnnotations = settings.Setting(True)
     displayAdvancedSettings = settings.Setting(False)

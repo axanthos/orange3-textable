@@ -28,7 +28,7 @@ from .TextableUtils import (
     JSONMessage, SendButton, InfoBox, pluralize
 )
 
-from Orange.widgets import gui
+from Orange.widgets import gui, settings
 
 
 class OWTextableMessage(OWTextableBaseWidget):
@@ -46,7 +46,7 @@ class OWTextableMessage(OWTextableBaseWidget):
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
     )
-
+    autoSend = settings.Setting(True)
     want_main_area = False
 
     def __init__(self, *args, **kwargs):

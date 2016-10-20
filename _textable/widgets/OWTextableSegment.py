@@ -55,6 +55,7 @@ class OWTextableSegment(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
+    autoSend = settings.Setting(True)
     regexes = settings.Setting([])
     segmentType = settings.Setting(u'Segment into words')
     importAnnotations = settings.Setting(True)

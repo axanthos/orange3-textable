@@ -48,6 +48,7 @@ class OWTextableMerge(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
+    autoSend = settings.Setting(True)
     importLabels = settings.Setting(True)
     labelKey = settings.Setting(u'input_label')     # TODO update docs
     autoNumber = settings.Setting(False)
