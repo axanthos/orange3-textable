@@ -298,7 +298,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 u"Jump to a specific segment number."
             ),
         )
-        gui.separator(widget=self.navigationBox, height=3)
         self.mainArea.layout().addWidget(self.browser)
 
         # Info box...
@@ -365,7 +364,9 @@ class OWTextableDisplay(OWTextableBaseWidget):
             else:
                 customFormatting = False
                 self.autoSend = True
+
             if customFormatting:
+                self.navigationBox.setVisible(False)
                 self.navigationBox.setDisabled(True)
                 self.exportBox.setDisabled(True)
                 self.formattingIndentedBox.setDisabled(False)
@@ -403,6 +404,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 )
                 progressBar.finish()
             else:
+                self.navigationBox.setVisible(True)
                 self.formattingIndentedBox.setDisabled(True)
                 self.warning()
                 self.error()
@@ -419,7 +421,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
                     displayedString,
                     label=self.captionTitle,
                 )
-                self.navigationBox.setDisabled(False)
+                self.navigationBox.setEnabled(not summarized)
                 self.gotoSpin.setRange(1, len(self.segmentation))
                 if self.goto:
                     self.browser.setSource(QUrl("#%i" % self.goto))
@@ -428,11 +430,13 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 self.exportBox.setDisabled(False)
                 self.infoBox.settingsChanged()
                 progressBar.finish()
-                self.navigationBox.setVisible(not summarized)
+
         else:
             self.goto = 0
+            self.gotoSpin.setRange(0, 1)
             self.exportBox.setDisabled(True)
-            self.navigationBox.setVisible(False)
+            self.navigationBox.setVisible(True)
+            self.navigationBox.setEnabled(False)
             self.formattingIndentedBox.setDisabled(True)
         self.adjustSize()
 
