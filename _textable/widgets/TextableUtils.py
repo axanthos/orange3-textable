@@ -857,9 +857,9 @@ class SegmentationContextHandler(VersionedSettingsHandlerMixin,
 
         Two contexts match if their encodings are structurally
         equal (==).
-
         """
-        return 2 if context.encoded == args else 0
+        assert len(args) == 1 and isinstance(args[0], Segmentation)
+        return 2 if context.encoded == self.encode(*args) else 0
 
 
 from Orange.widgets import widget
