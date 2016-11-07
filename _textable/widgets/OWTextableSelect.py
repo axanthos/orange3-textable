@@ -938,8 +938,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 self.regexAnnotationKey = self.regexAnnotationKey
             self.advancedSettings.setVisible(False)
 
-        self.adjustSizeWithTimer()
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle

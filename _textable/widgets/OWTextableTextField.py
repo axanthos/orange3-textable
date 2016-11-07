@@ -73,7 +73,6 @@ class OWTextableTextField(OWTextableBaseWidget):
             master=self,
             callback=self.sendData,
             infoBoxAttribute='infoBox',
-            sendIfPreCallback=self.adjustSize(),
         )
 
         # LTTL.Input object (token that will be sent).

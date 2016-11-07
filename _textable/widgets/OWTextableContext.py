@@ -482,7 +482,6 @@ class OWTextableContext(OWTextableBaseWidget):
             self.unitAnnotationKey = u''
             self.unitsBox.setDisabled(True)
             self.contextsBox.setDisabled(True)
-            self.adjustSize()
             return
         else:
             if len(self.segmentations) == 1:
@@ -557,8 +556,6 @@ class OWTextableContext(OWTextableBaseWidget):
                         1,
                         200,
                     )
-
-        self.adjustSizeWithTimer()
 
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""
