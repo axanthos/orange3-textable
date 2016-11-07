@@ -176,7 +176,6 @@ class OWTextableMerge(OWTextableBaseWidget):
         self.infoBox.draw()
 
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
 
     def sendData(self):
 
@@ -263,7 +262,6 @@ class OWTextableMerge(OWTextableBaseWidget):
             self.autoNumberKeyLineEdit.setDisabled(False)
         else:
             self.autoNumberKeyLineEdit.setDisabled(True)
-        self.adjustSizeWithTimer()
 
     def setCaption(self, title):
         if 'captionTitle' in dir(self):

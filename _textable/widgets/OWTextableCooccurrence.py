@@ -490,7 +490,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             self.units2Box.setDisabled(True)
             self.mode = 'Sliding window'
             self._contextsBox.setDisabled(True)
-            self.adjustSize()
             return
         else:
             if len(self.segmentations) == 1:
@@ -577,8 +576,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                 self.unit2AnnotationKey = self.unit2AnnotationKey
                 self.sequenceLength = 1
                 self.sequenceLengthSpin.setDisabled(True)
-
-        self.adjustSizeWithTimer()
 
     def handleNewSignals(self):
         """Overridden: called after multiple singnals have been added"""

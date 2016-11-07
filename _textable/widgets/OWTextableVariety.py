@@ -565,7 +565,6 @@ class OWTextableVariety(OWTextableBaseWidget):
             self.categoriesBox.setDisabled(True)
             self.mode = 'No context'
             self.contextsBox.setDisabled(True)
-            self.adjustSize()
             return
         else:
             if len(self.segmentations) == 1:
@@ -633,8 +632,6 @@ class OWTextableVariety(OWTextableBaseWidget):
             if self.contextAnnotationKey not in contextAnnotationKeys:
                 self.contextAnnotationKey = u'(none)'
             self.contextAnnotationKey = self.contextAnnotationKey
-
-        self.adjustSizeWithTimer()
 
     def handleNewSignals(self):
         """Overridden: called after multiple signals have been added"""

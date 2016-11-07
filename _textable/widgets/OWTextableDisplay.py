@@ -438,7 +438,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
             self.navigationBox.setVisible(True)
             self.navigationBox.setEnabled(False)
             self.formattingIndentedBox.setDisabled(True)
-        self.adjustSize()
 
     def gotoSegment(self):
         if self.goto:

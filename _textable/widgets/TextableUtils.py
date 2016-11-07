@@ -187,17 +187,24 @@ class AdvancedSettings(object):
 
     def setVisible(self, bool):
         """Toggle between basic and advanced settings."""
+        changed = False
         if bool:
             for widget in self.basicWidgets:
-                widget.setVisible(not bool)
+                changed = changed or widget.isVisible()
+                widget.setVisible(False)
             for widget in self.advancedWidgets:
-                widget.setVisible(bool)
+                changed = changed or not widget.isVisible()
+                widget.setVisible(True)
         else:
             for widget in self.advancedWidgets:
-                widget.setVisible(bool)
+                changed = changed or widget.isVisible()
+                widget.setVisible(False)
             for widget in self.basicWidgets:
-                widget.setVisible(not bool)
-        self.master.adjustSize()
+                changed = changed or not widget.isVisible()
+                widget.setVisible(True)
+
+        if changed:
+            self.master.adjustSizeWithTimer()
 
     def basicWidgetsAppendSeparator(self, height=5):
         """Append a separator to the list of basic widgets."""
@@ -283,7 +290,6 @@ class InfoBox(object):
         self.stateLabel.setText(
             "<html><img src='%s'>&nbsp;&nbsp;%s</html>" % (iconPath, message)
         )
-        self.widget.window().adjustSizeWithTimer()
 
     def initialMessage(self):
         """Display initial message"""

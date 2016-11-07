@@ -422,7 +422,6 @@ class OWTextableIntersect(OWTextableBaseWidget):
             self.source = -1
             self.sourceAnnotationKey = u''
             intersectBox.setDisabled(True)
-            self.adjustSize()
             return
         else:
             if len(self.segmentations) == 1:
@@ -453,8 +452,6 @@ class OWTextableIntersect(OWTextableBaseWidget):
             if self.filteringAnnotationKey not in filteringAnnotationKeys:
                 self.filteringAnnotationKey = u'(none)'
             self.filteringAnnotationKey = self.filteringAnnotationKey
-        self.adjustSize()
-        self.adjustSizeWithTimer()
 
     def setCaption(self, title):
         if 'captionTitle' in dir(self):

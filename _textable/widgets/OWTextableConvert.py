@@ -882,8 +882,6 @@ class OWTextableConvert(OWTextableBaseWidget):
 
         self.advancedSettings.setVisible(self.displayAdvancedSettings)
 
-        self.adjustSizeWithTimer()
-
     def onDeleteWidget(self):
         if self.segmentation is not None:
             self.segmentation.clear()

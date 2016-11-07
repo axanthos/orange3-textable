@@ -666,7 +666,6 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             self.advancedSettings.setVisible(True)
         else:
             self.advancedSettings.setVisible(False)
-        self.adjustSizeWithTimer()
 
     def updateConditionsBoxButtons(self):
         """Update state of Conditions box buttons"""

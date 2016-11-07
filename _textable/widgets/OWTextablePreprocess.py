@@ -203,7 +203,6 @@ class OWTextablePreprocess(OWTextableBaseWidget):
             self.caseTransformCombo.setDisabled(False)
         else:
             self.caseTransformCombo.setDisabled(True)
-        self.adjustSizeWithTimer()
 
     def setCaption(self, title):
         if 'captionTitle' in dir(self):

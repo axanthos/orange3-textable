@@ -946,7 +946,6 @@ class OWTextableSegment(OWTextableBaseWidget):
             self.basicRegexFieldBox.setVisible(
                 self.segmentType == 'Use a regular expression'
             )
-        self.adjustSizeWithTimer()
 
     def updateRegexBoxButtons(self):
         """Update state of Regex box buttons"""

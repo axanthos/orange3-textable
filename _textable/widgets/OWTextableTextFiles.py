@@ -874,7 +874,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             self.advancedSettings.setVisible(True)
         else:
             self.advancedSettings.setVisible(False)
-        self.adjustSizeWithTimer()
 
     def updateFileBoxButtons(self):
         """Update state of File box buttons"""

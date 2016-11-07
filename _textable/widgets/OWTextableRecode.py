@@ -745,8 +745,6 @@ class OWTextableRecode(OWTextableBaseWidget):
         else:
             self.advancedSettings.setVisible(False)
 
-        self.adjustSizeWithTimer()
-
     def updateSubstBoxButtons(self):
         """Update state of Regex box buttons"""
         if self.selectedSubstLabels:
