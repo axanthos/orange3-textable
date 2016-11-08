@@ -29,21 +29,21 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.4"   # file version
+__version__ = "1.0.5"   # file version
 
 NAME = 'Orange3-Textable'
-DOCUMENTATION_NAME = 'Orange3 Textable'
+DOCUMENTATION_NAME = 'Textable'
 
 VERSION = '3.0a1'  # package version
 
-DESCRIPTION = 'Orange Textable add-on for Orange data mining software package.'
+DESCRIPTION = 'Textable add-on for Orange 3 data mining software package.'
 LONG_DESCRIPTION = open(
     os.path.join(os.path.dirname(__file__), 'README.rst')
 ).read()
 AUTHOR = 'LangTech Sarl'
 AUTHOR_EMAIL = 'info@langtech.ch'
-URL = 'http://langtech.ch/textable'
-DOWNLOAD_URL = 'https://bitbucket.org/langtech/orange-textable/get/v%s.zip' % VERSION
+URL = 'http://textable.io'
+DOWNLOAD_URL = 'https://github.com/axanthos/orange3-textable/archive/master.zip'
 LICENSE = 'GPLv3'
 
 KEYWORDS = (
@@ -55,7 +55,7 @@ KEYWORDS = (
 )
 
 CLASSIFIERS = (
-    'Development Status :: 4 - Beta',
+    'Development Status :: 3 - Alpha',
     'Environment :: X11 Applications :: Qt',
     'Environment :: Plugins',
     'Programming Language :: Python :: 3 :: Only',
@@ -79,7 +79,7 @@ INSTALL_REQUIRES = (
     'Orange3 >= 3.3.8',
     'setuptools',
     'future',
-    'LTTL >= 2.0b2',
+    'LTTL >= 2.0b4',
 ),
 
 EXTRAS_REQUIRE = {
