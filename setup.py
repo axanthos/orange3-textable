@@ -29,12 +29,12 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.5"   # file version
+__version__ = "1.0.6"   # file version
 
 NAME = 'Orange3-Textable'
 DOCUMENTATION_NAME = 'Textable'
 
-VERSION = '3.0a1'  # package version
+VERSION = '3.0a2'  # package version
 
 DESCRIPTION = 'Textable add-on for Orange 3 data mining software package.'
 LONG_DESCRIPTION = open(
@@ -79,7 +79,7 @@ INSTALL_REQUIRES = (
     'Orange3 >= 3.3.8',
     'setuptools',
     'future',
-    'LTTL >= 2.0b4',
+    'LTTL >= 2.0b5',
 ),
 
 EXTRAS_REQUIRE = {
@@ -95,8 +95,8 @@ ENTRY_POINTS = {
     'orange.widgets': (
         'Textable = _textable.widgets',
     ),
-    'orange.canvas.help': (
-        'intersphinx = _textable:doc_root'
+    "orange.canvas.help": (
+        'html-index = _textable.widgets.widgets:WIDGET_HELP_PATH',
     ),
 }
 

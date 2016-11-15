@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>URLs &mdash; Orange3-Textable 3.0a1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.0a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Orange3-Textable 3.0a1 documentation" href="../../index.html" />
+    <link rel="next" title="Preprocess" href="../segmentationprocessing/preprocess.html" />
+    <link rel="prev" title="Text Files" href="textfiles.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../segmentationprocessing/preprocess.html" title="Preprocess"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="textfiles.html" title="Text Files"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="urls">
+<h1>URLs<a class="headerlink" href="#urls" title="Permalink to this headline">¶</a></h1>
+<div class="figure">
+<img alt="../../_images/urls.png" src="../../_images/urls.png" />
+</div>
+<p>Fetch text data online.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p><strong>Inputs</strong>:</p>
+<ul class="simple">
+<li>Message</li>
+</ul>
+<p>JSON Message controlling the list of imported URLs</p>
+<p><strong>Outputs</strong>:</p>
+<ul class="simple">
+<li>Text data</li>
+</ul>
+<p>Segmentation covering the content of imported URLs</p>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>URLs</strong> widget is designed to import the contents of one or several internet locations (URLs) to the Orange Canvas softaware. Its output is a segmentation containing a (potentially annotated) segment for the content of each selected URL. The imported textual content is subject to normalization. The widget is available in two versions, according to whether or not the <em>Advanced Settings</em> checkbox is selected.</p>
+</div>
+<div class="section" id="basic-interface">
+<h2>Basic interface<a class="headerlink" href="#basic-interface" title="Permalink to this headline">¶</a></h2>
+<p>The basic version limits the number of imported URLs to one.</p>
+<div class="figure">
+<img alt="../../_images/urls-basic-stamped.png" src="../../_images/urls-basic-stamped.png" />
+</div>
+<ol class="arabic simple">
+<li>Input the selected URL and select the encoding of its content.</li>
+<li>By clicking <em>Send</em> changes are communicated to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be communicated to the output at every modification.</li>
+<li>Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted.</li>
+</ol>
+</div>
+<div class="section" id="advanced-interface">
+<h2>Advanced interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h2>
+<p>The advanced version of the <strong>URLs</strong> widget allows the user to import the content of several URLs in a determined order; each URL can moreover be associated to a distinct encoding and specific annotations. The emitted segmentation contains a segment for the content of each imported URL.</p>
+<ol class="arabic">
+<li><p class="first">The <em>Sources</em> section allows the user to select the imported URLs as well as their content&#8217;s encoding, to determine the order in which they appear in the output segmentation, and optionally assign annotations. The list of imported URLs with additional information about corresponding annotations and encodings appears at the top of the window.</p>
+</li>
+<li><p class="first">The buttons on the left side of the <em>Sources</em> section allow the user to modify their selection by:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li>changing the order in which the URLs appear in the output: <em>Move Up</em>, <em>Move Down</em></li>
+<li>deleting individual URLs from the list: <em>Remove</em></li>
+</ol>
+<p>c) clearing the list of all URLs: <em>Clear All</em>
+c) import a list of URLs in JSON format and add it to the previously selected sources: <em>Import List</em>
+d) export the source list in a JSON file: <em>Export List</em></p>
+</div></blockquote>
+</li>
+<li><p class="first">Add new URLs to the list. They must first be input in the field before they can be added to the list by clicking on the <em>Add</em> button. If you wish to add several URLs simultaneously, you must separate them by the string &#8221; / &#8221; (space + slash +space).</p>
+</li>
+<li><p class="first">Select the <em>Encoding</em>.</p>
+</li>
+<li><p class="first">Assign an annotation by specifying its key in the <em>Annotation key</em> field and the corresponding value in the <em>Annotation value</em> field. These three parameters (encoding, key, value) will be applied to each URL appearing in the URLs field at the moment of their addition to the list with <em>Add</em>.</p>
+</li>
+<li><p class="first">Specify the label affected to the output segmentation. The <em>Import URLs with key</em> checkbox enables the program to create for each imported URL an annotation whose value is the file name (as displayed in the list) and whose key is specified by the user in the text field on the right of the checkbox. Similarly, the button <em>Auto-number with key</em> enables the program to automatically number the imported URLs and to associate the number to the annotation key specified in the text field on the right.</p>
+</li>
+<li><p class="first">By clicking <em>Send</em>, changes are communicated to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be communicated to the output at every modification.</p>
+</li>
+<li><p class="first">Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>For the purpose of this example, we have decided to make use of the advanced interface and explore the additional options offered by it.
+We opened the <strong>URLs</strong> widget and selected the advanced settings option. We imported several URLs and annotated them. We got our data from the <a class="reference external" href="https://www.gutenberg.org/">Project Gutenberg</a> website and chose to focus on annotating Shakespeare&#8217;s works by genre. We selected <a class="reference external" href="http://www.gutenberg.org/cache/epub/1112/pg1112.txt">Romeo and Juliet</a>, <a class="reference external" href="http://www.gutenberg.org/cache/epub/2243/pg2243.txt">The Merchant of Venice</a> and Shakespeare&#8217;s <a class="reference external" href="http://www.gutenberg.org/cache/epub/1041/pg1041.txt">Sonnets</a> and annotated them according to type (tragedy, comedy, poetry). We then displayed our results in the <strong>Display</strong> widget.</p>
+<div class="figure">
+<img alt="../../_images/urls-example.png" src="../../_images/urls-example.png" />
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">URLs</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#basic-interface">Basic interface</a></li>
+<li><a class="reference internal" href="#advanced-interface">Advanced interface</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="textfiles.html"
+                        title="previous chapter">Text Files</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../segmentationprocessing/preprocess.html"
+                        title="next chapter">Preprocess</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/widgets/textimport/urls.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../segmentationprocessing/preprocess.html" title="Preprocess"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="textfiles.html" title="Text Files"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, LangTech Sarl.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

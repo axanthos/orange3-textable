@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Intersect &mdash; Orange3-Textable 3.0a1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.0a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Orange3-Textable 3.0a1 documentation" href="../../index.html" />
+    <link rel="next" title="Extract XML" href="extractxml.html" />
+    <link rel="prev" title="Select" href="select.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="extractxml.html" title="Extract XML"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="select.html" title="Select"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="intersect">
+<h1>Intersect<a class="headerlink" href="#intersect" title="Permalink to this headline">¶</a></h1>
+<div class="figure">
+<img alt="../../_images/intersect.png" src="../../_images/intersect.png" />
+</div>
+<p>In-/exclude segments based on another segmentation.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p><strong>Inputs</strong>:</p>
+<ul class="simple">
+<li>Segmentation (multiple)</li>
+</ul>
+<p>Segmentation out of which a subset of segments should be selected (&#8220;source&#8221; segmentation), or containing the segments that will be in-/excluded from the former (&#8220;filter&#8221; segmentation)</p>
+<p><strong>Outputs</strong>:</p>
+<ul class="simple">
+<li>Selected data (default)</li>
+</ul>
+<p>Segmentation containing the selected segments</p>
+<ul class="simple">
+<li>Discarded data</li>
+</ul>
+<p>Segmentation containing the discarded segments</p>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>Intersect</strong> widget enables the user to search through multiple segmentations and find segments that intersect. Those segments can then be included or excluded from the output segmentation. The widget is available in two versions, according to whether or not the <em>Advanced Settings</em> checkbox is selected.</p>
+</div>
+<div class="section" id="the-basic-interface">
+<h2>The basic interface<a class="headerlink" href="#the-basic-interface" title="Permalink to this headline">¶</a></h2>
+<p>The basic interface allow the user to specify whether to include or exclude the intersecting segments from the output segmentation.</p>
+<div class="figure">
+<img alt="../../_images/intersect-basic-stamped.png" src="../../_images/intersect-basic-stamped.png" />
+</div>
+<ol class="arabic simple">
+<li>Select the widget mode you wish to use and include or exclude segments from the output segmentation.</li>
+<li>Use the drop-down menu to select the source and the filter segmentation. The latter is mostly used when trying to filter information deemed irrelevant for research.</li>
+<li>By clicking on the <em>Send</em> button, changes are committed to the output of the widget. Alternatively, use <em>Send automatically</em> and the segmentation will be modified on every change.</li>
+<li>Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted</li>
+</ol>
+</div>
+<div class="section" id="the-advanced-interface">
+<h2>The advanced interface<a class="headerlink" href="#the-advanced-interface" title="Permalink to this headline">¶</a></h2>
+<div class="figure">
+<img alt="../../_images/intersect-advanced-stamped.png" src="../../_images/intersect-advanced-stamped.png" />
+</div>
+<ol class="arabic simple">
+<li>Select the widget mode you wish to use and include or exclude segments from the output segmentation.</li>
+<li>&amp; 4. Use the drop-down menu to select the source and the filter segmentation. The latter is mostly used when trying to filter information deemed irrelevant for research.</li>
+<li>&amp; 5. A <em>Filter/Source annotation key</em> dropdown menu. If a given annotation key of the source/filter segmentation is selected, the corresponding annotation value (rather than content) types will condition the in-/exclusion of the source segmentation segments.</li>
+</ol>
+<ol class="arabic simple" start="6">
+<li>Automatically number the segments from the output segmentation and associate the number to the annotation key specified in the text field on the right.</li>
+<li>Copy every annotation from the input segmentation to the output segmentation.</li>
+<li>By clicking on the <em>Send</em> button, changes are committed to the output of the widget. Alternatively, use <em>Send automatically</em> and the segmentation will be modified on every change.</li>
+<li>Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted</li>
+</ol>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>For the purpose of this example, we have decided to explore the ratio between the lines spoken by male characters and the lines spoken by female characters in Shakespeare&#8217;s <a class="reference external" href="https://www.ibiblio.org/xml/examples/shakespeare/r_and_j.xml">Romeo and Juliet</a>. We used the <strong>Extract XML</strong> widget to extract all speaker tags (&lt;SPEAKER&gt;) and preprocessed the data because it was not all capitalized. We then divided the file into line segments. We used the <strong>Text Field</strong> widget to input the names of female characters in Romeo and Juliet and then segmented the segmentation into words. By using the <strong>Intersect</strong> widget and information about the segments sent to the widget&#8217;s output we came to the conclusion that the ratio is approximately 2:1 in favor of male character lines.</p>
+<div class="figure">
+<img alt="../../_images/intersect-example.png" src="../../_images/intersect-example.png" />
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Intersect</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#the-basic-interface">The basic interface</a></li>
+<li><a class="reference internal" href="#the-advanced-interface">The advanced interface</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="select.html"
+                        title="previous chapter">Select</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="extractxml.html"
+                        title="next chapter">Extract XML</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/widgets/segmentationprocessing/intersect.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="extractxml.html" title="Extract XML"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="select.html" title="Select"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, LangTech Sarl.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

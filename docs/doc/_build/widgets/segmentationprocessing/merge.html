@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Merge &mdash; Orange3-Textable 3.0a1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.0a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Orange3-Textable 3.0a1 documentation" href="../../index.html" />
+    <link rel="next" title="Segment" href="segment.html" />
+    <link rel="prev" title="Recode" href="recode.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="segment.html" title="Segment"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="recode.html" title="Recode"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="merge">
+<h1>Merge<a class="headerlink" href="#merge" title="Permalink to this headline">¶</a></h1>
+<div class="figure">
+<img alt="../../_images/merge.png" src="../../_images/merge.png" />
+</div>
+<p>Merge two or more segmentations.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p><strong>Inputs</strong>:</p>
+<ul class="simple">
+<li>Segmentation (multiple)</li>
+</ul>
+<p>Any number of segmentations that should be merged together</p>
+<p><strong>Outputs</strong>:</p>
+<ul class="simple">
+<li>Merged data</li>
+</ul>
+<p>Merged segmentation</p>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>Merge</strong> widget merges two or more segmentations and outputs them to its output channel.</p>
+<div class="figure">
+<img alt="../../_images/merge-stamped.png" src="../../_images/merge-stamped.png" />
+</div>
+<ol class="arabic simple">
+<li>Create for each input segmentation an annotation whose value is the segmentation label and whose key is specified by the user in the text field on the right of the checkbox.</li>
+<li>Automatically number the output segments and associate the number to the annotation key specified in the text field on the right.</li>
+<li>Copy every input segmentation annotation to the output segmentation.</li>
+<li>Fuse several distinct segments with the same addresses into a single segment.</li>
+<li>By clicking <em>Send</em>, changes are communicated to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be communicated to the output at every modification.</li>
+<li>Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted.</li>
+</ol>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>We used the <strong>Text Field</strong> widget to input texts in three different languages. We renamed them according to the language that was used, merged them together by using the <strong>Merge</strong> widget and decided to import the labels with the key <em>Language</em>. We then displayed our results in the <strong>Display</strong> widget and by doing that we created ourselves a handy dictionary, which we then saved to our computer.</p>
+<div class="figure">
+<img alt="../../_images/merge-example.png" src="../../_images/merge-example.png" />
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Merge</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="recode.html"
+                        title="previous chapter">Recode</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="segment.html"
+                        title="next chapter">Segment</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/widgets/segmentationprocessing/merge.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="segment.html" title="Segment"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="recode.html" title="Recode"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, LangTech Sarl.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

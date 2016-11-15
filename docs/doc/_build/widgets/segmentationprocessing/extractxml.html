@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Extract XML &mdash; Orange3-Textable 3.0a1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.0a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Orange3-Textable 3.0a1 documentation" href="../../index.html" />
+    <link rel="next" title="Display" href="display.html" />
+    <link rel="prev" title="Intersect" href="intersect.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="display.html" title="Display"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intersect.html" title="Intersect"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="extract-xml">
+<h1>Extract XML<a class="headerlink" href="#extract-xml" title="Permalink to this headline">¶</a></h1>
+<div class="figure">
+<img alt="../../_images/extractxml.png" src="../../_images/extractxml.png" />
+</div>
+<p>Create a new segmentation based on XML markup.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p><strong>Inputs</strong>:</p>
+<ul class="simple">
+<li>Segmentation</li>
+</ul>
+<p>Segmentation covering XML data based on which a news segmentation will be created</p>
+<p><strong>Outputs</strong>:</p>
+<ul class="simple">
+<li>Extracted data</li>
+</ul>
+<p>Segmentation containing the segments corresponding to extracted XML elements</p>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The <a href="#id1"><span class="problematic" id="id2">**</span></a>Extract XML* widget is used to search portions corresponding to a specific <a class="reference external" href="https://en.wikipedia.org/wiki/XML">XML</a> element type in an input segmentation. It creates a segment for each occurence of this <a class="reference external" href="http://www.w3schools.com/xml/xml_elements.asp">element</a>. If such an occurence is distributed among several segments of the input segmentation, the widget will create as many segments in the output segmentation. Every attribute from the extracted elements is automatically converted in and annotation in the output segmentation. The widget is available in two versions, according to whether or not the <em>Advanced Settings</em> checkbox is selected.</p>
+</div>
+<div class="section" id="basic-interface">
+<h2>Basic interface<a class="headerlink" href="#basic-interface" title="Permalink to this headline">¶</a></h2>
+<p>The basic interface only allows the extraction of a single type of element at a time; however, it extracts every occurrence of this element, including those embedded in other occurrences of the same type.</p>
+<div class="figure">
+<img alt="../../_images/extractxml-basic-stamped.png" src="../../_images/extractxml-basic-stamped.png" />
+</div>
+<ol class="arabic simple">
+<li>Delete the XML tags embedded within the extracted XML elements, if any. The extracted elements will potentially be decomposed in several segments corresponding to portions of their content, which are separated by the deleted XML tags. In the <em>XML</em> field, you select which element types are to be sought.</li>
+<li>By clicking on the <em>Send</em> button, changes are committed to the output of the widget. Alternatively, use <em>Send automatically</em> and the segmentation will be modified on every change.</li>
+<li>Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted</li>
+</ol>
+</div>
+<div class="section" id="advanced-interface">
+<h2>Advanced Interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h2>
+<p>The advanced version of the <strong>Extract XML</strong> widget allows the user to configure the XML element extraction.</p>
+<div class="figure">
+<img alt="../../_images/extractxml-advanced-stamped.png" src="../../_images/extractxml-advanced-stamped.png" />
+</div>
+<ol class="arabic">
+<li><p class="first">Indicate the XML element type which should be sought.</p>
+</li>
+<li><p class="first">Assign to each output segment an annotation whose key is the text contained in the field immediately on the right and whose value is the name of the XML element extracted by the widget.</p>
+</li>
+<li><p class="first">Exclude XML tags embedded within the extracted XML elements from the output segmentation. The extracted elements will potentially be decomposed in several segments corresponding to portions of their content which are separated by the excluded XML tags.</p>
+</li>
+<li><p class="first">By not choosing this option, a single segment is created (as opposed to several).</p>
+</li>
+<li><p class="first">Determines the behavior of the widget in the very particular case where (a) elements of the extracted type are (exactly) embedded in one another, (b) they have different values for the same attribute, (c) the <em>Remove markup</em> option is selected and (d) the <em>Fuse duplicates</em> option (section Options) as well.If the <em>Prioritize shallow attributes</em> option is selected, the value of the element closest to the “surface” will be kept.</p>
+</li>
+<li><p class="first">Limit the extraction by specifying the conditions bearing on attributes on the extracted elements. These conditions are expressed in the form of <a class="reference external" href="https://en.wikipedia.org/wiki/Regular_expression">regular expressions</a> that the given attribute values must match.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Use the buttons on the right side of the widget to delete the selected condition or completely empty the list.</li>
+<li>Specify the attribute in question and the corresponding regular expression (RegEx).</li>
+<li>Manage the application of the corresponding options to the regular expression.</li>
+<li>Add the newly created condition to the list.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Specify the output segmentation label:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>Auto-number with key</em>: automatically number the segments of the output segmentation</li>
+<li><em>Import annotations</em>: copy annotations from the input segmentation to the output segmentation</li>
+<li><em>Merge duplicate segments</em>: fuse distinct segments with the same address</li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+<blockquote>
+<div><ol class="arabic simple" start="8">
+<li>By clicking <em>Send</em>, changes are communicated to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be communicated to the output at every modification.</li>
+<li>Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted.</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>We downloaded a set of Shakespeare&#8217;s <a class="reference external" href="http://metalab.unc.edu/bosak/xml/eg/shaks200.zip">plays</a>  marked up in XML and used the <strong>Text Files</strong> widget to import two files into Orange. We then extracted all stage directions by typing <em>&lt;STAGEDIR&gt;</em> in the XML element field. We are now free to explore how stage directions in a comedy differentiate from those in a tragedy.</p>
+<div class="figure">
+<img alt="images/extractxml-example.png" src="images/extractxml-example.png" />
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Extract XML</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#basic-interface">Basic interface</a></li>
+<li><a class="reference internal" href="#advanced-interface">Advanced Interface</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="intersect.html"
+                        title="previous chapter">Intersect</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="display.html"
+                        title="next chapter">Display</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/widgets/segmentationprocessing/extractxml.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="display.html" title="Display"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="intersect.html" title="Intersect"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, LangTech Sarl.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
