@@ -29,7 +29,7 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.6"   # file version
+__version__ = "1.0.7"   # file version
 
 NAME = 'Orange3-Textable'
 DOCUMENTATION_NAME = 'Textable'
@@ -96,7 +96,7 @@ ENTRY_POINTS = {
         'Textable = _textable.widgets',
     ),
     "orange.canvas.help": (
-        'html-index = _textable.widgets.widgets:WIDGET_HELP_PATH',
+        'html-index = _textable.widgets:WIDGET_HELP_PATH',
     ),
 }
 
