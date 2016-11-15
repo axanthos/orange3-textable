@@ -6,6 +6,10 @@
 Welcome to Orange3-Textable's documentation!
 ============================================
 
+NB: this documentation is still work in progress. Until it's completed, the user 
+is advised to consult the `documentation of Textable v2.0 
+<http://orange-textable.readthedocs.io>`_
+
 Contents:
 
 .. toctree::
