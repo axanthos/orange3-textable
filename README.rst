@@ -4,7 +4,7 @@ Textable
 Textable is an open source add-on bringing advanced text-analytical
 functionalities to the `Orange Canvas <http://orange.biolab.si/>`_ data mining
 software package (itself open source). Look at the following `example
-<http://orange3-textable.readthedocs.io/en/latest/illustration.html>`_ to see
+<http://orange-textable.readthedocs.io/en/latest/illustration.html>`_ to see
 it in typical action.
 
 The project's website is http://textable.io. It hosts a repository of
@@ -19,9 +19,9 @@ Orange Textable was designed and implemented by `LangTech Sarl
 <http://langtech.ch>`_ on behalf of the `department of language and
 information sciences (SLI) <http://www.unil.ch/sli>`_ at the `University of
 Lausanne <http://www.unil.ch>`_ (see `Credits
-<http://orange3-textable.readthedocs.io/en/latest/credits.html>`_ and
+<http://orange-textable.readthedocs.io/en/latest/credits.html>`_ and
 `How to cite Orange Textable
-<http://orange3-textable.readthedocs.io/en/latest/credits.html>`_).
+<http://orange-textable.readthedocs.io/en/latest/credits.html>`_).
 
 Features
 --------

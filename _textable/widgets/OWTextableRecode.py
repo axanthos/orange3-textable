@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.3'
+__version__ = '0.13.4'
 
 import os, re, codecs, json
 
@@ -486,11 +486,17 @@ class OWTextableRecode(OWTextableBaseWidget):
             try:
                 substitutions.append((re.compile(regex_string), subst[1]))
             except re.error as re_error:
-                message = u'Please enter a valid regex (error: %s' %    \
-                          re_error.message
-                if self.displayAdvancedSettings and len(mySubstitutions) > 1:
-                    message += u', substitution #%i' % (subst_idx + 1)
-                message += u').'
+                try:
+                    message = u'Please enter a valid regex (error: %s' %    \
+                              re_error.msg
+                    if self.displayAdvancedSettings and len(mySubstitutions) > 1:
+                        message += u', substitution #%i' % (subst_idx + 1)
+                    message += u').'
+                except AttributeError:
+                    message = u'Please enter a valid regex'
+                    if self.displayAdvancedSettings and len(mySubstitutions) > 1:
+                        message += u' (substitution #%i)' % (subst_idx + 1)
+                    message += u'.'
                 self.infoBox.setText(
                     message, 'error'
                 )
@@ -526,8 +532,11 @@ class OWTextableRecode(OWTextableBaseWidget):
                     'error'
                 )
             else:
-                message = u'Please enter a valid regex (error: %s).' %    \
-                          re_error.message
+                try:
+                    message = u'Please enter a valid regex (error: %s).' %    \
+                              re_error.msg
+                except AttributeError:
+                    message = u'Please enter a valid regex.'
                 self.infoBox.setText(
                     message, 'error'
                 )

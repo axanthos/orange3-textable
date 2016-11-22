@@ -20,7 +20,7 @@ along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
 
-__version__ = '0.14.3'
+__version__ = '0.14.4'
 
 import re, math
 
@@ -606,8 +606,11 @@ class OWTextableSelect(OWTextableBaseWidget):
                 try:
                     regex = re.compile(regex_string)
                 except re.error as re_error:
-                    message = u'Please enter a valid regex (error: %s).' %    \
-                              re_error.message
+                    try:
+                        message = u'Please enter a valid regex (error: %s).' % \
+                                  re_error.msg
+                    except AttributeError:
+                        message = u'Please enter a valid regex.'
                     self.infoBox.setText(message, 'error')
                     self.send('Selected data', None, self)
                     self.send('Discarded data', None, self)
@@ -775,8 +778,11 @@ class OWTextableSelect(OWTextableBaseWidget):
                     progress_callback=progressBar.advance,
                 )
             except re.error as re_error:
-                message = u'Please enter a valid regex (error: %s).' %    \
-                          re_error.message
+                try:
+                    message = u'Please enter a valid regex (error: %s).' % \
+                              re_error.msg
+                except AttributeError:
+                    message = u'Please enter a valid regex.'
                 self.infoBox.setText(message, 'error')
                 self.send('Selected data', None, self)
                 self.send('Discarded data', None, self)
