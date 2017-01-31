@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.15.5'
+__version__ = '0.15.6'
 
 import re
 
@@ -529,14 +529,14 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                     conditions[attribute] = re.compile(regex_string)
                 except re.error as re_error:
                     try:
-                        message = u'Please enter a valid regex (error: %s' %    \
+                        message = u'Please enter a valid regex (error: %s' %   \
                                   re_error.msg
-                        if len(conditions) > 1:
+                        if len(self.conditions) > 1:
                             message += u', condition #%i' % (condition_idx + 1)
                         message += u').'
                     except AttributeError:
                         message = u'Please enter a valid regex'
-                        if len(conditions) > 1:
+                        if len(self.conditions) > 1:
                             message += u' (condition #%i)' % (condition_idx + 1)
                         message += u'.'
                     self.infoBox.setText(message, 'error')
