@@ -74,17 +74,6 @@ class OWTextableInterchange(OWTextableBaseWidget):
         """Initialize a Message widget"""
         super().__init__(*args, **kwargs)
 
-        # if not textMiningIsInstalled:
-        #     gui.label(
-        #         widget=self.controlArea,
-        #         master=self,
-        #         label="This widget serves to convert data between the\n"
-        #               "Textable add-on format (segmentation) and the Text\n"
-        #               "Mining add-on format (corpus). In order to use it,\n"
-        #               "please install the Text Mining add-on (Orange3-Text)."
-        #     )
-        #     return
-
         # Other attributes...
         self.segmentation = None
         self.corpus = None
