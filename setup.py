@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """File setup.py
-Copyright 2012-2016 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2017 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange-Textable package v3.0.
 
