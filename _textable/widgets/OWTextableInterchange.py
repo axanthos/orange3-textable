@@ -30,8 +30,14 @@ from .TextableUtils import (
 )
 
 from Orange.widgets import gui, settings
-from orangecontrib.text import Corpus
 from Orange.data import DiscreteVariable, StringVariable, Domain, Table
+
+textMiningIsInstalled = True
+try:
+    from orangecontrib.text import Corpus
+except ImportError:
+    textMiningIsInstalled = False
+
 
 import numpy as np
 
@@ -45,34 +51,59 @@ class OWTextableInterchange(OWTextableBaseWidget):
     icon = "icons/interchange.svg"
     priority = 10003
 
-    inputs = [
-        ("Textable segmentation", Segmentation, "inputSegmentation"),
-        ("Text Mining corpus", Corpus, "inputCorpus"),
-    ]
-    outputs = [
-        ("Textable segmentation", Segmentation),
-        ("Text Mining corpus", Corpus),
-    ]
+    if textMiningIsInstalled:
+        inputs = [
+            ("Textable segmentation", Segmentation, "inputSegmentation"),
+            ("Text Mining corpus", Corpus, "inputCorpus"),
+        ]
+        outputs = [
+            ("Textable segmentation", Segmentation),
+            ("Text Mining corpus", Corpus),
+        ]
 
-    settingsHandler = VersionedSettingsHandler(
-        version=__version__.rsplit(".", 1)[0]
-    )
-    autoSend = settings.Setting(True)
-    limitNumCategories = settings.Setting(True)
-    maxNumCategories = settings.Setting(100)
+        settingsHandler = VersionedSettingsHandler(
+            version=__version__.rsplit(".", 1)[0]
+        )
+        autoSend = settings.Setting(True)
+        limitNumCategories = settings.Setting(True)
+        maxNumCategories = settings.Setting(100)
+
     want_main_area = False
 
     def __init__(self, *args, **kwargs):
         """Initialize a Message widget"""
         super().__init__(*args, **kwargs)
 
+        # if not textMiningIsInstalled:
+        #     gui.label(
+        #         widget=self.controlArea,
+        #         master=self,
+        #         label="This widget serves to convert data between the\n"
+        #               "Textable add-on format (segmentation) and the Text\n"
+        #               "Mining add-on format (corpus). In order to use it,\n"
+        #               "please install the Text Mining add-on (Orange3-Text)."
+        #     )
+        #     return
+
         # Other attributes...
         self.segmentation = None
         self.corpus = None
         self.segmentContent = 0
-        self.discreteVariables = list()
-        self.metaAttributes = list()
+        self.createdInputs = list()
         self.infoBox = InfoBox(widget=self.controlArea)
+
+        if not textMiningIsInstalled:
+            self.infoBox.draw()
+            self.infoBox.setText(
+                "This widget serves to convert data between the "
+                "Textable add-on format (segmentation) and the Text "
+                "Mining add-on format (corpus). In order to use it, "
+                "please install the Text Mining add-on (Orange3-Text).",
+                "warning"
+            )
+            return
+
+
         gui.separator(self.controlArea, height=3)
         self.sendButton = SendButton(
             widget=self.controlArea,
@@ -183,6 +214,7 @@ class OWTextableInterchange(OWTextableBaseWidget):
 
         # Convert corpus to segmentation...
         if self.corpus:
+            self.clearCreatedInputs()
             new_segments = list()
             text_feature = self.corpus.text_features[self.segmentContent]
             for row in self.corpus:
@@ -210,8 +242,9 @@ class OWTextableInterchange(OWTextableBaseWidget):
                         new_segment_annotations
                     )
                 )
+                self.createdInputs.append(new_input)
                 progressBar.advance()
-            new_segmentation = Segmentation(new_segments)
+            new_segmentation = Segmentation(new_segments, self.captionTitle)
             msg_seg = u'%i segment@p' % len(new_segmentation)
             msg_seg = pluralize(msg_seg, len(new_segmentation))
             self.send('Textable segmentation', new_segmentation)
@@ -260,12 +293,13 @@ class OWTextableInterchange(OWTextableBaseWidget):
                 rows.append(row)
                 progressBar.advance
             table = Table(domain, rows)
-            corpus = Corpus(
-                domain,
-                X=table.X,
-                metas=table.metas,
-                text_features=[metas[-1]]
-            )
+            if textMiningIsInstalled:
+                corpus = Corpus(
+                    domain,
+                    X=table.X,
+                    metas=table.metas,
+                    text_features=[metas[-1]]
+                )
             msg_corpus = u'%i document@p' % len(self.segmentation)
             msg_corpus = pluralize(msg_corpus, len(self.segmentation))
             self.send('Text Mining corpus', corpus)
@@ -309,6 +343,14 @@ class OWTextableInterchange(OWTextableBaseWidget):
                 self.sendButton.settingsChanged()
         else:
             super().setCaption(title)
+
+    def onDeleteWidget(self):
+        self.clearCreatedInputs()
+
+    def clearCreatedInputs(self):
+        for i in self.createdInputs:
+            Segmentation.set_data(i[0].str_index, None)
+        del self.createdInputs[:]
 
 
 if __name__ == "__main__":
