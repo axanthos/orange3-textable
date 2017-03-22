@@ -1,4 +1,4 @@
-recursive-include _textable *.png
+recursive-include _textable *.png *.svg
 recursive-include docs/rst *
 include docs/Makefile
 include LICENSE
