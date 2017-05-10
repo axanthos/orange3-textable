@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.4'
+__version__ = '0.13.5'
 
 
 from LTTL.Table import Table
@@ -348,9 +348,10 @@ class OWTextableVariety(OWTextableBaseWidget):
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 u"Check this box if you want to compute the average\n"
-                u"variety per subsample."
+                u"(or expected) variety per subsample."
             ),
         )
+        # TODO: document RMSP!
         gui.separator(widget=self.resamplingBox, height=3)
         iBox2 = gui.indentedBox(
             widget=self.resamplingBox,
@@ -589,14 +590,12 @@ class OWTextableVariety(OWTextableBaseWidget):
                 len(self.segmentations[self.units][1])
             )
             self.sequenceLength = self.sequenceLength or 1
-            if self.sequenceLength > 1:
-                self.categoriesBox.setDisabled(True)
+            self.categoriesBox.setDisabled(self.sequenceLength > 1)
+            self.sequenceLengthSpin.setDisabled(self.measurePerCategory)
+            if self.mode == u'Sliding window':
+                self.numSubsampleSpin.setDisabled(False)
             else:
-                self.categoriesBox.setDisabled(False)
-            if self.measurePerCategory:
-                self.sequenceLengthSpin.setDisabled(True)
-            else:
-                self.sequenceLengthSpin.setDisabled(False)
+                self.numSubsampleSpin.setDisabled(not self.measurePerCategory)
             self.contextsBox.setDisabled(False)
             self.subsampleSizeSpin.setRange(
                 1,
