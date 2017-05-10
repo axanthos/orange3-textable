@@ -111,3 +111,4 @@ build/*
 *.pyc
 Thumbs.db
 
+release.bat
