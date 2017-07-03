@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.4'
+__version__ = '0.13.5'
 
 import os, re, codecs, json
 
@@ -511,7 +511,7 @@ class OWTextableRecode(OWTextableBaseWidget):
             iterations=len(self.segmentation)
         )
         try:
-            recoded_data = Segmenter.recode(
+            recoded_data, num_subs = Segmenter.recode(
                 segmentation=self.segmentation,
                 substitutions=substitutions,
                 label=self.captionTitle,
@@ -520,8 +520,13 @@ class OWTextableRecode(OWTextableBaseWidget):
             )
             newNumInputs = len(Segmentation.data)
             self.createdInputIndices = range(previousNumInputs, newNumInputs)
-            message = u'%i segment@p sent to output.' % len(recoded_data)
+            message = u'%i segment@p sent to output' % len(recoded_data)
             message = pluralize(message, len(recoded_data))
+            if num_subs:
+                message += u' (%i replacement@p performed).' % num_subs
+                message = pluralize(message, num_subs)
+            else:
+                message += u" (no replacements performed)."
             self.infoBox.setText(message)
             self.send('Recoded data', recoded_data, self)
         except re.error as re_error:

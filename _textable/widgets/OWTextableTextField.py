@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.3'
+__version__ = '0.13.4'
 
 from unicodedata import normalize
 
@@ -105,7 +105,6 @@ class OWTextableTextField(OWTextableBaseWidget):
 
     def inputTextData(self, segmentation):
         """Handle text data on input connection"""
-        self.segmentation.clear()
         if not segmentation:
             return
         self.editor.setPlainText(

@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.16.5'
+__version__ = '0.16.6'
 
 import sys
 import os
@@ -461,9 +461,9 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 errors='xmlcharrefreplace',
             )
             outputFile.write(
-                normalizeCarriageReturns(
+                #normalizeCarriageReturns(
                     self.displayedSegmentation[0].get_content()
-                )
+                #)
             )
             outputFile.close()
             QMessageBox.information(
@@ -476,9 +476,9 @@ class OWTextableDisplay(OWTextableBaseWidget):
     def copyToClipboard(self):
         """Copy displayed segmentation to clipboard"""
         QApplication.clipboard().setText(
-            normalizeCarriageReturns(
+            #normalizeCarriageReturns(
                 self.displayedSegmentation[0].get_content()
-            )
+            #)
         )
         QMessageBox.information(
             None,

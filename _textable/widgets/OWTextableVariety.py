@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.5'
+__version__ = '0.13.6'
 
 
 from LTTL.Table import Table
@@ -34,7 +34,7 @@ from Orange.widgets import widget, gui, settings
 
 
 class OWTextableVariety(OWTextableBaseWidget):
-    """Orange widget for mesuring variety of text units"""
+    """Orange widget for measuring variety of text units"""
 
     name = "Variety"
     description = "Measure the variety of segments"
@@ -58,6 +58,7 @@ class OWTextableVariety(OWTextableBaseWidget):
     unitWeighting = settings.Setting(False)
     measurePerCategory = settings.Setting(False)
     categoryWeighting = settings.Setting(False)
+    adjustSubsampleSize = settings.Setting(True)
     applyResampling = settings.Setting(False)
     numSubsamples = settings.Setting(100)
     subsampleSize = settings.ContextSetting(50)
@@ -214,6 +215,19 @@ class OWTextableVariety(OWTextableBaseWidget):
                 u"Check this box in order to apply category\n"
                 u"frequency weighting (i.e. compute a weighted\n"
                 u"rather than unweighted average)."
+            ),
+        )
+        gui.separator(widget=iBox, height=3)
+        gui.checkBox(
+            widget=iBox,
+            master=self,
+            value='adjustSubsampleSize',
+            label=u'Dynamically adjust subsample size',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"Attempt to make variety estimation more robust\n"
+                u"by using the RMSP subsample size adjustment method\n"
+                u"described in Xanthos and Guex 2015."
             ),
         )
         self.measurePerCategoryCheckbox.disables.append(iBox)
@@ -459,6 +473,7 @@ class OWTextableVariety(OWTextableBaseWidget):
         categories = {
             'annotation_key': self.categoryAnnotationKey or None,
             'weighting': self.categoryWeighting,
+            'adjust': self.adjustSubsampleSize,
         }
         if categories['annotation_key'] == u'(none)':
             categories['annotation_key'] = None
@@ -466,11 +481,14 @@ class OWTextableVariety(OWTextableBaseWidget):
         # Case 1: sliding window...
         if self.mode == 'Sliding window':
 
-            num_iterations = len(units['segmentation']) - (self.windowSize - 1)
-            if self.applyResampling:
-                num_iterations += num_iterations * self.numSubsamples
+            num_rows = len(units['segmentation']) - (self.windowSize - 1)
+            if self.measurePerCategory:
+                if self.applyResampling:
+                    num_iterations = num_rows * 3
+                else:
+                    num_iterations = num_rows * 2
             else:
-                num_iterations *= 2
+                num_iterations = num_rows / 2
 
             # Measure...
             progressBar = gui.ProgressBar(
@@ -503,18 +521,19 @@ class OWTextableVariety(OWTextableBaseWidget):
                 if contexts['annotation_key'] == u'(none)':
                     contexts['annotation_key'] = None
                 num_contexts = len(contexts['segmentation'])
-                num_iterations = num_contexts
+                if self.measurePerCategory and self.applyResampling:
+                    num_iterations = num_contexts * 3
+                else:
+                    num_iterations = num_contexts
             # Parameters for mode 'No context'...
             else:
                 contexts = None
                 num_iterations = (
                     len(units['segmentation']) - (self.sequenceLength - 1)
                 )
-                num_contexts = 1
-            if self.applyResampling:
-                num_iterations += num_contexts * self.numSubsamples
-            else:
-                num_iterations += num_contexts
+                if self.measurePerCategory and self.applyResampling:
+                    num_iterations *= 2
+
 
             # Measure...
             progressBar = gui.ProgressBar(
@@ -592,10 +611,12 @@ class OWTextableVariety(OWTextableBaseWidget):
             self.sequenceLength = self.sequenceLength or 1
             self.categoriesBox.setDisabled(self.sequenceLength > 1)
             self.sequenceLengthSpin.setDisabled(self.measurePerCategory)
-            if self.mode == u'Sliding window':
-                self.numSubsampleSpin.setDisabled(False)
-            else:
-                self.numSubsampleSpin.setDisabled(not self.measurePerCategory)
+            # if self.mode == u'Sliding window':
+            #     self.numSubsampleSpin.setDisabled(False)
+            # else:
+            self.numSubsampleSpin.setDisabled(
+                not(self.measurePerCategory or self.unitWeighting)
+            )
             self.contextsBox.setDisabled(False)
             self.subsampleSizeSpin.setRange(
                 1,
