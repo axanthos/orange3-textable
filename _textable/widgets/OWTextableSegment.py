@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.6'
+__version__ = '0.21.7'
 
 import os, re, codecs, json
 
@@ -709,7 +709,7 @@ class OWTextableSegment(OWTextableBaseWidget):
             self.send('Segmented data', segmented_data, self)
         except IndexError:
             self.infoBox.setText(
-                u'reference to unmatched group in annotation key and/or value.',
+                u'Reference to unmatched group in annotation key and/or value.',
                 'error'
             )
             self.send('Segmented data', None, self)

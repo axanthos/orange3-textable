@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.5'
+__version__ = '0.13.6'
 
 import os, re, codecs, json
 
@@ -530,21 +530,18 @@ class OWTextableRecode(OWTextableBaseWidget):
             self.infoBox.setText(message)
             self.send('Recoded data', recoded_data, self)
         except re.error as re_error:
-            if re_error.message == 'invalid group reference':
-                self.infoBox.setText(
-                    u'reference to unmatched group in annotation key ' +    \
-                    u'and/or value.',
-                    'error'
-                )
-            else:
-                try:
-                    message = u'Please enter a valid regex (error: %s).' %    \
-                              re_error.msg
-                except AttributeError:
-                    message = u'Please enter a valid regex.'
-                self.infoBox.setText(
-                    message, 'error'
-                )
+            try:
+                if str(re_error) == 'invalid group reference':
+                    message = u'Reference to unmatched group in ' +   \
+                              u' annotation key and/or value.'
+                else:
+                    message = u'Please enter a valid regex (error: %s).' %   \
+                              str(re_error)
+            except AttributeError:
+                message = u'Please enter a valid regex.'
+            self.infoBox.setText(
+                message, 'error'
+            )
             self.send('Recoded data', None, self)
         self.sendButton.resetSettingsChangedFlag()
         progressBar.finish()
