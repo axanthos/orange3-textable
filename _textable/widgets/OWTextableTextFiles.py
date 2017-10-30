@@ -18,15 +18,20 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.17.4'
+__version__ = '0.17.5'
 
 
-import codecs, io, os, re, json
+import codecs
+import os
+import re
+import json
 from unicodedata import normalize
 
 from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QFileDialog, QMessageBox
 from PyQt4.QtGui import QFont
+
+from chardet.universaldetector import UniversalDetector
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
@@ -35,6 +40,7 @@ import LTTL.Segmenter as Segmenter
 from .TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
     JSONMessage, InfoBox, SendButton, AdvancedSettings,
+    addSeparatorAfterDefaultEncodings, addAutoDetectEncoding,
     getPredefinedEncodings, normalizeCarriageReturns, pluralize
 )
 
@@ -65,7 +71,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
     # Settings...
     autoSend = settings.Setting(True)
     files = settings.Setting([])
-    encoding = settings.Setting('iso-8859-1')
+    encoding = settings.Setting('(auto-detect)')
     autoNumber = settings.Setting(False)
     autoNumberKey = settings.Setting(u'num')
     importFilenames = settings.Setting(True)
@@ -143,7 +149,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             ),
         )
         gui.separator(widget=basicFileBox, width=3)
-        gui.comboBox(
+        advancedEncodingsCombobox = gui.comboBox(
             widget=basicFileBox,
             master=self,
             value='encoding',
@@ -157,6 +163,8 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"Select input file(s) encoding."
             ),
         )
+        addSeparatorAfterDefaultEncodings(advancedEncodingsCombobox)
+        addAutoDetectEncoding(advancedEncodingsCombobox)
         gui.separator(widget=basicFileBox, width=3)
         self.advancedSettings.basicWidgets.append(basicFileBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
@@ -305,7 +313,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             ),
         )
         gui.separator(widget=addFileBox, width=3)
-        gui.comboBox(
+        basicEncodingsCombobox = gui.comboBox(
             widget=addFileBox,
             master=self,
             value='encoding',
@@ -319,6 +327,8 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"Select input file(s) encoding."
             ),
         )
+        addSeparatorAfterDefaultEncodings(basicEncodingsCombobox)
+        addAutoDetectEncoding(basicEncodingsCombobox)
         gui.separator(widget=addFileBox, width=3)
         gui.lineEdit(
             widget=addFileBox,
@@ -529,14 +539,27 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         for myFile in myFiles:
             filePath = myFile[0]
             encoding = myFile[1]
+            encoding = re.sub(r"[ ]\(.+", "", encoding)
             annotation_key = myFile[2]
             annotation_value = myFile[3]
 
             # Try to open the file...
             self.error()
             try:
-                # simply open in Python 3?
-                fh = io.open(filePath, mode='rU', encoding=encoding)
+                if encoding == "(auto-detect)":
+                    detector = UniversalDetector()
+                    fh = open(filePath, 'rb')
+                    for line in fh:
+                        detector.feed(line)
+                        if detector.done: break
+                    detector.close()
+                    fh.close()
+                    encoding = detector.result['encoding']
+                fh = open(
+                    filePath,
+                    mode='rU',
+                    encoding=encoding,
+                )
                 try:
                     fileContent = ""
                     i = 0
@@ -811,9 +834,10 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         """Add files to files attr"""
         filePathList = re.split(r' +/ +', self.newFiles)
         for filePath in filePathList:
+            encoding = re.sub(r"[ ]\(.+", "", self.encoding)
             self.files.append((
                 filePath,
-                self.encoding,
+                encoding,
                 self.newAnnotationKey,
                 self.newAnnotationValue,
             ))

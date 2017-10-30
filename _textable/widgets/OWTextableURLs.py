@@ -18,15 +18,21 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.14.3'
+__version__ = '0.14.4'
 
-import os, codecs, re, json
+import os
+import codecs
+import re
+import json
+import http
 from unicodedata import normalize
 from urllib.request import urlopen
 
 from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QFont
 from PyQt4.QtGui import QMessageBox, QFileDialog
+
+import chardet
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
@@ -35,6 +41,7 @@ import LTTL.Segmenter as Segmenter
 from .TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
     JSONMessage, InfoBox, SendButton, AdvancedSettings,
+    addSeparatorAfterDefaultEncodings, addAutoDetectEncoding,
     normalizeCarriageReturns, getPredefinedEncodings, pluralize
 )
 
@@ -60,7 +67,7 @@ class OWTextableURLs(OWTextableBaseWidget):
     # Settings...
     autoSend = settings.Setting(True)
     URLs = settings.Setting([])
-    encoding = settings.Setting('utf-8')
+    encoding = settings.Setting('(auto-detect)')
     autoNumber = settings.Setting(False)
     autoNumberKey = settings.Setting(u'num')
     importURLs = settings.Setting(True)
@@ -128,7 +135,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             ),
         )
         gui.separator(widget=basicURLBox, height=3)
-        gui.comboBox(
+        advancedEncodingsCombobox = gui.comboBox(
             widget=basicURLBox,
             master=self,
             value='encoding',
@@ -142,6 +149,8 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"Select URL's encoding."
             ),
         )
+        addSeparatorAfterDefaultEncodings(advancedEncodingsCombobox)
+        addAutoDetectEncoding(advancedEncodingsCombobox)
         gui.separator(widget=basicURLBox, height=3)
         self.advancedSettings.basicWidgets.append(basicURLBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
@@ -271,7 +280,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             ),
         )
         gui.separator(widget=addURLBox, height=3)
-        gui.comboBox(
+        basicEncodingsCombobox = gui.comboBox(
             widget=addURLBox,
             master=self,
             value='encoding',
@@ -285,6 +294,8 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"Select URL's encoding."
             ),
         )
+        addSeparatorAfterDefaultEncodings(basicEncodingsCombobox)
+        addAutoDetectEncoding(basicEncodingsCombobox)
         gui.separator(widget=addURLBox, height=3)
         gui.lineEdit(
             widget=addURLBox,
@@ -491,34 +502,42 @@ class OWTextableURLs(OWTextableBaseWidget):
         for myURL in myURLs:
 
             URL = myURL[0]
+            if not URL.startswith("http"):
+                URL = "http://" + URL
             encoding = myURL[1]
+            encoding = re.sub(r"[ ]\(.+", "", encoding)
             annotation_key = myURL[2]
             annotation_value = myURL[3]
 
             # Try to fetch URL content...
             self.error()
+            URLContent = ""
             try:
                 URLHandle = urlopen(URL)
-                try:
-                    URLContent = URLHandle.read().decode(encoding)
-                except UnicodeError:
-                    progressBar.finish()
-                    if len(myURLs) > 1:
-                        message = u"Please select another encoding "    \
-                                  + u"for URL %s." % URL
-                    else:
-                        message = u"Please select another encoding."
-                    self.infoBox.setText(message, 'error')
-                    self.send('Text data', None, self)
-                    return
-                finally:
-                    URLHandle.close()
+                URLContent = URLHandle.read()
+                URLHandle.close()
+            except http.client.IncompleteRead as e:
+                URLContent = e.partial
             except IOError:
                 progressBar.finish()
                 if len(myURLs) > 1:
                     message = u"Couldn't retrieve %s." % URL
                 else:
                     message = u"Couldn't retrieve URL."
+                self.infoBox.setText(message, 'error')
+                self.send('Text data', None, self)
+                return
+            try:
+                if encoding == "(auto-detect)":
+                    encoding = chardet.detect(URLContent)['encoding']
+                URLContent = URLContent.decode(encoding)
+            except UnicodeError:
+                progressBar.finish()
+                if len(myURLs) > 1:
+                    message = u"Please select another encoding "    \
+                              + u"for URL %s." % URL
+                else:
+                    message = u"Please select another encoding."
                 self.infoBox.setText(message, 'error')
                 self.send('Text data', None, self)
                 return
@@ -739,9 +758,10 @@ class OWTextableURLs(OWTextableBaseWidget):
         """Add URLs to URLs attr"""
         URLList = re.split(r' +/ +', self.newURL)
         for URL in URLList:
+            encoding = re.sub(r"[ ]\(.+", "", self.encoding)
             self.URLs.append((
                 URL,
-                self.encoding,
+                encoding,
                 self.newAnnotationKey,
                 self.newAnnotationValue,
             ))

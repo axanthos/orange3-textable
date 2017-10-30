@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.4'
+__version__ = '0.13.5'
 
 from unicodedata import normalize
 
@@ -29,8 +29,7 @@ from PyQt4.QtGui import QPlainTextEdit
 
 from .TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
-    getPredefinedEncodings, pluralize,
-    InfoBox, SendButton
+    pluralize, InfoBox, SendButton
 )
 from Orange.widgets import widget, gui, settings
 
@@ -55,9 +54,6 @@ class OWTextableTextField(OWTextableBaseWidget):
     autoSend = settings.Setting(True)
     textFieldContent = settings.Setting(u''.encode('utf-8'))
     encoding = settings.Setting(u'utf-8')
-
-    # Predefined list of available encodings...
-    encodings = getPredefinedEncodings()
 
     want_main_area = False
 

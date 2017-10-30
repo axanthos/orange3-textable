@@ -18,10 +18,11 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.19.5'
+__version__ = '0.19.7'
 
 import os
 import codecs
+import re
 
 from PyQt4.QtGui import QMessageBox, QApplication, QFileDialog
 import Orange.data
@@ -33,7 +34,8 @@ from LTTL.Input import Input
 
 from .TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
-    InfoBox, SendButton, AdvancedSettings, pluralize, getPredefinedEncodings
+    InfoBox, SendButton, AdvancedSettings, pluralize,
+    getPredefinedEncodings, addSeparatorAfterDefaultEncodings
 )
 
 ColumnDelimiters = [
@@ -62,7 +64,7 @@ class OWTextableConvert(OWTextableBaseWidget):
     )
     # Settings...
     autoSend = settings.Setting(True)
-    exportEncoding = settings.Setting('utf-8')
+    exportEncoding = settings.Setting('utf8')
     colDelimiter_idx = settings.Setting(0)
 
     includeOrangeHeaders = settings.Setting(False)
@@ -433,6 +435,7 @@ class OWTextableConvert(OWTextableBaseWidget):
             ),
         )
         conversionEncodingCombo.setMinimumWidth(150)
+        addSeparatorAfterDefaultEncodings(conversionEncodingCombo)
         gui.separator(widget=encodingBox, width=5)
         gui.widgetLabel(
             widget=encodingBox,
@@ -719,9 +722,10 @@ class OWTextableConvert(OWTextableBaseWidget):
         )
         if filePath:
             self.lastLocation = os.path.dirname(filePath)
+            encoding = re.sub(r"[ ]\(.+", "", self.exportEncoding)
             outputFile = codecs.open(
                 filePath,
-                encoding=self.exportEncoding,
+                encoding=encoding,
                 mode='w',
                 errors='xmlcharrefreplace',
             )

@@ -36,7 +36,7 @@ Provides functions:
 - getPredefinedEncodings
 """
 
-__version__ = '0.13'
+__version__ = '0.14'
 
 import re, os, uuid
 
@@ -430,121 +430,129 @@ def normalizeCarriageReturns(string):
     return (string.replace('\n', row_delimiter))
 
 
+def addSeparatorAfterDefaultEncodings(combobox):
+    """Add a separator after default encodings in encoding combobox"""
+    try:
+        separatorPosition = getPredefinedEncodings().index("[SEPARATOR]")
+        combobox.removeItem(separatorPosition)
+        combobox.insertSeparator(separatorPosition)
+    except:
+        pass
+    return
+
+
+def addAutoDetectEncoding(combobox):
+    """Add an AUTO-DETECT option in encoding combobox"""
+    combobox.insertItem(0, "(auto-detect)")
+    combobox.insertSeparator(1)
+    return
+
+
 def getPredefinedEncodings():
-    """Return the list of predefined encodings"""
+    """Return the list of predefined encodings (update: py 3.4)"""
     return [
-        u'ascii',
-        u'iso-8859-1',
-        u'iso-8859-15',
-        u'utf8',
-        u'windows-1252',
-        u"ascii",
-        u"big5",
-        u"big5hkscs",
-        u"cp037",
-        u"cp273",
-        u"German",
-        u"New",
-        u"cp424",
-        u"cp437",
-        u"cp500",
+        u"utf8",
+        u"iso-8859-1",
+        u"iso-8859-15",
+        u"[SEPARATOR]",
+        u"ascii (646, us-ascii)",
+        u"big5 (big5-tw, csbig5)",
+        u"big5hkscs (big5-hkscs, hkscs)",
+        u"cp037 (IBM037, IBM039)",
+        u"cp273 (273, IBM273, csIBM273)",
+        u"cp424 (EBCDIC-CP-HE, IBM424)",
+        u"cp437 (437, IBM437)",
+        u"cp500 (EBCDIC-CP-BE, EBCDIC-CP-CH, IBM500)",
         u"cp720",
         u"cp737",
-        u"cp775",
-        u"cp850",
-        u"cp852",
-        u"cp855",
+        u"cp775 (IBM775)",
+        u"cp850 (850, IBM850)",
+        u"cp852 (852, IBM852)",
+        u"cp855 (855, IBM855)",
         u"cp856",
-        u"cp857",
-        u"cp858",
-        u"cp860",
-        u"cp861",
-        u"cp862",
-        u"cp863",
-        u"cp864",
-        u"cp865",
-        u"cp866",
-        u"cp869",
+        u"cp857 (857, IBM857)",
+        u"cp858 (858, IBM858)",
+        u"cp860 (860, IBM860)",
+        u"cp861 (861, CP-IS, IBM861)",
+        u"cp862 (862, IBM862)",
+        u"cp863 (863, IBM863)",
+        u"cp864 (IBM864)",
+        u"cp865 (865, IBM865)",
+        u"cp866 (866, IBM866)",
+        u"cp869 (869, CP-GR, IBM869)",
         u"cp874",
         u"cp875",
-        u"cp932",
-        u"cp949",
-        u"cp950",
+        u"cp932 (932, ms932, mskanji, ms-kanji)",
+        u"cp949 (949, ms949, uhc)",
+        u"cp950 (950, ms950)",
         u"cp1006",
-        u"cp1026",
-        u"cp1125",
-        u"Ukrainian",
-        u"New",
-        u"cp1140",
-        u"cp1250",
-        u"cp1251",
-        u"cp1252",
-        u"cp1253",
-        u"cp1254",
-        u"cp1255",
-        u"cp1256",
-        u"cp1257",
-        u"cp1258",
+        u"cp1026 (ibm1026)",
+        u"cp1125 (1125, ibm1125, cp866u, ruscii)",
+        u"cp1140 (ibm1140)",
+        u"cp1250 (windows-1250)",
+        u"cp1251 (windows-1251)",
+        u"cp1252 (windows-1252)",
+        u"cp1253 (windows-1253)",
+        u"cp1254 (windows-1254)",
+        u"cp1255 (windows-1255)",
+        u"cp1256 (windows-1256)",
+        u"cp1257 (windows-1257)",
+        u"cp1258 (windows-1258)",
         u"cp65001",
-        u"Windows",
-        u"New",
-        u"euc_jp",
-        u"euc_jis_2004",
-        u"euc_jisx0213",
-        u"euc_kr",
-        u"gb2312",
-        u"gbk",
-        u"gb18030",
-        u"hz",
-        u"iso2022_jp",
-        u"iso2022_jp_1",
-        u"iso2022_jp_2",
-        u"iso2022_jp_2004",
-        u"iso2022_jp_3",
-        u"iso2022_jp_ext",
-        u"iso2022_kr",
-        u"latin_1",
-        u"iso8859_2",
-        u"iso8859_3",
-        u"iso8859_4",
-        u"iso8859_5",
-        u"iso8859_6",
-        u"iso8859_7",
-        u"iso8859_8",
-        u"iso8859_9",
-        u"iso8859_10",
-        u"iso8859_11",
-        u"iso8859_13",
-        u"iso8859_14",
-        u"iso8859_15",
-        u"iso8859_16",
-        u"johab",
+        u"euc_jis_2004 (jisx0213, eucjis2004)",
+        u"euc_jisx0213 (eucjisx0213)",
+        u"euc_jp (eucjp, ujis, u-jis)",
+        u"euc_kr (euckr, korean, ksc5601, ksx1001, ...)",
+        u"gb18030 (gb18030-2000)",
+        u"gb2312 (chinese, csiso58gb231280, euc, cn, iso, ir-58, ...)",
+        u"gbk (936, cp936, ms936)",
+        u"hz (hzgb, hz-gb, hz-gb-2312)",
+        u"iso2022_jp (csiso2022jp, iso2022jp, iso-2022-jp)",
+        u"iso2022_jp_1 (iso2022jp-1, iso-2022-jp-1)",
+        u"iso2022_jp_2 (iso2022jp-2, iso-2022-jp-2)",
+        u"iso2022_jp_2004 (iso2022jp-2004, iso-2022-jp-2004)",
+        u"iso2022_jp_3 (iso2022jp-3, iso-2022-jp-3)",
+        u"iso2022_jp_ext (iso2022jp-ext, iso-2022-jp-ext)",
+        u"iso2022_kr (csiso2022kr, iso2022kr, iso-2022-kr)",
+        u"iso8859_1 (iso-8859-1, 8859, cp819, latin, latin1, L1)",
+        u"iso8859_2 (iso-8859-2, latin2, L2)",
+        u"iso8859_3 (iso-8859-3, latin3, L3)",
+        u"iso8859_4 (iso-8859-4, latin4, L4)",
+        u"iso8859_5 (iso-8859-5, cyrillic)",
+        u"iso8859_6 (iso-8859-6, arabic)",
+        u"iso8859_7 (iso-8859-7, greek, greek8)",
+        u"iso8859_8 (iso-8859-8, hebrew)",
+        u"iso8859_9 (iso-8859-9, latin5, L5)",
+        u"iso8859_10 (iso-8859-10, latin6, L6)",
+        u"iso8859_11 (iso-8859-11, thai)",
+        u"iso8859_13 (iso-8859-13, latin7, L7)",
+        u"iso8859_14 (iso-8859-14, latin8, L8)",
+        u"iso8859_15 (iso-8859-15, latin9, L9)",
+        u"iso8859_16 (iso-8859-16, latin10, L10)",
+        u"johab (cp1361, ms1361)",
         u"koi8_r",
-        u"koi8_t",
-        u"Tajik",
-        u"New",
+#        u"koi8_t", # 3.5
         u"koi8_u",
-        u"kz1048",
-        u"Kazakh",
-        u"New",
-        u"mac_cyrillic",
-        u"mac_greek",
-        u"mac_iceland",
-        u"mac_latin2",
-        u"mac_roman",
-        u"mac_turkish",
-        u"ptcp154",
-        u"shift_jis",
-        u"shift_jis_2004",
-        u"shift_jisx0213",
-        u"utf_32",
-        u"utf_32_be",
-        u"utf_32_le",
-        u"utf_16",
-        u"utf_16_be",
-        u"utf_16_le",
-        u"utf_7",
-        u"utf_8",
+#        u"kz1048 (kz_1048, strk1048_2002, rk1048)",    # 3.5
+        u"latin_1 (iso-8859-1, 8859, cp819, latin, latin1, L1)",
+        u"mac_cyrillic (maccyrillic)",
+        u"mac_greek (macgreek)",
+        u"mac_iceland (maciceland)",
+        u"mac_latin2 (maclatin2, maccentraleurope)",
+        u"mac_roman (macroman, macintosh)",
+        u"mac_turkish (macturkish)",
+        u"ptcp154 (csptcp154, pt154, cp154, cyrillic-asian)",
+        u"shift_jis (csshiftjis, shiftjis, sjis, s_jis)",
+        u"shift_jis_2004 (shiftjis2004, sjis_2004, sjis2004)",
+        u"shift_jisx0213 (shiftjisx0213, sjisx0213, s_jisx0213)",
+        u"utf_16 (U16, utf16)",
+        u"utf_16_be (UTF-16BE)",
+        u"utf_16_le (UTF-16LE)",
+        u"utf_32 (U32, utf32)",
+        u"utf_32_be (UTF-32BE)",
+        u"utf_32_le (UTF-32LE)",
+        u"utf_7 (U7, unicode-1-1-utf-7)",
+        u"utf_8 (U8, UTF, utf8)",
         u"utf_8_sig",
     ]
 
@@ -656,8 +664,19 @@ class SegmentationsInputList(object):
         obj.__dict__["__segmentations"] = value
 
 
+class _ContextHandler(settings.ContextHandler):
+    #: Reimplemented due to orange3 gh-2301
+    #: (the close_context deletes the textable widgets uuid)
+    def close_context(self, widget):
+        if widget.current_context is None:
+            return
+
+        self.settings_from_widget(widget)
+        widget.current_context = None
+
+        
 class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
-                                     settings.ContextHandler):
+                                     _ContextHandler):
     """
     Segmentations list context handler.
 
@@ -846,7 +865,7 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
 
 
 class SegmentationContextHandler(VersionedSettingsHandlerMixin,
-                                 settings.ContextHandler):
+                                 _ContextHandler):
     """
     Context handler for a single :class:`Segmentation` instance.
 
