@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.5"
+__version__ = u"0.1.6"
 
 import os
 import re
@@ -271,7 +271,7 @@ class Treetagger(OWTextableBaseWidget):
                 (re.compile(r"<unknown>"), "[unknown]"),
                 (re.compile(
                     r"(.+)\t(.+)\t(.+?)(?=[\r\n])"),
-                    '<w lemma="&3" type="&2">&1</w>'
+                    '<w lemma="&3" pos-tag="&2">&1</w>'
                 ),
                 (re.compile(r'"""'), '"&quot;"'),
                 (re.compile(r'^\n|\n$'), ''),
@@ -372,9 +372,16 @@ class Treetagger(OWTextableBaseWidget):
                     'Language parameter files not found.',
                     QMessageBox.Ok
                 )
+            return
 
-        # Else if the path is not known, let the user locate it manually...
-        else:
+        # Else if the path is not known...
+
+        # First try to locate it automatically...
+        TreetaggerPath = treetaggerwrapper.locate_treetagger()
+
+        # If it fails, let the user locate it manually...
+        if not (TreetaggerPath and self.checkTreetaggerPath(TreetaggerPath)):
+
             TreetaggerManualPath = os.path.normpath(
                 str(
                     QFileDialog.getExistingDirectory(
@@ -388,24 +395,7 @@ class Treetagger(OWTextableBaseWidget):
 
                 # Check if selected dir contains Treetagger binary...
                 if self.checkTreetaggerPath(TreetaggerManualPath):
-                    # Save config to app data...
-                    try:
-                        user_data_editor_dir = os.path.normpath(
-                            self.__class__.configFilePath + "/../.."
-                        )
-                        if not os.path.exists(user_data_editor_dir):
-                            os.makedirs(user_data_editor_dir)
-                        user_data_software_dir = os.path.normpath(
-                            self.__class__.configFilePath + "/.."
-                        )
-                        if not os.path.exists(user_data_software_dir):
-                            os.makedirs(user_data_software_dir)
-                        outputFile = open(self.__class__.configFilePath, "w")
-                        outputFile.write(TreetaggerManualPath)
-                        outputFile.close()
-                    except IOError:
-                        pass
-                    self.TreetaggerPath = TreetaggerManualPath
+                    TreetaggerPath = TreetaggerManualPath
                 else:
                     QMessageBox.warning(
                         None,
@@ -413,15 +403,34 @@ class Treetagger(OWTextableBaseWidget):
                         'Not a valid Treetagger base directory.',
                         QMessageBox.Ok
                     )
-                    self.TreetaggerPath = None
 
-                self.sendButton.settingsChanged()
+        # If a valid path was found somehow, save config to app data...
+        if TreetaggerPath:
+            try:
+                user_data_editor_dir = os.path.normpath(
+                    self.__class__.configFilePath + "/../.."
+                )
+                if not os.path.exists(user_data_editor_dir):
+                    os.makedirs(user_data_editor_dir)
+                user_data_software_dir = os.path.normpath(
+                    self.__class__.configFilePath + "/.."
+                )
+                if not os.path.exists(user_data_software_dir):
+                    os.makedirs(user_data_software_dir)
+                outputFile = open(self.__class__.configFilePath, "w")
+                outputFile.write(TreetaggerPath)
+                outputFile.close()
+            except IOError:
+                pass
+            self.TreetaggerPath = TreetaggerPath
+
+            self.sendButton.settingsChanged()
 
     def checkTreetaggerPath(self, path):
         """Check if path is a valid Treetagger base dir"""
         return os.path.exists(
             os.path.normpath(
-                path + "/bin/tree-tagger" + ".exe" if os.name == "nt" else ""
+                path + "/bin/tree-tagger" + (".exe" if os.name == "nt" else "")
             )
         )
 
@@ -451,6 +460,7 @@ if __name__ == "__main__":
     myApplication = QApplication(sys.argv)
     myWidget = Treetagger()
     myWidget.show()
-    myWidget.segmentation(Input("salut les amis"))
+    myWidget.segmentation = Input("My tailor is rich.")
+    myWidget.language = "English"
+    myWidget.sendData()
     myApplication.exec_()
-    myWidget.saveSettings()
