@@ -1,6 +1,7 @@
 """
 Class OWTextableTreetagger
 Copyright 2017 LangTech Sarl
+Based on an original prototype developed by Xavier Barros
 -------------------------------------------------------------------------------
 This file is part of the Orange-Textable package v3.0.
 
@@ -18,10 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.2"
-__author__ = "Xavier Barros"
-__maintainer__ = "LangTech Sarl"
-__email__ = "info@langtech.ch"
+__version__ = u"0.1.3"
 
 import os
 import re
@@ -221,7 +219,7 @@ class Treetagger(OWTextableBaseWidget):
 
         self.progressBar.advance()
 
-        # Dump segmentation in unique string to avoid multiple calls to TT
+        # Dump segmentation in unique string to avoid multiple calls to TT...
         concatenated_text = copy_of_input_seg.to_string(
             formatting="<ax_tt %(tt_ax)s>%(__content__)s</ax_tt>",
             display_all=True,
@@ -316,7 +314,17 @@ class Treetagger(OWTextableBaseWidget):
                     languages.append(language)
                 except:
                     pass
-            self.language = self.language or languages[0]
+            if not languages:
+                self.infoBox.setText(
+                    "Please make sure that at least one language parameter "
+                    "file is installed in your Treetagger distribution, then "
+                    "click Locate Treetagger again.",
+                    "warning"
+                )
+                self.optionsBox.setDisabled(True)
+                self.locateTreetaggerBox.setVisible(True)
+            else:
+                self.language = self.language or languages[0]
         else:
             self.noTreetaggerPathWarning = (
                 "Please click 'Locate Treetagger' below and select the "
