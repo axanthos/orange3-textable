@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.3"
+__version__ = u"0.1.4"
 
 import os
 import re
@@ -158,11 +158,11 @@ class Treetagger(OWTextableBaseWidget):
 
         gui.separator(self.locateTreetaggerBox, height=3)
 
-        gui.button(
+        self.treetaggerButton = gui.button(
             widget=self.locateTreetaggerBox,
             master=self,
             label="Locate Treetagger",
-            callback=self.getTreetaggerPath,
+            callback=self.validateTreetagger,
             tooltip=(
                 u"TODO."
             ),
@@ -298,31 +298,18 @@ class Treetagger(OWTextableBaseWidget):
         if self.TreetaggerPath:
             self.optionsBox.setDisabled(False)
             self.locateTreetaggerBox.setVisible(False)
-            # Get list of available languages...
-            languages = list()
             self.languageCombobox.clear()
-            for lang_code in sorted(treetaggerwrapper.g_langsupport):
-                if lang_code.startswith("__"):
-                    continue
-                try:
-                    treetaggerwrapper.TreeTagger(
-                        TAGLANG=lang_code,
-                        TAGDIR=self.TreetaggerPath,
-                    )
-                    language = pycountry.languages.get(alpha_2=lang_code).name
-                    self.languageCombobox.addItem(language)
-                    languages.append(language)
-                except:
-                    pass
+            languages = self.getAvailableLanguages()
             if not languages:
                 self.infoBox.setText(
                     "Please make sure that at least one language parameter "
-                    "file is installed in your Treetagger distribution, then "
-                    "click Locate Treetagger again.",
+                    "file is installed in your Treetagger 'lib' directory, "
+                    "then click 'Reload language parameter files'.",
                     "warning"
                 )
                 self.optionsBox.setDisabled(True)
                 self.locateTreetaggerBox.setVisible(True)
+                self.treetaggerButton.setText("Reload language parameter files")
             else:
                 self.language = self.language or languages[0]
         else:
@@ -334,6 +321,23 @@ class Treetagger(OWTextableBaseWidget):
             self.optionsBox.setDisabled(True)
             self.locateTreetaggerBox.setVisible(True)
         self.adjustSizeWithTimer()
+
+    def getAvailableLanguages(self):
+        languages = list()
+        for lang_code in sorted(treetaggerwrapper.g_langsupport):
+            if lang_code.startswith("__"):
+                continue
+            try:
+                treetaggerwrapper.TreeTagger(
+                    TAGLANG=lang_code,
+                    TAGDIR=self.TreetaggerPath,
+                )
+                language = pycountry.languages.get(alpha_2=lang_code).name
+                self.languageCombobox.addItem(language)
+                languages.append(language)
+            except:
+                pass
+        return languages
 
     def lookupSavedTreetaggerPath(self):
         """Look for a saved Treetagger base dir path in app data"""
@@ -350,50 +354,65 @@ class Treetagger(OWTextableBaseWidget):
             except IOError:
                 pass
 
-    def getTreetaggerPath(self):
-        """Try to locate a valid Treetagger base dir manually"""
+    def validateTreetagger(self):
+        """Respond to user actions needed to validate Treetagger path"""
 
-        TreetaggerManualPath = os.path.normpath(
-            str(
-                QFileDialog.getExistingDirectory(
-                    self, u"Please locate Treetagger base directory"
-                )
-            )
-        )
-
-        # If user selected a dir...
-        if TreetaggerManualPath:
-
-            # Check if selected dir contains Treetagger binary...
-            if self.checkTreetaggerPath(TreetaggerManualPath):
-                # Save config to app data...
-                try:
-                    user_data_editor_dir = os.path.normpath(
-                        self.__class__.configFilePath + "/../.."
-                    )
-                    if not os.path.exists(user_data_editor_dir):
-                        os.makedirs(user_data_editor_dir)
-                    user_data_software_dir = os.path.normpath(
-                        self.__class__.configFilePath + "/.."
-                    )
-                    if not os.path.exists(user_data_software_dir):
-                        os.makedirs(user_data_software_dir)
-                    outputFile = open(self.__class__.configFilePath, "w")
-                    outputFile.write(TreetaggerManualPath)
-                    outputFile.close()
-                except IOError:
-                    pass
-                self.TreetaggerPath = TreetaggerManualPath
+        # If the Treetagger path is known, make sure there are language files...
+        if self.TreetaggerPath:
+            if self.getAvailableLanguages():
+                self.sendButton.settingsChanged()
+                self.updateGUI()
             else:
                 QMessageBox.warning(
                     None,
                     'Textable',
-                    'Not a valid Treetagger base directory.',
+                    'Language parameter files not found.',
                     QMessageBox.Ok
                 )
-                self.TreetaggerPath = None
 
-            self.sendButton.settingsChanged()
+        # Else if the path is not known, let the user locate it manually...
+        else:
+            TreetaggerManualPath = os.path.normpath(
+                str(
+                    QFileDialog.getExistingDirectory(
+                        self, u"Please locate Treetagger base directory"
+                    )
+                )
+            )
+
+            # If user selected a dir...
+            if TreetaggerManualPath:
+
+                # Check if selected dir contains Treetagger binary...
+                if self.checkTreetaggerPath(TreetaggerManualPath):
+                    # Save config to app data...
+                    try:
+                        user_data_editor_dir = os.path.normpath(
+                            self.__class__.configFilePath + "/../.."
+                        )
+                        if not os.path.exists(user_data_editor_dir):
+                            os.makedirs(user_data_editor_dir)
+                        user_data_software_dir = os.path.normpath(
+                            self.__class__.configFilePath + "/.."
+                        )
+                        if not os.path.exists(user_data_software_dir):
+                            os.makedirs(user_data_software_dir)
+                        outputFile = open(self.__class__.configFilePath, "w")
+                        outputFile.write(TreetaggerManualPath)
+                        outputFile.close()
+                    except IOError:
+                        pass
+                    self.TreetaggerPath = TreetaggerManualPath
+                else:
+                    QMessageBox.warning(
+                        None,
+                        'Textable',
+                        'Not a valid Treetagger base directory.',
+                        QMessageBox.Ok
+                    )
+                    self.TreetaggerPath = None
+
+                self.sendButton.settingsChanged()
 
     def checkTreetaggerPath(self, path):
         """Check if path is a valid Treetagger base dir"""
