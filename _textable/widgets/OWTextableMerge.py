@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.1'
+__version__ = '0.21.2'
 
 
 from LTTL.Segmentation import Segmentation
@@ -50,7 +50,7 @@ class OWTextableMerge(OWTextableBaseWidget):
     # Settings...
     autoSend = settings.Setting(True)
     importLabels = settings.Setting(True)
-    labelKey = settings.Setting(u'input_label')     # TODO update docs
+    labelKey = settings.Setting(u'source')     # TODO update docs
     autoNumber = settings.Setting(False)
     autoNumberKey = settings.Setting(u'num')
     copyAnnotations = settings.Setting(True)

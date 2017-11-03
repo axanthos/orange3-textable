@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="48"
+   height="48"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="treetagger.svg">
+  <metadata
+     id="metadata16">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Category Icon</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs14" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1610"
+     inkscape:window-height="848"
+     id="namedview12"
+     showgrid="false"
+     inkscape:zoom="5.6568543"
+     inkscape:cx="15.422877"
+     inkscape:cy="49.554933"
+     inkscape:window-x="23"
+     inkscape:window-y="60"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2"
+     showguides="false"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       position="39.457154,27.400801"
+       orientation="0,1"
+       id="guide4162" />
+    <sodipodi:guide
+       position="40.881996,23.564689"
+       orientation="0,1"
+       id="guide4164" />
+    <sodipodi:guide
+       position="16.330878,20.276593"
+       orientation="1,0"
+       id="guide4166" />
+    <sodipodi:guide
+       position="32.332946,17.974926"
+       orientation="1,0"
+       id="guide4168" />
+    <sodipodi:guide
+       position="22.468657,8.1106372"
+       orientation="1,0"
+       id="guide4170" />
+    <sodipodi:guide
+       position="26.523976,3.9457154"
+       orientation="1,0"
+       id="guide4172" />
+    <sodipodi:guide
+       position="40.662789,10.521908"
+       orientation="0,1"
+       id="guide4174" />
+  </sodipodi:namedview>
+  <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+  <title
+     id="title4">Category Icon</title>
+  <path
+     inkscape:connector-curvature="0"
+     id="path4178"
+     d="m 8.950561,8.1452446 25.565611,0 0,6.1287424 -9.280667,0 0,20.837723 -6.478957,0 0,-20.837723 -9.805987,0 0,-6.1287424 z"
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#333333;stroke-width:1.59764421px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1" />
+  <rect
+     style="opacity:1;fill:#666666;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect4180"
+     width="2.9660838"
+     height="1.5924387"
+     x="19.552427"
+     y="19.779282" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#333333;stroke-width:1.598;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="m 13.483829,12.888291 25.565611,0 0,6.128742 -9.280668,0 0,20.837723 -6.478956,0 0,-20.837723 -9.805987,0 0,-6.128742 z"
+     id="path4176"
+     inkscape:connector-curvature="0" />
+</svg>

@@ -36,12 +36,13 @@ Basic text analysis
 * filter segments based on frequency
 * easily generate random text samples
 
-Quantitative text analysis
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Advanced text analysis
+~~~~~~~~~~~~~~~~~~~~~~
 
 * concordances and collocations, also based on annotations
 * segment distribution, document-term matrix, transition matrix, etc.
 * co-occurrence tables, also between different types of segments
+* lemmatization and POS-tagging via Treetagger
 * robust linguistic complexity measures, incl. mean length of word, lexical diversity, etc.
 * many advanced data mining algorithms: clustering, classification, factor analyses, etc.
 
@@ -62,7 +63,8 @@ Interoperability
 * import text from keyboard, files, or URLs
 * process any kind of raw text format: TXT, HTML, XML, CSV, etc.
 * supports many text encodings, incl. Unicode
-* export results in text files or copy–paste
+* export results in text files or copy-paste
+* easy interfacing with Orange's Text Mining add-on
 
 Ease of access
 ~~~~~~~~~~~~~~

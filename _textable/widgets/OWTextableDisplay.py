@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.16.8'
+__version__ = '0.16.9'
 
 import sys
 import os
@@ -67,6 +67,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
     footer = settings.Setting(u'')
     encoding = settings.Setting('utf8')
     lastLocation = settings.Setting('.')
+    basicFormatHTML = settings.Setting(True)
 
     # Predefined list of available encodings...
     encodings = getPredefinedEncodings()
@@ -196,15 +197,15 @@ class OWTextableDisplay(OWTextableBaseWidget):
         headerLineEdit.setMinimumWidth(200)
         gui.separator(widget=self.formattingIndentedBox, height=3)
 
-        # Export box
-        self.exportBox = gui.widgetBox(
+        # Advanced export box
+        self.advancedExportBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Export',
             orientation='vertical',
             addSpace=True,
         )
         encodingCombo = gui.comboBox(
-            widget=self.exportBox,
+            widget=self.advancedExportBox,
             master=self,
             value='encoding',
             items=type(self).encodings,
@@ -223,12 +224,12 @@ class OWTextableDisplay(OWTextableBaseWidget):
             ),
         )
         addSeparatorAfterDefaultEncodings(encodingCombo)
-        gui.separator(widget=self.exportBox, height=3)
+        gui.separator(widget=self.advancedExportBox, height=3)
         exportBoxLine2 = gui.widgetBox(
-            widget=self.exportBox,
+            widget=self.advancedExportBox,
             orientation='horizontal',
         )
-        exportButton = gui.button(
+        gui.button(
             widget=exportBoxLine2,
             master=self,
             label=u'Export to file',
@@ -238,7 +239,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 u"which the displayed segmentation will be saved."
             ),
         )
-        self.copyButton = gui.button(
+        gui.button(
             widget=exportBoxLine2,
             master=self,
             label=u'Copy to clipboard',
@@ -280,6 +281,22 @@ class OWTextableDisplay(OWTextableBaseWidget):
             height=25,
         )
 
+        self.basicFormatBox = gui.widgetBox(
+            widget=self.mainArea,
+            orientation='vertical',
+            box=u'Format',
+            addSpace=False,
+        )
+        gui.checkBox(
+            widget=self.basicFormatBox,
+            master=self,
+            value='basicFormatHTML',
+            label=u'Display segmentation in rich text format (HTML)',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                u"TODO."
+            ),
+        )
         self.navigationBox = gui.widgetBox(
             widget=self.mainArea,
             orientation='vertical',
@@ -301,6 +318,35 @@ class OWTextableDisplay(OWTextableBaseWidget):
             ),
         )
         self.mainArea.layout().addWidget(self.browser)
+
+        # Advanced export box
+        gui.separator(widget=self.mainArea, height=3)
+        self.basicExportBox = gui.widgetBox(
+            widget=self.mainArea,
+            box=u'Export',
+            orientation='horizontal',
+            addSpace=True,
+        )
+        gui.button(
+            widget=self.basicExportBox,
+            master=self,
+            label=u'Save to file',
+            callback=self.exportFile,
+            tooltip=(
+                u"Open a dialog for selecting the output file to\n"
+                u"which the displayed segmentation will be saved."
+            ),
+        )
+        gui.button(
+            widget=self.basicExportBox,
+            master=self,
+            label=u'Copy to clipboard',
+            callback=self.copyToClipboard,
+            tooltip=(
+                u"Copy the displayed segmentation to clipboard, in\n"
+                u"order to paste it in another application."
+            ),
+        )
 
         # Info box...
         self.infoBox.draw()
@@ -359,6 +405,12 @@ class OWTextableDisplay(OWTextableBaseWidget):
         self.advancedSettingsRightBox.setVisible(
             not self.displayAdvancedSettings
         )
+        self.basicFormatBox.setVisible(
+            not self.displayAdvancedSettings
+        )
+        self.basicExportBox.setVisible(
+            not self.displayAdvancedSettings
+        )
         self.browser.clear()
         if self.segmentation:
             if self.displayAdvancedSettings:
@@ -370,7 +422,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
             if customFormatting:
                 self.navigationBox.setVisible(False)
                 self.navigationBox.setDisabled(True)
-                self.exportBox.setDisabled(True)
+                self.advancedExportBox.setDisabled(True)
                 self.formattingIndentedBox.setDisabled(False)
                 displayedString = u''
                 progressBar = gui.ProgressBar(
@@ -387,7 +439,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
                         progress_callback=progressBar.advance,
                     )
                     self.infoBox.settingsChanged()
-                    self.exportBox.setDisabled(False)
+                    self.advancedExportBox.setDisabled(False)
                     self.warning()
                     self.error()
                 except TypeError as type_error:
@@ -409,8 +461,9 @@ class OWTextableDisplay(OWTextableBaseWidget):
                     label=self.captionTitle,
                 )
                 progressBar.finish()
+
             else:
-                self.navigationBox.setVisible(True)
+                self.navigationBox.setVisible(self.basicFormatHTML)
                 self.formattingIndentedBox.setDisabled(True)
                 self.warning()
                 self.error()
@@ -418,29 +471,38 @@ class OWTextableDisplay(OWTextableBaseWidget):
                     self,
                     iterations=len(self.segmentation)
                 )
-                displayedString, summarized = self.segmentation.to_html(
-                    True,
-                    progressBar.advance,
-                )
+                if self.basicFormatHTML or self.displayAdvancedSettings:
+                    displayedString, summarized = self.segmentation.to_html(
+                        True,
+                        progressBar.advance,
+                    )
+                    self.navigationBox.setEnabled(
+                        len(self.segmentation) > 1 and not summarized
+                    )
+                else:
+                    displayedString = self.segmentation.to_string(
+                        formatting="%(__content__)s",
+                        segment_delimiter="\n",
+                        progress_callback=progressBar.advance,
+                    )
                 self.browser.append(displayedString)
                 self.displayedSegmentation.update(
                     displayedString,
                     label=self.captionTitle,
                 )
-                self.navigationBox.setEnabled(not summarized)
                 self.gotoSpin.setRange(1, len(self.segmentation))
                 if self.goto:
                     self.browser.setSource(QUrl("#%i" % self.goto))
                 else:
                     self.browser.setSource(QUrl("#top"))
-                self.exportBox.setDisabled(False)
+                self.advancedExportBox.setDisabled(False)
                 self.infoBox.settingsChanged()
                 progressBar.finish()
 
         else:
             self.goto = 0
             self.gotoSpin.setRange(0, 1)
-            self.exportBox.setDisabled(True)
+            self.advancedExportBox.setDisabled(True)
             self.navigationBox.setVisible(True)
             self.navigationBox.setEnabled(False)
             self.formattingIndentedBox.setDisabled(True)
@@ -460,7 +522,10 @@ class OWTextableDisplay(OWTextableBaseWidget):
         )
         if filePath:
             self.lastLocation = os.path.dirname(filePath)
-            encoding = re.sub(r"[ ]\(.+", "", self.encoding)
+            if self.displayAdvancedSettings:
+                encoding = re.sub(r"[ ]\(.+", "", self.encoding)
+            else:
+                encoding = "utf8"
             outputFile = codecs.open(
                 filePath,
                 encoding=encoding,
