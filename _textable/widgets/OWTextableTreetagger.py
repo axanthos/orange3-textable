@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.4"
+__version__ = u"0.1.5"
 
 import os
 import re
@@ -75,6 +75,15 @@ class Treetagger(OWTextableBaseWidget):
         # Other attributes...
         self.segmentation = None
         self.createdInputs = list()
+        self.noLanguageParameterWarning = (
+            "Please make sure that at least one language parameter "
+            "file is installed in your Treetagger 'lib' directory, "
+            "then click 'Reload language parameter files'."
+        )
+        self.noTreetaggerPathWarning = (
+            "Please click 'Locate Treetagger' below and select the "
+            "base directory of a valid Treetagger distribution."
+        )
         self.TreetaggerPath = (
             treetaggerwrapper.locate_treetagger() or
             self.lookupSavedTreetaggerPath()
@@ -187,7 +196,10 @@ class Treetagger(OWTextableBaseWidget):
             self.infoBox.setText(self.noTreetaggerPathWarning, "warning")
             self.send("Tagged data", None)
             return
-
+        elif not self.getAvailableLanguages():
+            self.infoBox.setText(self.noLanguageParameterWarning, "warning")
+            self.send("Tagged data", None)
+            return
         elif not self.segmentation:
             self.infoBox.setText(
                 u"Widget needs input",
@@ -301,22 +313,13 @@ class Treetagger(OWTextableBaseWidget):
             self.languageCombobox.clear()
             languages = self.getAvailableLanguages()
             if not languages:
-                self.infoBox.setText(
-                    "Please make sure that at least one language parameter "
-                    "file is installed in your Treetagger 'lib' directory, "
-                    "then click 'Reload language parameter files'.",
-                    "warning"
-                )
+                self.infoBox.setText(self.noLanguageParameterWarning, "warning")
                 self.optionsBox.setDisabled(True)
                 self.locateTreetaggerBox.setVisible(True)
                 self.treetaggerButton.setText("Reload language parameter files")
             else:
                 self.language = self.language or languages[0]
         else:
-            self.noTreetaggerPathWarning = (
-                "Please click 'Locate Treetagger' below and select the "
-                "base directory of a valid Treetagger distribution."
-            )
             self.infoBox.setText(self.noTreetaggerPathWarning, "warning")
             self.optionsBox.setDisabled(True)
             self.locateTreetaggerBox.setVisible(True)
