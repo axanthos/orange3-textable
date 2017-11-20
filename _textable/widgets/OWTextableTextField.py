@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.5'
+__version__ = '0.13.6'
 
 from unicodedata import normalize
 
@@ -51,7 +51,6 @@ class OWTextableTextField(OWTextableBaseWidget):
     )
 
     # Settings ...
-    autoSend = settings.Setting(True)
     textFieldContent = settings.Setting(u''.encode('utf-8'))
     encoding = settings.Setting(u'utf-8')
 

@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.6'
+__version__ = '0.21.7'
 
 
 from LTTL.Table import IntPivotCrosstab
@@ -26,7 +26,7 @@ from LTTL.Segmentation import Segmentation
 import LTTL.Processor as Processor
 
 from .TextableUtils import (
-    OWTextableBaseWidget,
+    OWTextableBaseWidget, ProgressBar,
     InfoBox, SendButton, updateMultipleInputs, pluralize,
     SegmentationListContextHandler, SegmentationsInputList
 )
@@ -413,11 +413,14 @@ class OWTextableCount(OWTextableBaseWidget):
         if units['annotation_key'] == u'(none)':
             units['annotation_key'] = None
 
+        self.controlArea.setDisabled(True)
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+
         # Case 1: sliding window...
         if self.mode == 'Sliding window':
 
             # Count...
-            progressBar = gui.ProgressBar(
+            progressBar = ProgressBar(
                 self,
                 iterations=len(units['segmentation']) - (self.windowSize - 1)
             )
@@ -439,7 +442,7 @@ class OWTextableCount(OWTextableBaseWidget):
                     self.rightContextSize - 1
                 )
             )
-            progressBar = gui.ProgressBar(
+            progressBar = ProgressBar(
                 self,
                 iterations=num_iterations
             )
@@ -477,7 +480,7 @@ class OWTextableCount(OWTextableBaseWidget):
                 )
 
             # Count...
-            progressBar = gui.ProgressBar(
+            progressBar = ProgressBar(
                 self,
                 iterations=num_iterations
             )
@@ -487,6 +490,8 @@ class OWTextableCount(OWTextableBaseWidget):
                 progress_callback=progressBar.advance,
             )
             progressBar.finish()
+
+        self.controlArea.setDisabled(False)
 
         total = sum([i for i in table.values.values()])
         if total == 0:

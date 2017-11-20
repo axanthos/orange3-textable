@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.6"
+__version__ = u"0.1.7"
 
 import os
 import re
@@ -34,7 +34,7 @@ import LTTL.Segmenter as Segmenter
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
-    InfoBox, SendButton
+    InfoBox, SendButton, ProgressBar
 )
 
 import appdirs
@@ -57,7 +57,6 @@ class Treetagger(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
 
-    autoSend = settings.Setting(False)
     language = settings.Setting(0)
     replaceUnknown = settings.Setting(False)
     outputFormat = settings.Setting("segment into words")
@@ -117,7 +116,7 @@ class Treetagger(OWTextableBaseWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"TODO."
+                u"Select the language of the input text."
             ),
         )
         self.languageCombobox.setMinimumWidth(120)
@@ -138,7 +137,12 @@ class Treetagger(OWTextableBaseWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"TODO."
+                u"Select the format of the output:\n\n"
+                u"Segment into words: each word is in a separate segment,\n"
+                u"with lemma and POS-tag as annotations.\n\n"
+                u"Add XML tags: output segments correspond to input segments\n"
+                u"and each word is tagged in XML as a 'w' element with\n"
+                u"lemma and POS-tag as attributes."
             ),
         )
 
@@ -151,7 +155,8 @@ class Treetagger(OWTextableBaseWidget):
             label="Output token in place of [unknown] lemmas",
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"TODO."
+                u"For out-of-vocabulary words, the word form is used as the\n"
+                u"lemma (in place of Treetagger's default 'unknown' code)."
             ),
         )
 
@@ -173,7 +178,8 @@ class Treetagger(OWTextableBaseWidget):
             label="Locate Treetagger",
             callback=self.validateTreetagger,
             tooltip=(
-                u"TODO."
+                u"Click to select the location of the Treetagger base\n"
+                u"directory (containing the 'lib' and 'bin' subdirectories)."
             ),
         )
 
@@ -208,13 +214,10 @@ class Treetagger(OWTextableBaseWidget):
             self.send("Tagged data", None)
             return
 
-        self.infoBox.setText(
-            u"Treetagger is running...",
-            "warning"
-        )
-
         # Initialize progress bar.
-        self.progressBar = gui.ProgressBar(
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+        self.controlArea.setDisabled(True)
+        self.progressBar = ProgressBar(
             self,
             iterations = 5
         )
@@ -297,6 +300,7 @@ class Treetagger(OWTextableBaseWidget):
                 return
 
         self.progressBar.finish()
+        self.controlArea.setDisabled(False)
 
         output_segmentation.label = self.captionTitle
         message = u'%i segment@p sent to output.' % len(output_segmentation)

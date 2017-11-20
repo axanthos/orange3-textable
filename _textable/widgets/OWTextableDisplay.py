@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.16.9'
+__version__ = '0.16.10'
 
 import sys
 import os
@@ -33,7 +33,7 @@ from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
 
 from .TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler,
+    OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     SendButton, InfoBox, getPredefinedEncodings, pluralize,
     addSeparatorAfterDefaultEncodings, normalizeCarriageReturns
 )
@@ -58,7 +58,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
-    autoSend = settings.Setting(True)
     displayAdvancedSettings = settings.Setting(False)
     customFormatting = settings.Setting(False)
     customFormat = settings.Setting(u'%(__content__)s')
@@ -419,13 +418,17 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 customFormatting = False
                 self.autoSend = True
 
+            self.controlArea.setDisabled(True)
+            self.mainArea.setDisabled(True)
+            self.infoBox.setText(u"Processing, please wait...", "warning")
+
             if customFormatting:
                 self.navigationBox.setVisible(False)
                 self.navigationBox.setDisabled(True)
                 self.advancedExportBox.setDisabled(True)
                 self.formattingIndentedBox.setDisabled(False)
                 displayedString = u''
-                progressBar = gui.ProgressBar(
+                progressBar = ProgressBar(
                     self,
                     iterations=len(self.segmentation)
                 )
@@ -467,7 +470,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 self.formattingIndentedBox.setDisabled(True)
                 self.warning()
                 self.error()
-                progressBar = gui.ProgressBar(
+                progressBar = ProgressBar(
                     self,
                     iterations=len(self.segmentation)
                 )
@@ -498,6 +501,9 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 self.advancedExportBox.setDisabled(False)
                 self.infoBox.settingsChanged()
                 progressBar.finish()
+
+            self.controlArea.setDisabled(False)
+            self.mainArea.setDisabled(False)
 
         else:
             self.goto = 0

@@ -18,14 +18,14 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 
 from LTTL.Segment import Segment
 from LTTL.Input import Input
 from LTTL.Segmentation import Segmentation
 from .TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler,
+    OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     SendButton, InfoBox, pluralize
 )
 
@@ -61,7 +61,6 @@ class OWTextableInterchange(OWTextableBaseWidget):
         settingsHandler = VersionedSettingsHandler(
             version=__version__.rsplit(".", 1)[0]
         )
-        autoSend = settings.Setting(True)
         limitNumCategories = settings.Setting(True)
         maxNumCategories = settings.Setting(100)
 
@@ -193,7 +192,9 @@ class OWTextableInterchange(OWTextableBaseWidget):
             num_iterations += len(self.corpus)
         if self.segmentation:
             num_iterations += len(self.segmentation)
-        progressBar = gui.ProgressBar(
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(
             self,
             iterations=num_iterations
         )
@@ -293,6 +294,7 @@ class OWTextableInterchange(OWTextableBaseWidget):
             self.send('Text Mining corpus', None)
 
         progressBar.finish()
+        self.controlArea.setDisabled(False)
 
         if msg_seg or msg_corpus:
             message = msg_seg

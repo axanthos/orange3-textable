@@ -20,7 +20,7 @@ along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
 
-__version__ = '0.14.4'
+__version__ = '0.14.5'
 
 import re, math
 
@@ -29,7 +29,7 @@ from LTTL.Segmentation import Segmentation
 from LTTL.Utils import iround
 
 from .TextableUtils import (
-    OWTextableBaseWidget, SegmentationContextHandler,
+    OWTextableBaseWidget, SegmentationContextHandler, ProgressBar,
     InfoBox, SendButton, AdvancedSettings, pluralize
 )
 
@@ -686,7 +686,9 @@ class OWTextableSelect(OWTextableBaseWidget):
                 autoNumberKey = None
 
             # Perform selection...
-            progressBar = gui.ProgressBar(
+            self.infoBox.setText(u"Processing, please wait...", "warning")
+            self.controlArea.setDisabled(True)
+            progressBar = ProgressBar(
                 self,
                 iterations=num_iterations
             )
@@ -759,7 +761,9 @@ class OWTextableSelect(OWTextableBaseWidget):
             num_iterations = len(self.segmentation)
 
             # Perform selection...
-            progressBar = gui.ProgressBar(
+            self.infoBox.setText(u"Processing, please wait...", "warning")
+            self.controlArea.setDisabled(True)
+            progressBar = ProgressBar(
                 self,
                 iterations=num_iterations
             )
@@ -790,6 +794,7 @@ class OWTextableSelect(OWTextableBaseWidget):
                 return
 
         progressBar.finish()
+        self.controlArea.setDisabled(False)
 
         message = u'%i segment@p sent to output.' % len(selected_data)
         message = pluralize(message, len(selected_data))

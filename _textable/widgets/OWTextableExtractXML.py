@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.15.6'
+__version__ = '0.15.7'
 
 import re
 
@@ -28,7 +28,7 @@ import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 
 from .TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler,
+    OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     pluralize,SendButton, InfoBox, AdvancedSettings
 )
 
@@ -51,7 +51,6 @@ class OWTextableExtractXML(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
-    autoSend = settings.Setting(True)
     conditions = settings.Setting([])
     importAnnotations = settings.Setting(True)
     autoNumber = settings.Setting(False)
@@ -556,7 +555,9 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             preserveLeaves = False
 
         # Perform tokenization...
-        progressBar = gui.ProgressBar(
+        self.controlArea.setDisabled(True)
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+        progressBar = ProgressBar(
             self,
             iterations=num_iterations
         )
@@ -586,6 +587,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             self.send('Extracted data', None, self)
         self.sendButton.resetSettingsChangedFlag()
         progressBar.finish()
+        self.controlArea.setDisabled(False)
 
     def inputData(self, segmentation):
         """Process incoming segmentation"""

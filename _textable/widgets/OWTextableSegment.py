@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.7'
+__version__ = '0.21.8'
 
 import os, re, codecs, json
 
@@ -28,7 +28,7 @@ import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 
 from .TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler,
+    OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     JSONMessage, InfoBox, SendButton, AdvancedSettings,
     normalizeCarriageReturns, pluralize
 )
@@ -55,7 +55,6 @@ class OWTextableSegment(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
-    autoSend = settings.Setting(True)
     regexes = settings.Setting([])
     segmentType = settings.Setting(u'Segment into words')
     importAnnotations = settings.Setting(True)
@@ -687,7 +686,9 @@ class OWTextableSegment(OWTextableBaseWidget):
                 return
 
         # Perform tokenization...
-        progressBar = gui.ProgressBar(
+        self.controlArea.setDisabled(True)
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+        progressBar = ProgressBar(
             self,
             iterations=len(self.inputSegmentation) * len(myRegexes)
         )
@@ -715,6 +716,7 @@ class OWTextableSegment(OWTextableBaseWidget):
             self.send('Segmented data', None, self)
         self.sendButton.resetSettingsChangedFlag()
         progressBar.finish()
+        self.controlArea.setDisabled(False)
 
     def inputData(self, segmentation):
         """Process incoming segmentation"""

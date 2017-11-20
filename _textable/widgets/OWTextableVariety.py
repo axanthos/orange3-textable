@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.6'
+__version__ = '0.13.7'
 
 
 from LTTL.Table import Table
@@ -26,7 +26,7 @@ from LTTL.Segmentation import Segmentation
 import LTTL.Processor as Processor
 
 from .TextableUtils import (
-    OWTextableBaseWidget, SegmentationListContextHandler,
+    OWTextableBaseWidget, SegmentationListContextHandler, ProgressBar,
     SegmentationsInputList, InfoBox, SendButton, updateMultipleInputs
 )
 import Orange.data
@@ -478,6 +478,9 @@ class OWTextableVariety(OWTextableBaseWidget):
         if categories['annotation_key'] == u'(none)':
             categories['annotation_key'] = None
 
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+        self.controlArea.setDisabled(True)
+
         # Case 1: sliding window...
         if self.mode == 'Sliding window':
 
@@ -491,7 +494,7 @@ class OWTextableVariety(OWTextableBaseWidget):
                 num_iterations = num_rows / 2
 
             # Measure...
-            progressBar = gui.ProgressBar(
+            progressBar = ProgressBar(
                 self,
                 iterations=num_iterations
             )
@@ -536,7 +539,7 @@ class OWTextableVariety(OWTextableBaseWidget):
 
 
             # Measure...
-            progressBar = gui.ProgressBar(
+            progressBar = ProgressBar(
                 self,
                 iterations=num_iterations
             )
@@ -551,6 +554,8 @@ class OWTextableVariety(OWTextableBaseWidget):
                 progress_callback=progressBar.advance,
             )
             progressBar.finish()
+
+        self.controlArea.setDisabled(False)
 
         if not len(table.row_ids):
             self.infoBox.setText(u'Resulting table is empty.', 'warning')

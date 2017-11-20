@@ -18,14 +18,14 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.2'
+__version__ = '0.21.3'
 
 
 from LTTL.Segmentation import Segmentation
 import LTTL.Segmenter as Segmenter
 
 from .TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler,
+    OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     updateMultipleInputs, InfoBox, SendButton, pluralize,
 )
 
@@ -48,7 +48,6 @@ class OWTextableMerge(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
-    autoSend = settings.Setting(True)
     importLabels = settings.Setting(True)
     labelKey = settings.Setting(u'source')     # TODO update docs
     autoNumber = settings.Setting(False)
@@ -222,7 +221,9 @@ class OWTextableMerge(OWTextableBaseWidget):
             autoNumberKey = None
 
         # Initialize progress bar...
-        progressBar = gui.ProgressBar(
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(
             self,
             iterations=num_segments
         )
@@ -239,6 +240,7 @@ class OWTextableMerge(OWTextableBaseWidget):
             progress_callback=progressBar.advance,
         )
         progressBar.finish()
+        self.controlArea.setDisabled(False)
         message = u'%i segment@p sent to output.' % len(concatenation)
         message = pluralize(message, len(concatenation))
         self.infoBox.setText(message)

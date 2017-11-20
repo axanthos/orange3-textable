@@ -29,12 +29,11 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.22"   # file version
+__version__ = "1.0.23"   # file version
 
 NAME = 'Orange3-Textable'
 DOCUMENTATION_NAME = 'Textable'
 
-VERSION = '3.1.0a0'  # package version
 
 DESCRIPTION = 'Textable add-on for Orange 3 data mining software package.'
 LONG_DESCRIPTION = open(
@@ -76,7 +75,7 @@ PACKAGE_DATA = {
 }
 
 INSTALL_REQUIRES = (
-    'Orange3 >= 3.4.1',
+    'Orange3 >= 3.7.0',
     'setuptools',
     'future',
     'LTTL >= 2.0.6',

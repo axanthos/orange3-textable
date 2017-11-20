@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u'1.0.2'
+__version__ = u'1.0.3'
 __author__ = "Mahtab Mohammadi"
 __maintainer__ = "LangTech Sarl"
 
@@ -28,7 +28,7 @@ from LTTL.Table import IntPivotCrosstab
 from LTTL.Segmentation import Segmentation
 
 from .TextableUtils import (
-    OWTextableBaseWidget,
+    OWTextableBaseWidget, ProgressBar,
     InfoBox, SendButton, updateMultipleInputs, pluralize,
     SegmentationListContextHandler, SegmentationsInputList,
 )
@@ -400,9 +400,12 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         if units['annotation_key'] == u'(none)':
             units['annotation_key'] = None
 
+        self.controlArea.setDisabled(True)
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+
         # Case1: sliding window
         if self.mode == 'Sliding window':
-            progressBar = gui.ProgressBar(
+            progressBar = ProgressBar(
                 self,
                 iterations=len(units['segmentation']) - (self.windowSize - 1)
             )
@@ -432,7 +435,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                 if units2['annotation_key'] == u'(none)':
                     units2['annotation_key'] = None
                 num_iterations = len(contexts['segmentation'])
-                progressBar = gui.ProgressBar(
+                progressBar = ProgressBar(
                     self,
                     iterations=num_iterations * 2
                 )
@@ -445,7 +448,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                 )
             else:
                 num_iterations = (len(contexts['segmentation']))
-                progressBar = gui.ProgressBar(
+                progressBar = ProgressBar(
                     self,
                     iterations=num_iterations
                 )
@@ -456,6 +459,9 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                     progress_callback=progressBar.advance,
                 )
             progressBar.finish()
+
+        self.controlArea.setDisabled(False)
+
         if len(table.row_ids) == 0:
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
             self.send('Textable pivot crosstab', None)

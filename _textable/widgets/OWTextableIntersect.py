@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.15.1'
+__version__ = '0.15.2'
 
 
 import LTTL.Segmenter as Segmenter
@@ -27,7 +27,7 @@ from LTTL.Segmentation import Segmentation
 from .TextableUtils import (
     OWTextableBaseWidget, InfoBox, SendButton, AdvancedSettings,
     pluralize, updateMultipleInputs, SegmentationListContextHandler,
-    SegmentationsInputList
+    SegmentationsInputList, ProgressBar
 )
 
 from Orange.widgets import widget, gui, settings
@@ -355,7 +355,9 @@ class OWTextableIntersect(OWTextableBaseWidget):
             copyAnnotations = True
 
         # Perform filtering...
-        progressBar = gui.ProgressBar(
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(
             self,
             iterations=num_iterations
         )
@@ -371,6 +373,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
             progress_callback=progressBar.advance,
         )
         progressBar.finish()
+        self.controlArea.setDisabled(False)
         message = u'%i segment@p sent to output.' % len(filtered_data)
         message = pluralize(message, len(filtered_data))
         self.infoBox.setText(message)

@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.17.5'
+__version__ = '0.17.6'
 
 
 import codecs
@@ -38,7 +38,7 @@ from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
 
 from .TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler,
+    OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     JSONMessage, InfoBox, SendButton, AdvancedSettings,
     addSeparatorAfterDefaultEncodings, addAutoDetectEncoding,
     getPredefinedEncodings, normalizeCarriageReturns, pluralize
@@ -69,7 +69,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
     )
 
     # Settings...
-    autoSend = settings.Setting(True)
     files = settings.Setting([])
     encoding = settings.Setting('(auto-detect)')
     autoNumber = settings.Setting(False)
@@ -530,7 +529,9 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         else:
             myFiles = [[self.file, self.encoding, u'', u'']]
 
-        progressBar = gui.ProgressBar(
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(
             self,
             iterations=len(myFiles)
         )
@@ -658,6 +659,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         message = pluralize(message, numChars)
         self.infoBox.setText(message)
         progressBar.finish()
+        self.controlArea.setDisabled(False)
 
         self.send('Text data', self.segmentation, self)
         self.sendButton.resetSettingsChangedFlag()

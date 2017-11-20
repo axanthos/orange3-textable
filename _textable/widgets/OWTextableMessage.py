@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.01.3'
+__version__ = '0.01.4'
 
 
 import json
@@ -46,7 +46,6 @@ class OWTextableMessage(OWTextableBaseWidget):
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
     )
-    autoSend = settings.Setting(True)
     want_main_area = False
 
     def __init__(self, *args, **kwargs):

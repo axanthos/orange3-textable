@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.6'
+__version__ = '0.13.7'
 
 import os, re, codecs, json
 
@@ -29,7 +29,7 @@ import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 
 from .TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler, JSONMessage,
+    OWTextableBaseWidget, VersionedSettingsHandler, JSONMessage, ProgressBar,
     InfoBox, SendButton, AdvancedSettings, pluralize, normalizeCarriageReturns
 )
 
@@ -55,7 +55,6 @@ class OWTextableRecode(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
-    autoSend = settings.Setting(True)
     substitutions = settings.Setting([])
     copyAnnotations = settings.Setting(True)
     displayAdvancedSettings = settings.Setting(False)
@@ -506,7 +505,9 @@ class OWTextableRecode(OWTextableBaseWidget):
         # Perform recoding...
         self.clearCreatedInputIndices()
         previousNumInputs = len(Segmentation.data)
-        progressBar = gui.ProgressBar(
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+        self.controlArea.setDisabled(True)
+        progressBar = ProgressBar(
             self,
             iterations=len(self.segmentation)
         )
@@ -545,6 +546,7 @@ class OWTextableRecode(OWTextableBaseWidget):
             self.send('Recoded data', None, self)
         self.sendButton.resetSettingsChangedFlag()
         progressBar.finish()
+        self.controlArea.setDisabled(False)
 
     def inputData(self, segmentation):
         """Process incoming segmentation"""

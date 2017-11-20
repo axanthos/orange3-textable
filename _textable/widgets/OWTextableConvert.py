@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.19.7'
+__version__ = '0.19.8'
 
 import os
 import codecs
@@ -33,7 +33,7 @@ from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 
 from .TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler,
+    OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     InfoBox, SendButton, AdvancedSettings, pluralize,
     getPredefinedEncodings, addSeparatorAfterDefaultEncodings
 )
@@ -63,7 +63,6 @@ class OWTextableConvert(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     # Settings...
-    autoSend = settings.Setting(True)
     exportEncoding = settings.Setting('utf8')
     colDelimiter_idx = settings.Setting(0)
 
@@ -608,7 +607,10 @@ class OWTextableConvert(OWTextableBaseWidget):
                 numIterations += num_cols
             if self.reformat:
                 numIterations += num_rows
-            progressBar = gui.ProgressBar(self, numIterations)
+
+            self.controlArea.setDisabled(True)
+            self.infoBox.setText(u"Processing, please wait...", "warning")
+            progressBar = ProgressBar(self, numIterations)
 
             # Sort if needed...
             if self.sortRows or self.sortCols:
@@ -673,6 +675,7 @@ class OWTextableConvert(OWTextableBaseWidget):
                     )
 
             progressBar.finish()
+            self.controlArea.setDisabled(False)
 
         self.transformed_table = transformed_table
 

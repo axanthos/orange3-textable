@@ -18,14 +18,14 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.12.4'
+__version__ = '0.12.5'
 
 from LTTL.Table import Table
 from LTTL.Segmentation import Segmentation
 import LTTL.Processor as Processor
 
 from .TextableUtils import (
-    OWTextableBaseWidget,
+    OWTextableBaseWidget, ProgressBar,
     InfoBox, SendButton, updateMultipleInputs, SegmentationListContextHandler,
     SegmentationsInputList
 )
@@ -344,7 +344,9 @@ class OWTextableCategory(OWTextableBaseWidget):
             contexts['annotation_key'] = None
 
         # Count...
-        progressBar = gui.ProgressBar(
+        self.controlArea.setDisabled(True)
+        self.infoBox.setText(u"Processing, please wait...", "warning")
+        progressBar = ProgressBar(
             self,
             iterations=len(contexts['segmentation'])
         )
@@ -355,6 +357,7 @@ class OWTextableCategory(OWTextableBaseWidget):
             progress_callback=progressBar.advance,
         )
         progressBar.finish()
+        self.controlArea.setDisabled(False)
 
         if not len(table.row_ids):
             self.infoBox.setText(u'Resulting table is empty.', 'warning')

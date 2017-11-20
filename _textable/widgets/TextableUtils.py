@@ -28,6 +28,7 @@ Provides classes:
 - SegmentationListContextHandler
 - SegmentationContextHandler
 - OWTextableBaseWidget
+- ProgressBar
 -----------------------------------------------------------------------------
 Provides functions:
 - pluralize
@@ -36,7 +37,7 @@ Provides functions:
 - getPredefinedEncodings
 """
 
-__version__ = '0.14'
+__version__ = '0.15'
 
 import re, os, uuid
 
@@ -674,7 +675,7 @@ class _ContextHandler(settings.ContextHandler):
         self.settings_from_widget(widget)
         widget.current_context = None
 
-        
+
 class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
                                      _ContextHandler):
     """
@@ -905,8 +906,8 @@ class SegmentationContextHandler(VersionedSettingsHandlerMixin,
 
 
 from Orange.widgets import widget
-from PyQt4.QtGui import QSizePolicy
-from PyQt4.QtCore import QTimer
+from PyQt4.QtCore import QTimer, QEventLoop
+from PyQt4.QtGui import QSizePolicy, QApplication
 
 
 class OWTextableBaseWidget(widget.OWWidget):
@@ -963,3 +964,31 @@ class OWTextableBaseWidget(widget.OWWidget):
         """
         if self.want_message_bar:
             super().update_message_state()
+
+
+class ProgressBar:
+    def __init__(self, widget, iterations):
+        self.iter = iterations
+        self.widget = widget
+        self.count = 0
+        self.finished = False
+        self.widget.setBlocking(True)  # not accepting inputs from the canvas
+        self.widget.progressBarInit(processEvents=None)
+        QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
+
+    def __del__(self):
+        if not self.finished:
+            self.widget.setBlocking(False)
+            self.widget.progressBarFinished(processEvents=None)
+
+    def advance(self, count=1):
+        self.count += count
+        self.widget.progressBarSet(int(self.count * 100 / max(1, self.iter)),
+                                   processEvents=None)
+        QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
+
+    def finish(self):
+        self.finished = True
+        self.widget.setBlocking(False)
+        self.widget.progressBarFinished(processEvents=None)
+        QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
