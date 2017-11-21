@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.14.5'
+__version__ = '0.14.6'
 
 import os
 import codecs
@@ -295,6 +295,7 @@ class OWTextableURLs(OWTextableBaseWidget):
         )
         addSeparatorAfterDefaultEncodings(basicEncodingsCombobox)
         addAutoDetectEncoding(basicEncodingsCombobox)
+        self.encoding = self.encoding
         gui.separator(widget=addURLBox, height=3)
         gui.lineEdit(
             widget=addURLBox,
@@ -507,6 +508,7 @@ class OWTextableURLs(OWTextableBaseWidget):
                 URL = "http://" + URL
             encoding = myURL[1]
             encoding = re.sub(r"[ ]\(.+", "", encoding)
+            print(encoding)
             annotation_key = myURL[2]
             annotation_value = myURL[3]
 
