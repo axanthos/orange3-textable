@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.14.6'
+__version__ = '0.14.7'
 
 import os
 import codecs
@@ -529,6 +529,7 @@ class OWTextableURLs(OWTextableBaseWidget):
                     message = u"Couldn't retrieve URL."
                 self.infoBox.setText(message, 'error')
                 self.send('Text data', None, self)
+                self.controlArea.setDisabled(False)
                 return
             try:
                 if encoding == "(auto-detect)":
@@ -543,6 +544,7 @@ class OWTextableURLs(OWTextableBaseWidget):
                     message = u"Please select another encoding."
                 self.infoBox.setText(message, 'error')
                 self.send('Text data', None, self)
+                self.controlArea.setDisabled(False)
                 return
 
             # Replace newlines with '\n'...
