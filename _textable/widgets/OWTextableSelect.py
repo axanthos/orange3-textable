@@ -20,7 +20,7 @@ along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
 
-__version__ = '0.14.5'
+__version__ = '0.14.6'
 
 import re, math
 
@@ -588,10 +588,10 @@ class OWTextableSelect(OWTextableBaseWidget):
                 # Prepare regex...
                 regex_string = self.regex
                 if (
-                                    self.ignoreCase
-                                or self.unicodeDependent
-                            or self.multiline
-                        or self.dotAll
+                     self.ignoreCase
+                     or self.unicodeDependent
+                     or self.multiline
+                     or self.dotAll
                 ):
                     flags = ''
                     if self.ignoreCase:
@@ -791,6 +791,7 @@ class OWTextableSelect(OWTextableBaseWidget):
                 self.send('Selected data', None, self)
                 self.send('Discarded data', None, self)
                 progressBar.finish()
+                self.controlArea.setDisabled(False)
                 return
 
         progressBar.finish()
