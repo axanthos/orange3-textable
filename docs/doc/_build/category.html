@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, Category widget" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Category widget" name="description" />
 <meta content="Orange, Textable, documentation, Category, widget" name="keywords" />
 
     <title>Category &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="Conversion/export widgets" href="conversion_export_widgets.html" />
     <link rel="prev" title="Context" href="context.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -58,7 +55,7 @@
   <div class="section" id="category">
 <span id="id1"></span><h1>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h1>
 <img alt="_images/Category_54.png" src="_images/Category_54.png" />
-<p>Build a table with categories defined by segments&#8217; content or annotations.</p>
+<p>Build a table with categories defined by segments’ content or annotations.</p>
 <div class="section" id="signals">
 <h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
 <p>Inputs:</p>
@@ -104,7 +101,7 @@ instance of <strong>Category</strong>, and the columns to its right by an instan
 <th class="head"><em>__category__</em></th>
 <th class="head"><em>noun</em></th>
 <th class="head"><em>verb</em></th>
-<th class="head">...</th>
+<th class="head">…</th>
 </tr>
 </thead>
 <tbody valign="top">
@@ -112,31 +109,31 @@ instance of <strong>Category</strong>, and the columns to its right by an instan
 <td><em>news</em></td>
 <td>35</td>
 <td>12</td>
-<td>...</td>
+<td>…</td>
 </tr>
 <tr class="row-odd"><th class="stub"><em>text2</em></th>
 <td><em>news</em></td>
 <td>20</td>
 <td>8</td>
-<td>...</td>
+<td>…</td>
 </tr>
 <tr class="row-even"><th class="stub"><em>text3</em></th>
 <td><em>poetry</em></td>
 <td>27</td>
 <td>18</td>
-<td>...</td>
+<td>…</td>
 </tr>
-<tr class="row-odd"><th class="stub">...</th>
-<td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
+<tr class="row-odd"><th class="stub">…</th>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
 </tr>
 </tbody>
 </table>
 <p>The tables produced by this widget only contain two columns. The first
 (header <em>__context__</em>) contains the headers corresponding to the
-contexts &#8211; which are essentially defined in the same way as with the
+contexts – which are essentially defined in the same way as with the
 <strong>Containing segmentation</strong> mode of widgets <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>, <a class="reference internal" href="length.html#length"><span class="std std-ref">Length</span></a>, and
 <a class="reference internal" href="variety.html#variety"><span class="std std-ref">Variety</span></a>: by the segment types appearing in a segmentation. The second
 column (header <em>__category__</em>) contains the annotation(s) associated
@@ -216,10 +213,10 @@ example</em> <a class="footnote-reference" href="#id3" id="id2">[1]</a>:</p>
 <td>4</td>
 <td><em>vowel</em></td>
 </tr>
-<tr class="row-odd"><td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
+<tr class="row-odd"><td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
 </tr>
 <tr class="row-even"><td><em>e</em></td>
 <td>16</td>
@@ -307,7 +304,7 @@ these keys is selected, the corresponding annotation values will be used; if
 on the other hand the value <em>(none)</em> is selected, the <em>content</em> of the
 segments will be used. The <strong>Sequence length</strong> drop-down menu allows the user
 to indicate if the widget should consider the isolated segments or the
-<em>n&#8211;grams</em> of segments. In this latter case, the (optional) string specified
+<em>n–grams</em> of segments. In this latter case, the (optional) string specified
 in the <strong>Intra-sequence delimiter</strong> text field will be used to separate the
 content or the annotation value corresponding to each individual segment.</p>
 <div class="figure align-center" id="id4">
@@ -347,7 +344,7 @@ because modified data is received through an existing connection).</p>
 <dl class="docutils">
 <dt><em>Data correctly sent to output.</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click &#8216;Compute&#8217; when ready.</em></dt>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Compute’ when ready.</em></dt>
 <dd>Settings and/or input have changed but the <strong>Compute automatically</strong>
 checkbox has not been selected, so the user is prompted to click the
 <strong>Compute</strong> button (or equivalently check the box) in order for computation
@@ -355,10 +352,10 @@ and data emission to proceed.</dd>
 <dt><em>No data sent to output yet: no input segmentation.</em></dt>
 <dd>The widget instance is not able to emit data to output because it receives
 none on its input channel(s).</dd>
-<dt><em>No data sent to output yet, see &#8216;Widget state&#8217; below.</em></dt>
-<dd>A problem with the instance&#8217;s parameters and/or input data prevents it
+<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
+<dd>A problem with the instance’s parameters and/or input data prevents it
 from operating properly, and additional diagnostic information can be
-found in the <strong>Widget state</strong> box at the bottom of the instance&#8217;s
+found in the <strong>Widget state</strong> box at the bottom of the instance’s
 interface (see <a class="reference internal" href="#warnings">Warnings</a> below).</dd>
 </dl>
 </div>
@@ -366,7 +363,7 @@ interface (see <a class="reference internal" href="#warnings">Warnings</a> below
 <h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt><em>Resulting table is empty.</em></dt>
-<dd>No table has been emitted because the widget instance couldn&#8217;t find a
+<dd>No table has been emitted because the widget instance couldn’t find a
 single element in its input segmentation(s). A likely cause for this
 problem (when using the <strong>Containing segmentation</strong> mode) is that the unit
 and context segmentations do not refer to the same strings, so that the
@@ -459,7 +456,7 @@ which the segmentation refers).</td></tr>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>

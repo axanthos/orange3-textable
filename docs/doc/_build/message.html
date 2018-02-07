@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, Message widget" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Message widget" name="description" />
 <meta content="Orange, Textable, documentation, Message, widget" name="keywords" />
 
     <title>Message &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="JSON im-/export format" href="json_format.html" />
     <link rel="prev" title="Convert" href="convert.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -78,7 +75,7 @@
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
 <p>This widget inputs a segmentation containing a single segment whose content
 is in <a class="reference external" href="http://www.json.org/">JSON</a> format. After validation, the data are
-converted to a <em>JSONMessage</em> object and emitted to the widget&#8217;s
+converted to a <em>JSONMessage</em> object and emitted to the widget’s
 output connections. Provided that the data conform to one of the formats
 described in section <a class="reference internal" href="json_format.html"><span class="doc">JSON im-/export format</span></a>, the
 <em>JSONMessage</em> object can be sent to an instance of the corresponding widget
@@ -88,7 +85,7 @@ used to control its behavior remotely.</p>
 <span id="message-fig1"></span><img alt="Interface of the Message widget" src="_images/message_example.png" />
 <p class="caption"><span class="caption-text">Figure 1: Interface of the <strong>Message</strong> widget.</span></p>
 </div>
-<p>The widget&#8217;s interface offers no user-controlled option (see <a class="reference internal" href="#message-fig1"><span class="std std-ref">figure 1</span></a> above). The <strong>Info</strong> section indicates the number of items
+<p>The widget’s interface offers no user-controlled option (see <a class="reference internal" href="#message-fig1"><span class="std std-ref">figure 1</span></a> above). The <strong>Info</strong> section indicates the number of items
 present in the parsed JSON data, or the reasons why no <em>JSONObject</em> can be
 emitted (no input or invalid data, input segmentation containing more than one
 segment).</p>
@@ -106,7 +103,7 @@ connection).</p>
 <dl class="docutils">
 <dt><em>Data correctly sent to output: &lt;n&gt; items.</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click &#8216;Send&#8217; when ready.</em></dt>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
 <dd>Settings and/or input have changed but the <strong>Send automatically</strong> checkbox
 has not been selected, so the user is prompted to click the <strong>Send</strong>
 button (or equivalently check the box) in order for computation and data
@@ -114,10 +111,10 @@ emission to proceed.</dd>
 <dt><em>No data sent to output yet: no input segmentation.</em></dt>
 <dd>The widget instance is not able to emit data to output because it receives
 none on its input channel(s).</dd>
-<dt><em>No data sent to output yet, see &#8216;Widget state&#8217; below.</em></dt>
-<dd>A problem with the instance&#8217;s parameters and/or input data prevents it
+<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
+<dd>A problem with the instance’s parameters and/or input data prevents it
 from operating properly, and additional diagnostic information can be
-found in the <strong>Widget state</strong> box at the bottom of the instance&#8217;s
+found in the <strong>Widget state</strong> box at the bottom of the instance’s
 interface (see <a class="reference internal" href="#warnings">Warnings</a> and <a class="reference internal" href="#errors">Errors</a> below).</dd>
 </dl>
 </div>
@@ -132,8 +129,8 @@ interface (see <a class="reference internal" href="#warnings">Warnings</a> and <
 <h3>Errors<a class="headerlink" href="#errors" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt><em>JSON parsing error.</em></dt>
-<dd>The input JSON data couldn&#8217;t be correctly parsed. Please use a JSON
-validator to check the data&#8217;s well-formedness.</dd>
+<dd>The input JSON data couldn’t be correctly parsed. Please use a JSON
+validator to check the data’s well-formedness.</dd>
 </dl>
 </div>
 </div>
@@ -219,7 +216,7 @@ validator to check the data&#8217;s well-formedness.</dd>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>

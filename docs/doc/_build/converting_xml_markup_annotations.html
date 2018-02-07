@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, converting XML markup to annotations" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, converting XML markup to annotations" name="description" />
 <meta content="Orange, Textable, documentation, xml, markup, tag, extract, import, annotation" name="keywords" />
 
     <title>3.3. Converting XML markup to annotations &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="3.4. Tagging table rows with annotations" href="tagging_table_rows_annotations.html" />
     <link rel="prev" title="3.2. Annotating by merging" href="annotating_merging.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -58,19 +55,19 @@
   <div class="section" id="converting-xml-markup-to-annotations">
 <h1>3.3. Converting XML markup to annotations<a class="headerlink" href="#converting-xml-markup-to-annotations" title="Permalink to this headline">¶</a></h1>
 <p>Often, the best way (and sometimes the only way) to add a specific type of
-annotation to a text is by &#8220;manually&#8221; adding it to the data. This is
+annotation to a text is by “manually” adding it to the data. This is
 frequently done with XML markup. For instance, the text that appears in the
 <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance of
 <a class="reference internal" href="#converting-xml-markup-annotations-fig1"><span class="std std-ref">figure 1</span></a> below is segmented
-into words by means of <em>&lt;w&gt;</em> tags whose <em>type</em> attribute indicates the &#8220;part
-of speech&#8221; associated with each word (e.g. <em>DET</em>, <em>NOUN</em>, <em>PREP</em>, and so on).</p>
+into words by means of <em>&lt;w&gt;</em> tags whose <em>type</em> attribute indicates the “part
+of speech” associated with each word (e.g. <em>DET</em>, <em>NOUN</em>, <em>PREP</em>, and so on).</p>
 <div class="figure align-center" id="id1">
 <span id="converting-xml-markup-annotations-fig1"></span><img alt="Specifying annotations values using the label of Text field instances" src="_images/text_field_xml_example.png" />
 <p class="caption"><span class="caption-text">Figure 1: Sample text annotated using XML markup.</span></p>
 </div>
 <p>The role of widget <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> is to convert XML markup into annotated
 segments (in the sense of Orange Textable). In its basic version (see
-<a class="reference internal" href="#converting-xml-markup-annotations-fig2"><span class="std std-ref">figure 2</span></a> below), the widget&#8217;s
+<a class="reference internal" href="#converting-xml-markup-annotations-fig2"><span class="std std-ref">figure 2</span></a> below), the widget’s
 interface essentially requires the user to specify the name of the XML
 tags that must be imported, namely <em>w</em> in this example. The <strong>Remove markup</strong>
 checkbox indicates whether further markup (if any) detected <em>within</em>
@@ -162,7 +159,7 @@ to a <em>{key: value}</em> annotation.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>

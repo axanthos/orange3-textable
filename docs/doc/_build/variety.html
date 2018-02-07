@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, Variety widget" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Variety widget" name="description" />
 <meta content="Orange, Textable, documentation, Variety, widget" name="keywords" />
 
     <title>Variety &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="Cooccurrence" href="cooccurrence.html" />
     <link rel="prev" title="Length" href="length.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -86,7 +83,7 @@ dependent on the length of segmentations, it is possible to calculate their
 average value on a number of subsamples of fixed size.</p>
 <p>The tables produced by the <strong>Variety</strong> widget have at least 2 columns, and at
 most 4. The first column contains the headers corresponding to the contexts
-&#8211; which are essentially defined in the same way as in the <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> and
+– which are essentially defined in the same way as in the <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> and
 <a class="reference internal" href="length.html#length"><span class="std std-ref">Length</span></a> widgets. The second column gives the variety measures and its
 header is <em>__variety__</em>, unless resampling has been applied (in which case the
 header will be <em>__variety_average__</em>). In the latter case, the third column
@@ -168,10 +165,10 @@ example</em> <a class="footnote-reference" href="#id4" id="id2">[1]</a>:</p>
 <td>4</td>
 <td><em>vowel</em></td>
 </tr>
-<tr class="row-odd"><td>...</td>
-<td>...</td>
-<td>...</td>
-<td>...</td>
+<tr class="row-odd"><td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
 </tr>
 <tr class="row-even"><td><em>e</em></td>
 <td>16</td>
@@ -264,7 +261,7 @@ letter category</em>:</p>
 </tbody>
 </table>
 <p>On average, in our example, a type of letter (<em>consonant or vowel</em>) is thus
-represented by 4.0 distinct letters &#8211; as long as we give the same weight to
+represented by 4.0 distinct letters – as long as we give the same weight to
 each category. The alternative consists of weighing the categories according
 to their frequency, which would result in our case in giving more weight to
 the variety of consonants (whose frequency is 9) than to that of the vowels
@@ -296,7 +293,7 @@ calculate the average variety/perplexity per category, it is possible to weigh
 same <em>context</em> (i.e. table rows) specification modes as in the
 <a class="reference internal" href="length.html#length"><span class="std std-ref">Length</span></a> widget: the first mode consists in defining the contexts based
 on the content or the annotations of a given segmentation; the second lies on
-the concept of a &#8220;window&#8221; of <em>n</em> segments that we progressively &#8220;slide&#8221; from
+the concept of a “window” of <em>n</em> segments that we progressively “slide” from
 the beginning to the end of the segmentation.</p>
 <p>All variety measures (weighed or not, simple or by category) are sensitive to
 the sample size, which in our case means the segmentation length. As such,
@@ -346,9 +343,9 @@ example, by setting the size of the subsamples to 2 segments, and by drawing
 </thead>
 <tbody valign="top">
 <tr class="row-even"><th class="stub"><em>a</em></th>
-<td>&#8212;</td>
-<td>&#8212;</td>
-<td>&#8212;</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
 </tr>
 <tr class="row-odd"><th class="stub"><em>simple</em></th>
 <td>1.59</td>
@@ -383,7 +380,7 @@ these keys is selected, the corresponding annotation values will be used; if
 on the other hand the value <em>(none)</em> is selected, the content of the segments
 will be used. The <strong>Sequence length</strong> drop-down menu allows the user to
 indicate if the widget should consider the isolated segments or the
-<em>n&#8211;grams</em>. Finally, the <strong>Weigh by frequency</strong> checkbox allows the user to
+<em>n–grams</em>. Finally, the <strong>Weigh by frequency</strong> checkbox allows the user to
 enable the weighing of the units by their frequency (thus the perplexity
 measure rather than the variety).</p>
 <p>In the <strong>Categories</strong> section, the <strong>Measure diversity per category</strong> checkbox
@@ -398,7 +395,7 @@ choose among the context specification modes described above. The <strong>No
 context</strong> mode corresponds to the case where the variety measure is applied
 globally to the entire unit segmentation.</p>
 <p>The <strong>Sliding window</strong> mode (see <a class="reference internal" href="#variety-fig2"><span class="std std-ref">figure 2</span></a>) implements
-the notion of a &#8220;sliding window&#8221; introduced earlier. It allows the user to
+the notion of a “sliding window” introduced earlier. It allows the user to
 observe the evolution of variety throughout the segmentation. The only
 parameter is the window size (in number of segments), set by means of the
 <strong>Window size</strong> cursor.</p>
@@ -440,7 +437,7 @@ because modified data is received through an existing connection).</p>
 <dl class="docutils">
 <dt><em>Data correctly sent to output.</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click &#8216;Compute&#8217; when ready.</em></dt>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Compute’ when ready.</em></dt>
 <dd>Settings and/or input have changed but the <strong>Compute automatically</strong>
 checkbox has not been selected, so the user is prompted to click the
 <strong>Compute</strong> button (or equivalently check the box) in order for computation
@@ -448,10 +445,10 @@ and data emission to proceed.</dd>
 <dt><em>No data sent to output yet: no input segmentation.</em></dt>
 <dd>The widget instance is not able to emit data to output because it receives
 none on its input channel(s).</dd>
-<dt><em>No data sent to output yet, see &#8216;Widget state&#8217; below.</em></dt>
-<dd>A problem with the instance&#8217;s parameters and/or input data prevents it
+<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
+<dd>A problem with the instance’s parameters and/or input data prevents it
 from operating properly, and additional diagnostic information can be
-found in the <strong>Widget state</strong> box at the bottom of the instance&#8217;s
+found in the <strong>Widget state</strong> box at the bottom of the instance’s
 interface (see <a class="reference internal" href="#warnings">Warnings</a> below).</dd>
 </dl>
 </div>
@@ -459,7 +456,7 @@ interface (see <a class="reference internal" href="#warnings">Warnings</a> below
 <h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt><em>Resulting table is empty.</em></dt>
-<dd>No table has been emitted because the widget instance couldn&#8217;t find a
+<dd>No table has been emitted because the widget instance couldn’t find a
 single element in its input segmentation(s). A likely cause for this
 problem (when using the <strong>Containing segmentation</strong> mode) is that the unit
 and context segmentations do not refer to the same strings, so that the
@@ -559,7 +556,7 @@ use a clearly higher subsample size, for example 50 segments or more.</td></tr>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>

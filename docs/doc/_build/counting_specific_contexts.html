@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, counting in specific contexts" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, counting in specific contexts" name="description" />
 <meta content="Orange, Textable, documentation, count, context, contigency table, document-term matrix, term-document matrix" name="keywords" />
 
     <title>2.4. Counting in specific contexts &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="3. Annotations" href="annotations.html" />
     <link rel="prev" title="2.3. Counting segment types" href="counting_segment_types.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -57,7 +54,7 @@
             
   <div class="section" id="counting-in-specific-contexts">
 <h1>2.4. Counting in specific contexts<a class="headerlink" href="#counting-in-specific-contexts" title="Permalink to this headline">¶</a></h1>
-<p>Section <strong>Contexts</strong> of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>&#8216;s interface lets the
+<p>Section <strong>Contexts</strong> of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>’s interface lets the
 user define the <em>contexts</em> in which units should be counted. Thus, while
 the settings of section <strong>Units</strong> affect the <em>columns</em> of the resulting table,
 those of section <strong>Contexts</strong> affect its <em>rows</em>.</p>
@@ -72,7 +69,7 @@ three other modes corresponding to three different definitions of contexts.</p>
 </div>
 <p>When <strong>Mode</strong> is set to <strong>Sliding window</strong> (see
 <a class="reference internal" href="#counting-specific-contexts-fig1"><span class="std std-ref">figure 1</span></a> above), context is defined
-as a &#8220;window&#8221; of <em>n</em> consecutive segments which &#8220;slides&#8221; from the beginning
+as a “window” of <em>n</em> consecutive segments which “slides” from the beginning
 to the end of the segmentation. In the case of the letter segmentation of
 <em>a simple example</em> (as obtained with the schema illustrated in
 the <a class="reference internal" href="counting_segment_types.html"><span class="doc">previous section</span></a>), setting the number
@@ -81,8 +78,8 @@ successive contexts: <em>asimp</em>, <em>simpl</em>, <em>imple</em>, <em>mplee</
 (see <a class="reference internal" href="#counting-specific-contexts-table1"><span class="std std-ref">table 1</span></a> below). This mode is
 useful for studying the evolution of unit frequencies throughout a
 segmentation.</p>
-<table border="1" class="colwidths-given docutils" id="id2">
-<span id="counting-specific-contexts-table1"></span><caption><span class="caption-text">Table 1: Frequency of letters in a &#8220;sliding window&#8221; of size 5.</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<span id="counting-specific-contexts-table1"></span><table border="1" class="colwidths-given docutils" id="id2">
+<caption><span class="caption-text">Table 1: Frequency of letters in a “sliding window” of size 5.</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
 <colgroup>
 <col width="11%" />
 <col width="11%" />
@@ -95,7 +92,7 @@ segmentation.</p>
 <col width="11%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head stub">&nbsp;</th>
+<tr class="row-odd"><th class="head stub">&#160;</th>
 <th class="head"><em>a</em></th>
 <th class="head"><em>e</em></th>
 <th class="head"><em>i</em></th>
@@ -218,15 +215,15 @@ adjacent segment types occurring to the left and/or right of each position.</p>
 <p>For instance, setting <strong>Left context size</strong> to 1 and <strong>Right context size</strong>
 to 0 amounts to counting the frequency of each segment type given the type
 that occurs immediately to its left. This particular table is often called
-&#8220;transition matrix&#8221; (see <a class="reference internal" href="#counting-specific-contexts-table2"><span class="std std-ref">table 2</span></a>
+“transition matrix” (see <a class="reference internal" href="#counting-specific-contexts-table2"><span class="std std-ref">table 2</span></a>
 below). The string selected in the <strong>Unit position marker</strong> string is used
 to indicate the position where units appear in the context. Thus,
 <a class="reference internal" href="#counting-specific-contexts-table2"><span class="std std-ref">table 2</span></a> shows that both <em>m</em> and <em>s</em>
 appear once immediately to the right of an <em>a</em> (i.e. in context <em>a_</em>).
 To take another example, setting <strong>Right context size</strong> to 2, we would find
 that <em>e</em> occurs once both in context <em>l_ex</em> and <em>e_xa</em>.</p>
-<table border="1" class="colwidths-given docutils" id="id4">
-<span id="counting-specific-contexts-table2"></span><caption><span class="caption-text">Table 2: Frequency of letter (row) to letter (column) transitions.</span><a class="headerlink" href="#id4" title="Permalink to this table">¶</a></caption>
+<span id="counting-specific-contexts-table2"></span><table border="1" class="colwidths-given docutils" id="id4">
+<caption><span class="caption-text">Table 2: Frequency of letter (row) to letter (column) transitions.</span><a class="headerlink" href="#id4" title="Permalink to this table">¶</a></caption>
 <colgroup>
 <col width="11%" />
 <col width="11%" />
@@ -239,7 +236,7 @@ that <em>e</em> occurs once both in context <em>l_ex</em> and <em>e_xa</em>.</p>
 <col width="11%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head stub">&nbsp;</th>
+<tr class="row-odd"><th class="head stub">&#160;</th>
 <th class="head"><em>a</em></th>
 <th class="head"><em>e</em></th>
 <th class="head"><em>i</em></th>
@@ -340,8 +337,8 @@ whithin words). Segment <em>A</em> is considered to be contained within segment 
 if the following three conditions are met:</p>
 <ul class="simple">
 <li>A and B refer to the same string (their addresses have the same string index)</li>
-<li>A&#8217;s initial position is greater than or equal to B&#8217;s initial position</li>
-<li>A&#8217;s final position is lesser than or equal to B&#8217;s initial position</li>
+<li>A’s initial position is greater than or equal to B’s initial position</li>
+<li>A’s final position is lesser than or equal to B’s initial position</li>
 </ul>
 <p>To try this mode out, modify the schema used in the
 <a class="reference internal" href="counting_segment_types.html"><span class="doc">previous section</span></a> as illustrated on
@@ -445,7 +442,7 @@ case (contrary to what can be seen in table 1
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>

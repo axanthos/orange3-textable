@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, Text Files widget" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Text Files widget" name="description" />
 <meta content="Orange, Textable, documentation, Text Files, widget" name="keywords" />
 
     <title>Text Files &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="URLs" href="urls.html" />
     <link rel="prev" title="Text Field" href="text_field.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -138,7 +135,7 @@ and (c) the encoding with which each is associated.</p>
 and that each is provided with an annotation whose key is <em>author</em>. The first
 file associates value <em>Dickens</em> with this key and is encoded in utf-8; the
 second one has value <em>Fitzgerald</em> and is encoded in iso-8859-1.</p>
-<p>The first buttons on the right of the imported files&#8217; list enable the user to
+<p>The first buttons on the right of the imported files’ list enable the user to
 modify the order in which they appear in the output segmentation (<strong>Move Up</strong>
 and <strong>Move Down</strong>), to delete a file from the list (<strong>Remove</strong>) or to
 completely empty it (<strong>Clear All</strong>). Except for <strong>Clear All</strong>, all these
@@ -154,7 +151,7 @@ in this dialog  and validated the choice by clicking on <strong>Open</strong>, t
 appear in the <strong>File paths</strong> field and can be added to the list by clicking on
 the <strong>Add</strong> button. It is also possible to type the complete paths of the
 files directly in the text field, separating the paths corresponding to the
-successive files with the string &#8221; &#8221; (space + slash + space).</p>
+successive files with the string ” ” (space + slash + space).</p>
 <p>Before adding one or more files to the list by clicking on <strong>Add</strong>, it is
 possible to select their encoding (<strong>Encoding</strong>), and to assign an annotation
 by specifying its key in the <strong>Annotation key</strong> field and the corresponding
@@ -176,7 +173,7 @@ has not been enabled.</p>
 <p>The <strong>Info</strong> section indicates the length of the output segmentation in
 characters, or the reasons why no segmentation is emitted (no selected file,
 encoding issue, etc.). In the example, the two segments corresponding to the
-imported files thus total up to 1&#8216;262&#8216;145 characters.</p>
+imported files thus total up to 1‘262‘145 characters.</p>
 <p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
 disables the button and the widget attempts to automatically emit a
@@ -190,7 +187,7 @@ of a file list in JSON format (see <a class="reference internal" href="json_form
 of files specified in this message replaces previously imported sources (if
 any). Note that removing the incoming connection from the <strong>Message</strong> instance
 will not, by itself, remove the list of files imported in this way from the
-<strong>Text Files</strong> instance&#8217;s interface; conversely, this list of files can be
+<strong>Text Files</strong> instance’s interface; conversely, this list of files can be
 modified using buttons <strong>Move up/down</strong>, <strong>Remove</strong>, etc. even if the incoming
 connection from the <strong>Message</strong> instance has not been removed. Finally, note
 that if a <strong>Text Files</strong> instance has the basic version of its interface
@@ -205,7 +202,7 @@ activated when an incoming connection is created from an instance of
 <dl class="docutils">
 <dt><em>Data correctly sent to output: &lt;n&gt; segments (&lt;m&gt; characters).</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click &#8216;Send&#8217; when ready.</em></dt>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
 <dd>Settings and/or input have changed but the <strong>Send automatically</strong> checkbox
 has not been selected, so the user is prompted to click the <strong>Send</strong>
 button (or equivalently check the box) in order for computation and data
@@ -213,10 +210,10 @@ emission to proceed.</dd>
 <dt><em>No data sent to output yet: no file selected.</em></dt>
 <dd>The widget instance is not able to emit data to output because no input
 file has been selected.</dd>
-<dt><em>No data sent to output yet, see &#8216;Widget state&#8217; below.</em></dt>
-<dd>A problem with the instance&#8217;s parameters and/or input data prevents it
+<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
+<dd>A problem with the instance’s parameters and/or input data prevents it
 from operating properly, and additional diagnostic information can be
-found in the <strong>Widget state</strong> box at the bottom of the instance&#8217;s
+found in the <strong>Widget state</strong> box at the bottom of the instance’s
 interface (see <a class="reference internal" href="#warnings">Warnings</a> and <a class="reference internal" href="#errors">Errors</a> below).</dd>
 </dl>
 </div>
@@ -230,25 +227,25 @@ order for computation and data emission to proceed.</dd>
 <dd>The <strong>Auto-number with key</strong> checkbox has been selected and an annotation
 key must be specified in the text field on the right in order for
 computation and data emission to proceed.</dd>
-<dt><em>JSON message on input connection doesn&#8217;t have the right keys and/or values.</em></dt>
+<dt><em>JSON message on input connection doesn’t have the right keys and/or values.</em></dt>
 <dd>The widget instance has received a JSON message on its <code class="docutils literal"><span class="pre">Message</span></code> input
 channel and the keys and/or values specified in this message do not match
 those that are expected for this particular widget type (see <a class="reference internal" href="json_format.html"><span class="doc">JSON
 im-/export format</span></a>, <a class="reference internal" href="json_file_list.html"><span class="doc">File list</span></a>).</dd>
 <dt><em>JSON parsing error.</em></dt>
 <dd>The widget instance has received data on its <code class="docutils literal"><span class="pre">Message</span></code> input channel and
-the data couldn&#8217;t be correctly parsed. Please use a JSON validator to
-check the data&#8217;s well-formedness.</dd>
+the data couldn’t be correctly parsed. Please use a JSON validator to
+check the data’s well-formedness.</dd>
 </dl>
 </div>
 <div class="section" id="errors">
 <h3>Errors<a class="headerlink" href="#errors" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
-<dt><em>Couldn&#8217;t open file</em> or <em>Couldn&#8217;t open file &#8216;&lt;filepath&gt;&#8217;.</em></dt>
-<dd>A file couldn&#8217;t be opened and read, typically because the specified path
+<dt><em>Couldn’t open file</em> or <em>Couldn’t open file ‘&lt;filepath&gt;’.</em></dt>
+<dd>A file couldn’t be opened and read, typically because the specified path
 is wrong.</dd>
-<dt><em>Encoding error</em> or <em>Encoding error: file &#8216;&lt;filepath&gt;&#8217;.</em></dt>
-<dd>A file couldn&#8217;t be read with the specified encoding (it must be in another
+<dt><em>Encoding error</em> or <em>Encoding error: file ‘&lt;filepath&gt;’.</em></dt>
+<dd>A file couldn’t be read with the specified encoding (it must be in another
 encoding).</dd>
 </dl>
 </div>
@@ -342,7 +339,7 @@ encoding).</dd>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>

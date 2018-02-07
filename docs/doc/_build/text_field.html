@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, Text Field widget" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Text Field widget" name="description" />
 <meta content="Orange, Textable, documentation, Text Field, widget" name="keywords" />
 
     <title>Text Field &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="Text Files" href="text_files.html" />
     <link rel="prev" title="Text import widgets" href="text_import_widgets.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -98,7 +95,7 @@ connection(s). When it is selected, the <strong>Send automatically</strong> chec
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface (editing of the text or
 label modification).</p>
-<p>It should be noted that the text field&#8217;s content is normalized in three ways:</p>
+<p>It should be noted that the text field’s content is normalized in three ways:</p>
 <ul class="simple">
 <li>it is systematically converted to Unicode</li>
 <li>it is subjected to the <a class="reference external" href="http://unicode.org/reports/tr15">canonical Unicode decomposition-recomposition</a> technique (Unicode sequences such as
@@ -128,8 +125,8 @@ receives a new input on its incoming connection. In particular, this will
 happen if the schema is saved and later re-opened. To avoid any loss of
 data, the safest way to operate is to remove the incoming connection
 as soon as it has been created and the string has been copied in the
-<strong>Text Field</strong> instance&#8217;s interface; indeed, removing the incoming
-connection will not remove the imported string from the instance&#8217;s
+<strong>Text Field</strong> instance’s interface; indeed, removing the incoming
+connection will not remove the imported string from the instance’s
 interface, where it can then be edited without risking to overwrite it.</li>
 </ul>
 </div>
@@ -143,10 +140,10 @@ interface, where it can then be edited without risking to overwrite it.</li>
 <dt><em>No data sent to output yet: text field is empty.</em></dt>
 <dd>The widget instance is not able to emit data to output because no text has
 been entered in the text field.</dd>
-<dt><em>No data sent to output yet, see &#8216;Widget state&#8217; below.</em></dt>
-<dd>A problem with the instance&#8217;s parameters and/or input data prevents it
+<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
+<dd>A problem with the instance’s parameters and/or input data prevents it
 from operating properly, and additional diagnostic information can be
-found in the <strong>Widget state</strong> box at the bottom of the instance&#8217;s
+found in the <strong>Widget state</strong> box at the bottom of the instance’s
 interface (see <a class="reference internal" href="#warnings">Warnings</a> below).</dd>
 </dl>
 </div>
@@ -172,7 +169,7 @@ order for computation and data emission to proceed.</dd>
 <li><a class="reference internal" href="merging_segmentations_together.html"><span class="doc">Getting started: Merging segmentations together</span></a></li>
 <li><a class="reference internal" href="annotating_merging.html"><span class="doc">Getting started: Annotating by merging</span></a></li>
 <li><a class="reference internal" href="converting_xml_markup_annotations.html"><span class="doc">Getting started: Converting XML markup to annotations</span></a></li>
-<li><a class="reference internal" href="preprocess.html#anchor-to-caveat"><span class="std std-ref">Reference: Preprocess (section &#8220;Caveat&#8221;)</span></a></li>
+<li><a class="reference internal" href="preprocess.html#anchor-to-caveat"><span class="std std-ref">Reference: Preprocess (section “Caveat”)</span></a></li>
 </ul>
 </div>
 </div>
@@ -245,7 +242,7 @@ order for computation and data emission to proceed.</dd>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>

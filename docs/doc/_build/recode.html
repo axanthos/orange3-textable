@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, Recode widget" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Recode widget" name="description" />
 <meta content="Orange, Textable, documentation, Recode, widget" name="keywords" />
 
     <title>Recode &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="Merge" href="merge.html" />
     <link rel="prev" title="Preprocess" href="preprocess.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -84,13 +81,13 @@ outputs a new segmentation corresponding to the modified data. The
 modifications applied are defined by <em>substitutions</em>, namely pairs
 composed of a regular expression (designed to identify portions of text that
 should be modified) and a replacement string.</p>
-<p>It is possible to &#8220;capture&#8221; text portions using parentheses appearing in the
+<p>It is possible to “capture” text portions using parentheses appearing in the
 regular expressions, in order to insert them in the replacement strings, where
 sequences <code class="docutils literal"><span class="pre">&amp;1</span></code>, <code class="docutils literal"><span class="pre">&amp;2</span></code>, etc. correspond to the successive pairs of
 parentheses (numbered on the basis of the position of the opening
 parenthesis).</p>
 <p>Note that <strong>Recode</strong> creates a copy of each modified segment, which
-increases the program&#8217;s memory footprint; moreover this widget can only work
+increases the program’s memory footprint; moreover this widget can only work
 on segmentations without any overlap, which means no part of the text is
 covered by more than one segment.</p>
 <p>The interface of <strong>Recode</strong> is available in two versions, according to
@@ -146,7 +143,7 @@ the empty string). The second replaces occurrences of British English forms
 <em>Ignore case</em> option is selected) with their American English variants
 (<em>behavior</em>, <em>color</em>, and <em>neighbor</em>), while the last replaces sequences
 like <em>a X of mine</em> with <em>my X</em>; thus they illustrate the possibility to
-&#8220;capture&#8221; text portions through parentheses appearing in the regular
+“capture” text portions through parentheses appearing in the regular
 expression.</p>
 <p>To take a concrete example, the successive application of these three
 substitutions to string</p>
@@ -202,7 +199,7 @@ of a substitution list in JSON format (see <a class="reference internal" href="j
 case the list of substitutions specified in this message replaces those
 previously specified (if any). Note that removing the incoming connection from
 the <strong>Message</strong> instance will not, by itself, remove the list of substitutions
-imported in this way from the <strong>Recode</strong> instance&#8217;s interface; conversely,
+imported in this way from the <strong>Recode</strong> instance’s interface; conversely,
 this list of files can be modified using buttons <strong>Move up/down</strong>, <strong>Remove</strong>,
 etc. even if the incoming connection from the <strong>Message</strong> instance has not
 been removed. Finally, note that if a <strong>Recode</strong> instance has the basic
@@ -227,7 +224,7 @@ applies to <strong>Recode</strong>.</p>
 <dl class="docutils">
 <dt><em>Data correctly sent to output: &lt;n&gt; segments.</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click &#8216;Send&#8217; when ready.</em></dt>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
 <dd>Settings and/or input have changed but the <strong>Send automatically</strong> checkbox
 has not been selected, so the user is prompted to click the <strong>Send</strong>
 button (or equivalently check the box) in order for computation and data
@@ -235,10 +232,10 @@ emission to proceed.</dd>
 <dt><em>No data sent to output yet: no input segmentation.</em></dt>
 <dd>The widget instance is not able to emit data to output because it receives
 none on its input channel(s).</dd>
-<dt><em>No data sent to output yet, see &#8216;Widget state&#8217; below.</em></dt>
-<dd>A problem with the instance&#8217;s parameters and/or input data prevents it
+<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
+<dd>A problem with the instance’s parameters and/or input data prevents it
 from operating properly, and additional diagnostic information can be
-found in the <strong>Widget state</strong> box at the bottom of the instance&#8217;s
+found in the <strong>Widget state</strong> box at the bottom of the instance’s
 interface (see <a class="reference internal" href="#warnings">Warnings</a> and <a class="reference internal" href="#errors">Errors</a> below).</dd>
 </dl>
 </div>
@@ -249,17 +246,17 @@ interface (see <a class="reference internal" href="#warnings">Warnings</a> and <
 <dd>A label must be entered in the <strong>Output segmentation label</strong> field in
 order for computation and data emission to proceed.</dd>
 <dt><em>Input segmentation is overlapping.</em></dt>
-<dd>The instance&#8217;s input segmentation contains overlapping segments, which
+<dd>The instance’s input segmentation contains overlapping segments, which
 preempts the application of recoding operations.</dd>
-<dt><em>JSON message on input connection doesn&#8217;t have the right keys and/or values.</em></dt>
+<dt><em>JSON message on input connection doesn’t have the right keys and/or values.</em></dt>
 <dd>The widget instance has received a JSON message on its <code class="docutils literal"><span class="pre">Message</span></code> input
 channel and the keys and/or values specified in this message do not match
 those that are expected for this particular widget type (see <a class="reference internal" href="json_format.html"><span class="doc">JSON
 im-/export format</span></a>, <a class="reference internal" href="json_substitution_list.html"><span class="doc">Substitution list</span></a>).</dd>
 <dt><em>JSON parsing error.</em></dt>
 <dd>The widget instance has received data on its <code class="docutils literal"><span class="pre">Message</span></code> input channel and
-the data couldn&#8217;t be correctly parsed. Please use a JSON validator to
-check the data&#8217;s well-formedness.</dd>
+the data couldn’t be correctly parsed. Please use a JSON validator to
+check the data’s well-formedness.</dd>
 </dl>
 </div>
 <div class="section" id="errors">
@@ -271,7 +268,7 @@ check the data&#8217;s well-formedness.</dd>
 <dd>The <em>n</em>-th regular expression in the <strong>Substitutions</strong> list is invalid.</dd>
 <dt><em>Reference to unmatched group in replacement string.</em></dt>
 <dd>A replacement string specified by the user contains a reference to a
-numbered variable (<code class="docutils literal"><span class="pre">&amp;1</span></code>, <code class="docutils literal"><span class="pre">&amp;2</span></code>, ...) which turns out to not always have
+numbered variable (<code class="docutils literal"><span class="pre">&amp;1</span></code>, <code class="docutils literal"><span class="pre">&amp;2</span></code>, …) which turns out to not always have
 a matching element.</dd>
 </dl>
 </div>
@@ -288,7 +285,7 @@ a matching element.</dd>
 <li><a class="reference internal" href="json_format.html"><span class="doc">Reference: JSON im-/export format</span></a>, <a class="reference internal" href="json_substitution_list.html"><span class="doc">Substitution
 list</span></a></li>
 <li><a class="reference internal" href="message.html#message"><span class="std std-ref">Reference: Message widget</span></a></li>
-<li><a class="reference internal" href="preprocess.html#anchor-to-caveat"><span class="std std-ref">Reference: Preprocess (section &#8220;Caveat&#8221;)</span></a></li>
+<li><a class="reference internal" href="preprocess.html#anchor-to-caveat"><span class="std std-ref">Reference: Preprocess (section “Caveat”)</span></a></li>
 <li><a class="reference internal" href="note_regular_expressions.html"><span class="doc">Getting started: A note on regular expressions</span></a></li>
 </ul>
 </div>
@@ -389,7 +386,7 @@ Note that option <code class="docutils literal"><span class="pre">-u</span></cod
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>
