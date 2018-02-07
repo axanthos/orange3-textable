@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, Preprocess widget" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Preprocess widget" name="description" />
 <meta content="Orange, Textable, documentation, Preprocess, widget" name="keywords" />
 
     <title>Preprocess &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="Recode" href="recode.html" />
     <link rel="prev" title="Segmentation processing widgets" href="segmentation_processing_widgets.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -85,7 +82,7 @@ the replacing of accentuated characters by their non-accentuated equivalents.</p
 <p class="caption"><span class="caption-text">Figure 1: Interface of the <strong>Preprocess</strong> widget.</span></p>
 </div>
 <p>Note that <strong>Preprocess</strong> creates a copy of each modified segment, which
-increases the program&#8217;s memory footprint; moreover this widget can only work
+increases the program’s memory footprint; moreover this widget can only work
 on segmentations without any overlap, which means no part of the text is
 covered by more than one segment.</p>
 <p>In the <strong>Preprocessing</strong> section of its interface (see <a class="reference internal" href="#preprocess-fig1"><span class="std std-ref">figure 1</span></a> above), the <strong>Transform case</strong> checkbox triggers the
@@ -115,9 +112,9 @@ only new <em>segmentations</em>, <strong>Preprocess</strong> is prone to a very 
 possibly disconcerting type of error, which can be best understood by studying
 an example.</p>
 <p>Suppose that you wish to count word frequency in the content of two
-<a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instances&#8211;a scenario similar to that illustrated in section
+<a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instances–a scenario similar to that illustrated in section
 <a class="reference internal" href="counting_specific_contexts.html"><span class="doc">Counting in specific contexts</span></a>. You could
-use <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> to combine the <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instances&#8217; output in a
+use <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> to combine the <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instances’ output in a
 single segmentation (see <a class="reference internal" href="#preprocess-fig2"><span class="std std-ref">figure 2</span></a> below), then
 segment the latter into words with <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a>. You would eventually
 feed both the segmentation emitted by <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> (specifying units) and
@@ -161,7 +158,7 @@ in the others.</p>
 <dl class="docutils">
 <dt><em>Data correctly sent to output: &lt;n&gt; segments.</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click &#8216;Send&#8217; when ready.</em></dt>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
 <dd>Settings and/or input have changed but the <strong>Send automatically</strong> checkbox
 has not been selected, so the user is prompted to click the <strong>Send</strong>
 button (or equivalently check the box) in order for computation and data
@@ -169,10 +166,10 @@ emission to proceed.</dd>
 <dt><em>No data sent to output yet: no input segmentation.</em></dt>
 <dd>The widget instance is not able to emit data to output because it receives
 none on its input channel(s).</dd>
-<dt><em>No data sent to output yet, see &#8216;Widget state&#8217; below.</em></dt>
-<dd>A problem with the instance&#8217;s parameters and/or input data prevents it
+<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
+<dd>A problem with the instance’s parameters and/or input data prevents it
 from operating properly, and additional diagnostic information can be
-found in the <strong>Widget state</strong> box at the bottom of the instance&#8217;s
+found in the <strong>Widget state</strong> box at the bottom of the instance’s
 interface (see <a class="reference internal" href="#warnings">Warnings</a> below).</dd>
 </dl>
 </div>
@@ -293,7 +290,7 @@ substring.</dd>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>

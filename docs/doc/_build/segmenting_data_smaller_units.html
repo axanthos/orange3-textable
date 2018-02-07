@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, segmenting data into smaller units" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, segmenting data into smaller units" name="description" />
 <meta content="Orange, Textable, documentation, segment, words, letters, units" name="keywords" />
 
     <title>1.5. Segmenting data into smaller units &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="1.6. Partitioning segmentations" href="partitioning_segmentations.html" />
     <link rel="prev" title="1.4. A note on regular expressions" href="note_regular_expressions.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -60,7 +57,7 @@
 <p>We have seen <a class="reference internal" href="merging_segmentations_together.html"><span class="doc">previously</span></a> how to combine
 several segmentations into a single one. We will often be performing the
 inverse operation: create a segmentation whose segments are <em>parts</em> of another
-segmentation&#8217;s segments. Typically, we will be segmenting strings into words,
+segmentation’s segments. Typically, we will be segmenting strings into words,
 characters, or any kind of text units that will be later counted, measured,
 and so on. This is precisely the purpose of widget <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a>.</p>
 <p>To try it out, create a new schema with an instance of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a>
@@ -83,7 +80,7 @@ every match a new segment in the output segmentation.</p>
 <p class="caption"><span class="caption-text">Figure 2: Interface of the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> widget, configured for word segmentation</span></p>
 </div>
 <p>For instance, the regex <code class="docutils literal"><span class="pre">\w+</span></code> divides each incoming segment into sequences
-of alphanumeric character (and underscore)&#8211;which in our case amounts to
+of alphanumeric character (and underscore)–which in our case amounts to
 segmenting <em>a simple example</em> into three words. To obtain a segmentation
 into letters (or to be precise, alphanumeric characters or underscores),
 simply use <code class="docutils literal"><span class="pre">\w</span></code>.</p>
@@ -161,7 +158,7 @@ inflected forms of <em>retrieve</em> with <code class="docutils literal"><span c
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>

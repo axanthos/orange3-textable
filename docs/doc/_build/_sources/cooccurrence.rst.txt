@@ -96,7 +96,7 @@ the window size to 3 segments, we thus define the following contexts:
     12. *ple*
 
 Considering the letter segmentation as that of the unit types, we would obtain
-the following cooccurrence matrix[3]_:
+the following cooccurrence matrix [3]_:
 
 .. csv-table::
     :header: *__unit__*, *a*, *s*, *i*, *m*, *p*, *l*, *e*, *x*

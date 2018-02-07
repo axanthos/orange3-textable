@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, strings, segments, and segmentation" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, strings, segments, and segmentation" name="description" />
 <meta content="Orange, Textable, documentation, strings, segments, segmentation" name="keywords" />
 
     <title>1.1. Strings, segments, and segmentations &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="1.2. Keyboard input and segmentation display" href="keyboard_input_segmentation_display.html" />
     <link rel="prev" title="1. Segmentations" href="segmentations.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -91,14 +88,14 @@ a character too), and let us suppose that its string index is 1:</p>
 <tbody valign="top">
 <tr class="row-odd"><th class="stub">Character</th>
 <td><em>a</em></td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 <td><em>s</em></td>
 <td><em>i</em></td>
 <td><em>m</em></td>
 <td><em>p</em></td>
 <td><em>l</em></td>
 <td><em>e</em></td>
-<td>&nbsp;</td>
+<td>&#160;</td>
 <td><em>e</em></td>
 <td><em>x</em></td>
 <td><em>a</em></td>
@@ -138,11 +135,11 @@ segment has an <em>address</em> consisting of three elements:</p>
 </div></blockquote>
 <p>In the case of <em>a simple example</em>, address (1, 3, 8) refers to substring
 <em>simple</em>, (1, 12, 12) to character <em>a</em>, and (1, 1, 16) to the entire string.
-The substring corresponding to a given address is called the segment&#8217;s
+The substring corresponding to a given address is called the segment’s
 <em>content</em>.</p>
 <p>A <em>segmentation</em> is an ordered list of segments. For instance, segmentation
 ((1, 1, 1 ), (1, 3, 8), (1, 10, 16)) contains 3 word segments, ((1, 1, 1),
-(1, 2, 2 ), ..., (1, 16, 16)) contains 16 character segments, and ((1, 1, 16))
+(1, 2, 2 ), …, (1, 16, 16)) contains 16 character segments, and ((1, 1, 16))
 contains a single segment covering the whole string.</p>
 <p>As shown by the word segmentation example, every character in the string needs
 not be included in a segment. Moreover, a single character may belong to
@@ -154,7 +151,7 @@ example? (<a class="reference internal" href="#solution-string-segments-segmenta
 must be the same as the order of the corresponding substrings in the string.
 For instance ((1, 1, 1), (1, 2, 1), (1, 2, 2)) is possible, but not ((1, 2, 1),
 (1, 1, 1)), because the second segment starts before the first. Similarly,
-((1, 2, 2), (1, 2, 1)) isn&#8217;t possible because the second segment ends before
+((1, 2, 2), (1, 2, 1)) isn’t possible because the second segment ends before
 the first.</p>
 <p>In the previous examples, all the segments of a given segmentation refer to
 the same string. However, a segmentation may contain segments belonging to
@@ -251,7 +248,7 @@ can also store annotations associated with segments.</td></tr>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>

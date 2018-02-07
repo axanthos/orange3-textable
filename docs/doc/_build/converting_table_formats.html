@@ -1,18 +1,15 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta content="Orange Textable documentation, converting between table formats" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, converting between table formats" name="description" />
 <meta content="Orange, Textable, documentation, table, format, conversion" name="keywords" />
 
     <title>2.2. Converting between table formats &#8212; Textable v3.1.0b3 documentation</title>
-    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -31,7 +28,7 @@
     <link rel="next" title="2.3. Counting segment types" href="counting_segment_types.html" />
     <link rel="prev" title="2.1. From segmentations to tables" href="segmentations_tables.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -57,7 +54,7 @@
             
   <div class="section" id="converting-between-table-formats">
 <h1>2.2. Converting between table formats<a class="headerlink" href="#converting-between-table-formats" title="Permalink to this headline">¶</a></h1>
-<p>Orange Canvas has a &#8220;native&#8221; type for representing data tables, namely
+<p>Orange Canvas has a “native” type for representing data tables, namely
 <em>Table</em>. However, this type does not support Unicode well, which is a serious
 limitation in the perspective of text processing. To overcome this issue (as
 much as possible), Orange Textable defines its own Unicode-friendly table
@@ -68,7 +65,7 @@ these widget must then be connected with an instance of <a class="reference inte
 has mainly two purposes:</p>
 <blockquote>
 <div><ul class="simple">
-<li>It <em>converts</em> data from Orange Textable&#8217;s internal format to the
+<li>It <em>converts</em> data from Orange Textable’s internal format to the
 native <em>Table</em> format of Orange Canvas, which makes it possible to
 use the other widgets of Orange Canvas for visualizing, modifying,
 analyzing, etc. tables built with Orange Textable.</li>
@@ -80,7 +77,7 @@ a table containing data encoded in Unicode.</li>
 </ul>
 </div></blockquote>
 <p>As shown on <a class="reference internal" href="#converting-table-formats-fig1"><span class="std std-ref">figure 1</span></a> below, section
-<strong>Encoding</strong> of the widget&#8217;s interface lets the user choose the encoding
+<strong>Encoding</strong> of the widget’s interface lets the user choose the encoding
 of the <em>Table</em> object emitted by the widget (<strong>Orange table</strong>); variants of
 Unicode should be avoided here since they are currently not well supported by
 other widgets in Orange Canvas.</p>
@@ -98,8 +95,8 @@ encoding is used by default. Export proper is performed by clicking the
 systematically create a new instance of <a class="reference internal" href="convert.html#convert"><span class="std std-ref">Convert</span></a> and connect
 them together. Usually, moreover, you will want to connect the
 <a class="reference internal" href="convert.html#convert"><span class="std std-ref">Convert</span></a> instance to a <em>Data Table</em> instance (from the <em>Data</em>
-tab of Orange Canvas) in order to view the table just built&#8211;except in the
-case where it contains Unicode data that wouldn&#8217;t display correctly in
+tab of Orange Canvas) in order to view the table just built–except in the
+case where it contains Unicode data that wouldn’t display correctly in
 <em>Data table</em>.</p>
 <div class="section" id="see-also">
 <h2>2.2.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
@@ -171,7 +168,7 @@ case where it contains Unicode data that wouldn&#8217;t display correctly in
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
     </div>
   </body>
 </html>
