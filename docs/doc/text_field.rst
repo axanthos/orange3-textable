@@ -34,7 +34,7 @@ segmentation containing a single unannoted segment covering the whole string.
 Secondarily, **Text Field** can be used to manually edit a previously imported
 string.
 
-The interface of the widget is divided in three zones (see :ref:`figure 1
+The interface of the widget is divided in two zones (see :ref:`figure 1
 <text_field_fig1>` below). The upper part is a text field editable by the
 user. The standard editing functions (copy, paste, cancel, etc.) are
 accessible through a right-click on the field.
@@ -47,13 +47,8 @@ accessible through a right-click on the field.
 
     Figure 1: Interface of the *Text field* widget.
 
-The **Options** section allows the user to define the label of the output
-segmentation (**Output segmentation label**), here *text_string*.
+The **Field** section allows the user to copy or manually edit texts. The text can be segmented using a character.
 
-The **Info** section indicates the length of the output segmentation in
-characters, or the reasons why no segmentation is emitted (in particular if no
-text has been entered in the field). In the example, the single segment
-contained in the output segmentation covers 16 characters.
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
@@ -116,12 +111,6 @@ Information
     found in the **Widget state** box at the bottom of the instance's
     interface (see `Warnings`_ below).
 
-Warnings
-~~~~~~~~
-
-*No label was provided.*
-    A label must be entered in the **Output segmentation label** field in
-    order for computation and data emission to proceed.
 
 Examples
 --------
