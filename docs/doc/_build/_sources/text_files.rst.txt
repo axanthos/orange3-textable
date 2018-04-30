@@ -68,17 +68,16 @@ encoding of the file.
 
     Figure 1: **Text files** widget (basic interface).
 
-The **Options** section allows the user to define the label of the output
-segmentation (**Output segmentation label**), here *Great Expectations*.
-
-The **Info** section indicates the  the number of characters in the single
-segment contained in the output segmentation, or the reasons why no
-segmentation is emitted (no input data, encoding issue, etc.).
+The user can define the label of the output segmentation (**Options**) by checking the **Advanced settings**.
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface.
+
+The text below the **Send** button indicates the  the number of characters in the single
+segment contained in the output segmentation, or the reasons why no
+segmentation is emitted (no input data, encoding issue, etc.).
 
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
