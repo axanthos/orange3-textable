@@ -54,8 +54,10 @@ Basic interface
 ~~~~~~~~~~~~~~~
 
 The basic version of the widget permits to choose between four types of Text Data segmentation output. 
-The *Segment into Letters* option segments text data into letters; the *Segment into Words* option segments text data into words (which is mandatory in order to count segments, see cookbook); the *Segment into lines* option segments text data into lines.
-Eventually, *Use a regular expression* opens a short Regex section (see :ref:`figure 1 <segment_fig1>` below).  This Regex can be a particular string of characters (a word) or a regular expression. For instance,``\w+`` creates a
+The *Segment into Letters* option segments text data into letters; the *Segment into Words* option segments 
+text data into words (which is mandatory in order to count segments, see cookbook); the *Segment into lines* option segments text data into lines.
+Eventually, *Use a regular expression* opens a short Regex section (see :ref:`figure 1 <segment_fig1>` below). 
+This Regex can be a particular string of characters (a word) or a regular expression. For instance,``\w+`` creates a
 segment for each word of each input segment (to be precise: each continuous
 sequence of alphanumerical characters and underscores). [#]_
 
@@ -149,8 +151,7 @@ corresponding value (**Annotation key** and **value**). The **Ignore case
 regular expressions. Adding the new regular expression to the list is executed
 by finally clicking on the **Add** button.
 
-The **Options** section allows the user to define the output segmentation
-label. The **Auto-number with key** checkbox enables the program to
+Through the **Options** section, the **Auto-number with key** checkbox enables the program to
 automatically number the output segments and to associate the number to the
 annotation key specified in the text field on the right. The **Import
 annotations** checkbox copies the annotations of each input segment to the
@@ -159,15 +160,15 @@ enables the program to fuse into a single segment several distinct segments
 whose addresses are identical; the annotations associated to the fused
 segments are all copied in the single resulting segment. [#]_
 
-The **Info** section gives indications regarding the current status of the
-widget instance (see `Messages`_ below, section `Information`_).
-
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).
+
+Below the **Send** button, the user finds indications regarding the current status of the
+widget instance (see `Messages`_ below, section `Information`_).
 
 .. _segment_remote_control_ref:
 
