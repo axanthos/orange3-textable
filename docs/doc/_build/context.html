@@ -769,7 +769,9 @@ The <strong>Use collocation format</strong> button is used to format the result 
 collocation list (rather than a concordance); when it is selected, the
 <strong>Min. frequency</strong> drop-down menu allows the user to specify the (global)
 minimal frequency that the segment type must reach in order to appear in the
-list.</p>
+list. Checking the <strong>Treat distinct strings as contiguous</strong> box permits to treat
+separate strings as if they were contiguous, so that the end of each string is a
+djacent to the beginning of the next string.</p>
 <div class="figure align-center" id="id9">
 <span id="context-fig2"></span><img alt="Context widget in &quot;Containing segmentation mode&quot;" src="_images/context_mode_containing_segmentation_example.png" />
 <p class="caption"><span class="caption-text">Figure 2: <strong>Context</strong> widget (Containing segmentation mode).</span></p>
@@ -777,14 +779,14 @@ list.</p>
 <p>In <strong>Containing segmentation mode</strong> (see <a class="reference internal" href="#context-fig2"><span class="std std-ref">figure 2</span></a>), the
 <strong>Contexts</strong> section allows the user to specify the maximal number of
 characters that appear in the right and left context of the pivot.</p>
-<p>The <strong>Info</strong> section indicates if a table was correctly emitted, or
-the reasons why no table is emitted (typically, because it is empty).</p>
-<p>The <strong>Compute</strong> button triggers the emission of a table in the internal format
+<p>The <strong>Send</strong> button triggers the emission of a table in the internal format
 of Orange Textable, to the output connection(s). When it is selected, the
-<strong>Compute automatically</strong> checkbox disables the button and the widget attempts
+<strong>Send automatically</strong> checkbox disables the button and the widget attempts
 to automatically emit a segmentation at every modification of its interface or
 when its input data are modified (by deletion or addition of a connection, or
 because modified data is received through an existing connection).</p>
+<p>The informations generated below the <strong>Send</strong> button indicate if a table was correctly emitted, or
+the reasons why no table is emitted (typically, because it is empty).</p>
 </div>
 <div class="section" id="messages">
 <h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
@@ -793,10 +795,10 @@ because modified data is received through an existing connection).</p>
 <dl class="docutils">
 <dt><em>Data correctly sent to output.</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Compute’ when ready.</em></dt>
-<dd>Settings and/or input have changed but the <strong>Compute automatically</strong>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
+<dd>Settings and/or input have changed but the <strong>Send automatically</strong>
 checkbox has not been selected, so the user is prompted to click the
-<strong>Compute</strong> button (or equivalently check the box) in order for computation
+<strong>Send</strong> button (or equivalently check the box) in order for computation
 and data emission to proceed.</dd>
 <dt><em>No data sent to output yet: no input segmentation.</em></dt>
 <dd>The widget instance is not able to emit data to output because it receives
