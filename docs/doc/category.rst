@@ -171,15 +171,15 @@ selected, the corresponding annotation values will will constitute the row
 headers; if on the other hand the value *(none)* is selected, the *content* of
 the segments will be used.
 
-The **Info** section indicates if a table has been correctly emitted, or the
-reasons why no table is emitted (no input data, typically).
-
-The **Compute** button triggers the emission of a table in the internal format
+The **Send** button triggers the emission of a table in the internal format
 of Orange Textable, to the output connection(s). When it is selected, the
-**Compute automatically** checkbox disables the button and the widget attempts
+**Send automatically** checkbox disables the button and the widget attempts
 to automatically emit a segmentation at every modification of its interface or
 when its input data are modified (by deletion or addition of a connection, or
 because modified data is received through an existing connection).
+
+The informations generated below the **Send** button indicate if a table has been correctly emitted, or the
+reasons why no table is emitted (no input data, typically).
 
 Messages
 --------
@@ -190,10 +190,10 @@ Information
 *Data correctly sent to output.*
     This confirms that the widget has operated properly.
 
-*Settings were* (or *Input has*) *changed, please click 'Compute' when ready.*
-    Settings and/or input have changed but the **Compute automatically** 
+*Settings were* (or *Input has*) *changed, please click 'Send' when ready.*
+    Settings and/or input have changed but the **Send automatically** 
     checkbox has not been selected, so the user is prompted to click the 
-    **Compute** button (or equivalently check the box) in order for computation 
+    **Send** button (or equivalently check the box) in order for computation 
     and data emission to proceed.
 
 *No data sent to output yet: no input segmentation.*
