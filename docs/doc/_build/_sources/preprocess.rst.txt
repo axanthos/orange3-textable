@@ -47,22 +47,14 @@ increases the program's memory footprint; moreover this widget can only work
 on segmentations without any overlap, which means no part of the text is
 covered by more than one segment.
 
-In the **Preprocessing** section of its interface (see :ref:`figure 1
-<preprocess_fig1>` above), the **Transform case** checkbox triggers the
-systematic modification of the case: select **to lower** to convert every
+the **Transform case** checkbox triggers the systematic modification of the case: select **to lower** to convert every
 character to lower case and **to upper** to convert them to upper case. The
 **Remove accents** checkbox controls the replacement of accentuated character
 by their non-accentuated equivalents (é -> e, ç -> c, etc.).
 
-The **Options** section enables the user to define the label of the output
-segmentation (**Output segmentation label**). The **Copy annotations** button
-copies all the annotations of the input segmentation to the output
+The **Copy annotations** button copies all the annotations of the input segmentation to the output
 segmentation; it is only accessible when the **Advanced settings** checkbox is
 selected (otherwise the annotations are by default copied).
-
-The **Info** section indicates the number of segments present in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-overlaps in the input segmentation, etc.).
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
@@ -70,6 +62,10 @@ disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).
+
+Below the **Send** button, the user finds the number of segments present in the output
+segmentation, or the reasons why no segmentation is emitted (no input data,
+overlaps in the input segmentation, etc.).
 
 .. _anchor_to_caveat:
 
