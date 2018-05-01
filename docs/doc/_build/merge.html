@@ -80,12 +80,7 @@ segmentation to its output connections.</p>
 <span id="merge-fig1"></span><img alt="Merge widget (advanced interface)" src="_images/merge_advanced_example.png" />
 <p class="caption"><span class="caption-text">Figure 1: <strong>Merge</strong> widget (advanced interface).</span></p>
 </div>
-<p>The <strong>Ordering</strong> section of the widget interface (see <a class="reference internal" href="#merge-fig1"><span class="std std-ref">figure 1</span></a> above) allows the user to select the order in which the input
-segmentations are placed to form the merged output segmentation. The label of
-each input segmentation appears on a line of the list and can be selected then
-moved by clicking on the <strong>Move Up</strong> and <strong>Move Down</strong> buttons.</p>
-<p>The <strong>Options</strong> section allows the user to specify the label assigned to the
-output segmentation (<strong>Output segmentation label</strong>). The <strong>Import labels with
+<p>The <strong>Options</strong> section allows the user to import and label segments. The <strong>Import labels with
 key</strong> checkbox enables the user to create for each input segmentation an
 annotation whose value is the segmentation label (as displayed in the list)
 and whose key is specified by the user in the text field on the right of the
@@ -94,29 +89,19 @@ to automatically number the output segments and to associate the number to the
 annotation key specified in the text field on the right. The <strong>Copy
 annotations</strong> checkbox copies every input segmentation annotation to the
 output segmentation.</p>
-<p>The two last elements of the <strong>Options</strong> section influence the ordering of
-segments in the output segmentation as well as their count. The <strong>Sort
-segments</strong> checkbox enables the program to sort the segments on the basis of
-their address (string index first, then initial position, and final position);
-this option is typically useful to rearrange segments that belong to
-different segmentations of a single text in their order of occurrence in the
-text. <a class="footnote-reference" href="#id4" id="id2">[1]</a> The <strong>Fuse duplicate segments</strong> checkbox enables the program to
+<p><a class="footnote-reference" href="#id4" id="id2">[1]</a> The <strong>Fuse duplicate segments</strong> checkbox enables the program to
 fuse into a single segment several distinct segments whose addresses are the
 same; the annotations associated to the fused segments are all copied in the
 single resulting segment. <a class="footnote-reference" href="#id5" id="id3">[2]</a></p>
-<p>When the <strong>Advanced settings</strong> checkbox is not selected, only the <strong>Output
-segmentation label</strong> and <strong>Import labels with key</strong> options are accessible.
-In that case, auto-numbering is disabled, annotations are copied by default,
-and segments are sorted by address but not fused.</p>
-<p>The <strong>Info</strong> section indicates the number of segments in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-no label specified for the output segmentation, etc.).</p>
 <p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).</p>
+<p>Below the <strong>Send</strong> button, the user finds the number of segments in the output
+segmentation, or the reasons why no segmentation is emitted (no input data,
+no label specified for the output segmentation, etc.).</p>
 </div>
 <div class="section" id="messages">
 <h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>

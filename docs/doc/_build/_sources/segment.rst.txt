@@ -53,9 +53,9 @@ whether or not the **Advanced Settings** checkbox is selected.
 Basic interface
 ~~~~~~~~~~~~~~~
 
-The basic version of the widget is limited to the application of a single
-regular expression, specified in the Regex section (see :ref:`figure 1
-<segment_fig1>` below). The expression given as an example (``\w+``) creates a
+The basic version of the widget permits to choose between four types of Text Data segmentation output. 
+The *Segment into Letters* option segments text data into letters; the *Segment into Words* option segments text data into words (which is mandatory in order to count segments, see cookbook); the *Segment into lines* option segments text data into lines.
+Eventually, *Use a regular expression* opens a short Regex section (see :ref:`figure 1 <segment_fig1>` below).  This Regex can be a particular string of characters (a word) or a regular expression. For instance,``\w+`` creates a
 segment for each word of each input segment (to be precise: each continuous
 sequence of alphanumerical characters and underscores). [#]_
 
@@ -67,20 +67,15 @@ sequence of alphanumerical characters and underscores). [#]_
 
     Figure 1: **Segment** widget (basic interface).
 
-The **Options** section allows the user to define the output segmentation
-label. The annotations of each input segment are systematically copied in the
-corresponding output segments (see `Advanced interface`_, option **Import
-annotations**).
-
-The **Info** section gives indications regarding the current status of the
-widget instance (see `Messages`_ below, section `Information`_).
-
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).
+
+Below the **Send** button the user finds all the indications regarding the current status of the
+widget instance (see `Messages`_ below, section `Information`_).
 
 Advanced interface
 ~~~~~~~~~~~~~~~~~~

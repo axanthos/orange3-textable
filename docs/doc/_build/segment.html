@@ -92,26 +92,23 @@ parentheses) of the regular expression. <a class="footnote-reference" href="#id6
 whether or not the <strong>Advanced Settings</strong> checkbox is selected.</p>
 <div class="section" id="basic-interface">
 <h3>Basic interface<a class="headerlink" href="#basic-interface" title="Permalink to this headline">¶</a></h3>
-<p>The basic version of the widget is limited to the application of a single
-regular expression, specified in the Regex section (see <a class="reference internal" href="#segment-fig1"><span class="std std-ref">figure 1</span></a> below). The expression given as an example (<code class="docutils literal"><span class="pre">\w+</span></code>) creates a
+<p>The basic version of the widget permits to choose between four types of Text Data segmentation output.
+The <em>Segment into Letters</em> option segments text data into letters; the <em>Segment into Words</em> option segments text data into words (which is mandatory in order to count segments, see cookbook); the <em>Segment into lines</em> option segments text data into lines.
+Eventually, <em>Use a regular expression</em> opens a short Regex section (see <a class="reference internal" href="#segment-fig1"><span class="std std-ref">figure 1</span></a> below).  This Regex can be a particular string of characters (a word) or a regular expression. For instance,``w+`` creates a
 segment for each word of each input segment (to be precise: each continuous
 sequence of alphanumerical characters and underscores). <a class="footnote-reference" href="#id7" id="id3">[2]</a></p>
 <div class="figure align-center" id="id10">
 <span id="segment-fig1"></span><img alt="Basic interface of the Segment widget" src="_images/segment_example.png" />
 <p class="caption"><span class="caption-text">Figure 1: <strong>Segment</strong> widget (basic interface).</span></p>
 </div>
-<p>The <strong>Options</strong> section allows the user to define the output segmentation
-label. The annotations of each input segment are systematically copied in the
-corresponding output segments (see <a class="reference internal" href="#advanced-interface">Advanced interface</a>, option <strong>Import
-annotations</strong>).</p>
-<p>The <strong>Info</strong> section gives indications regarding the current status of the
-widget instance (see <a class="reference internal" href="#messages">Messages</a> below, section <a class="reference internal" href="#information">Information</a>).</p>
 <p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).</p>
+<p>Below the <strong>Send</strong> button the user finds all the indications regarding the current status of the
+widget instance (see <a class="reference internal" href="#messages">Messages</a> below, section <a class="reference internal" href="#information">Information</a>).</p>
 </div>
 <div class="section" id="advanced-interface">
 <h3>Advanced interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h3>
