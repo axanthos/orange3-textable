@@ -274,13 +274,16 @@ only parameter is the window size (in number of segments), defined by the
     Figure 4: **Count** widget (**Containing segmentation** mode).
 
 The **Left--right neighborhood** mode (see :ref:`figure 3 <count_fig3>`)
-allows the user to specifycontext types based on the *n* segments immediately
+allows the user to specify context types based on the *n* segments immediately
 to the left and/or right of each segment; this mode notably allows the user to
 build a Markov chain transition matrix. The **Left context size** and **Right
 context size** parameters determine the number of segments taken into
 consideration in each part of the context. The **Unit position marker** text
 field allows the user to specify the (possibly empty) character chain to
 insert in-between the left and right parts of the context in the row headers.
+The checkbox (**Treat distinct strings as contiguous**) enables the user to to choose 
+if separate strings should be treated as if they were actually contiguous, so that 
+the end of each string is adjacent to the beginning of the next string. 
 
 Finally, the **Containing segmentation** mode (see :ref:`figure 4
 <count_fig4>`) corresponds to the case where contexts are defined by the
@@ -294,7 +297,7 @@ the row headers; if however the value *(none)* is selected, the *content* of
 the segments will be exploited. The **Merge** contexts checkbox enables the
 program to globally count the units in the whole context segmentation.
 
-The **Info** section indicates the sum of frequencies in the output table, or
+Below the **Send button**, the user finds indications such as the sum of frequencies in the output table, or
 the reasons why not table is emitted (no input data or total frequency is
 zero).
 
