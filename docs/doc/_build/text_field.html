@@ -77,19 +77,14 @@
 segmentation containing a single unannoted segment covering the whole string.
 Secondarily, <strong>Text Field</strong> can be used to manually edit a previously imported
 string.</p>
-<p>The interface of the widget is divided in three zones (see <a class="reference internal" href="#text-field-fig1"><span class="std std-ref">figure 1</span></a> below). The upper part is a text field editable by the
+<p>The interface of the widget is divided in two zones (see <a class="reference internal" href="#text-field-fig1"><span class="std std-ref">figure 1</span></a> below). The upper part is a text field editable by the
 user. The standard editing functions (copy, paste, cancel, etc.) are
 accessible through a right-click on the field.</p>
 <div class="figure align-center" id="id2">
 <span id="text-field-fig1"></span><img alt="Interface of the Text field widget" src="_images/text_field_example.png" />
 <p class="caption"><span class="caption-text">Figure 1: Interface of the <em>Text field</em> widget.</span></p>
 </div>
-<p>The <strong>Options</strong> section allows the user to define the label of the output
-segmentation (<strong>Output segmentation label</strong>), here <em>text_string</em>.</p>
-<p>The <strong>Info</strong> section indicates the length of the output segmentation in
-characters, or the reasons why no segmentation is emitted (in particular if no
-text has been entered in the field). In the example, the single segment
-contained in the output segmentation covers 16 characters.</p>
+<p>The <strong>Field</strong> section allows the user to copy or manually edit texts. The text can be segmented using a character.</p>
 <p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
 disables the button and the widget attempts to automatically emit a
@@ -144,15 +139,7 @@ been entered in the text field.</dd>
 <dd>A problem with the instance’s parameters and/or input data prevents it
 from operating properly, and additional diagnostic information can be
 found in the <strong>Widget state</strong> box at the bottom of the instance’s
-interface (see <a class="reference internal" href="#warnings">Warnings</a> below).</dd>
-</dl>
-</div>
-<div class="section" id="warnings">
-<h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><em>No label was provided.</em></dt>
-<dd>A label must be entered in the <strong>Output segmentation label</strong> field in
-order for computation and data emission to proceed.</dd>
+interface (see <a href="#id3"><span class="problematic" id="id4">`Warnings`_</span></a> below).</dd>
 </dl>
 </div>
 </div>
@@ -187,7 +174,6 @@ order for computation and data emission to proceed.</dd>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#messages">Messages</a><ul>
 <li><a class="reference internal" href="#information">Information</a></li>
-<li><a class="reference internal" href="#warnings">Warnings</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#examples">Examples</a></li>
