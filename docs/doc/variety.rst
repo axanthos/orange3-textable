@@ -217,7 +217,9 @@ will be used. The **Sequence length** drop-down menu allows the user to
 indicate if the widget should consider the isolated segments or the
 *n--grams*. Finally, the **Weigh by frequency** checkbox allows the user to
 enable the weighing of the units by their frequency (thus the perplexity
-measure rather than the variety).
+measure rather than the variety). Checking the **Dynamically adjust subsample size** box 
+permits a more robust variety estimation. This calculation uses the RMSP subsample size 
+adjustment method described in Xanthos and Guex 2015.
 
 In the **Categories** section, the **Measure diversity per category** checkbox
 triggers the calculation of the average diversity by category. The
