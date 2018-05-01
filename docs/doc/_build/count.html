@@ -549,13 +549,16 @@ only parameter is the window size (in number of segments), defined by the
 <p class="caption"><span class="caption-text">Figure 4: <strong>Count</strong> widget (<strong>Containing segmentation</strong> mode).</span></p>
 </div>
 <p>The <strong>Left–right neighborhood</strong> mode (see <a class="reference internal" href="#count-fig3"><span class="std std-ref">figure 3</span></a>)
-allows the user to specifycontext types based on the <em>n</em> segments immediately
+allows the user to specify context types based on the <em>n</em> segments immediately
 to the left and/or right of each segment; this mode notably allows the user to
 build a Markov chain transition matrix. The <strong>Left context size</strong> and <strong>Right
 context size</strong> parameters determine the number of segments taken into
 consideration in each part of the context. The <strong>Unit position marker</strong> text
 field allows the user to specify the (possibly empty) character chain to
-insert in-between the left and right parts of the context in the row headers.</p>
+insert in-between the left and right parts of the context in the row headers.
+The checkbox (<strong>Treat distinct strings as contiguous</strong>) enables the user to to choose
+if separate strings should be treated as if they were actually contiguous, so that
+the end of each string is adjacent to the beginning of the next string.</p>
 <p>Finally, the <strong>Containing segmentation</strong> mode (see <a class="reference internal" href="#count-fig4"><span class="std std-ref">figure 4</span></a>) corresponds to the case where contexts are defined by the
 segment types that appear in a segmentation (which can be that of the units or
 another). This segmentation, that we will call <em>context segmentation</em> by
@@ -566,7 +569,7 @@ the keys is selected, the corresponding annotation value types will constitute
 the row headers; if however the value <em>(none)</em> is selected, the <em>content</em> of
 the segments will be exploited. The <strong>Merge</strong> contexts checkbox enables the
 program to globally count the units in the whole context segmentation.</p>
-<p>The <strong>Info</strong> section indicates the sum of frequencies in the output table, or
+<p>Below the <strong>Send button</strong>, the user finds indications such as the sum of frequencies in the output table, or
 the reasons why not table is emitted (no input data or total frequency is
 zero).</p>
 <p>The <strong>Compute</strong> button triggers the emission of a table in the internal format
