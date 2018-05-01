@@ -47,10 +47,7 @@ used to control its behavior remotely.
     Figure 1: Interface of the **Message** widget.
 
 The widget's interface offers no user-controlled option (see :ref:`figure 1
-<message_fig1>` above). The **Info** section indicates the number of items
-present in the parsed JSON data, or the reasons why no *JSONObject* can be
-emitted (no input or invalid data, input segmentation containing more than one
-segment).
+<message_fig1>` above). 
 
 The **Send** button triggers the emission of a **JSONMessage** object to the
 output connection(s). When it is selected, the **Send automatically** checkbox
@@ -58,6 +55,11 @@ disables the button and the widget attempts to automatically emit a
 segmentation when its input data are modified (by deletion or addition of a
 connection, or because modified data is received through an existing
 connection).
+
+The informations generated below the **Send** button indicate the number of items
+present in the parsed JSON data, or the reasons why no *JSONObject* can be
+emitted (no input or invalid data, input segmentation containing more than one
+segment).
 
 Messages
 --------
