@@ -118,9 +118,8 @@ To try this mode out, modify the schema used in the
     Figure 3: Schema for testing the :ref:`Count` widget (Containing segmentation mode).
 
 The first instance of :ref:`Segment` produces a word segmentation (**Regex:**
-``\w+`` and **Output segmentation label:** *words*) which the second instance
-(*Segment (1)*) further decomposes into letters (**Regex:** ``\w`` and
-**Output segmentation label:** *letters*). The instance of :ref:`Count` is
+``\w+`` and **Widget label:** *Words*) which the second instance (the upper one) further decomposes into letters (**Regex:** ``\w`` and
+**Widget label:** *Letters*). The instance of :ref:`Count` is
 configured as shown on :ref:`figure 4 <counting_specific_contexts_fig4>`
 below. The resulting table is the same as table 2
 :ref:`here <segmentations_tables_table2>` (possibly with a different ordering
