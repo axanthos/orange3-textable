@@ -29,8 +29,7 @@ below). In what follows, we will suppose that the string typed in
     
 In its basic form (i.e. with **Advanced settings** unchecked, see
 :ref:`figure 2 <segmenting_data_smaller_units_fig2>` below),
-:ref:`Segment` takes a single parameter (aside from the
-**Output segmentation label**), namely a regex. The widget then looks for all
+:ref:`Segment` offers four parameters in the drop-down menu named segment type. The string can be segmented into lines, letters, words or using a regex. If chose, the widget then looks for all
 matches of the regex pattern in each successive input segment, and creates for
 every match a new segment in the output segmentation.
 
@@ -53,6 +52,11 @@ regexes will often use the ``\b`` *anchor*, which represents a word boundary.
 For instance, words that contain less than 4 characters can be retrieved
 with ``\b\w{1,3}\b``, those ending in *-tion* with ``\b\w+tion\b``, and the
 inflected forms of *retrieve* with ``\bretriev(e|es|ed|ing)\b``.
+
+With the Advanced settings checked (see figure 3 below), several regexes can be added to the list. Regexes can be tokenized or splited, depending on your research goal. For more information, see 
+:ref:`Segment widget <Segment>`
+
+.. figure:: figures/segment_advanced_example.png
 
 See also
 --------

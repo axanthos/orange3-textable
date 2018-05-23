@@ -29,10 +29,8 @@ has mainly two purposes:
         a table containing data encoded in Unicode.
         
 As shown on :ref:`figure 1 <converting_table_formats_fig1>` below, section
-**Encoding** of the widget's interface lets the user choose the encoding
-of the *Table* object emitted by the widget (**Orange table**); variants of
-Unicode should be avoided here since they are currently not well supported by
-other widgets in Orange Canvas.
+**Encoding** of the widget's interface lets the user choose the encoding for text file export (**Outupt file**); in 
+this case, there are no counter-indications to the use of Unicode.
 
 .. _converting_table_formats_fig1:
 
@@ -42,9 +40,7 @@ other widgets in Orange Canvas.
 
     Figure 1: Basic interface of widget :ref:`Convert`.
 
-The encoding for text file export can also be selected in this section
-(**Output file**); in this case there are no counter-indications to
-the use of Unicode. Note that when exporting to the clipboard, the utf-8
+Note that when exporting to the clipboard, the utf-8
 encoding is used by default. Export proper is performed by clicking the
 **Export** button and selecting the output file in the dialog that appears.
 

@@ -12,7 +12,7 @@ produces frequency tables such as tables 1 and 2
 illustrated on :ref:`figure 1 <counting_segment_types_fig1>` below. As usual,
 we will suppose that the :ref:`Text Field` instance contains
 *a simple example*. The :ref:`Segment` instance is configured for
-letter segmentation (**Regex:** ``\w`` and **Output segmentation label:**
+letter segmentation (**Regex:** ``\w`` and **Widget Segment label:**
 *letters*). The default configuration of the instances of
 :ref:`Convert` and *Data Table* (from the **Data** tab of Orange
 Canvas) needs not be modified for this example.
@@ -44,8 +44,8 @@ the order of columns).
 
     Figure 2: Counting the frequency of letter types with widget :ref:`Count`.
 
-Note that checkbox *Compute automatically* is unchecked by default so that
-the user must click on **Compute** to trigger computations. The motivation for
+Note that checkbox *Send automatically* is unchecked by default so that
+the user must click on **Send** to trigger computations. The motivation for
 this default setting is that
 :doc:`table construction widgets <table_construction_widgets>` can be quite
 slow when operating on large segmentations, and it can be annoying to see

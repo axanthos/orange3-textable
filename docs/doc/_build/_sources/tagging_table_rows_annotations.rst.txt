@@ -13,9 +13,9 @@ of :ref:`Count`, :ref:`Length`, :ref:`Variety`, or :ref:`Category`.
 
 Consider the example of the texts in English and French introduced
 :doc:`here <annotating_merging>`. Suppose that after having merged them into
-a single segmentation with an instance of :ref:`Merge` (**Output segmentation
-label:** *texts*), we segment these three texts into letters with an instance
-of :ref:`Segment` (**Regex** ``\w``, **Output segmentation label:** *letters*),
+a single segmentation with an instance of :ref:`Merge` (**Widget Merge
+label:** *Texts*), we segment these three texts into letters with an instance
+of :ref:`Segment` (**Regex** ``\w``, **Widget Segment label:** *letters*),
 as in the schema shown on
 :ref:`figure 1 <tagging_table_rows_annotations_fig1>` below; both
 segmentations (*texts* and *letters*) can then be sent to an instance of
