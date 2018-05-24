@@ -4,6 +4,9 @@
 
 Annotating by merging
 =====================
+Whenever Textable widgets manipulate text contents, they can manipulate
+annotations instead: you can search for segments attached to specific
+annotations, count annotations, merge data based on their annotations, etc.
 
 Widget :ref:`Merge` makes it possible to convert the labels of its input
 segmentations into annotation values. Suppose for instance that three
