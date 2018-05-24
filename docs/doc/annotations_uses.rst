@@ -9,9 +9,13 @@ In Orange Textable, an *annotation* is a piece of information attached to a
 segment. Annotations consist of two parts: *key* and *value*. For instance, in
 the now classical case of the word segmentation of *a simple example*, segment
 *example* could be associated with the annotation *{part of speech: noun}*;
-this annotation's key is *part of speech* and its value is *noun*. The same
-segment could be simultaneously associated with another annotation such as
+this annotation's key is *part of speech* and its value is *noun*. 
+A segment can have zero, one, or several annotations attached to it.
+The same segment could be simultaneously associated with another annotation such as
 *{word category: lexical}*, or any *{key: value}* pair deemed relevant.
+Note that annotations keys are unique : Since they serve to recognize various annotation values attached to a single
+segment, annotation keys cannot be duplicated within the segment: in the
+example above, "simple" can only have one value at a time for key "category".
 
 Even though we have carefully ignored them so far, annotations play a
 fundamental role in text data processing and analysis. They make it possible
