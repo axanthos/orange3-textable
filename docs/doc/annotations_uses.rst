@@ -32,6 +32,6 @@ which would be at best extremely difficult, if ever possible, without having
 encoded the relevant information by means of annotations.
 
 In the following sections, we will first see two simple methods for creating
-or importing annotations in Orange Textable, and then various ways of
+or importing annotations in Orange Textable based on previous widget labels, and then various ways of
 exploiting such annotations.
 
