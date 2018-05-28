@@ -4,14 +4,11 @@
    :keywords: Orange, Textable, documentation, keyboard, input, segmentation,
               display
 
-Keyboard input and segmentation display
+Keyboard input, widget labelling and segmentation display
 =======================================
 
 Typing text in a :ref:`Text Field` widget is the simplest way to
-import a string in Orange Textable. This widget
-emits in output a segmentation containing a single segment whose address
-points to the entire string that was typed. This segmentation is assigned the
-label specified in the **Output segmentation label** field (see
+import a string in Orange Textable. As a result, the widget creates a segmentation with a single segment covering the entire string. (see
 :ref:`figure 1 <keyboard_input_segmentation_fig1>` below):
 
 .. _keyboard_input_segmentation_fig1:
@@ -20,7 +17,10 @@ label specified in the **Output segmentation label** field (see
     :align: center
     :alt: Example usage of widget Text Field
 
-    Figure 1: Typing *a simple example* in widget :ref:`Text Field`.
+    Figure 1: Typing some simple examples in widget :ref:`Text Field`.
+Each segmentation is identified by a label which is the name of the widget that creates the segmentation. 
+You can rename this widget to make the label more meaningful (see figure 1 below). 
+As we will see later, a segmentation can also store annotations associated with segments. 
     
 This widget's simplicity makes it most adequate for pedagogic purposes. Later,
 we will discover other, more powerful ways of importing strings.
