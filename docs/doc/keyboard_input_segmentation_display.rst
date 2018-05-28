@@ -55,7 +55,7 @@ covering the whole string (see :ref:`figure 3
 By default, :ref:`Display` passes its input data without
 modification to its output connections. It is very useful for viewing
 intermediate results in an Orange Textable workflow and making sure that other
-widgets process data as expected.
+widgets have processed data as expected.
     
 See also
 --------
