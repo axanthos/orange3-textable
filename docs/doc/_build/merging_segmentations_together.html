@@ -67,25 +67,18 @@ a different string in each <a class="reference internal" href="text_field.html#t
 <em>text_string</em> and <em>text_string2</em>). Eventually, connect the instances as
 shown on <a class="reference internal" href="#merging-segmentations-together-fig1"><span class="std std-ref">figure 1</span></a>.</p>
 <div class="figure align-center" id="id1">
-<span id="merging-segmentations-together-fig1"></span><a class="reference internal image-reference" href="_images/merge_example_schema.png"><img alt="Schema illustrating the usage of widget Merge" src="_images/merge_example_schema.png" style="width: 493.5px; height: 360.75px;" /></a>
+<span id="merging-segmentations-together-fig1"></span><a class="reference internal image-reference" href="_images/merge_example_schema.png"><img alt="Schema illustrating the usage of widget Merge" src="_images/merge_example_schema.png" style="width: 1005.75px; height: 655.5px;" /></a>
 <p class="caption"><span class="caption-text">Figure 1: Grouping <em>a simple example</em> with <em>another example</em> using widget <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
 </div>
 <p>The interface of widget <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> (see
-<a class="reference internal" href="#merging-segmentations-together-fig2"><span class="std std-ref">figure 2</span></a> below) illustrates a
-feature shared by most Orange Textable widgets: the <strong>Advanced settings</strong>
-checkbox triggers the display of more complex controls offering more
-possibilities to the user. For now we will stick to the basic settings and
-leave the box unchecked.</p>
+<a class="reference internal" href="#merging-segmentations-together-fig2"><span class="std std-ref">figure 2</span></a> below) features 4 options :
+2 annotation keys; the possibility of copying segment inputs annotations if any and the option of fusing segments that have the same adress.</p>
 <div class="figure align-center" id="id2">
 <span id="merging-segmentations-together-fig2"></span><img alt="Interface of widget merge" src="_images/merge_example.png" />
 <p class="caption"><span class="caption-text">Figure 2: Interface of widget <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
 </div>
-<p>Section <strong>Ordering</strong> of the widget’s interface lets the user view the labels
-of incoming segmentations and control the order in which they will appear in
-the output segmentation (by selecting them and clicking on <strong>Move Up</strong> /
-<strong>Down</strong>). The <strong>Output segmentation label</strong> can be set in section
-<strong>Options</strong>. We will return <a class="reference internal" href="annotating_merging.html"><span class="doc">later</span></a> to the purpose
-of checkbox <strong>Import labels with key</strong>; leave it unchecked for now.</p>
+<p>We will return <a class="reference internal" href="annotating_merging.html"><span class="doc">later</span></a> to the purpose
+of checkbox <strong>Import labels with key</strong>, as well as <strong>Auto-number with key</strong>. Leave them unchecked for now.</p>
 <div class="figure align-center" id="id3">
 <span id="merging-segmentations-together-fig3"></span><img alt="Displaying a merged segmentation" src="_images/display_merged_example.png" />
 <p class="caption"><span class="caption-text">Figure 3: Merged segmentation.</span></p>
@@ -95,8 +88,7 @@ resulting merged segmentation, as displayed by widget
 <a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a>. As can be seen, <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> makes it easy
 to concatenate several strings into a single segmentation. If the incoming
 segmentations contained several segments, each of them would appear in the
-output segmentation, in the order specified under <strong>Ordering</strong> (and, within
-each incoming segmentation, in the original order of segments).</p>
+output segmentation, in the order they have been linked to the Merge widget.</p>
 <p id="merging-segmentations-together-ex"><strong>Exercise:</strong> Can you add a new instance of <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> to the
 schema illustrated on <a class="reference internal" href="#merging-segmentations-together-fig1"><span class="std std-ref">figure 1</span></a>
 above and modify the connections (but not the configuration of existing
@@ -110,7 +102,7 @@ widgets) so that the segmentation given in
 </div>
 <p id="solution-merging-segmentations-together-ex"><strong>Solution:</strong> (<a class="reference internal" href="#merging-segmentations-together-ex"><span class="std std-ref">back to the exercise</span></a>)</p>
 <div class="figure align-center" id="id5">
-<a class="reference internal image-reference" href="_images/solution_exercise_merge.png"><img alt="New Merge widget takes input from old one and Text field, and sends output to Display" src="_images/solution_exercise_merge.png" style="width: 542.5px; height: 217.7px;" /></a>
+<a class="reference internal image-reference" href="_images/solution_exercise_merge.png"><img alt="New Merge widget takes input from old one and Text field, and sends output to Display" src="_images/solution_exercise_merge.png" style="width: 670.5999999999999px; height: 350.0px;" /></a>
 <p class="caption"><span class="caption-text">Figure 5: Solution to the <a class="reference internal" href="#merging-segmentations-together-ex"><span class="std std-ref">exercise</span></a>.</span></p>
 </div>
 <div class="section" id="see-also">

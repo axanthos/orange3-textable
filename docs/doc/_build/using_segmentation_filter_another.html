@@ -78,16 +78,16 @@ the time being.)</p>
 <a class="reference internal" href="#using-segmentation-filter-another-fig2"><span class="std std-ref">figure 2</span></a> below). The first
 instance of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> contains the text to process (for
 instance the
-<a class="reference external" href="http://www.un.org/en/documents/udhr/">Universal Declaration of Human Rights</a>),
+<a class="reference external" href="http://www.un.org/en/documents/udhr/">Universal Declaration of Human Rights</a>) and is labelled as such,
 while the second instance, <em>Text Field (1)</em>, contains the list of English
 stopwords mentioned above. Both instances of <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> produce
 a word segmentation with regex <code class="docutils literal"><span class="pre">\w+</span></code>; the only difference in their
-configuration is the output segmentation label , i.e. <em>words</em> for <em>Segment</em>
-and <em>stopwords</em> for <em>Segment (1)</em>. Finally, the instance of
+configuration is the Segment Widget label , i.e. <em>words</em> for the segmentation of the UDHR
+and <em>stopwords</em> for the segmentation of <em>Text Field (1)</em>. Finally, the instance of
 <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> is configured as shown on
 <a class="reference internal" href="#using-segmentation-filter-another-fig1"><span class="std std-ref">figure 1</span></a> above.</p>
 <div class="figure align-center" id="id2">
-<span id="using-segmentation-filter-another-fig2"></span><a class="reference internal image-reference" href="_images/intersect_example_schema.png"><img alt="Schema illustrating the use of the Intersect widget for stopword removal" src="_images/intersect_example_schema.png" style="width: 408.0px; height: 196.8px;" /></a>
+<span id="using-segmentation-filter-another-fig2"></span><a class="reference internal image-reference" href="_images/intersect_example_schema.png"><img alt="Schema illustrating the use of the Intersect widget for stopword removal" src="_images/intersect_example_schema.png" style="width: 663.2px; height: 320.0px;" /></a>
 <p class="caption"><span class="caption-text">Figure 2: Example schema for removing stopword using widget <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> .</span></p>
 </div>
 <p>The content of the first segments of the resulting segmentation is:</p>

@@ -11,7 +11,7 @@ hopefully easy is the concept of "segmentation", which is at the heart of
 Orange Textable.
 
 In this section, you'll learn about segmentations and closely related topics
-such as strings and segments. You'll also survey the main ways in which
+such as strings, widget labels and segments. You'll also survey the main ways in which
 segmentations are used in Orange Textable.
 
 .. toctree::

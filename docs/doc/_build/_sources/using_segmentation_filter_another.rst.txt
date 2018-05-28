@@ -38,12 +38,12 @@ In order to try out the widget, set up a schema similar to the one shown on
 :ref:`figure 2 <using_segmentation_filter_another_fig2>` below). The first
 instance of :ref:`Text Field` contains the text to process (for
 instance the
-`Universal Declaration of Human Rights <http://www.un.org/en/documents/udhr/>`_),
+`Universal Declaration of Human Rights <http://www.un.org/en/documents/udhr/>`_) and is labelled as such,
 while the second instance, *Text Field (1)*, contains the list of English
 stopwords mentioned above. Both instances of :ref:`Segment` produce
 a word segmentation with regex ``\w+``; the only difference in their
-configuration is the output segmentation label , i.e. *words* for *Segment*
-and *stopwords* for *Segment (1)*. Finally, the instance of
+configuration is the Segment Widget label , i.e. *words* for the segmentation of the UDHR
+and *stopwords* for the segmentation of *Text Field (1)*. Finally, the instance of
 :ref:`Intersect` is configured as shown on
 :ref:`figure 1 <using_segmentation_filter_another_fig1>` above.
 
