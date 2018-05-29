@@ -52,7 +52,12 @@ Contents
 .. toctree::
     :maxdepth: 2
 
-    Getting started <getting_started>
+    Textable's basics <Textable_basics>
+	
+.. toctree::
+    :maxdepth: 2
+	
+	Advanced topics <advanced_topics>
 
 .. toctree::
     :maxdepth: 2
