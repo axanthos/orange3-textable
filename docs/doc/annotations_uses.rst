@@ -4,6 +4,9 @@
 
 The uses of annotating segmentations
 ==========================
+Annotations are bits of information attached to text segments. 
+They let you go beyond what's in the text, and extend Orange Textable's analytic capacities
+from textual content to user-provided interpretative information and metadata.
 
 In Orange Textable, an *annotation* is a piece of information attached to a
 segment. Annotations consist of two parts: *key* and *value*. For instance, in
