@@ -19,4 +19,4 @@ To benefit from the whole potential of Textable, you'll need to learn how to man
 	A note on regular expressions <note_regular_expressions>
 	Partitioning segmentations using a regex <partitioning_segmentations>
 	Using a segmentation to filter another <using_segmentation_filter_another>
-	XML Annotation-based selection using a regex <annotation_based_selection>
+	XML Annotation-based selection using a regex <xml_annotation_based_selection>
