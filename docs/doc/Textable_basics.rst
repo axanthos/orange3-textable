@@ -3,7 +3,7 @@
    :keywords: Orange, Textable, documentation, textable basics, tutorial
 
 Textable's basics
-===============
+==================
 
 This part of the documentation is a tutorial that introduces the basic usage patterns of Orange Textable. 
 It is meant to be read in the indicated order. Note that a basic familiarity with the interface of Orange Canvas is assumed; if needed,`this short tutorial

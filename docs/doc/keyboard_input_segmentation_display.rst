@@ -5,7 +5,7 @@
               display
 
 Keyboard input, widget labelling and segmentation display
-=======================================
+===========================================================
 
 Typing text in a :ref:`Text Field` widget is the simplest way to
 import a string in Orange Textable. As a result, the widget creates a segmentation with a single segment covering the entire string. (see
@@ -66,7 +66,7 @@ See also
 * :doc:`Cookbook: Display text content <display_text_content>`
 
 Footnotes
---------
+---------
 
 [#] A segment is basically a substring of characters. Every segment has an address consisting of three elements:
 1) string index
