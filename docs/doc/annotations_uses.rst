@@ -31,7 +31,6 @@ exploited to study the distribution of discourse types as a function of genre,
 which would be at best extremely difficult, if ever possible, without having
 encoded the relevant information by means of annotations.
 
-In the following sections, we will first see two simple methods for creating
-or importing annotations in Orange Textable based on previous widget labels, and then various ways of
-exploiting such annotations.
+In the following section, we will see a simple method for creating annotations in Orange Textable using the :ref:`Merge` widget, 
+and then various ways of exploiting such annotations.
 
