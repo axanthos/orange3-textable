@@ -25,8 +25,8 @@ Tables enable users to analyze text data (context, count, length, variety, coocc
     Keyboard input, widget labelling and segmentation display <keyboard_input_segmentation_display>
     Merging and segmenting <merging_and_segmenting>
     Segmenting data into smaller units <segmenting_data_smaller_units>
-    The uses of annotating segmentations <annotations_uses>
-    Merging and annotations <annotating_merging>
+    The uses of annotating segmentations <uses_annotating_segmentations>
+    Merging and annotating <merging_annotating>
 	From segmentations to tables <segmentations_tables>
 	Counting segment types <counting_segment_types>
 	Counting in specific contexts <counting_specific_contexts>

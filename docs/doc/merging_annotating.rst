@@ -1,8 +1,8 @@
 .. meta::
-   :description: Orange Textable documentation, merging and annotations
+   :description: Orange Textable documentation, merging and annotating
    :keywords: Orange, Textable, documentation, annotation, merge
 
-Merging and annotations
+Merging and annotating
 =====================
 Whenever Textable widgets manipulate text contents, they can manipulate
 annotations instead: you can search for segments attached to specific

@@ -1,5 +1,5 @@
 .. meta::
-   :description: Orange Textable documentation, annotations and their uses
+   :description: Orange Textable documentation, Uses of annotating segmentations
    :keywords: Orange, Textable, documentation, annotations, uses
 
 The uses of annotating segmentations
