@@ -18,9 +18,8 @@ segmentations are used in Orange Textable.
     :maxdepth: 1
    
     Strings, segments, and segmentations <strings_segments_segmentations>
-    Keyboard input and segmentation display <keyboard_input_segmentation_display>
-    Merging segmentations together <merging_segmentations_together>
-    A note on regular expressions <note_regular_expressions>
+    Keyboard input, widget labelling and segmentation display <keyboard_input_segmentation_display>
+    Merging and segmenting <merging_and_segmenting>
     Segmenting data into smaller units <segmenting_data_smaller_units>
     Partitioning segmentations <partitioning_segmentations>
     Using a segmentation to filter another <using_segmentation_filter_another>
