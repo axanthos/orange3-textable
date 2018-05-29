@@ -2,7 +2,7 @@
    :description: Orange Textable documentation, annotations and their uses
    :keywords: Orange, Textable, documentation, annotations, uses
 
-Annotations and their uses
+The uses of annotating segmentations
 ==========================
 
 In Orange Textable, an *annotation* is a piece of information attached to a
