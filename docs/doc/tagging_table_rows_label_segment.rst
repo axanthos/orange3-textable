@@ -1,9 +1,9 @@
 .. meta::
-   :description: Orange Textable documentation, tagging table rows with widget labels
+   :description: Orange Textable documentation, tagging table rows with segments and labels
                  annotations
    :keywords: Orange, Textable, documentation, table, row, label, annotations
 
-Tagging table rows with widget labels as annotations
+Tagging table rows with segments and labels
 ===================================
 
 There are several situations in which annotations attached to a segment can be

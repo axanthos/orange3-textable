@@ -26,11 +26,11 @@ Tables enable users to analyze text data (context, count, length, variety, coocc
     Merging and segmenting <merging_and_segmenting>
     Segmenting data into smaller units <segmenting_data_smaller_units>
     The uses of annotating segmentations <annotations_uses>
-    Annotating by merging <annotating_merging>
+    Merging and annotations <annotating_merging>
 	From segmentations to tables <segmentations_tables>
 	Counting segment types <counting_segment_types>
 	Counting in specific contexts <counting_specific_contexts>
-	Tagging table rows with widget labels as annotations <tagging_table_rows_annotations>
+	Tagging table rows with segments and labels <tagging_table_rows_label_segment>
     
 
 
