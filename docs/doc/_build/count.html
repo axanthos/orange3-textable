@@ -1,15 +1,18 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Count widget" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="Orange Textable documentation, Count widget" name="description" />
 <meta content="Orange, Textable, documentation, Count, widget" name="keywords" />
 
     <title>Count &#8212; Textable v3.1.0b3 documentation</title>
+    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -28,7 +31,7 @@
     <link rel="next" title="Length" href="length.html" />
     <link rel="prev" title="Table construction widgets" href="table_construction_widgets.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -77,7 +80,7 @@ the contexts in which the units will be counted</p>
 <p>This widget inputs one or several segmentations, counts the frequency of
 segments defined by one of the segmentations (potentially within segments
 defined by another), and sends the result in the form of a <em>contingency
-table</em> (or <em>co-occurrence matrix</em> or also <em>term–document matrix</em>).</p>
+table</em> (or <em>co-occurrence matrix</em> or also <em>term&#8211;document matrix</em>).</p>
 <p>The contingency tables produced by this widget are of <em>PivotCrosstab</em> type,
 a subtype of the generic <em>Table</em> format (see <a class="reference internal" href="convert.html#convert"><span class="std std-ref">Convert</span></a> widget, section
 <a class="reference internal" href="convert.html#anchor-to-table-formats"><span class="std std-ref">Table formats</span></a>). In such a table, each column
@@ -160,10 +163,10 @@ example</em> <a class="footnote-reference" href="#id5" id="id2">[1]</a>:</p>
 <td>4</td>
 <td><em>vowel</em></td>
 </tr>
-<tr class="row-odd"><td>…</td>
-<td>…</td>
-<td>…</td>
-<td>…</td>
+<tr class="row-odd"><td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
 </tr>
 <tr class="row-even"><td><em>e</em></td>
 <td>16</td>
@@ -305,8 +308,8 @@ speech</em> and contexts with the key <em>word category</em>:</p>
 </tbody>
 </table>
 <p>Orange Textable offers two other ways to define contexts while still using a
-single segmentation. The first relies on the notion of a “window” of <em>n</em>
-segments that we progressively “slide” from the beginning to the end of the
+single segmentation. The first relies on the notion of a &#8220;window&#8221; of <em>n</em>
+segments that we progressively &#8220;slide&#8221; from the beginning to the end of the
 segmentation. In our example, by applying this principle to the <em>letters</em>
 segmentation and by setting the window size to 11 segments, we thus define
 the following contexts:</p>
@@ -357,8 +360,8 @@ single segmentation consists of defining the contexts as <em>n</em> segments
 immediately to the left and/or to the right of each segment. For example,
 based on the <em>letter category</em> annotations of segmentation <em>letters</em>, defining
 the contexts as the two segments immediately on the left and on the right of
-the segment results in the following contingency table (where the ‘+’ symbol
-separates the successive segments of the context and the underscore symbol ‘_’
+the segment results in the following contingency table (where the &#8216;+&#8217; symbol
+separates the successive segments of the context and the underscore symbol &#8216;_&#8217;
 separates the left and right parts of the context):</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -463,7 +466,7 @@ following example):</p>
 </tbody>
 </table>
 <p>Finally, in every scenario considered here, we could also take an interest for
-the frequency of the sequences from 2, 3, …, <em>n</em> segments  (or <em>n–grams</em>)
+the frequency of the sequences from 2, 3, ..., <em>n</em> segments  (or <em>n&#8211;grams</em>)
 rather that to the frequency of isolated segments:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -521,7 +524,7 @@ to the chosen segmentation, if any; if one of the keys is selected, the
 corresponding annotation values will be counted; if on the other hand the
 value <em>(none)</em> is selected, the <em>content</em> of the segments will be counted. The
 <strong>Sequence length</strong> drop-down menu allows the user to indicate if isolated
-segments or segment <em>n–grams</em> should be counted; in this latter case, the
+segments or segment <em>n&#8211;grams</em> should be counted; in this latter case, the
 (optional) string specified in the <strong>Intra sequence delimiter</strong> text field
 will be used to separate the content or the annotation value corresponding to
 each segment in the column headers. <a class="footnote-reference" href="#id7" id="id4">[3]</a></p>
@@ -532,7 +535,7 @@ choose between the different ways of defining contexts described earlier. The
 where units are counted globally in the whole segmentation specified in the
 <strong>Units</strong> section (to which we will refer by the term <em>unit segmentation</em>).</p>
 <p>The <strong>Sliding window</strong> mode (see <a class="reference internal" href="#count-fig2"><span class="std std-ref">figure 2</span></a>) implements the
-notion of a “sliding window” introduced earlier. Typically it allows the user
+notion of a &#8220;sliding window&#8221; introduced earlier. Typically it allows the user
 to observe the evolution of frequency throughout the unit segmentation. The
 only parameter is the window size (in number of segments), defined by the
 <strong>Window size</strong> cursor.</p>
@@ -542,13 +545,13 @@ only parameter is the window size (in number of segments), defined by the
 </div>
 <div class="figure align-center" id="id10">
 <span id="count-fig3"></span><img alt="Count widget in mode &quot;Left-right neighborhood&quot;" src="_images/count_mode_left_right_neighborhood_example.png" />
-<p class="caption"><span class="caption-text">Figure 3: <strong>Count</strong> widget (<strong>Left–right neighborhood</strong> mode).</span></p>
+<p class="caption"><span class="caption-text">Figure 3: <strong>Count</strong> widget (<strong>Left&#8211;right neighborhood</strong> mode).</span></p>
 </div>
 <div class="figure align-center" id="id11">
 <span id="count-fig4"></span><img alt="Count widget in mode &quot;Containing segmentation&quot;" src="_images/count_mode_containing_segmentation.png" />
 <p class="caption"><span class="caption-text">Figure 4: <strong>Count</strong> widget (<strong>Containing segmentation</strong> mode).</span></p>
 </div>
-<p>The <strong>Left–right neighborhood</strong> mode (see <a class="reference internal" href="#count-fig3"><span class="std std-ref">figure 3</span></a>)
+<p>The <strong>Left&#8211;right neighborhood</strong> mode (see <a class="reference internal" href="#count-fig3"><span class="std std-ref">figure 3</span></a>)
 allows the user to specify context types based on the <em>n</em> segments immediately
 to the left and/or right of each segment; this mode notably allows the user to
 build a Markov chain transition matrix. The <strong>Left context size</strong> and <strong>Right
@@ -586,7 +589,7 @@ because modified data is received through an existing connection).</p>
 <dl class="docutils">
 <dt><em>Data correctly sent to output: total count is &lt;n&gt;.</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Compute’ when ready.</em></dt>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click &#8216;Compute&#8217; when ready.</em></dt>
 <dd>Settings and/or input have changed but the <strong>Compute automatically</strong>
 checkbox has not been selected, so the user is prompted to click the
 <strong>Compute</strong> button (or equivalently check the box) in order for computation
@@ -594,10 +597,10 @@ and data emission to proceed.</dd>
 <dt><em>No data sent to output yet: no input segmentation.</em></dt>
 <dd>The widget instance is not able to emit data to output because it receives
 none on its input channel(s).</dd>
-<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
-<dd>A problem with the instance’s parameters and/or input data prevents it
+<dt><em>No data sent to output yet, see &#8216;Widget state&#8217; below.</em></dt>
+<dd>A problem with the instance&#8217;s parameters and/or input data prevents it
 from operating properly, and additional diagnostic information can be
-found in the <strong>Widget state</strong> box at the bottom of the instance’s
+found in the <strong>Widget state</strong> box at the bottom of the instance&#8217;s
 interface (see <a class="reference internal" href="#warnings">Warnings</a> below).</dd>
 </dl>
 </div>
@@ -605,7 +608,7 @@ interface (see <a class="reference internal" href="#warnings">Warnings</a> below
 <h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt><em>Resulting table is empty.</em></dt>
-<dd>No table has been emitted because the widget instance couldn’t find a
+<dd>No table has been emitted because the widget instance couldn&#8217;t find a
 single element in its input segmentation(s). A likely cause for this
 problem (when using the <strong>Containing segmentation</strong> mode) is that the unit
 and context segmentations do not refer to the same strings, so that the
@@ -629,7 +632,7 @@ consequence of the improper use of widgets <a class="reference internal" href="p
 <div class="section" id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="convert.html#anchor-to-table-formats"><span class="std std-ref">Reference: Convert widget (section “Table formats”)</span></a></li>
+<li><a class="reference internal" href="convert.html#anchor-to-table-formats"><span class="std std-ref">Reference: Convert widget (section &#8220;Table formats&#8221;)</span></a></li>
 </ul>
 </div>
 <div class="section" id="footnotes">
@@ -657,7 +660,7 @@ Textable.</td></tr>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td>The same character string will be inserted between the successive
 segments that build up the left and/or right context if the
-<strong>Left–right neighborhood</strong> mode is selected.</td></tr>
+<strong>Left&#8211;right neighborhood</strong> mode is selected.</td></tr>
 </tbody>
 </table>
 </div>
@@ -732,7 +735,7 @@ segments that build up the left and/or right context if the
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

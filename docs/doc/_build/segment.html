@@ -1,15 +1,18 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Segment widget" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="Orange Textable documentation, Segment widget" name="description" />
 <meta content="Orange, Textable, documentation, Segment, widget" name="keywords" />
 
     <title>Segment &#8212; Textable v3.1.0b3 documentation</title>
+    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -28,7 +31,7 @@
     <link rel="next" title="Select" href="select.html" />
     <link rel="prev" title="Merge" href="merge.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -82,7 +85,7 @@ it works on the basis of a description of the form of the new segments (by
 means of regular expressions); alternatively, it can also operate based on a
 description of the separators that appear in-between the segments. It also
 allows the user to create annotations for the output segments.</p>
-<p>In the same way as for the <a class="reference internal" href="recode.html#recode"><span class="std std-ref">Recode</span></a> widget, it is possible to “capture”
+<p>In the same way as for the <a class="reference internal" href="recode.html#recode"><span class="std std-ref">Recode</span></a> widget, it is possible to &#8220;capture&#8221;
 text portions with square brackets used in a regular expression, notably to
 copy them in the annotation key and/or in the associated value; for this we
 use the notations <code class="docutils literal"><span class="pre">&amp;1</span></code>, <code class="docutils literal"><span class="pre">&amp;2</span></code>, etc. corresponding to the pairs of
@@ -197,7 +200,7 @@ of a regular expression list in JSON format (see <a class="reference internal" h
 expressions specified in this message replaces those previously specified
 (if any). Note that removing the incoming connection from the <strong>Message</strong>
 instance will not, by itself, remove the list of regular expressions imported
-in this way from the <strong>Segment</strong> instance’s interface; conversely, this list
+in this way from the <strong>Segment</strong> instance&#8217;s interface; conversely, this list
 of files can be modified using buttons <strong>Move up/down</strong>, <strong>Remove</strong>, etc. even
 if the incoming connection from the <strong>Message</strong> instance has not been removed.
 Finally, note that if a <strong>Segment</strong> instance has the basic version of its
@@ -212,7 +215,7 @@ interface activated when an incoming connection is created from an instance of
 <dl class="docutils">
 <dt><em>Data correctly sent to output: &lt;n&gt; segments.</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click &#8216;Send&#8217; when ready.</em></dt>
 <dd>Settings and/or input have changed but the <strong>Send automatically</strong> checkbox
 has not been selected, so the user is prompted to click the <strong>Send</strong>
 button (or equivalently check the box) in order for computation and data
@@ -220,10 +223,10 @@ emission to proceed.</dd>
 <dt><em>No data sent to output yet: no input segmentation.</em></dt>
 <dd>The widget instance is not able to emit data to output because it receives
 none on its input channel(s).</dd>
-<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
-<dd>A problem with the instance’s parameters and/or input data prevents it
+<dt><em>No data sent to output yet, see &#8216;Widget state&#8217; below.</em></dt>
+<dd>A problem with the instance&#8217;s parameters and/or input data prevents it
 from operating properly, and additional diagnostic information can be
-found in the <strong>Widget state</strong> box at the bottom of the instance’s
+found in the <strong>Widget state</strong> box at the bottom of the instance&#8217;s
 interface (see <a class="reference internal" href="#warnings">Warnings</a> and <a class="reference internal" href="#errors">Errors</a> below).</dd>
 </dl>
 </div>
@@ -241,15 +244,15 @@ order for computation and data emission to proceed.</dd>
 <dd>The <strong>Auto-number with key</strong> checkbox has been selected and an annotation
 key must be specified in the text field on the right in order for
 computation and data emission to proceed.</dd>
-<dt><em>JSON message on input connection doesn’t have the right keys and/or values.</em></dt>
+<dt><em>JSON message on input connection doesn&#8217;t have the right keys and/or values.</em></dt>
 <dd>The widget instance has received a JSON message on its <code class="docutils literal"><span class="pre">Message</span></code> input
 channel and the keys and/or values specified in this message do not match
 those that are expected for this particular widget type (see <a class="reference internal" href="json_format.html"><span class="doc">JSON
 im-/export format</span></a>, <a class="reference internal" href="json_regular_expression_list.html"><span class="doc">Regular expression list</span></a>).</dd>
 <dt><em>JSON parsing error.</em></dt>
 <dd>The widget instance has received data on its <code class="docutils literal"><span class="pre">Message</span></code> input channel and
-the data couldn’t be correctly parsed. Please use a JSON validator to
-check the data’s well-formedness.</dd>
+the data couldn&#8217;t be correctly parsed. Please use a JSON validator to
+check the data&#8217;s well-formedness.</dd>
 </dl>
 </div>
 <div class="section" id="errors">
@@ -261,8 +264,8 @@ check the data’s well-formedness.</dd>
 <dd>The <em>n</em>-th regular expression in the <strong>Regexes</strong> list is invalid.</dd>
 <dt><em>Reference to unmatched group in annotation key and/or value.</em></dt>
 <dd>In the advanced interface, a regular expression has been associated with
-an annotation key–value pair and in at least one of these terms reference
-is made to a numbered variable (<code class="docutils literal"><span class="pre">&amp;1</span></code>, <code class="docutils literal"><span class="pre">&amp;2</span></code>, …) which turns out to
+an annotation key&#8211;value pair and in at least one of these terms reference
+is made to a numbered variable (<code class="docutils literal"><span class="pre">&amp;1</span></code>, <code class="docutils literal"><span class="pre">&amp;2</span></code>, ...) which turns out to
 not always have a matching element.</dd>
 </dl>
 </div>
@@ -395,7 +398,7 @@ output segmentation before fusion) will be retained.</td></tr>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

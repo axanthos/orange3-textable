@@ -77,8 +77,6 @@ Comment
 See also
 --------
 
-* :doc:`Getting started: Converting between table formats
-  <converting_table_formats>`
 * :ref:`Reference: Convert widget <Convert>`
 * :doc:`Reference: Table construction widgets <table_construction_widgets>`
 * :ref:`Cookbook: Text input <cookbook_toc_text_input_ref>`

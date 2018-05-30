@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Recode &mdash; Orange3-Textable 3.0a1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.0a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Orange3-Textable 3.0a1 documentation" href="../../index.html" />
+    <link rel="next" title="Merge" href="merge.html" />
+    <link rel="prev" title="Preprocess" href="preprocess.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="merge.html" title="Merge"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="preprocess.html" title="Preprocess"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="recode">
+<h1>Recode<a class="headerlink" href="#recode" title="Permalink to this headline">¶</a></h1>
+<div class="figure">
+<img alt="../../_images/recode.png" src="../../_images/recode.png" />
+</div>
+<p>Custom text recoding using regular expressions.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p><strong>Inputs</strong>:</p>
+<ul class="simple">
+<li>Segmentation</li>
+</ul>
+<p>Segmentation covering the text that should be recoded</p>
+<ul class="simple">
+<li>Message</li>
+</ul>
+<p>JSON Message controlling the list of substitutions</p>
+<p><strong>Outputs</strong>:</p>
+<ul class="simple">
+<li>Recoded text data</li>
+</ul>
+<p>Segmentation covering the recoded text</p>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>Recode</strong> widget creates a modified copy of the input segmentation. The modifications applied are defined by <em>substitutions</em>, namely pairs composed of a <a class="reference external" href="https://en.wikipedia.org/wiki/Regular_expression">regular expression</a>  and a replacement string. The interface of the <strong>Recode</strong> widget is available in two versions, according to whether or not the <em>Advanced Settings</em> checkbox is selected.</p>
+</div>
+<div class="section" id="basic-interface">
+<h2>Basic Interface<a class="headerlink" href="#basic-interface" title="Permalink to this headline">¶</a></h2>
+<p>The basic version if the widget is limited to the application of a single substitution.</p>
+<div class="figure">
+<img alt="../../_images/recode-basic-stamped.png" src="../../_images/recode-basic-stamped.png" />
+</div>
+<ol class="arabic simple">
+<li>Specify the regular expression. Use regular expressions to reach more data or just enter a word you wish to subtitute.</li>
+<li>Specify the replacement string. If the replacement string is left empty, the text parts identified by the regular expression will simply be deleted.</li>
+<li>By clicking <em>Send</em>, changes are communicated to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be communicated to the output at every modification.</li>
+<li>Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted.</li>
+</ol>
+</div>
+<div class="section" id="advanced-interface">
+<h2>Advanced Interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h2>
+<p>The advanced interface allows the user to define several substitutions and to determine the order in which they should be applied.</p>
+<div class="figure">
+<img alt="widgets\segmentationprocessing\images/recode-advanced-png" src="widgets\segmentationprocessing\images/recode-advanced-png" />
+</div>
+<ol class="arabic">
+<li><p class="first">The <em>Substitutions</em> section allows the user to select the substitutions applied to each successive input segment and to determine their application order. The list of substitutions with corresponding regular expressions, replacement strings and additional options associated with the regular expression used appears at the top of the window.</p>
+</li>
+<li><p class="first">The buttons on the left side of the <em>Sources</em> section allow the user to modify his selection by:</p>
+<blockquote>
+<div><ul class="simple">
+<li>changing the order in which the substitutions are applied: <em>Move Up</em>, <em>Move Down</em></li>
+<li>deleting individual substitutions from the list: <em>Remove</em></li>
+<li>clearing the list of all substitutions: <em>Clear All</em></li>
+<li>import a list of substitutions in JSON format and add it to the previously selected sources: <em>Import List</em></li>
+<li>export the list of substitutions in a JSON file: <em>Export List</em></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Define a new subsitution by using RegEx.</p>
+</li>
+<li><p class="first">Define the replacement string.</p>
+</li>
+<li><p class="first">Control the application of the corresponding options to the regular expression: <em>Ignore case</em>, <em>Unicode dependent</em>, <em>Multiline</em>, <em>Dot matches</em>.</p>
+</li>
+<li><p class="first">Add a new substitution to the list.</p>
+</li>
+<li><p class="first">Copy every annotation of the input segmentation to the output segmentation.</p>
+</li>
+<li><p class="first">By clicking <em>Send</em>, changes are communicated to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be communicated to the output at every modification.</p>
+</li>
+<li><p class="first">Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted</p>
+</li>
+</ol>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>For the purpose of this example, we have decided to adapt our American spelling for our readers that prefer British English. We mostly focused on the difference in spelling the affix <em>-ize</em> (or <em>-ise</em> that is preferred in British English). We used the <strong>Text Field</strong> widget to input several words that use the American way of spelling and then segmented the input segmentation into words. Lastly, we used the advanced interface of the <strong>Recode</strong> widget and replaced all occurences of the affix <em>-ize</em> with the affix <em>-ise</em>.</p>
+<div class="figure">
+<img alt="../../_images/recode-example.png" src="../../_images/recode-example.png" />
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Recode</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#basic-interface">Basic Interface</a></li>
+<li><a class="reference internal" href="#advanced-interface">Advanced Interface</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="preprocess.html"
+                        title="previous chapter">Preprocess</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="merge.html"
+                        title="next chapter">Merge</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/widgets/segmentationprocessing/recode.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="merge.html" title="Merge"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="preprocess.html" title="Preprocess"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, LangTech Sarl.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

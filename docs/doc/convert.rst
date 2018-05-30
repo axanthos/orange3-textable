@@ -325,8 +325,6 @@ Information
 See also
 --------
 
-* :doc:`Getting started: Converting between table formats
-  <converting_table_formats>`
 * :doc:`Cookbook: Display table <display_table>`
 * :doc:`Cookbook: Export table <export_table>`
 

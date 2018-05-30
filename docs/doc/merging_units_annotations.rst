@@ -3,7 +3,7 @@
    :keywords: Orange, Textable, documentation, merge, units, annotations
 
 Merging units with XML annotations
-==============================
+==================================
 
 Annotations can also be used for merging *units* (that is, columns) during
 counting operations in particular. Consider again the example of annotations

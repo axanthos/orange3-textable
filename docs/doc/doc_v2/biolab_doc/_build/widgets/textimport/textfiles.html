@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Text Files &mdash; Orange3-Textable 3.0a1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.0a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Orange3-Textable 3.0a1 documentation" href="../../index.html" />
+    <link rel="next" title="URLs" href="urls.html" />
+    <link rel="prev" title="Text Field" href="textfield.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="urls.html" title="URLs"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="textfield.html" title="Text Field"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="text-files">
+<h1>Text Files<a class="headerlink" href="#text-files" title="Permalink to this headline">¶</a></h1>
+<div class="figure">
+<img alt="../../_images/textfiles.png" src="../../_images/textfiles.png" />
+</div>
+<p>Import data from raw text files.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p><strong>Inputs</strong>:</p>
+<ul class="simple">
+<li>Message</li>
+</ul>
+<p>JSON Message controlling the list of imported text files</p>
+<p><strong>Outputs</strong>:</p>
+<ul class="simple">
+<li>Text data</li>
+</ul>
+<p>Segmentation covering the content of imported text files</p>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>This widget is designed to import the contents of one or several text files. It outputs a segmentation containing a (potentially annotated) segment for each imported file. The imported textual content is normalized in several ways: converted to Unicode, subjected to canonical Unicode-recomposition <a class="reference external" href="http://unicode.org/reports/tr15">technique</a>, stripped from the utf8 byte-order <a class="reference external" href="https://en.wikipedia.org/wiki/Byte_order_mark#UTF-8">mark</a> and various forms of line endings (in particular rn and r) are converted to a single form (namely n). The widget is available in two versions, according to whether or not the <em>Advanced Settings</em> checkbox is selected.</p>
+</div>
+<div class="section" id="the-basic-interface">
+<h2>The basic interface<a class="headerlink" href="#the-basic-interface" title="Permalink to this headline">¶</a></h2>
+<p>The basic interface of the widget enables the input of a single file.</p>
+<div class="figure">
+<img alt="../../_images/textfiles-basic-stamped.png" src="../../_images/textfiles-basic-stamped.png" />
+</div>
+<ol class="arabic simple">
+<li>Select a file. The selected file later appears in the <em>File Path</em> text field.</li>
+<li>Specify the encoding of the file by using the <a class="reference external" href="https://en.wikipedia.org/wiki/Character_encoding">encoding</a> drop-down menu.</li>
+<li>By clicking <em>Send</em>, changes are communicated to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be communicated to the widget&#8217;s output at every modification.</li>
+<li>Information about the output:  the number of characters in a single segment contained in the output segmentation, or the reasons why no segmentation is emitted (no input data, encoding issue, etc.).</li>
+</ol>
+</div>
+<div class="section" id="the-advanced-interface">
+<h2>The advanced interface<a class="headerlink" href="#the-advanced-interface" title="Permalink to this headline">¶</a></h2>
+<p>The advanced interface of the widget enables the import of several files in a determined order. The user can decide to annotate and encode each file accordingly.</p>
+<div class="figure">
+<img alt="../../_images/textfiles-advanced-stamped.png" src="../../_images/textfiles-advanced-stamped.png" />
+</div>
+<ol class="arabic">
+<li><p class="first">Select the input files as well as their encoding, determine the order in which they appear in the output segmentation, and (optionally) assign annotations. The list of imported files with additional information about the corresponding annotations and encodings appears at the top of the window.</p>
+</li>
+<li><p class="first">Modify the selection of sources by:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li>changing the order in which the files appear in the output: <em>Move Up</em>, <em>Move Down</em></li>
+<li>deleting individual files from the list: <em>Remove</em></li>
+<li>clearing the list of all files: <em>Clear All</em></li>
+<li>import a file list in JSON format and add it to the previously selected sources: <em>Import List</em></li>
+<li>export the source list in a JSON file: <em>Export List</em></li>
+</ol>
+</div></blockquote>
+</li>
+<li><p class="first">The <em>Browse</em> button opens a selection dialog. After having selected one or more files in this dialog and validated the choice by clicking on <em>Open</em>, the files appear in the <em>File path(s)</em> field and can be added to the list by clicking on the <em>Add</em> button. It is also possible to type the complete paths of the files directly in the text field, separating the paths corresponding to the successive files with the string ” ” (space + slash + space).</p>
+</li>
+<li><p class="first">Select the <em>Encoding</em>.</p>
+</li>
+<li><p class="first">Assign an annotation by specifying its key in the <em>Annotation key</em> field and the corresponding value in the <a href="#id1"><span class="problematic" id="id2">*</span></a>Annotation value field.</p>
+</li>
+<li><p class="first">Specify the label affected to the output segmentation. The <em>Import filenames with key</em> checkbox enables the program to create for each imported file an annotation whose value is the file name (as displayed in the list) and whose key is specified by the user in the text field on the right of the checkbox. Similarly, the button <em>Auto-number with key</em> enables the program to automatically number the imported files and to associate the number to the annotation key specified in the text field on the right.</p>
+</li>
+<li><p class="first">By clicking <em>Send</em> changes are communicated to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be communicated to the output at every modification.</p>
+</li>
+<li><p class="first">Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>For the purpose of this example, we have decided to make use of the advanced interface and explore the additional options offered by it.
+We opened the <strong>Text Files</strong> widget and selected the advanced settings option. We imported several text files and annotated them. We got our data from the <a class="reference external" href="https://www.gutenberg.org/">Project Gutenberg</a> website and chose to focus on annotating Shakespeare&#8217;s works by genre. We selected <a class="reference external" href="https://www.gutenberg.org/ebooks/1112">Romeo and Juliet</a>, <a class="reference external" href="https://www.gutenberg.org/ebooks/2243">The Merchant of Venice</a> and Shakespeare&#8217;s <a class="reference external" href="https://www.gutenberg.org/ebooks/1041">Sonnets</a> and annotated them according to type (tragedy, comedy, poetry). We then displayed our results in the <strong>Display</strong> widget.</p>
+<div class="figure">
+<img alt="../../_images/textfiles-example.png" src="../../_images/textfiles-example.png" />
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Text Files</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#the-basic-interface">The basic interface</a></li>
+<li><a class="reference internal" href="#the-advanced-interface">The advanced interface</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="textfield.html"
+                        title="previous chapter">Text Field</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="urls.html"
+                        title="next chapter">URLs</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/widgets/textimport/textfiles.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="urls.html" title="URLs"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="textfield.html" title="Text Field"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, LangTech Sarl.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

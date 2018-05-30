@@ -1,15 +1,18 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Intersect widget" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="Orange Textable documentation, Intersect widget" name="description" />
 <meta content="Orange, Textable, documentation, Intersect, widget" name="keywords" />
 
     <title>Intersect &#8212; Textable v3.1.0b3 documentation</title>
+    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -28,7 +31,7 @@
     <link rel="next" title="Extract XML" href="extract_xml.html" />
     <link rel="prev" title="Select" href="select.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -62,8 +65,8 @@
 <ul>
 <li><p class="first"><code class="docutils literal"><span class="pre">Segmentation</span></code> (multiple)</p>
 <p>Segmentation out of which a subset of segments should be selected
-(“source” segmentation), or containing the segments that will be
-in-/excluded from the former (“filter” segmentation”).</p>
+(&#8220;source&#8221; segmentation), or containing the segments that will be
+in-/excluded from the former (&#8220;filter&#8221; segmentation&#8221;).</p>
 </li>
 </ul>
 <p>Outputs:</p>
@@ -79,12 +82,12 @@ in-/excluded from the former (“filter” segmentation”).</p>
 <div class="section" id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
 <p>This widget inputs several segmentations and selects the segments of one of
-them (“source” segmentation) on the basis of the segments present in another
-(“filter” segmentation). It also emits on an output connection (not selected
+them (&#8220;source&#8221; segmentation) on the basis of the segments present in another
+(&#8220;filter&#8221; segmentation). It also emits on an output connection (not selected
 by default) a segmentation containing the segments that were <em>not</em> selected.</p>
 <div class="section" id="basic-interface">
 <h3>Basic interface<a class="headerlink" href="#basic-interface" title="Permalink to this headline">¶</a></h3>
-<p>The <strong>Intersect</strong> section of the widget’s basic interface (see <a class="reference internal" href="#intersect-fig1"><span class="std std-ref">figure 1</span></a> above) allows the user to specify if the segments of the
+<p>The <strong>Intersect</strong> section of the widget&#8217;s basic interface (see <a class="reference internal" href="#intersect-fig1"><span class="std std-ref">figure 1</span></a> above) allows the user to specify if the segments of the
 source segmentation that correspond to a type present in the filter
 segmentation should be included (<strong>Mode: Include</strong>) in the output segmentation
 or excluded (<strong>Mode: Exclude</strong>) from it. This section is also designed to
@@ -104,8 +107,8 @@ segmentations. The first (<strong>Source segmentation</strong>), whose label is 
 the result of the segmentation of a text in words, as performed with the
 <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> widget for instance. The second (<strong>Filter segmentation</strong>),
 whose label is <em>stopwords</em>, is the result of the segmentation in words of a
-list of so-called “stopwords” (articles, pronouns, prepositions,
-etc.)–typically deemed irrelevant for information retrieval.</p>
+list of so-called &#8220;stopwords&#8221; (articles, pronouns, prepositions,
+etc.)&#8211;typically deemed irrelevant for information retrieval.</p>
 <p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
 disables the button and the widget attempts to automatically emit a
@@ -118,7 +121,7 @@ no selected input segment, etc.).</p>
 </div>
 <div class="section" id="advanced-interface">
 <h3>Advanced interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h3>
-<p>The main difference between the widget’s basic and advanced interface is that
+<p>The main difference between the widget&#8217;s basic and advanced interface is that
 in the latter, section <strong>Intersect</strong> includes a <strong>Filter annotation key</strong>
 drop-down menu and a <strong>Source annotation key</strong>.</p>
 <p>If a given annotation key of the filter segmentation is
@@ -148,7 +151,7 @@ input segmentation to the output segmentation.</p>
 <dl class="docutils">
 <dt><em>Data correctly sent to output: &lt;n&gt; segments.</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click &#8216;Send&#8217; when ready.</em></dt>
 <dd>Settings and/or input have changed but the <strong>Send automatically</strong> checkbox
 has not been selected, so the user is prompted to click the <strong>Send</strong>
 button (or equivalently check the box) in order for computation and data
@@ -156,10 +159,10 @@ emission to proceed.</dd>
 <dt><em>No data sent to output yet: no input segmentation.</em></dt>
 <dd>The widget instance is not able to emit data to output because it receives
 none on its input channel(s).</dd>
-<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
-<dd>A problem with the instance’s parameters and/or input data prevents it
+<dt><em>No data sent to output yet, see &#8216;Widget state&#8217; below.</em></dt>
+<dd>A problem with the instance&#8217;s parameters and/or input data prevents it
 from operating properly, and additional diagnostic information can be
-found in the <strong>Widget state</strong> box at the bottom of the instance’s
+found in the <strong>Widget state</strong> box at the bottom of the instance&#8217;s
 interface (see <a class="reference internal" href="#warnings">Warnings</a> below).</dd>
 </dl>
 </div>
@@ -278,7 +281,7 @@ discarded segments receives the same label prepended with <em>NEG_</em>.</td></t
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

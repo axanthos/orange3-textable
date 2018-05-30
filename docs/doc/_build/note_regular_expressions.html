@@ -1,15 +1,18 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, a note on regular expressions" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="Orange Textable documentation, a note on regular expressions" name="description" />
 <meta content="Orange, Textable, documentation, regular expressions, regex, regexp, python" name="keywords" />
 
-    <title>1.4. A note on regular expressions &#8212; Textable v3.1.0b3 documentation</title>
+    <title>3. A note on regular expressions &#8212; Textable v3.1.0b3 documentation</title>
+    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -25,10 +28,10 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="1.5. Segmenting data into smaller units" href="segmenting_data_smaller_units.html" />
-    <link rel="prev" title="1.3. Merging segmentations together" href="merging_segmentations_together.html" /> 
+    <link rel="next" title="4. Partitioning segmentations using a regex" href="partitioning_segmentations.html" />
+    <link rel="prev" title="2. Merging units with XML annotations" href="merging_units_annotations.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -36,14 +39,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="segmenting_data_smaller_units.html" title="1.5. Segmenting data into smaller units"
+          <a href="partitioning_segmentations.html" title="4. Partitioning segmentations using a regex"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="merging_segmentations_together.html" title="1.3. Merging segmentations together"
+          <a href="merging_units_annotations.html" title="2. Merging units with XML annotations"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="segmentations.html" accesskey="U">1. Segmentations</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="advanced_topics.html" accesskey="U">Advanced topics</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -53,14 +55,14 @@
           <div class="body" role="main">
             
   <div class="section" id="a-note-on-regular-expressions">
-<h1>1.4. A note on regular expressions<a class="headerlink" href="#a-note-on-regular-expressions" title="Permalink to this headline">¶</a></h1>
+<h1>3. A note on regular expressions<a class="headerlink" href="#a-note-on-regular-expressions" title="Permalink to this headline">¶</a></h1>
 <p>Orange Textable widgets rely heavily on <em>regular expressions</em> (or <em>regexes</em>),
 which are essentially a body of conventions for describing a set of strings
 by means of a single string. These conventions are widely documented in books
 and on the Internet, so we will not give here yet another introduction to this
 topic. Nevertheless, a basic knowledge of regexes is required to perform any
 non-trivial task with Orange Textable, and more advanced knowledge to
-fully exploit the software’s possibilities.</p>
+fully exploit the software&#8217;s possibilities.</p>
 <p>The syntax of regexes is partly standardized, but some variations remain.
 Orange Textable uses Python regexes, for which Python documentation is the
 best source of information. In particular, it features a good
@@ -89,11 +91,11 @@ first reading might be limited to the following sections:</p>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="merging_segmentations_together.html"
-                        title="previous chapter">1.3. Merging segmentations together</a></p>
+  <p class="topless"><a href="merging_units_annotations.html"
+                        title="previous chapter">2. Merging units with XML annotations</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="segmenting_data_smaller_units.html"
-                        title="next chapter">1.5. Segmenting data into smaller units</a></p>
+  <p class="topless"><a href="partitioning_segmentations.html"
+                        title="next chapter">4. Partitioning segmentations using a regex</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -122,19 +124,18 @@ first reading might be limited to the following sections:</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="segmenting_data_smaller_units.html" title="1.5. Segmenting data into smaller units"
+          <a href="partitioning_segmentations.html" title="4. Partitioning segmentations using a regex"
              >next</a> |</li>
         <li class="right" >
-          <a href="merging_segmentations_together.html" title="1.3. Merging segmentations together"
+          <a href="merging_units_annotations.html" title="2. Merging units with XML annotations"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="segmentations.html" >1. Segmentations</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="advanced_topics.html" >Advanced topics</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

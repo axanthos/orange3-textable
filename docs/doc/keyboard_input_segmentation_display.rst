@@ -68,12 +68,13 @@ See also
 Footnotes
 ---------
 
-[#] A segment is basically a substring of characters. Every segment has an address consisting of three elements:
-1) string index
-2) initial position within the string
-3) final position
-In the case of a simple example, address (1, 3, 8) refers to substring simple, (1, 12, 12) to character a, and (1, 1, 16) to the entire string. 
-The substring corresponding to a given address is called the segment’s content.
+..[#] A segment is basically a substring of characters. Every segment has an 
+      address consisting of three elements: (i) string index, (ii) initial 
+      position within the string and (iii) final position. In the case of 
+      *a simple example*, address (1, 3, 8) refers to substring *simple*, 
+      (1, 12, 12) to character *a*, and (1, 1, 16) to the entire string. 
+      The substring corresponding to a given address is called the segment's 
+      content.
 
 
 

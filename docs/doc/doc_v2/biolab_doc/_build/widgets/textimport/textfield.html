@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Text Field &mdash; Orange3-Textable 3.0a1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.0a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Orange3-Textable 3.0a1 documentation" href="../../index.html" />
+    <link rel="next" title="Text Files" href="textfiles.html" />
+    <link rel="prev" title="Installation" href="../../getting-started/installation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="textfiles.html" title="Text Files"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../../getting-started/installation.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="text-field">
+<h1>Text Field<a class="headerlink" href="#text-field" title="Permalink to this headline">¶</a></h1>
+<div class="figure">
+<img alt="../../_images/textfield.png" src="../../_images/textfield.png" />
+</div>
+<p>Import text data from keyboard input.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p><strong>Inputs</strong>:</p>
+<ul class="simple">
+<li>Text data</li>
+</ul>
+<p>Segmentation containing the text to be edited</p>
+<p><strong>Outputs</strong>:</p>
+<ul class="simple">
+<li>Text data</li>
+</ul>
+<p>Segmentation covering the input text</p>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>Text Field</strong> widget enables the input of data by using a keyboard. It emits a segmentation containing a single unannotated segment covering the whole string. It can also be used to manually edit a previously imported string (imported from a text file or an URL).</p>
+<div class="figure">
+<img alt="../../_images/textfield-stamped.png" src="../../_images/textfield-stamped.png" />
+</div>
+<ol class="arabic simple">
+<li>The editable text field. Standard editing functions (copy, paste, cancel, etc.) apply.</li>
+<li>By clicking <em>Send</em>, changes are committed to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be committed at every modification. The text field&#8217;s content is normalized in three ways: converted to Unicode, subjected to canonical Unicode-recomposition <a class="reference external" href="http://unicode.org/reports/tr15">technique</a>, various forms of line endings (in particular rn and r) are converted to a single form (namely n).</li>
+<li>Information about the output: the length of the segmentation output in characters.</li>
+</ol>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>The first example is used to demonstrate how to input text for further processing by using the <strong>Text Field</strong> widget. The widget is fairly easy to use. Place the widget on the canvas by choosing it from the list of widgets in the add-on or use the right-click to click on the canvas and select the widget from there. Double-click on it to open it and input the text by using your keyboard. Standard editing functions apply and you can copy and paste text from other sources as well. When finished, click the <em>Send</em> button (alternatively, tick <em>Send automatically</em>) and display the segmented data through any of the compatible outputs. We simply entered the text string <em>This is a very simple example</em> and chose to display it in the <strong>Display</strong> widget.</p>
+<div class="figure">
+<img alt="widgets\textimport\images/textfield-example-1.png" src="widgets\textimport\images/textfield-example-1.png" />
+</div>
+<p>Our second example is used to demonstrate how to use the <strong>Text Field</strong> widget to manually edit imported strings of texts.
+We loaded Jane Austen&#8217;s <a class="reference external" href="http://www.gutenberg.org/cache/epub/1342/pg1342.txt">Pride and Prejudice</a> by using the <strong>URLs</strong> widget and because the text about Project Gutenberg had no use for us (and our further research) we decided to remove it by editing the input content in the <strong>Text Field</strong> widget.</p>
+<div class="figure">
+<img alt="widgets\textimport\images/textfield-example-2.png" src="widgets\textimport\images/textfield-example-2.png" />
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Text Field</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../../getting-started/installation.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="textfiles.html"
+                        title="next chapter">Text Files</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/widgets/textimport/textfield.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="textfiles.html" title="Text Files"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../../getting-started/installation.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, LangTech Sarl.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

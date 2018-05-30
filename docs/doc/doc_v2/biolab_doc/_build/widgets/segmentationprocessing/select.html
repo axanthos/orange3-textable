@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Select &mdash; Orange3-Textable 3.0a1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.0a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Orange3-Textable 3.0a1 documentation" href="../../index.html" />
+    <link rel="next" title="Intersect" href="intersect.html" />
+    <link rel="prev" title="Segment" href="segment.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="intersect.html" title="Intersect"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="segment.html" title="Segment"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="select">
+<h1>Select<a class="headerlink" href="#select" title="Permalink to this headline">¶</a></h1>
+<div class="figure">
+<img alt="../../_images/select.png" src="../../_images/select.png" />
+</div>
+<p>Select a subset of segments in a segmentation.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p><strong>Inputs</strong>:</p>
+<ul class="simple">
+<li>Segmentation</li>
+</ul>
+<p>Segmentation out of which a subset of segments should be selected</p>
+<p><strong>Outputs</strong>:</p>
+<ul class="simple">
+<li>Selected data (default)</li>
+</ul>
+<p>Segmentation containing the selected segments</p>
+<ul class="simple">
+<li>Discarded data</li>
+</ul>
+<p>Segmentation containing the discarded segments</p>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>Segment</strong> widget enables the user to select a subset of segments in segmentation. The selection is made by using regular expressions and the user can select whether to include or exclude the selected segments from the output segmentation. The widget is available in two versions, according to whether or not the <em>Advanced Settings</em> checkbox is selected.</p>
+<p>The advanced version offers different methods of selection - Regex, Sample, or Threshold, whereas the basic version only offers specifying the selection by using regular expressions.
+The basic version of the widget also does not include regular expression options, auto-numbering is disabled and annotations are copied by default.</p>
+</div>
+<div class="section" id="method-regex">
+<h2>Method: Regex<a class="headerlink" href="#method-regex" title="Permalink to this headline">¶</a></h2>
+<div class="figure">
+<img alt="../../_images/select-regex-stamped.png" src="../../_images/select-regex-stamped.png" />
+</div>
+<ol class="arabic simple">
+<li>Select a mode of selection: <em>Include</em> or <em>Exclude</em> the selected segment.</li>
+<li>Specify the regular expression. Optionally, also specify the annotation key and value. Control the application of the corresponding options to the regular expression: <em>Ignore case</em>, <em>Unicode dependent</em>, <em>Multiline</em>, <em>Dot matches</em></li>
+<li>Select whether you wish to auto-nummber the segmentations and if you wish to copy the annotations from the input segmentation to the ouput of the widget.</li>
+<li>By clicking <em>Send</em> changes are communicated to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be communicated to the output at every modification.</li>
+<li>Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted.</li>
+</ol>
+</div>
+<div class="section" id="method-sample">
+<h2>Method: Sample<a class="headerlink" href="#method-sample" title="Permalink to this headline">¶</a></h2>
+<div class="figure">
+<img alt="../../_images/select-sample-stamped.png" src="../../_images/select-sample-stamped.png" />
+</div>
+<p>Select the segments of the input segmentation with a random sampling process.</p>
+<ol class="arabic">
+<li><p class="first">Choose in which way to express the wanted size for the sample.</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>Count</em>: the size of the sample will be expressed directly in the number of segments.</li>
+<li><em>Proportion</em>: the sizze of the sample will be expressed in percentage of input segments</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Select whether you wish to auto-number the segmentations and if you wish to copy the annotations from the input segmentation to the ouput of the widget.</p>
+</li>
+<li><p class="first">By clicking <em>Send</em> changes are communicated to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be communicated to the output at every modification.</p>
+</li>
+<li><p class="first">Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="method-threshold">
+<h2>Method: Threshold<a class="headerlink" href="#method-threshold" title="Permalink to this headline">¶</a></h2>
+<div class="figure">
+<img alt="widgets\segmentationprocessing\images/select-treshhold-stamped.png" src="widgets\segmentationprocessing\images/select-treshhold-stamped.png" />
+</div>
+<p>Only the segments whose content (or annotation value for a given key) has a frequency in the segmentation that is comprised between given bound are retained from the input segmentation.</p>
+<ol class="arabic">
+<li><p class="first">Select an annotation key from the input segmentation.</p>
+</li>
+<li><p class="first">Choose the way in which to express the minimal and maximal frequency limits:</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>Count</em>: the limits wll be expressed in absolute frequencies</li>
+<li><em>Proportion</em>: the limits will be expressed in percentages</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Select whether you wish to auto-number the segmentations and if you wish to copy the annotations from the input segmentation to the ouput of the widget.</p>
+</li>
+<li><p class="first">By clicking <em>Send</em> changes are communicated to the output of the widget. Alternatively, tick <em>Send automatically</em> and changes will be communicated to the output at every modification.</p>
+</li>
+<li><p class="first">Information about the number of segments in the output segmentation or the reasons why no segmentation is emitted.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>THRESHOLD NE DELA - javi rdeč error</p>
+</div>
+<div class="section" id="id1">
+<h2>Example<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Select</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#method-regex">Method: Regex</a></li>
+<li><a class="reference internal" href="#method-sample">Method: Sample</a></li>
+<li><a class="reference internal" href="#method-threshold">Method: Threshold</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#id1">Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="segment.html"
+                        title="previous chapter">Segment</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="intersect.html"
+                        title="next chapter">Intersect</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/widgets/segmentationprocessing/select.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="intersect.html" title="Intersect"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="segment.html" title="Segment"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Orange3-Textable 3.0a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2016, LangTech Sarl.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

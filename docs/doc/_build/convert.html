@@ -1,15 +1,18 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Convert widget" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="Orange Textable documentation, Convert widget" name="description" />
 <meta content="Orange, Textable, documentation, Convert, widget" name="keywords" />
 
     <title>Convert &#8212; Textable v3.1.0b3 documentation</title>
+    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -28,7 +31,7 @@
     <link rel="next" title="Message" href="message.html" />
     <link rel="prev" title="Conversion/export widgets" href="conversion_export_widgets.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -176,7 +179,7 @@ the contingency table. It is the standard way of encoding a contingency table
 in Orange Canvas, and it is required by widgets such as <em>Correspondence
 Analysis</em> (after conversion to the <em>Table</em> type defined by Orange Canvas).</p>
 <p>The <em>WeightedFlatCrosstab</em> format produces a more compact representation by
-keeping only one copy of each distinct unit–context pair and by adding a
+keeping only one copy of each distinct unit&#8211;context pair and by adding a
 column <em>__count__</em> to save information on the number of repetition of each
 pair:</p>
 <table border="1" class="colwidths-given docutils">
@@ -217,7 +220,7 @@ pair:</p>
 </tbody>
 </table>
 <p>This format is sometimes used to represent contingency tables in third-party
-data analysis software. It is often called “sparse” matrix format.
+data analysis software. It is often called &#8220;sparse&#8221; matrix format.
 format.</p>
 </div>
 <div class="section" id="output-channels">
@@ -311,18 +314,18 @@ the strict sense of the term) can be selected in the drop-down menu, each of
 which deactivates the <strong>Norm</strong> drop-down menu on the right:</p>
 <ul class="simple">
 <li>In <strong>quotients</strong> mode, the count stored in each cell of a contingency table
-(of <em>PivotCrosstab</em> type) is divided by the corresponding “theoretical”
+(of <em>PivotCrosstab</em> type) is divided by the corresponding &#8220;theoretical&#8221;
 count under the hypothesis of independence between table rows and columns.
 This quotient is superior to 1 if the row and the column in question are in
 a mutual attraction relation, inferior to 1 in case of repulsion between the
 row and the column, finally equal to 1 if the row and column do not repulse
 nor attract each other particularly.</li>
-<li>In <strong>TF–IDF</strong> mode, the count stored in each cell of a contingency table
+<li>In <strong>TF&#8211;IDF</strong> mode, the count stored in each cell of a contingency table
 (of <em>PivotCrosstab</em> type) is multiplied by the natural log of the ratio of
 the number of rows (i.e. contexts) having nonzero frequency for this column
 (i.e. unit) to the total number of rows.</li>
 <li>In <strong>presence/absence</strong> mode, counts greater than 1 are replaced by the
-value 1, so that the resulting table can contain only 0’s and 1’s.</li>
+value 1, so that the resulting table can contain only 0&#8217;s and 1&#8217;s.</li>
 </ul>
 <p>The common property of all operations available in the <strong>Normalize</strong> drop-down
 menu is that they preserve the original dimensions of the input contingency
@@ -363,7 +366,7 @@ will be inserted between cell values when exporting a table in text format;
 possible choices are <em>tabulation (t)</em>, <em>comma (,)</em>, and <em>semi-colon (;)</em>.
 The <strong>Output Orange headers</strong> checkbox allows the user to indicate if the
 output should include every header line of the format <em>.tab</em> specific to
-Orange Canvas (<strong>Output Orange headers</strong>)–which is useful only for
+Orange Canvas (<strong>Output Orange headers</strong>)&#8211;which is useful only for
 re-importing the exported table using the built-in <strong>File</strong> widget of Orange
 Canvas (and in fact often necessary in that case). Both parameters (<strong>Column
 delimiter</strong> and <strong>Output Orange headers</strong> also apply to the data sent on the
@@ -385,7 +388,7 @@ table, or the reasons why no table is emitted (no input data).</p>
 <dl class="docutils">
 <dt><em>Data correctly sent to output: table has &lt;n&gt; and &lt;m&gt; columns.</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click &#8216;Send&#8217; when ready.</em></dt>
 <dd>Settings and/or input have changed but the <strong>Send automatically</strong> checkbox
 has not been selected, so the user is prompted to click the <strong>Send</strong>
 button (or equivalently check the box) in order for computation and data
@@ -399,7 +402,7 @@ none on its input channel(s).</dd>
 <div class="section" id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="converting_table_formats.html"><span class="doc">Getting started: Converting between table formats</span></a></li>
+<li><span class="xref doc">Getting started: Converting between table formats</span></li>
 <li><a class="reference internal" href="display_table.html"><span class="doc">Cookbook: Display table</span></a></li>
 <li><a class="reference internal" href="export_table.html"><span class="doc">Cookbook: Export table</span></a></li>
 </ul>
@@ -420,12 +423,12 @@ values.</td></tr>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>For more details on the calculation of Markov associativities, see
 Bavaud F. and Xanthos A. (2005). Markov associativities. <em>Journal of
-Quantitative Linguistics, 12</em>:123–137. Details on the effect of the
+Quantitative Linguistics, 12</em>:123&#8211;137. Details on the effect of the
 <strong>bias</strong> parameter can be found in Deneulin, P., Gautier, L., Le Fur,
 Y., and Bavaud, F. (2014). Corrélats textuels autour du concept de
 minéralité dans les vins. In Actes des 12èmes Journées
-internationales d’analyse statistique des données textuelles (JADT
-2014), pp. 209–223; the predefined values of this parameter
+internationales d&#8217;analyse statistique des données textuelles (JADT
+2014), pp. 209&#8211;223; the predefined values of this parameter
 (<strong>frequent</strong>, <strong>none</strong>, and <strong>rare</strong>) correspond respectively to
 values 1, 0.5 and 0 of parameter <em>alpha</em> in the above cited reference.</td></tr>
 </tbody>
@@ -506,7 +509,7 @@ values 1, 0.5 and 0 of parameter <em>alpha</em> in the above cited reference.</t
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

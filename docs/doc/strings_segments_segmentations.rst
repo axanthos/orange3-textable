@@ -22,11 +22,11 @@ a character too).
 .. _strings_segments_segmentations_fig1 :
 
 .. figure:: figures/a_simple_example.png
-	:align: center
+    :align: center
     :alt: example1
     :scale: 80%
 
-	Figure 1 : A simple string.
+    Figure 1 : A simple string.
 
 What makes the transition from text strings to data tables possible is the concept of a segmentation. 
 What is a segmentation ?  A segmentation is a string analysis based on a ordered list of segments. 
@@ -43,11 +43,11 @@ All segments referring to a given string must be grouped together, in the order 
 .. _strings_segments_segmentations_fig2 :
 
 .. figure:: figures/a_simple_plan.png
-	:align: center
+    :align: center
     :alt: example2
     :scale: 80%
 
-	Figure 2 : A segmentation can span several strings.
+    Figure 2 : A segmentation can span several strings.
 
 
 See also

@@ -1,15 +1,18 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, cookbook, build a concordance" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="Orange Textable documentation, cookbook, build a concordance" name="description" />
 <meta content="Orange, Textable, documentation, cookbook, concordance" name="keywords" />
 
     <title>Build a concordance &#8212; Textable v3.1.0b3 documentation</title>
+    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
@@ -28,7 +31,7 @@
     <link rel="next" title="Display table" href="display_table.html" />
     <link rel="prev" title="Examine the evolution of unit frequency along the text" href="examine_evolution_unit_frequency.html" /> 
   </head>
-  <body>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -100,17 +103,17 @@ the canvas.</li>
 <li>Drag and drop from the output connection (righthand side) of the widget
 instance that emits the segmentation in which occurrences of the query
 string will be retrieved (e.g. <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a>) to the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a>
-widget instance’s input connection (lefthand side).</li>
+widget instance&#8217;s input connection (lefthand side).</li>
 <li>Also connect both the <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance and the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a>
 instance to the <a class="reference internal" href="context.html#context"><span class="std std-ref">Context</span></a> instance (thus forming a triangle).</li>
-<li>Open the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> instance’s interface by double-clicking on its
+<li>Open the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> instance&#8217;s interface by double-clicking on its
 icon on the canvas and type the string whose context of occurrence will be
 examined in the <strong>Regex</strong> field (here: <code class="docutils literal"><span class="pre">hobbit</span></code>); assign it a
 recognizable <strong>Output segmentation label</strong>, such as <em>key_segments</em> for
 instance.</li>
 <li>Click the <strong>Send</strong> button (or make sure the <strong>Send automatically</strong>
 checkbox is selected).</li>
-<li>Open the <a class="reference internal" href="context.html#context"><span class="std std-ref">Context</span></a> instance’s interface by double-clicking on its
+<li>Open the <a class="reference internal" href="context.html#context"><span class="std std-ref">Context</span></a> instance&#8217;s interface by double-clicking on its
 icon on the canvas.</li>
 <li>In the <strong>Units</strong> section, select the segmentation that contains the
 occurrences of the query string (here: <em>key_segments</em>) using the
@@ -133,7 +136,7 @@ Table output</span></a>.</li>
 <h2>Comment<a class="headerlink" href="#comment" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>In the <strong>Regex</strong> field of the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> widget you can use all the
-syntax of Python’s regular expression (<em>cf.</em> <a class="reference external" href="http://docs.python.org/library/re.html">Python documentation</a>); for instance, if you wish to
+syntax of Python&#8217;s regular expression (<em>cf.</em> <a class="reference external" href="http://docs.python.org/library/re.html">Python documentation</a>); for instance, if you wish to
 restrict your search to entire words, you might frame the query string with
 word boundary anchors <code class="docutils literal"><span class="pre">\b</span></code> (in our example <code class="docutils literal"><span class="pre">\bhobbit\b</span></code>).</li>
 </ul>
@@ -214,7 +217,7 @@ word boundary anchors <code class="docutils literal"><span class="pre">\b</span>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

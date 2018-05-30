@@ -3,7 +3,7 @@
    :keywords: Orange, Textable, documentation, partition, filter, regex
 
 Partitioning segmentations using a regex
-==========================
+========================================
 
 There are many situations where we might want so selectively in- or exclude
 segments from a segmentation. For instance, a user might be want to exclude
