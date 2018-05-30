@@ -1,0 +1,146 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Uses of annotating segmentations" name="description" />
+<meta content="Orange, Textable, documentation, annotations, uses" name="keywords" />
+
+    <title>5. The uses of annotating segmentations &#8212; Textable v3.1.0b3 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.1.0b3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="6. Merging and annotating" href="merging_annotating.html" />
+    <link rel="prev" title="4. Segmenting data into smaller units" href="segmenting_data_smaller_units.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="merging_annotating.html" title="6. Merging and annotating"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="segmenting_data_smaller_units.html" title="4. Segmenting data into smaller units"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="Textable_basics.html" accesskey="U">Textable’s basics</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-uses-of-annotating-segmentations">
+<h1>5. The uses of annotating segmentations<a class="headerlink" href="#the-uses-of-annotating-segmentations" title="Permalink to this headline">¶</a></h1>
+<p>Annotations are bits of information attached to text segments.
+They let you go beyond what’s in the text, and extend Orange Textable’s analytic capacities
+from textual content to user-provided interpretative information and metadata.</p>
+<p>In Orange Textable, an <em>annotation</em> is a piece of information attached to a
+segment. Annotations consist of two parts: <em>key</em> and <em>value</em>. For instance, in
+the now classical case of the word segmentation of <em>a simple example</em> (see :ref:<a href="#id1"><span class="problematic" id="id2">`</span></a>figure 1&lt;uses_annotating_segmentations_fig1&gt;`below), segment
+<em>simple</em> could be associated with the annotation <em>{part of speech: adjective}</em>;
+this annotation’s key is <em>part of speech</em> and its value is <em>adjective</em>.</p>
+<div class="figure" id="uses-annotating-segmentations-fig1">
+<a class="reference internal image-reference" href="figures/a_simple_example_adjective.png:align:center"><img alt="example annotations" src="figures/a_simple_example_adjective.png:align:center" /></a>
+</div>
+<p>A segment can have zero, one, or several annotations attached to it.
+The same segment could be simultaneously associated with another annotation such as
+<em>{word category: lexical}</em>, or any <em>{key: value}</em> pair deemed relevant.</p>
+<div class="figure" id="uses-annotating-segmentations-fig2">
+<a class="reference internal image-reference" href="figures/a_simple_example_annotations2.png:align:center"><img alt="segments with various annotations" src="figures/a_simple_example_annotations2.png:align:center" /></a>
+</div>
+<p>Note that annotations keys are unique : Since they serve to recognize various annotation values attached to a single
+segment, annotation keys cannot be duplicated within the segment. On :ref:<a href="#id3"><span class="problematic" id="id4">`</span></a>figure 2 &lt;uses_annotating_segmentations_fig2&gt;`above,
+“simple” can only have one value at a time for key “category”.</p>
+<p>Even though we have carefully ignored them so far, annotations play a
+fundamental role in text data processing and analysis. They make it possible
+to go beyond the basic level of forms that are “physically” present in a text
+and tap into the more abstract–and often more interesting–level of the
+<em>interpretation</em> of these forms.</p>
+<p>For instance, the texts composing a given corpus could be annotated with
+respect to their genre (<em>novel</em>, <em>short story</em>, and so on), and the parts of
+these texts might be annotated with regard to their discourse type
+(<em>narrative</em>, <em>description</em>, <em>dialogue</em>, and so on). Such data could be
+exploited to study the distribution of discourse types as a function of genre,
+which would be at best extremely difficult, if ever possible, without having
+encoded the relevant information by means of annotations.</p>
+<p>In the following section, we will see a simple method for creating annotations in Orange Textable using the <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> widget,
+and then various ways of exploiting such annotations.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="segmenting_data_smaller_units.html"
+                        title="previous chapter">4. Segmenting data into smaller units</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="merging_annotating.html"
+                        title="next chapter">6. Merging and annotating</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/uses_annotating_segmentations.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="merging_annotating.html" title="6. Merging and annotating"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="segmenting_data_smaller_units.html" title="4. Segmenting data into smaller units"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="Textable_basics.html" >Textable’s basics</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

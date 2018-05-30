@@ -3,7 +3,7 @@
    :keywords: Orange, Textable, documentation, annotations, uses
 
 The uses of annotating segmentations
-====================================
+==========================
 Annotations are bits of information attached to text segments. 
 They let you go beyond what's in the text, and extend Orange Textable's analytic capacities
 from textual content to user-provided interpretative information and metadata.

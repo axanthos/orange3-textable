@@ -19,7 +19,14 @@ it.
 Consider the following string of 16 characters (note that whitespace counts as
 a character too).
 
-figure 1
+.. _strings_segments_segmentations_fig1 :
+
+.. figure:: figures/a_simple_example.png
+	:align: center
+    :alt: example1
+    :scale: 80%
+
+	Figure 1 : A simple string.
 
 What makes the transition from text strings to data tables possible is the concept of a segmentation. 
 What is a segmentation ?  A segmentation is a string analysis based on a ordered list of segments. 
@@ -28,13 +35,19 @@ it consists of 3 words but also 16 characters, 14 letters, 6 vowels, 3 e's, 2 mp
 
 
 In the previous example, all the segments of a given segmentation refer to the same string. 
-However, a segmentation  can span several strings. 
+However, a segmentation can span several strings. 
 Thus, the segments of a segmentation can cover different strings, as in the example below, where the segmentation "a", "simple", "plan" 
 spans two strings ("a simple example" and "what's the plan"). 
 All segments referring to a given string must be grouped together, in the order in which they appear in the string. 
 
-figure 2
+.. _strings_segments_segmentations_fig2 :
 
+.. figure:: figures/a_simple_plan.png
+	:align: center
+    :alt: example2
+    :scale: 80%
+
+	Figure 2 : A segmentation can span several strings.
 
 
 See also

@@ -1,8 +1,8 @@
 .. meta::
-   :description: Orange Textable documentation, merging segmentations together
+   :description: Orange Textable documentation, merging and segmenting
    :keywords: Orange, Textable, documentation, merge, data, corpus
 
-Merging segmentations together
+Merging and segmenting
 ==============================
 
 Computerized text analysis often implies consolidating various text sources

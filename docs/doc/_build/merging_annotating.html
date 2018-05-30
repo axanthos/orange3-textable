@@ -1,0 +1,172 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, merging and annotating" name="description" />
+<meta content="Orange, Textable, documentation, annotation, merge" name="keywords" />
+
+    <title>6. Merging and annotating &#8212; Textable v3.1.0b3 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.1.0b3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="7. From segmentations to tables" href="segmentations_tables.html" />
+    <link rel="prev" title="5. The uses of annotating segmentations" href="uses_annotating_segmentations.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="segmentations_tables.html" title="7. From segmentations to tables"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="uses_annotating_segmentations.html" title="5. The uses of annotating segmentations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="Textable_basics.html" accesskey="U">Textable’s basics</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="merging-and-annotating">
+<h1>6. Merging and annotating<a class="headerlink" href="#merging-and-annotating" title="Permalink to this headline">¶</a></h1>
+<p>Whenever Textable widgets manipulate text contents, they can manipulate
+annotations instead: you can search for segments attached to specific
+annotations, count annotations, merge data based on their annotations, etc.</p>
+<p>Widget <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> makes it possible to convert the labels of its input
+segmentations into annotation values. Suppose for instance that three
+instances of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> have been created: two instances containing a
+text in English, and one containing a text in French. We might want to merge
+these three segmentations into a single one, where each segment would be
+associated with an annotation whose key is <em>language</em> and whose value is
+either <em>en</em> or <em>fr</em>. The first step would then be to rename
+each <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance with the desired annotation value for this text, as
+shown on <a class="reference internal" href="#annotating-merging-fig1"><span class="std std-ref">figure 1</span></a> below.</p>
+<div class="figure align-center" id="id1">
+<span id="annotating-merging-fig1"></span><a class="reference internal image-reference" href="_images/annotation_text_field.png"><img alt="Specifying annotations values using the label of Text field instances" src="_images/annotation_text_field.png" style="width: 843.2px; height: 747.2px;" /></a>
+<p class="caption"><span class="caption-text">Figure 1: Specifying annotations values using the label of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instances.</span></p>
+</div>
+<p>The three instances of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> should then be connected to an
+instance of <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> as shown on <a class="reference internal" href="#annotating-merging-fig2"><span class="std std-ref">figure 2</span></a>
+below.</p>
+<div class="figure align-center" id="id2">
+<span id="annotating-merging-fig2"></span><img alt="Creating annotations with Merge" src="_images/merge_annotations_example_schema.png" />
+<p class="caption"><span class="caption-text">Figure 2: Example schema for creating annotations with <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
+</div>
+<p>One must still specify, in the interface of <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>, the annotation key
+to which values <em>en</em> and <em>fr</em> should be associated. This can be done by
+entering the string <em>language</em> in field <strong>Import labels with key</strong>, having
+previously ensured that labels would actually be converted into annotation
+values by checking the box at the left of this line (see <span class="xref std std-ref">figure 3</span> below). In order to give a value to each string, check <strong>Auto-number with key</strong> box. As a key, you can choose text, num, author, etc.
+Each segment will be given a specific number.
+.. _annotating_merging_fig3:</p>
+<div class="figure align-center" id="id3">
+<img alt="Importing labels as annotation values with Merge" src="_images/merge_annotations_example.png" />
+<p class="caption"><span class="caption-text">Figure 3: Importing labels as annotation values with <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
+</div>
+<p>The result of these operations can be viewed using an instance of
+<a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>, whose output is shown on
+<span class="xref std std-ref">figure 4</span> below. For each segment in
+the merged segmentation, an annotation value <em>en</em> or <em>fr</em> associated with key
+<em>language</em> is displayed between the segment’s address and its content. Note that the auto-number value offers the possibility to access each segment by using
+the drop-down menu <strong>Go to segment</strong>.
+.. _annotating_merging_fig4:</p>
+<div class="figure align-center" id="id4">
+<img alt="Annotations created with Merge" src="_images/display_merged_annotations_example.png" />
+<p class="caption"><span class="caption-text">Figure 4: Annotations created with <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
+</div>
+<div class="section" id="see-also">
+<h2>6.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Reference: Text Field widget</span></a></li>
+<li><a class="reference internal" href="merge.html#merge"><span class="std std-ref">Reference: Merge widget</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">6. Merging and annotating</a><ul>
+<li><a class="reference internal" href="#see-also">6.1. See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="uses_annotating_segmentations.html"
+                        title="previous chapter">5. The uses of annotating segmentations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="segmentations_tables.html"
+                        title="next chapter">7. From segmentations to tables</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/merging_annotating.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="segmentations_tables.html" title="7. From segmentations to tables"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="uses_annotating_segmentations.html" title="5. The uses of annotating segmentations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="Textable_basics.html" >Textable’s basics</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

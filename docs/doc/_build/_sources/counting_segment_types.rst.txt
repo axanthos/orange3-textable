@@ -13,8 +13,7 @@ illustrated on :ref:`figure 1 <counting_segment_types_fig1>` below. As usual,
 we will suppose that the :ref:`Text Field` instance contains
 *a simple example*. The :ref:`Segment` instance is configured for
 letter segmentation (**Regex:** ``\w`` and **Widget Segment label:**
-*letters*). The default configuration of the instances of
-:ref:`Convert` and *Data Table* (from the **Data** tab of Orange
+*letters*). The default configuration of *Data Table* (from the **Data** tab of Orange
 Canvas) needs not be modified for this example.
 
 .. _counting_segment_types_fig1:

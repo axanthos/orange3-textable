@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, strings, segments, and segmentation" name="description" />
 <meta content="Orange, Textable, documentation, strings, segments, segmentation" name="keywords" />
 
-    <title>1.1. Strings, segments, and segmentations &#8212; Textable v3.1.0b3 documentation</title>
+    <title>1. Strings, segments, and segmentations &#8212; Textable v3.1.0b3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -24,7 +24,9 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. Keyboard input, widget labelling and segmentation display" href="keyboard_input_segmentation_display.html" />
+    <link rel="prev" title="Textable’s basics" href="Textable_basics.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -33,7 +35,14 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="keyboard_input_segmentation_display.html" title="2. Keyboard input, widget labelling and segmentation display"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Textable_basics.html" title="Textable’s basics"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="Textable_basics.html" accesskey="U">Textable’s basics</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -43,7 +52,7 @@
           <div class="body" role="main">
             
   <div class="section" id="strings-segments-and-segmentations">
-<h1>1.1. Strings, segments, and segmentations<a class="headerlink" href="#strings-segments-and-segmentations" title="Permalink to this headline">¶</a></h1>
+<h1>1. Strings, segments, and segmentations<a class="headerlink" href="#strings-segments-and-segmentations" title="Permalink to this headline">¶</a></h1>
 <p>The main purpose of Orange Textable is to turn text strings into data tables.
 As we will see, there are several methods for importing text strings, the
 simplest of which is keyboard input using widget
@@ -55,19 +64,23 @@ Whenever a new string is imported, it is assigned a unique identification number
 it.</p>
 <p>Consider the following string of 16 characters (note that whitespace counts as
 a character too).</p>
-<p>figure 1</p>
+<div class="figure" id="strings-segments-segmentations-fig1">
+<a class="reference internal image-reference" href="figures/a_simple_example.png:align:center"><img alt="example1" src="figures/a_simple_example.png:align:center" /></a>
+</div>
 <p>What makes the transition from text strings to data tables possible is the concept of a segmentation.
 What is a segmentation ?  A segmentation is a string analysis based on a ordered list of segments.
 For instance, a string like “a simple example” above can be analyzed in many different ways:
 it consists of 3 words but also 16 characters, 14 letters, 6 vowels, 3 e’s, 2 mple’s, etc.</p>
 <p>In the previous example, all the segments of a given segmentation refer to the same string.
-However, a segmentation  can span several strings.
+However, a segmentation can span several strings.
 Thus, the segments of a segmentation can cover different strings, as in the example below, where the segmentation “a”, “simple”, “plan”
 spans two strings (“a simple example” and “what’s the plan”).
 All segments referring to a given string must be grouped together, in the order in which they appear in the string.</p>
-<p>figure 2</p>
+<div class="figure" id="strings-segments-segmentations-fig2">
+<a class="reference internal image-reference" href="figures/a_simple_plan.png:align:center"><img alt="example2" src="figures/a_simple_plan.png:align:center" /></a>
+</div>
 <div class="section" id="see-also">
-<h2>1.1.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<h2>1.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference internal" href="keyboard_input_segmentation_display.html"><span class="doc">Getting started: Keyboard input and segmentation display</span></a></li>
 <li><a class="reference internal" href="import_text_keyboard.html"><span class="doc">Cookbook: Import text from keyboard</span></a></li>
@@ -83,12 +96,18 @@ All segments referring to a given string must be grouped together, in the order 
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">1.1. Strings, segments, and segmentations</a><ul>
-<li><a class="reference internal" href="#see-also">1.1.1. See also</a></li>
+<li><a class="reference internal" href="#">1. Strings, segments, and segmentations</a><ul>
+<li><a class="reference internal" href="#see-also">1.1. See also</a></li>
 </ul>
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Textable_basics.html"
+                        title="previous chapter">Textable’s basics</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="keyboard_input_segmentation_display.html"
+                        title="next chapter">2. Keyboard input, widget labelling and segmentation display</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -116,7 +135,14 @@ All segments referring to a given string must be grouped together, in the order 
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="keyboard_input_segmentation_display.html" title="2. Keyboard input, widget labelling and segmentation display"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Textable_basics.html" title="Textable’s basics"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="Textable_basics.html" >Textable’s basics</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
