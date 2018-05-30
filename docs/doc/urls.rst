@@ -65,18 +65,16 @@ select the encoding of its content.
 
     Figure 1: **URLs** widget (basic interface).
 
-The **Options** section allows the user to define the label of the output
-segmentation (**Output segmentation label**), here *url_content*.
-
-The **Info** section indicates the  the number of characters in the single
-segment contained in the output segmentation, or the reasons why no
-segmentation is emitted (inability to retrieve the data, encoding issue,
-etc.).
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface.
+
+Below the **Send** button, the user finds the number of characters in the single
+segment contained in the output segmentation, or the reasons why no
+segmentation is emitted (inability to retrieve the data, encoding issue,
+etc.).
 
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
@@ -134,9 +132,7 @@ value in the **Annotation value** field. These three parameters (encoding,
 key, value) will be applied to each URL appearing in the **URLs** field
 at the moment of their addition to the list with **Add**.
 
-The **Options** section allows the user to specify the label affected to the
-output segmentation (**Output segmentation label**). The **Import URLs
-with key** checkbox enables the program to create for each imported URL an
+The **Import URLs with key** checkbox enables the program to create for each imported URL an
 annotation whose value is the URL (as displayed in the list) and whose
 key is specified by the user in the text field on the right of the checkbox.
 Similarly the button **Auto-number with key** enables the program to
@@ -148,16 +144,16 @@ In :ref:`figure 2 <URLs_fig2>`, it was thus decided to assign the label
 the annotation key *url*. On the other hand, the auto-numbering option
 has not been enabled.
 
-The **Info** section indicates the length of the output segmentation in
-characters, or the reasons why no segmentation is emitted (inability to
-retrieve the data, encoding issue, etc.). In the example, the two segments
-corresponding to the imported URLs' content thus total up to 1'300'344
-characters.
-
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface.
+
+Below the **Send** button, the user finds the length of the output segmentation in
+characters, or the reasons why no segmentation is emitted (inability to
+retrieve the data, encoding issue, etc.). In the example, the two segments
+corresponding to the imported URLs' content thus total up to 1'300'344
+characters.
 
 .. _urls_remote_control_ref:
 

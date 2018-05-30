@@ -1,8 +1,8 @@
 .. meta::
-   :description: Orange Textable documentation, merging segmentations together
+   :description: Orange Textable documentation, merging and segmenting
    :keywords: Orange, Textable, documentation, merge, data, corpus
 
-Merging segmentations together
+Merging and segmenting
 ==============================
 
 Computerized text analysis often implies consolidating various text sources
@@ -29,11 +29,8 @@ shown on :ref:`figure 1 <merging_segmentations_together_fig1>`.
     Figure 1: Grouping *a simple example* with *another example* using widget :ref:`Merge`.
 
 The interface of widget :ref:`Merge` (see
-:ref:`figure 2 <merging_segmentations_together_fig2>` below) illustrates a
-feature shared by most Orange Textable widgets: the **Advanced settings**
-checkbox triggers the display of more complex controls offering more
-possibilities to the user. For now we will stick to the basic settings and
-leave the box unchecked.
+:ref:`figure 2 <merging_segmentations_together_fig2>` below) features 4 options : 
+2 annotation keys; the possibility of copying segment inputs annotations if any and the option of fusing segments that have the same adress.
 
 .. _merging_segmentations_together_fig2:
 
@@ -43,12 +40,8 @@ leave the box unchecked.
 
     Figure 2: Interface of widget :ref:`Merge`.
     
-Section **Ordering** of the widget's interface lets the user view the labels
-of incoming segmentations and control the order in which they will appear in
-the output segmentation (by selecting them and clicking on **Move Up** /
-**Down**). The **Output segmentation label** can be set in section
-**Options**. We will return :doc:`later <annotating_merging>` to the purpose
-of checkbox **Import labels with key**; leave it unchecked for now.
+We will return :doc:`later <annotating_merging>` to the purpose
+of checkbox **Import labels with key**, as well as **Auto-number with key**. Leave them unchecked for now.
 
 .. _merging_segmentations_together_fig3:
 
@@ -63,8 +56,7 @@ resulting merged segmentation, as displayed by widget
 :ref:`Display`. As can be seen, :ref:`Merge` makes it easy
 to concatenate several strings into a single segmentation. If the incoming
 segmentations contained several segments, each of them would appear in the
-output segmentation, in the order specified under **Ordering** (and, within
-each incoming segmentation, in the original order of segments).
+output segmentation, in the order they have been linked to the Merge widget.
 
 .. _merging_segmentations_together_ex:
 

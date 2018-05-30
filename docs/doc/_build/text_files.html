@@ -103,15 +103,14 @@ encoding of the file.</p>
 <span id="text-files-fig1"></span><img alt="Basic interface of the Text files widget" src="_images/text_files_basic_example.png" />
 <p class="caption"><span class="caption-text">Figure 1: <strong>Text files</strong> widget (basic interface).</span></p>
 </div>
-<p>The <strong>Options</strong> section allows the user to define the label of the output
-segmentation (<strong>Output segmentation label</strong>), here <em>Great Expectations</em>.</p>
-<p>The <strong>Info</strong> section indicates the  the number of characters in the single
-segment contained in the output segmentation, or the reasons why no
-segmentation is emitted (no input data, encoding issue, etc.).</p>
+<p>The user can define the label of the output segmentation (<strong>Options</strong>) by checking the <strong>Advanced settings</strong>.</p>
 <p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface.</p>
+<p>The text below the <strong>Send</strong> button indicates the number of characters in the single
+segment contained in the output segmentation, or the reasons why no
+segmentation is emitted (no input data, encoding issue, etc.).</p>
 </div>
 <div class="section" id="advanced-interface">
 <h3>Advanced interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h3>
@@ -120,7 +119,7 @@ in a determined order; each file can moreover be associated to a distinct
 encoding and specific annotations. The emitted segmentation contains a segment
 for each imported file.</p>
 <div class="figure align-center" id="id3">
-<span id="text-files-fig2"></span><a class="reference internal image-reference" href="_images/text_files_advanced_example.png"><img alt="Advanced interface of the Text files widget" src="_images/text_files_advanced_example.png" style="width: 416.8px; height: 568.8000000000001px;" /></a>
+<span id="text-files-fig2"></span><a class="reference internal image-reference" href="_images/text_files_advanced_example.png"><img alt="Advanced interface of the Text files widget" src="_images/text_files_advanced_example.png" style="width: 319.20000000000005px; height: 571.2px;" /></a>
 <p class="caption"><span class="caption-text">Figure 2: <strong>Text files</strong> widget (advanced interface).</span></p>
 </div>
 <p>The advanced interface (see <a class="reference internal" href="#text-files-fig2"><span class="std std-ref">figure 2</span></a> above) presents
@@ -159,8 +158,7 @@ value in the <strong>Annotation value</strong> field. These three parameters (en
 key, value) will be applied to each file appearing in the <strong>File paths</strong> field
 at the moment of their addition to the list with <strong>Add</strong>.</p>
 <p>The <strong>Options</strong> section allows the user to specify the label affected to the
-output segmentation (<strong>Output segmentation label</strong>). The <strong>Import filenames
-with key</strong> checkbox enables the program to create for each imported file an
+output segmentation. The <strong>Import filenames with key</strong> checkbox enables the program to create for each imported file an
 annotation whose value is the file name (as displayed in the list) and whose
 key is specified by the user in the text field on the right of the checkbox.
 Similarly the button <strong>Auto-number with key</strong> enables the program to
@@ -170,14 +168,14 @@ annotation key specified in the text field on the right.</p>
 <em>novels</em> to the output segmentation, and to associate the name of each file to
 the annotation key <em>filename</em>. On the other hand, the auto-numbering option
 has not been enabled.</p>
-<p>The <strong>Info</strong> section indicates the length of the output segmentation in
-characters, or the reasons why no segmentation is emitted (no selected file,
-encoding issue, etc.). In the example, the two segments corresponding to the
-imported files thus total up to 1‘262‘145 characters.</p>
 <p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface.</p>
+<p>The text below the <strong>Send</strong> button indicates the length of the output segmentation in
+characters, or the reasons why no segmentation is emitted (no selected file,
+encoding issue, etc.). In the example, the two segments corresponding to the
+imported files thus total up to 1‘262‘145 characters.</p>
 </div>
 <div class="section" id="remote-control">
 <span id="text-files-remote-control-ref"></span><h3>Remote control<a class="headerlink" href="#remote-control" title="Permalink to this headline">¶</a></h3>

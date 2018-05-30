@@ -148,9 +148,7 @@ Basic interface
 
 The basic version of the widget (see :ref:`figure 1 <convert_fig1>` below) is
 essentially limited to the **Encoding** section, which allows the user to
-select an encoding for the output data. This can be done separately for the
-data emitted in Orange Canvas *Table* format on the default output channel
-(**Orange table** drop-down menu) and for the data possibly exported to a text
+select an encoding for the output data. This can be done for the data possibly exported to a text
 file in tab-delimited format (**Output File**). If certain characters cannot
 be converted to the specified encoding (for example accentuated characters in
 the ASCII encoding), they are automatically replaced by corresponding HTML
@@ -295,15 +293,15 @@ Canvas (and in fact often necessary in that case). Both parameters (**Column
 delimiter** and **Output Orange headers** also apply to the data sent on the
 *Segmentation* output channel)
 
-The **Info** section indicates the number of lines and columns in the output
-table, or the reasons why no table is emitted (no input data).
-
 The **Send** button triggers data emission to the output connection(s) (see
 `Output channels`_ above). When it is selected, the **Send automatically**
 checkbox disables the button and the widget attempts to automatically send
 data at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).
+
+The informations generated below the **Send** button indicate the number of lines and columns in the output
+table, or the reasons why no table is emitted (no input data).
 
 Messages
 --------

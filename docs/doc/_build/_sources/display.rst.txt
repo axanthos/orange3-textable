@@ -68,8 +68,7 @@ program to directly show a particular segment using **Go to segment**.
     Figure 1: **Display** widget (basic interface).
 
 It can be noted that the basic interface of **Display** is more sober than
-those of the other widgets of Orange Textable: it does not include an **Info**
-section, neither a **Send** button nor a **Send automatically** checkbox.
+those of the other widgets of Orange Textable: it does not include a **Send** button nor a **Send automatically** checkbox.
 What motivates this design is the will to emphasize the fundamental
 functionality of visualization of the input segmentation content and
 annotations -- main reason for the use of **Display** in most cases. In this
@@ -79,9 +78,9 @@ Advanced interface
 ~~~~~~~~~~~~~~~~~~
 
 The widget's advanced interface (see :ref:`figure 2 <display_fig2>`) restores
-the **Info** section which indicates the number of segments in the input
+informative indications such as the number of segments in the input
 segmentation or the reasons why no segmentation is emitted (for example
-no input data). The **Send** button triggers the emission of a segmentation to
+no input data) below the Text data window. The **Send** button triggers the emission of a segmentation to
 the output connection(s). When it is selected, the **Send automatically**
 checkbox disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are

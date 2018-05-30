@@ -34,7 +34,7 @@ key**: *type*) is *DET* or *PREP* (**Regex:** ``^(DET|PREP)$``).
 
 .. _annotation_based_selection_fig2:
 
-.. figure:: figures/select_annotation_example.png
+.. figure:: figures/select_annotation_key.png
     :align: center
     :alt: Inserting an instance of Select to filter a segmentation
 

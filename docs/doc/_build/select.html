@@ -93,7 +93,7 @@ the advanced interface are the following: (i) regular expression options are
 not accessible (<em>-u</em>, <em>Unicode dependent</em>, is nonetheless activated by
 default); (ii) auto-numbering is disabled; and (iii) annotations are copied
 by default.</p>
-<div class="figure align-center" id="id4">
+<div class="figure align-center" id="id2">
 <span id="select-fig1"></span><img alt="Basic interface of the Select widget" src="_images/select_example.png" />
 <p class="caption"><span class="caption-text">Figure 1: <strong>Select</strong> widget (basic interface).</span></p>
 </div>
@@ -103,7 +103,7 @@ by default.</p>
 <p>In its advanced version, the <strong>Select</strong> section of the widget interface comes
 in three versions depending on the value chosen in the <strong>Method</strong> drop-down
 menu (see figures <a class="reference internal" href="#select-fig2"><span class="std std-ref">2</span></a> to <a class="reference internal" href="#select-fig4"><span class="std std-ref">4</span></a> below).</p>
-<div class="figure align-center" id="id5">
+<div class="figure align-center" id="id3">
 <span id="select-fig2"></span><img alt="Advanced interface of the Select widget (Regex method)" src="_images/select_advanced_regex_example.png" />
 <p class="caption"><span class="caption-text">Figure 2: <strong>Select</strong> widget (advanced interface, <strong>Regex</strong> method).</span></p>
 </div>
@@ -134,7 +134,7 @@ segments whose annotation value for key <em>category</em> (<strong>Annotation ke
 <p>This method consists of selecting the segments of the input segmentation with
 a random sampling process, such that every input segment has the same
 probability of being selected or not.</p>
-<div class="figure align-center" id="id6">
+<div class="figure align-center" id="id4">
 <span id="select-fig3"></span><img alt="Advanced interface of the Select widget (Sample method)" src="_images/select_advanced_sample_example.png" />
 <p class="caption"><span class="caption-text">Figure 3: <strong>Select</strong> widget (advanced interface, <strong>Sample</strong> method).</span></p>
 </div>
@@ -150,7 +150,7 @@ value is selected, the size will be expressed in percentage of input segments
 <p>This method consists of retaining from the input segmentation only the
 segments whose content (or annotation value for a given key) has a frequency
 in the segmentation that is comprised between given bounds.</p>
-<div class="figure align-center" id="id7">
+<div class="figure align-center" id="id5">
 <span id="select-fig4"></span><img alt="Advanced interface of the Select widget (Threshold method)" src="_images/select_advanced_threshold_example.png" />
 <p class="caption"><span class="caption-text">Figure 4: <strong>Select</strong> widget (advanced interface, <strong>Threshold</strong> method).</span></p>
 </div>
@@ -172,22 +172,20 @@ retain only the segments whose annotation value for the key <em>category</em>
 Proportion</strong>) comprised between 5% (<strong>Min. proportion (%)</strong>) and 10% (<strong>Max.
 proportion (%)</strong>) in the input segmentation.</p>
 <p>The elements of the <strong>Options</strong> section of the widget interface are common to
-the three selection methods presented above. The <strong>Output segmentation label</strong>
-field enables the user to specify the label assigned to the output
-segmentation.  <a class="footnote-reference" href="#id3" id="id2">[1]</a> The <strong>Auto-number with key</strong> checkbox enables the program
+the three selection methods presented above. The <strong>Auto-number with key</strong> checkbox enables the program
 to automatically number the segments of the output segmentation and to
 associate the number to the annotation key specified in the text field on the
 right. The <strong>Copy annotations</strong> checkbox copies every annotation of the input
 segmentation to the output segmentation.</p>
-<p>The <strong>Info</strong> section indicates the number of segments in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-no selected input segment, etc.).</p>
 <p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).</p>
+<p>Below the <strong>Send</strong> button, some indications are given about the number of segments in the output
+segmentation, or the reasons why no segmentation is emitted (no input data,
+no selected input segment, etc.).</p>
 </div>
 </div>
 </div>
@@ -246,17 +244,6 @@ computation and data emission to proceed.</dd>
 <li><a class="reference internal" href="random_sample.html"><span class="doc">Cookbook: Create a random selection or sample of segments</span></a></li>
 </ul>
 </div>
-<div class="section" id="footnotes">
-<h2>Footnotes<a class="headerlink" href="#footnotes" title="Permalink to this headline">¶</a></h2>
-<table class="docutils footnote" frame="void" id="id3" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>Here it concerns the segmentation containing the selected segments and
-emitted on the default output channel; the segmentation containing the
-discarded segments receives the same label prepended with <em>NEG_</em>.</td></tr>
-</tbody>
-</table>
-</div>
 </div>
 
 
@@ -286,7 +273,6 @@ discarded segments receives the same label prepended with <em>NEG_</em>.</td></t
 </ul>
 </li>
 <li><a class="reference internal" href="#examples">Examples</a></li>
-<li><a class="reference internal" href="#footnotes">Footnotes</a></li>
 </ul>
 </li>
 </ul>

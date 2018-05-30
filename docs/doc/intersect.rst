@@ -73,6 +73,28 @@ whose label is *stopwords*, is the result of the segmentation in words of a
 list of so-called "stopwords" (articles, pronouns, prepositions,
 etc.)--typically deemed irrelevant for information retrieval.
 
+The **Send** button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the **Send automatically** checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).
+
+Below the **Send** button, the number of segments in the output
+segmentation are indicated, or the reasons why no segmentation is emitted (no input data,
+no selected input segment, etc.).
+
+Advanced interface
+~~~~~~~~~~~~~~~~~~
+
+The main difference between the widget's basic and advanced interface is that
+in the latter, section **Intersect** includes a **Filter annotation key**
+drop-down menu and a **Source annotation key**. 
+
+If a given annotation key of the filter segmentation is
+selected in the drop-down menu of the **Filter annotation key**, 
+the corresponding annotation value (rather than *content*) types
+will condition the in-/exclusion of the source segmentation segments.
 Since the **Source annotation key** drop-down menu is set on *(none)*,
 the content of input segments will determine the next steps (rather than the
 values of some annotation key). Concretely, the source segmentation segments
@@ -81,30 +103,6 @@ the filter segmentation (namely a stopword) will be excluded (**Mode:
 Exclude**) from the output segmentation. By contrast, choosing the value
 **Include** would result in including as output only the stopwords from the
 text.
-
-The **Options** section limits itself to the output segmentation label choice.
-[#]_ By default, annotations are systematically copied from input to output
-segments.
-
-The **Info** section indicates the number of segments in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-no selected input segment, etc.).
-
-The **Send** button triggers the emission of a segmentation to the output
-connection(s). When it is selected, the **Send automatically** checkbox
-disables the button and the widget attempts to automatically emit a
-segmentation at every modification of its interface or when its input data are
-modified (by deletion or addition of a connection, or because modified data is
-received through an existing connection).
-
-Advanced interface
-~~~~~~~~~~~~~~~~~~
-
-The main difference between the widget's basic and advanced interface is that
-in the latter, section **Intersect** includes a **Filter annotation key**
-drop-down menu. If a given annotation key of the filter segmentation is
-selected, the corresponding annotation value (rather than *content*) types
-will condition the in-/exclusion of the source segmentation segments.
 
 The advanced interface also offers two additional controls in section
 **Options**. The **Auto-number with key** checkbox enable the program to

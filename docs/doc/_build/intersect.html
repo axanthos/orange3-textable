@@ -89,8 +89,8 @@ source segmentation that correspond to a type present in the filter
 segmentation should be included (<strong>Mode: Include</strong>) in the output segmentation
 or excluded (<strong>Mode: Exclude</strong>) from it. This section is also designed to
 select the source segmentation (<strong>Source segmentation</strong>) and the filter
-segmentation (<strong>Filter segmentation</strong>) among the input segmentations. <a class="footnote-reference" href="#id4" id="id2">[1]</a></p>
-<div class="figure align-center" id="id6">
+segmentation (<strong>Filter segmentation</strong>) among the input segmentations. <a class="footnote-reference" href="#id3" id="id2">[1]</a></p>
+<div class="figure align-center" id="id5">
 <span id="intersect-fig1"></span><img alt="Basic interface of the Intersect widget" src="_images/intersect_example.png" />
 <p class="caption"><span class="caption-text">Figure 1: <strong>Intersect</strong> widget (basic interface).</span></p>
 </div>
@@ -106,7 +106,26 @@ the result of the segmentation of a text in words, as performed with the
 whose label is <em>stopwords</em>, is the result of the segmentation in words of a
 list of so-called “stopwords” (articles, pronouns, prepositions,
 etc.)–typically deemed irrelevant for information retrieval.</p>
-<p>Since the <strong>Source annotation key</strong> drop-down menu is set on <em>(none)</em>,
+<p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).</p>
+<p>Below the <strong>Send</strong> button, the number of segments in the output
+segmentation are indicated, or the reasons why no segmentation is emitted (no input data,
+no selected input segment, etc.).</p>
+</div>
+<div class="section" id="advanced-interface">
+<h3>Advanced interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h3>
+<p>The main difference between the widget’s basic and advanced interface is that
+in the latter, section <strong>Intersect</strong> includes a <strong>Filter annotation key</strong>
+drop-down menu and a <strong>Source annotation key</strong>.</p>
+<p>If a given annotation key of the filter segmentation is
+selected in the drop-down menu of the <strong>Filter annotation key</strong>,
+the corresponding annotation value (rather than <em>content</em>) types
+will condition the in-/exclusion of the source segmentation segments.
+Since the <strong>Source annotation key</strong> drop-down menu is set on <em>(none)</em>,
 the content of input segments will determine the next steps (rather than the
 values of some annotation key). Concretely, the source segmentation segments
 (namely the words from the text) whose content matches that of a segment from
@@ -114,26 +133,6 @@ the filter segmentation (namely a stopword) will be excluded (<strong>Mode:
 Exclude</strong>) from the output segmentation. By contrast, choosing the value
 <strong>Include</strong> would result in including as output only the stopwords from the
 text.</p>
-<p>The <strong>Options</strong> section limits itself to the output segmentation label choice.
-<a class="footnote-reference" href="#id5" id="id3">[2]</a> By default, annotations are systematically copied from input to output
-segments.</p>
-<p>The <strong>Info</strong> section indicates the number of segments in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-no selected input segment, etc.).</p>
-<p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
-connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
-disables the button and the widget attempts to automatically emit a
-segmentation at every modification of its interface or when its input data are
-modified (by deletion or addition of a connection, or because modified data is
-received through an existing connection).</p>
-</div>
-<div class="section" id="advanced-interface">
-<h3>Advanced interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h3>
-<p>The main difference between the widget’s basic and advanced interface is that
-in the latter, section <strong>Intersect</strong> includes a <strong>Filter annotation key</strong>
-drop-down menu. If a given annotation key of the filter segmentation is
-selected, the corresponding annotation value (rather than <em>content</em>) types
-will condition the in-/exclusion of the source segmentation segments.</p>
 <p>The advanced interface also offers two additional controls in section
 <strong>Options</strong>. The <strong>Auto-number with key</strong> checkbox enable the program to
 automatically number the segments from the output segmentation and to
@@ -186,7 +185,7 @@ computation and data emission to proceed.</dd>
 </div>
 <div class="section" id="footnotes">
 <h2>Footnotes<a class="headerlink" href="#footnotes" title="Permalink to this headline">¶</a></h2>
-<table class="docutils footnote" frame="void" id="id4" rules="none">
+<table class="docutils footnote" frame="void" id="id3" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>It should be noted that the interface does not prevent the user from
@@ -196,10 +195,10 @@ key</strong> and <strong>Filter annotation key</strong> menus (the latter being 
 available when the <strong>Advanced settings</strong> checkbox is selected).</td></tr>
 </tbody>
 </table>
-<table class="docutils footnote" frame="void" id="id5" rules="none">
+<table class="docutils footnote" frame="void" id="id4" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Here it concerns the segmentation containing the selected segments and
+<tr><td class="label">[2]</td><td>Here it concerns the segmentation containing the selected segments and
 emitted on the default output channel; the segmentation containing the
 discarded segments receives the same label prepended with <em>NEG_</em>.</td></tr>
 </tbody>

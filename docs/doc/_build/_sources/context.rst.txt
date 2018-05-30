@@ -301,7 +301,9 @@ The **Use collocation format** button is used to format the result as a
 collocation list (rather than a concordance); when it is selected, the
 **Min. frequency** drop-down menu allows the user to specify the (global)
 minimal frequency that the segment type must reach in order to appear in the
-list.
+list. Checking the **Treat distinct strings as contiguous** box permits to treat 
+separate strings as if they were contiguous, so that the end of each string is a
+djacent to the beginning of the next string.
 
 .. _context_fig2:
 
@@ -315,15 +317,15 @@ In **Containing segmentation mode** (see :ref:`figure 2 <context_fig2>`), the
 **Contexts** section allows the user to specify the maximal number of
 characters that appear in the right and left context of the pivot.
 
-The **Info** section indicates if a table was correctly emitted, or
-the reasons why no table is emitted (typically, because it is empty).
-
-The **Compute** button triggers the emission of a table in the internal format
+The **Send** button triggers the emission of a table in the internal format
 of Orange Textable, to the output connection(s). When it is selected, the
-**Compute automatically** checkbox disables the button and the widget attempts
+**Send automatically** checkbox disables the button and the widget attempts
 to automatically emit a segmentation at every modification of its interface or
 when its input data are modified (by deletion or addition of a connection, or
 because modified data is received through an existing connection).
+
+The informations generated below the **Send** button indicate if a table was correctly emitted, or
+the reasons why no table is emitted (typically, because it is empty).
 
 Messages
 --------
@@ -334,10 +336,10 @@ Information
 *Data correctly sent to output.*
     This confirms that the widget has operated properly.
 
-*Settings were* (or *Input has*) *changed, please click 'Compute' when ready.*
-    Settings and/or input have changed but the **Compute automatically** 
+*Settings were* (or *Input has*) *changed, please click 'Send' when ready.*
+    Settings and/or input have changed but the **Send automatically** 
     checkbox has not been selected, so the user is prompted to click the 
-    **Compute** button (or equivalently check the box) in order for computation 
+    **Send** button (or equivalently check the box) in order for computation 
     and data emission to proceed.
 
 *No data sent to output yet: no input segmentation.*

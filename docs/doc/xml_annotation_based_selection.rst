@@ -1,8 +1,8 @@
 .. meta::
-   :description: Orange Textable documentation, annotation-based selection
-   :keywords: Orange, Textable, documentation, annotation, selection
+   :description: Orange Textable documentation, XML annotation-based selection using a regex
+   :keywords: Orange, Textable, documentation, annotation, selection, xml, regex
 
-Annotation-based selection
+XML Annotation-based selection using a regex
 ==========================
 
 Another common way of exploiting annotations consists in using them to select
@@ -34,7 +34,7 @@ key**: *type*) is *DET* or *PREP* (**Regex:** ``^(DET|PREP)$``).
 
 .. _annotation_based_selection_fig2:
 
-.. figure:: figures/select_annotation_example.png
+.. figure:: figures/select_annotation_key.png
     :align: center
     :alt: Inserting an instance of Select to filter a segmentation
 

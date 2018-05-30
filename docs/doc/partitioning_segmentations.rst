@@ -1,8 +1,8 @@
 .. meta::
-   :description: Orange Textable documentation, partitioning segmentations
-   :keywords: Orange, Textable, documentation, partition, filter
+   :description: Orange Textable documentation, partitioning segmentations using a regex
+   :keywords: Orange, Textable, documentation, partition, filter, regex
 
-Partitioning segmentations
+Partitioning segmentations using a regex
 ==========================
 
 There are many situations where we might want so selectively in- or exclude
@@ -20,7 +20,7 @@ successively. (For now, the option **Annotation key: (none)** can be ignored.)
 
 .. _partitioning_segmentations_fig1:
 
-.. figure:: figures/select_example.png
+.. figure:: figures/select_annotation_example.png
     :align: center
     :alt: Example usage of widget Select
 

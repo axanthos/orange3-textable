@@ -60,12 +60,12 @@ produces frequency tables such as tables 1 and 2
 illustrated on <a class="reference internal" href="#counting-segment-types-fig1"><span class="std std-ref">figure 1</span></a> below. As usual,
 we will suppose that the <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance contains
 <em>a simple example</em>. The <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> instance is configured for
-letter segmentation (<strong>Regex:</strong> <code class="docutils literal"><span class="pre">\w</span></code> and <strong>Output segmentation label:</strong>
+letter segmentation (<strong>Regex:</strong> <code class="docutils literal"><span class="pre">\w</span></code> and <strong>Widget Segment label:</strong>
 <em>letters</em>). The default configuration of the instances of
 <a class="reference internal" href="convert.html#convert"><span class="std std-ref">Convert</span></a> and <em>Data Table</em> (from the <strong>Data</strong> tab of Orange
 Canvas) needs not be modified for this example.</p>
 <div class="figure align-center" id="id1">
-<span id="counting-segment-types-fig1"></span><a class="reference internal image-reference" href="_images/count_example_schema.png"><img alt="Schema for testing the Count widget" src="_images/count_example_schema.png" style="width: 466.40000000000003px; height: 69.60000000000001px;" /></a>
+<span id="counting-segment-types-fig1"></span><a class="reference internal image-reference" href="_images/count_example_schema.png"><img alt="Schema for testing the Count widget" src="_images/count_example_schema.png" style="width: 753.6px; height: 196.8px;" /></a>
 <p class="caption"><span class="caption-text">Figure 1: Schema for testing the <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> widget.</span></p>
 </div>
 <p>Basically, the purpose of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> is to determine the frequency
@@ -81,8 +81,8 @@ the order of columns).</p>
 <span id="counting-segment-types-fig2"></span><img alt="Counting the frequency of letter types with widget :ref:`Count`" src="_images/count_example.png" />
 <p class="caption"><span class="caption-text">Figure 2: Counting the frequency of letter types with widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>.</span></p>
 </div>
-<p>Note that checkbox <em>Compute automatically</em> is unchecked by default so that
-the user must click on <strong>Compute</strong> to trigger computations. The motivation for
+<p>Note that checkbox <em>Send automatically</em> is unchecked by default so that
+the user must click on <strong>Send</strong> to trigger computations. The motivation for
 this default setting is that
 <a class="reference internal" href="table_construction_widgets.html"><span class="doc">table construction widgets</span></a> can be quite
 slow when operating on large segmentations, and it can be annoying to see

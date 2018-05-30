@@ -73,20 +73,15 @@ tags. [#]_
 
     Figure 1: **Recode** widget (basic interface).
 
-The **Options** section allows the user to define the output segmentation
-label. The annotations of each input segment are systematically copied in the
-corresponding output segments (see `Advanced interface`_, option **Copy
-annotations**).
-
-The **Info** section gives indications regarding the current status of the
-widget instance (see `Messages`_ below, section `Information`_).
-
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).
+
+Below the **Send** button, the user finds all the indications regarding the current status of the
+widget instance (see `Messages`_ below, section `Information`_).
 
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
@@ -169,15 +164,15 @@ The **Options** section allows the user to define the output segmentation
 label. The **Copy annotations** checkbox copies every annotation of the input
 segmentation to the output segmentation.
 
-The **Info** section gives indications regarding the current status of the
-widget instance (see `Messages`_ below, section `Information`_).
-
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).
+
+Below the **Send** button, the user finds all the indications regarding the current status of the
+widget instance (see `Messages`_ below, section `Information`_).
 
 .. _recode_remote_control_ref:
 

@@ -85,25 +85,22 @@ the replacing of accentuated characters by their non-accentuated equivalents.</p
 increases the program’s memory footprint; moreover this widget can only work
 on segmentations without any overlap, which means no part of the text is
 covered by more than one segment.</p>
-<p>In the <strong>Preprocessing</strong> section of its interface (see <a class="reference internal" href="#preprocess-fig1"><span class="std std-ref">figure 1</span></a> above), the <strong>Transform case</strong> checkbox triggers the
-systematic modification of the case: select <strong>to lower</strong> to convert every
+<p>the <strong>Transform case</strong> checkbox triggers the systematic modification of the case: select <strong>to lower</strong> to convert every
 character to lower case and <strong>to upper</strong> to convert them to upper case. The
 <strong>Remove accents</strong> checkbox controls the replacement of accentuated character
 by their non-accentuated equivalents (é -&gt; e, ç -&gt; c, etc.).</p>
-<p>The <strong>Options</strong> section enables the user to define the label of the output
-segmentation (<strong>Output segmentation label</strong>). The <strong>Copy annotations</strong> button
-copies all the annotations of the input segmentation to the output
+<p>The <strong>Copy annotations</strong> button copies all the annotations of the input segmentation to the output
 segmentation; it is only accessible when the <strong>Advanced settings</strong> checkbox is
 selected (otherwise the annotations are by default copied).</p>
-<p>The <strong>Info</strong> section indicates the number of segments present in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-overlaps in the input segmentation, etc.).</p>
 <p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).</p>
+<p>Below the <strong>Send</strong> button, the user finds the number of segments present in the output
+segmentation, or the reasons why no segmentation is emitted (no input data,
+overlaps in the input segmentation, etc.).</p>
 </div>
 <div class="section" id="caveat">
 <span id="anchor-to-caveat"></span><h2>Caveat<a class="headerlink" href="#caveat" title="Permalink to this headline">¶</a></h2>

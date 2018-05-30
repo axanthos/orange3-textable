@@ -78,19 +78,16 @@ decomposed in several segments corresponding to portions  of their content
 which are separated by the deleted XML tags (see `Advanced interface`_ for an
 example of this mechanism [#]_).
 
-The **Options** section limits itself to the output segmentation label choice.
-By default, the input segment annotations are copied in the output segments.
-
-The **Info** section indicates the number of segments in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-no output segment created, etc.).
-
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).
+
+Below, the **Send** button, the user finds indications such as the number of segments in the output
+segmentation, or the reasons why no segmentation is emitted (no input data,
+no output segment created, etc.).
 
 Advanced interface
 ~~~~~~~~~~~~~~~~~~
@@ -188,8 +185,7 @@ matches all (s)** checkboxes manage the application of the corresponding
 options to the regular expression. Adding the new condition to the list is
 finally carried out by clicking on the **Add** button.
 
-The **Options** section allows the user to specify the output segmentation
-label. The **Auto-number with key** checkbox enables the program to
+Through the **Options** section the **Auto-number with key** checkbox enables the program to
 automatically number the segments of the output segmentation and to associate
 the number to the annotation key specified in the text field on the right. The
 **Import annotations** checkbox copies in each output segment every annotation
@@ -198,16 +194,16 @@ duplicate segments** checkbox enables the program to fuse distinct segments
 whose addresses are the same in a single segment; the annotations associated
 to the fused segments are copied in the single resulting segment. [#]_
 
-The **Info** section indicates the number of segments in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-no output segment created, etc.).
-
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).
+
+Below the **Send** button, the user finds some indications such as the number of segments in the output
+segmentation, or the reasons why no segmentation is emitted (no input data,
+no output segment created, etc.).
 
 Messages
 --------

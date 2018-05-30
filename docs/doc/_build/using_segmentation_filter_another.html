@@ -7,7 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, using a segmentation to filter another" name="description" />
 <meta content="Orange, Textable, documentation, filter, stoplist, stopwords" name="keywords" />
 
-    <title>1.7. Using a segmentation to filter another &#8212; Textable v3.1.0b3 documentation</title>
+    <title>1.6. Using a segmentation to filter another &#8212; Textable v3.1.0b3 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -24,9 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="2. Tables" href="tables.html" />
-    <link rel="prev" title="1.6. Partitioning segmentations" href="partitioning_segmentations.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
   </head>
   <body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -35,15 +33,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="tables.html" title="2. Tables"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="partitioning_segmentations.html" title="1.6. Partitioning segmentations"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="segmentations.html" accesskey="U">1. Segmentations</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -53,7 +43,7 @@
           <div class="body" role="main">
             
   <div class="section" id="using-a-segmentation-to-filter-another">
-<h1>1.7. Using a segmentation to filter another<a class="headerlink" href="#using-a-segmentation-to-filter-another" title="Permalink to this headline">¶</a></h1>
+<h1>1.6. Using a segmentation to filter another<a class="headerlink" href="#using-a-segmentation-to-filter-another" title="Permalink to this headline">¶</a></h1>
 <p>In some cases, the number of forms to be selectively included in or excluded
 from a segmentation is too large for using the <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> widget.
 A typical example is the removal of “stopwords” from a text: in English for
@@ -78,16 +68,16 @@ the time being.)</p>
 <a class="reference internal" href="#using-segmentation-filter-another-fig2"><span class="std std-ref">figure 2</span></a> below). The first
 instance of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> contains the text to process (for
 instance the
-<a class="reference external" href="http://www.un.org/en/documents/udhr/">Universal Declaration of Human Rights</a>),
+<a class="reference external" href="http://www.un.org/en/documents/udhr/">Universal Declaration of Human Rights</a>) and is labelled as such,
 while the second instance, <em>Text Field (1)</em>, contains the list of English
 stopwords mentioned above. Both instances of <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> produce
 a word segmentation with regex <code class="docutils literal"><span class="pre">\w+</span></code>; the only difference in their
-configuration is the output segmentation label , i.e. <em>words</em> for <em>Segment</em>
-and <em>stopwords</em> for <em>Segment (1)</em>. Finally, the instance of
+configuration is the Segment Widget label , i.e. <em>words</em> for the segmentation of the UDHR
+and <em>stopwords</em> for the segmentation of <em>Text Field (1)</em>. Finally, the instance of
 <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> is configured as shown on
 <a class="reference internal" href="#using-segmentation-filter-another-fig1"><span class="std std-ref">figure 1</span></a> above.</p>
 <div class="figure align-center" id="id2">
-<span id="using-segmentation-filter-another-fig2"></span><a class="reference internal image-reference" href="_images/intersect_example_schema.png"><img alt="Schema illustrating the use of the Intersect widget for stopword removal" src="_images/intersect_example_schema.png" style="width: 408.0px; height: 196.8px;" /></a>
+<span id="using-segmentation-filter-another-fig2"></span><a class="reference internal image-reference" href="_images/intersect_example_schema.png"><img alt="Schema illustrating the use of the Intersect widget for stopword removal" src="_images/intersect_example_schema.png" style="width: 663.2px; height: 320.0px;" /></a>
 <p class="caption"><span class="caption-text">Figure 2: Example schema for removing stopword using widget <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> .</span></p>
 </div>
 <p>The content of the first segments of the resulting segmentation is:</p>
@@ -132,7 +122,7 @@ pronouns listed above.</p>
 </div>
 <p>(<a class="reference internal" href="#using-segmentation-filter-another-ex"><span class="std std-ref">back to the exercise</span></a>)</p>
 <div class="section" id="see-also">
-<h2>1.7.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<h2>1.6.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference internal" href="select.html#select"><span class="std std-ref">Reference: Select widget</span></a></li>
 <li><a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Reference: Intersect widget</span></a></li>
@@ -149,18 +139,12 @@ pronouns listed above.</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">1.7. Using a segmentation to filter another</a><ul>
-<li><a class="reference internal" href="#see-also">1.7.1. See also</a></li>
+<li><a class="reference internal" href="#">1.6. Using a segmentation to filter another</a><ul>
+<li><a class="reference internal" href="#see-also">1.6.1. See also</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="partitioning_segmentations.html"
-                        title="previous chapter">1.6. Partitioning segmentations</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="tables.html"
-                        title="next chapter">2. Tables</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -188,15 +172,7 @@ pronouns listed above.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="tables.html" title="2. Tables"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="partitioning_segmentations.html" title="1.6. Partitioning segmentations"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="segmentations.html" >1. Segmentations</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0b3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

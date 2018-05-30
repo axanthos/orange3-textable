@@ -344,13 +344,12 @@ if the following three conditions are met:</p>
 <a class="reference internal" href="counting_segment_types.html"><span class="doc">previous section</span></a> as illustrated on
 <a class="reference internal" href="#counting-specific-contexts-fig3"><span class="std std-ref">figure 3</span></a> below.</p>
 <div class="figure align-center" id="id5">
-<span id="counting-specific-contexts-fig3"></span><a class="reference internal image-reference" href="_images/count_mode_containing_segmentation_example_schema.png"><img alt="Schema for testing the Count widget (Containing segmentation mode)" src="_images/count_mode_containing_segmentation_example_schema.png" style="width: 528.0px; height: 154.4px;" /></a>
+<span id="counting-specific-contexts-fig3"></span><a class="reference internal image-reference" href="_images/count_mode_containing_segmentation_example_schema.png"><img alt="Schema for testing the Count widget (Containing segmentation mode)" src="_images/count_mode_containing_segmentation_example_schema.png" style="width: 938.4000000000001px; height: 298.40000000000003px;" /></a>
 <p class="caption"><span class="caption-text">Figure 3: Schema for testing the <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> widget (Containing segmentation mode).</span></p>
 </div>
 <p>The first instance of <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> produces a word segmentation (<strong>Regex:</strong>
-<code class="docutils literal"><span class="pre">\w+</span></code> and <strong>Output segmentation label:</strong> <em>words</em>) which the second instance
-(<em>Segment (1)</em>) further decomposes into letters (<strong>Regex:</strong> <code class="docutils literal"><span class="pre">\w</span></code> and
-<strong>Output segmentation label:</strong> <em>letters</em>). The instance of <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> is
+<code class="docutils literal"><span class="pre">\w+</span></code> and <strong>Widget label:</strong> <em>Words</em>) which the second instance (the upper one) further decomposes into letters (<strong>Regex:</strong> <code class="docutils literal"><span class="pre">\w</span></code> and
+<strong>Widget label:</strong> <em>Letters</em>). The instance of <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> is
 configured as shown on <a class="reference internal" href="#counting-specific-contexts-fig4"><span class="std std-ref">figure 4</span></a>
 below. The resulting table is the same as table 2
 <a class="reference internal" href="segmentations_tables.html#segmentations-tables-table2"><span class="std std-ref">here</span></a> (possibly with a different ordering

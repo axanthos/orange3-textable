@@ -403,14 +403,14 @@ constitute the row headers; if on the other hand the value <em>(none)</em> is
 selected, the <em>content</em> of the segments will be used. The <strong>Merge contexts</strong>
 checkbox allows the user to measure the length or to calculate the average
 length globally in the entire segmentation that defined the contexts.</p>
-<p>The <strong>Info</strong> section indicates if a table has been correctly emitted, or the
-reasons why no table is emitted (no input data).</p>
-<p>The <strong>Compute</strong> button triggers the emission of a table in the internal format
+<p>The <strong>Send</strong> button triggers the emission of a table in the internal format
 of Orange Textable to the output connection(s). When it is selected, the
-<strong>Compute automatically</strong> checkbox disables the button and the widget attempts
+<strong>Send automatically</strong> checkbox disables the button and the widget attempts
 to automatically emit a segmentation at every modification of its interface or
 when its input data are modified (by deletion or addition of a connection, or
 because modified data is received through an existing connection).</p>
+<p>The informations below the <strong>Send</strong> button indicate if a table has been correctly emitted, or the
+reasons why no table is emitted (no input data).</p>
 </div>
 <div class="section" id="messages">
 <h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
@@ -419,10 +419,10 @@ because modified data is received through an existing connection).</p>
 <dl class="docutils">
 <dt><em>Data correctly sent to output.</em></dt>
 <dd>This confirms that the widget has operated properly.</dd>
-<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Compute’ when ready.</em></dt>
-<dd>Settings and/or input have changed but the <strong>Compute automatically</strong>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
+<dd>Settings and/or input have changed but the <strong>Send automatically</strong>
 checkbox has not been selected, so the user is prompted to click the
-<strong>Compute</strong> button (or equivalently check the box) in order for computation
+<strong>Send</strong> button (or equivalently check the box) in order for computation
 and data emission to proceed.</dd>
 <dt><em>No data sent to output yet: no input segmentation.</em></dt>
 <dd>The widget instance is not able to emit data to output because it receives

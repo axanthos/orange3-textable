@@ -162,17 +162,11 @@ Proportion**) comprised between 5% (**Min. proportion (%)**) and 10% (**Max.
 proportion (%)**) in the input segmentation.
 
 The elements of the **Options** section of the widget interface are common to
-the three selection methods presented above. The **Output segmentation label**
-field enables the user to specify the label assigned to the output
-segmentation.  [#]_ The **Auto-number with key** checkbox enables the program
+the three selection methods presented above. The **Auto-number with key** checkbox enables the program
 to automatically number the segments of the output segmentation and to
 associate the number to the annotation key specified in the text field on the
 right. The **Copy annotations** checkbox copies every annotation of the input
 segmentation to the output segmentation.
-
-The **Info** section indicates the number of segments in the output
-segmentation, or the reasons why no segmentation is emitted (no input data,
-no selected input segment, etc.).
 
 The **Send** button triggers the emission of a segmentation to the output
 connection(s). When it is selected, the **Send automatically** checkbox
@@ -180,6 +174,10 @@ disables the button and the widget attempts to automatically emit a
 segmentation at every modification of its interface or when its input data are
 modified (by deletion or addition of a connection, or because modified data is
 received through an existing connection).
+
+Below the **Send** button, some indications are given about the number of segments in the output
+segmentation, or the reasons why no segmentation is emitted (no input data,
+no selected input segment, etc.).
 
 Messages
 --------
@@ -242,9 +240,3 @@ Examples
 * :doc:`Cookbook: Create a random selection or sample of segments
   <random_sample>`
 
-Footnotes
----------
-
-.. [#] Here it concerns the segmentation containing the selected segments and
-       emitted on the default output channel; the segmentation containing the
-       discarded segments receives the same label prepended with *NEG\_*.

@@ -85,16 +85,17 @@ used to control its behavior remotely.</p>
 <span id="message-fig1"></span><img alt="Interface of the Message widget" src="_images/message_example.png" />
 <p class="caption"><span class="caption-text">Figure 1: Interface of the <strong>Message</strong> widget.</span></p>
 </div>
-<p>The widget’s interface offers no user-controlled option (see <a class="reference internal" href="#message-fig1"><span class="std std-ref">figure 1</span></a> above). The <strong>Info</strong> section indicates the number of items
-present in the parsed JSON data, or the reasons why no <em>JSONObject</em> can be
-emitted (no input or invalid data, input segmentation containing more than one
-segment).</p>
+<p>The widget’s interface offers no user-controlled option (see <a class="reference internal" href="#message-fig1"><span class="std std-ref">figure 1</span></a> above).</p>
 <p>The <strong>Send</strong> button triggers the emission of a <strong>JSONMessage</strong> object to the
 output connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
 disables the button and the widget attempts to automatically emit a
 segmentation when its input data are modified (by deletion or addition of a
 connection, or because modified data is received through an existing
 connection).</p>
+<p>The informations generated below the <strong>Send</strong> button indicate the number of items
+present in the parsed JSON data, or the reasons why no <em>JSONObject</em> can be
+emitted (no input or invalid data, input segmentation containing more than one
+segment).</p>
 </div>
 <div class="section" id="messages">
 <h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>

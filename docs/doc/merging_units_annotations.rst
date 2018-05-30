@@ -1,8 +1,8 @@
 .. meta::
-   :description: Orange Textable documentation, merging units with annotations
+   :description: Orange Textable documentation, merging units with XML annotations
    :keywords: Orange, Textable, documentation, merge, units, annotations
 
-Merging units with annotations
+Merging units with XML annotations
 ==============================
 
 Annotations can also be used for merging *units* (that is, columns) during
