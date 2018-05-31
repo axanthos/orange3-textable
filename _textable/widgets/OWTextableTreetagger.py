@@ -19,10 +19,12 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.8"
+__version__ = u"0.1.9"
 
 import os
 import re
+
+from xml.sax.saxutils import quoteattr
 
 from Orange.widgets import gui, settings
 
@@ -227,8 +229,12 @@ class Treetagger(OWTextableBaseWidget):
         copy_of_input_seg.label = self.segmentation.label
         for seg_idx, segment in enumerate(self.segmentation):
             attr = " ".join(
-                ["%s='%s'" % item for item in segment.annotations.items()]
+                [
+                    "%s=%s" % (item[0], quoteattr(item[1])) 
+                    for item in segment.annotations.items()
+                ]
             )
+            print(attr)
             segment.annotations["tt_ax"] = attr
             copy_of_input_seg.append(segment)
 
@@ -239,7 +245,7 @@ class Treetagger(OWTextableBaseWidget):
             formatting="<ax_tt %(tt_ax)s>%(__content__)s</ax_tt>",
             display_all=True,
         )
-
+        print(concatenated_text)
         self.progressBar.advance()
 
         # Tag the segmentation contents...
@@ -260,7 +266,7 @@ class Treetagger(OWTextableBaseWidget):
         )
         tagged_input = Input("\n".join(tagged_lines))
         self.createdInputs.append(tagged_input)
-
+        print(tagged_input[0].get_content())
         # Re-segment to match the original segmentation structure.
         tagged_segmentation = Segmenter.import_xml(tagged_input, "ax_tt")
 
