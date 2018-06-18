@@ -17,9 +17,9 @@ this annotation's key is *part of speech* and its value is *adjective*.
 .. _uses_annotating_segmentations_fig1:	
 	
 .. figure:: figures/a_simple_example_adjective.png
-	:align: center
-    :alt: example annotations
-    :scale: 80%
+   :align: center
+   :alt: example annotations
+   :scale: 80 %
 	
 Figure 1: Annotating *simple* as an adjective.
 
@@ -30,9 +30,9 @@ The same segment could be simultaneously associated with another annotation such
 .. _uses_annotating_segmentations_fig2:	
 
 .. figure:: figures/a_simple_example_annotations2.png
-	:align: center
-    :alt: segments with various annotations
-    :scale: 80%
+   :align: center
+   :alt: segments with various annotations
+   :scale: 80 %
 
 Figure 2: Segments with various annotations
 
