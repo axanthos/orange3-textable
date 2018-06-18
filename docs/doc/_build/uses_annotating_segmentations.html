@@ -57,33 +57,31 @@
 They let you go beyond what’s in the text, and extend Orange Textable’s analytic capacities
 from textual content to user-provided interpretative information and metadata.</p>
 <p>In Orange Textable, an <em>annotation</em> is a piece of information attached to a segment.
-Annotations consist of two parts: <em>key</em> and <em>value</em>. For instance, in
-the now classical case of the word segmentation of <em>a simple example</em> (see :ref:<a href="#id1"><span class="problematic" id="id2">`</span></a>figure 1&lt;uses_annotating_segmentations_fig1&gt;`below), segment
-<em>simple</em> could be associated with the annotation <em>{part of speech: adjective}</em>;
-this annotation’s key is <em>part of speech</em> and its value is <em>adjective</em>.</p>
+Annotations consist of two parts: <em>key</em> and <em>value</em> . For instance, in
+the now classical case of the word segmentation of <em>a simple example</em> (see :ref:<a href="#id1"><span class="problematic" id="id2">`</span></a>figure 1&lt;uses_annotating_segmentations_fig1&gt;`below), segment <em>simple</em> could be associated with the annotation <em>{part of speech: adjective}</em>;
+this annotation’s key is <em>part of speech</em> and its value is <em>adjective</em> .</p>
 <div class="figure align-center" id="uses-annotating-segmentations-fig1">
 <a class="reference internal image-reference" href="_images/a_simple_example_adjective.png"><img alt="example annotations" src="_images/a_simple_example_adjective.png" style="width: 384.0px; height: 640.0px;" /></a>
 </div>
 <p>Figure 1: Annotating <em>simple</em> as an adjective.</p>
 <p>A segment can have zero, one, or several annotations attached to it.
 The same segment could be simultaneously associated with another annotation such as
-<em>{word category: lexical}</em>, or any <em>{key: value}</em> pair deemed relevant.</p>
+<em>{word category: lexical}</em> , or any <em>{key: value}</em> pair deemed relevant.</p>
 <div class="figure align-center" id="uses-annotating-segmentations-fig2">
 <a class="reference internal image-reference" href="_images/a_simple_example_annotations2.png"><img alt="segments with various annotations" src="_images/a_simple_example_annotations2.png" style="width: 384.0px; height: 640.0px;" /></a>
 </div>
 <p>Figure 2: Segments with various annotations</p>
 <p>Note that annotations keys are unique : Since they serve to recognize various annotation values attached to a single segment,
-annotation keys cannot be duplicated within the segment. On :ref:<a href="#id3"><span class="problematic" id="id4">`</span></a>figure 2 &lt;uses_annotating_segmentations_fig2&gt;`above,
-“simple” can only have one value at a time for key “category”.</p>
+annotation keys cannot be duplicated within the segment. On :ref:<a href="#id3"><span class="problematic" id="id4">`</span></a>figure 2 &lt;uses_annotating_segmentations_fig2&gt;`above, “simple” can only have one value at a time for key “category” .</p>
 <p>Even though we have carefully ignored them so far, annotations play a
 fundamental role in text data processing and analysis. They make it possible
 to go beyond the basic level of forms that are “physically” present in a text
 and tap into the more abstract–and often more interesting–level of the
 <em>interpretation</em> of these forms.</p>
 <p>For instance, the texts composing a given corpus could be annotated with
-respect to their genre (<em>novel</em>, <em>short story</em>, and so on), and the parts of
+respect to their genre ( <em>novel</em> , <em>short story</em> , and so on), and the parts of
 these texts might be annotated with regard to their discourse type
-(<em>narrative</em>, <em>description</em>, <em>dialogue</em>, and so on). Such data could be
+( <em>narrative</em> , <em>description</em> , <em>dialogue</em> , and so on). Such data could be
 exploited to study the distribution of discourse types as a function of genre,
 which would be at best extremely difficult, if ever possible, without having
 encoded the relevant information by means of annotations.</p>
