@@ -21,7 +21,7 @@ this annotation's key is *part of speech* and its value is *adjective*.
     :alt: example annotations
     :scale: 80%
 	
-	Figure 1: Annotating *simple* as an adjective.
+Figure 1: Annotating *simple* as an adjective.
 
 A segment can have zero, one, or several annotations attached to it.
 The same segment could be simultaneously associated with another annotation such as
@@ -34,7 +34,7 @@ The same segment could be simultaneously associated with another annotation such
     :alt: segments with various annotations
     :scale: 80%
 
-	Figure 2: Segments with various annotations
+Figure 2: Segments with various annotations
 
 Note that annotations keys are unique : Since they serve to recognize various annotation values attached to a single
 segment, annotation keys cannot be duplicated within the segment. On :ref:`figure 2 <uses_annotating_segmentations_fig2>`above, 
