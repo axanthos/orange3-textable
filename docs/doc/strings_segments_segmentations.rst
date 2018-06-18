@@ -22,9 +22,9 @@ a character too).
 .. _strings_segments_segmentations_fig1 :
 
 .. figure:: figures/a_simple_example.png
-	:align: center
-    :alt: example1
-    :scale: 80%
+   :align: center
+   :alt: example1
+   :scale: 80 %
 	
 Figure 1 : A simple string.
 
@@ -43,9 +43,9 @@ All segments referring to a given string must be grouped together, in the order 
 .. _strings_segments_segmentations_fig2 :
 
 .. figure:: figures/a_simple_plan.png
-	:align: center
-    :alt: example2
-    :scale: 80%
+   :align: center
+   :alt: example2
+   :scale: 80 %
 
 Figure 2 : A segmentation can span several strings.
 
