@@ -10,7 +10,8 @@ from textual content to user-provided interpretative information and metadata.
 
 In Orange Textable, an *annotation* is a piece of information attached to a segment. 
 Annotations consist of two parts: *key* and *value* . For instance, in
-the now classical case of the word segmentation of *a simple example* (see :ref:`figure 1<uses_annotating_segmentations_fig1>`below), segment *simple* could be associated with the annotation *{part of speech: adjective}*;
+the now classical case of the word segmentation of *a simple example* (see :ref:`figure 1<uses_annotating_segmentations_fig1>`below), 
+segment *simple* could be associated with the annotation *{part of speech : adjective}*;
 this annotation's key is *part of speech* and its value is *adjective* . 
 
 .. _uses_annotating_segmentations_fig1 :	
@@ -24,7 +25,7 @@ Figure 1 : Annotating *simple* as an adjective.
 
 A segment can have zero, one, or several annotations attached to it.
 The same segment could be simultaneously associated with another annotation such as
-*{word category: lexical}* , or any *{key: value}* pair deemed relevant.
+*{word category : lexical}* , or any *{key : value}* pair deemed relevant.
 
 .. _uses_annotating_segmentations_fig2 :	
 
@@ -36,7 +37,8 @@ The same segment could be simultaneously associated with another annotation such
 Figure 2 : Segments with various annotations
 
 Note that annotations keys are unique : Since they serve to recognize various annotation values attached to a single segment, 
-annotation keys cannot be duplicated within the segment. On :ref:`figure 2 <uses_annotating_segmentations_fig2>`above, "simple" can only have one value at a time for key "category" .
+annotation keys cannot be duplicated within the segment. On :ref:`figure 2 <uses_annotating_segmentations_fig2>`above, 
+"simple" can only have one value at a time for key "category" .
 
 Even though we have carefully ignored them so far, annotations play a
 fundamental role in text data processing and analysis. They make it possible
