@@ -13,7 +13,7 @@ Annotations consist of two parts: *key* and *value* . For instance, in
 the now classical case of the word segmentation of *a simple example* (see :ref:`figure 1<uses_annotating_segmentations_fig1>`below), segment *simple* could be associated with the annotation *{part of speech: adjective}*;
 this annotation's key is *part of speech* and its value is *adjective* . 
 
-.. _uses_annotating_segmentations_fig1:	
+.. _uses_annotating_segmentations_fig1 :	
 	
 .. figure:: figures/a_simple_example_adjective.png
    :align: center
@@ -26,7 +26,7 @@ A segment can have zero, one, or several annotations attached to it.
 The same segment could be simultaneously associated with another annotation such as
 *{word category: lexical}* , or any *{key: value}* pair deemed relevant.
 
-.. _uses_annotating_segmentations_fig2:	
+.. _uses_annotating_segmentations_fig2 :	
 
 .. figure:: figures/a_simple_example_annotations2.png
    :align: center
