@@ -1,0 +1,290 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Preprocess widget" name="description" />
+<meta content="Orange, Textable, documentation, Preprocess, widget" name="keywords" />
+
+    <title>Preprocess &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Recode" href="recode.html" />
+    <link rel="prev" title="Segmentation processing widgets" href="segmentation_processing_widgets.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="recode.html" title="Recode"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="segmentation_processing_widgets.html" title="Segmentation processing widgets"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentation_processing_widgets.html" accesskey="U">Segmentation processing widgets</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="preprocess">
+<span id="id1"></span><h1>Preprocess<a class="headerlink" href="#preprocess" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/Preprocess_54.png" src="_images/Preprocess_54.png" />
+<p>Basic text preprocessing.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p>Inputs:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Segmentation</span></code></p>
+<p>Segmentation covering the text that should be preprocessed</p>
+</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Text</span> <span class="pre">data</span></code></p>
+<p>Segmentation covering the modified text</p>
+</li>
+</ul>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>This widget inputs a segmentation, creates a modified copy of the content of
+the segmentation, and outputs a new segmentation corresponding to the modified
+data. The possible modifications are on the case (lower case/upper case) and
+the replacing of accentuated characters by their non-accentuated equivalents.</p>
+<div class="figure align-center" id="id4">
+<span id="preprocess-fig1"></span><img alt="Interface of the Preprocess widget" src="_images/preprocess_advanced_example.png" />
+<p class="caption"><span class="caption-text">Figure 1: Interface of the <strong>Preprocess</strong> widget.</span></p>
+</div>
+<p>Note that <strong>Preprocess</strong> creates a copy of each modified segment, which
+increases the program’s memory footprint; moreover this widget can only work
+on segmentations without any overlap, which means no part of the text is
+covered by more than one segment.</p>
+<p>In the <strong>Preprocessing</strong> section of its interface (see <a class="reference internal" href="#preprocess-fig1"><span class="std std-ref">figure 1</span></a> above), the <strong>Transform case</strong> checkbox triggers the
+systematic modification of the case: select <strong>to lower</strong> to convert every
+character to lower case and <strong>to upper</strong> to convert them to upper case. The
+<strong>Remove accents</strong> checkbox controls the replacement of accentuated character
+by their non-accentuated equivalents (é -&gt; e, ç -&gt; c, etc.).</p>
+<p>The <strong>Options</strong> section enables the user to define the label of the output
+segmentation (<strong>Output segmentation label</strong>). The <strong>Copy annotations</strong> button
+copies all the annotations of the input segmentation to the output
+segmentation; it is only accessible when the <strong>Advanced settings</strong> checkbox is
+selected (otherwise the annotations are by default copied).</p>
+<p>The <strong>Info</strong> section indicates the number of segments present in the output
+segmentation, or the reasons why no segmentation is emitted (no input data,
+overlaps in the input segmentation, etc.).</p>
+<p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).</p>
+</div>
+<div class="section" id="caveat">
+<span id="anchor-to-caveat"></span><h2>Caveat<a class="headerlink" href="#caveat" title="Permalink to this headline">¶</a></h2>
+<p>As one of the rare widgets of Textable that do create new <em>strings</em> and not
+only new <em>segmentations</em>, <strong>Preprocess</strong> is prone to a very specific and
+possibly disconcerting type of error, which can be best understood by studying
+an example.</p>
+<p>Suppose that you wish to count word frequency in the content of two
+<a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instances–a scenario similar to that illustrated in section
+<a class="reference internal" href="counting_specific_contexts.html"><span class="doc">Counting in specific contexts</span></a>. You could
+use <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> to combine the <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instances’ output in a
+single segmentation (see <a class="reference internal" href="#preprocess-fig2"><span class="std std-ref">figure 2</span></a> below), then
+segment the latter into words with <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a>. You would eventually
+feed both the segmentation emitted by <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> (specifying units) and
+by <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> (specifying contexts) to an instance of <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> for
+building the frequency table.</p>
+<div class="figure align-center" id="id5">
+<span id="preprocess-fig2"></span><img alt="Counting words in the content of two Text Field instances" src="_images/preprocess_caveat_schema_without.png" />
+<p class="caption"><span class="caption-text">Figure 2: Counting words in the content of two <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instances.</span></p>
+</div>
+<p>Moreover, suppose that you want to convert the input texts to lower case
+before counting word frequency. An intuitive way of performing this is by
+inserting a <strong>Preprocess</strong> instance between <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> and <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> as
+on <a class="reference internal" href="#preprocess-fig3"><span class="std std-ref">figure 3</span></a> below. However, because <strong>Preprocess</strong>
+creates a <em>new</em> string for each input segment and emits a segmentation that
+refers to these new strings, this raises a rather insidious issue.</p>
+<div class="figure align-center" id="id6">
+<span id="preprocess-fig3"></span><img alt="Counting words in the content of two Text Field instances" src="_images/preprocess_caveat_schema_wrong.png" />
+<p class="caption"><span class="caption-text">Figure 3: WRONG way of inserting a <strong>Preprocess</strong> instance in the schema.</span></p>
+</div>
+<p>To no effect, <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> will attempt to find occurrences of the units
+specified by the segmentation received from <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> in the contexts
+specified by the segmentation received from <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>; since those actually
+belong to distinct strings, none of these units occurs in any of these
+contexts and the frequency table will remain hopelessly empty (as indicated by
+the warning symbol on top of the <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> widget instance).</p>
+<p>Luckily, a small wiring modification suffices to entirely solve the problem:
+the connection between <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> and <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> should simply be replaced
+by a <em>direct</em> connection between <strong>Preprocess</strong> and <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>, as on
+<a class="reference internal" href="#preprocess-fig4"><span class="std std-ref">figure 4</span></a> below. This way, units and contexts refer
+to the same set of strings and occurrences of the ones can be properly counted
+in the others.</p>
+<div class="figure align-center" id="id7">
+<span id="preprocess-fig4"></span><img alt="Counting words in the content of two Text Field instances" src="_images/preprocess_caveat_schema_right.png" />
+<p class="caption"><span class="caption-text">Figure 4: RIGHT way of inserting <strong>Preprocess</strong>.</span></p>
+</div>
+</div>
+<div class="section" id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="information">
+<h3>Information<a class="headerlink" href="#information" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><em>Data correctly sent to output: &lt;n&gt; segments.</em></dt>
+<dd>This confirms that the widget has operated properly.</dd>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
+<dd>Settings and/or input have changed but the <strong>Send automatically</strong> checkbox
+has not been selected, so the user is prompted to click the <strong>Send</strong>
+button (or equivalently check the box) in order for computation and data
+emission to proceed.</dd>
+<dt><em>No data sent to output yet: no input segmentation.</em></dt>
+<dd>The widget instance is not able to emit data to output because it receives
+none on its input channel(s).</dd>
+<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
+<dd>A problem with the instance’s parameters and/or input data prevents it
+from operating properly, and additional diagnostic information can be
+found in the <strong>Widget state</strong> box at the bottom of the instance’s
+interface (see <a class="reference internal" href="#warnings">Warnings</a> below).</dd>
+</dl>
+</div>
+<div class="section" id="warnings">
+<h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><em>No label was provided.</em></dt>
+<dd>A label must be entered in the <strong>Output segmentation label</strong> field in
+order for computation and data emission to proceed.</dd>
+<dt><em>Input segmentation is overlapping.</em></dt>
+<dd>At least two of the input segments cover the same substring, which this
+widget cannot handle. Make sure every input segment covers a distinct
+substring.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="merging_segmentations_together.html"><span class="doc">Getting started: Merging segmentations together</span></a></li>
+<li><a class="reference internal" href="annotating_merging.html"><span class="doc">Getting started: Annotating by merging</span></a></li>
+<li><a class="reference internal" href="merge_several_texts.html"><span class="doc">Cookbook: Merge several texts</span></a></li>
+</ul>
+</div>
+<div class="section" id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="tagging_table_rows_annotations.html"><span class="doc">Getting started: Tagging table rows with annotations</span></a></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>Examples<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="convert_text_to_lower_upper_case.html"><span class="doc">Cookbook: Convert text to lower or upper case</span></a></li>
+<li><a class="reference internal" href="remove_accents_from_text.html"><span class="doc">Cookbook: Remove accents from text</span></a></li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>See also<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="counting_specific_contexts.html"><span class="doc">Getting started: Counting in specific contexts</span></a></li>
+<li><a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Reference: Text Field widget</span></a></li>
+<li><a class="reference internal" href="merge.html#merge"><span class="std std-ref">Reference: Merge widget</span></a></li>
+<li><a class="reference internal" href="segment.html#segment"><span class="std std-ref">Reference: Segment widget</span></a></li>
+<li><a class="reference internal" href="count.html#count"><span class="std std-ref">Reference: Count widget</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Preprocess</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#caveat">Caveat</a></li>
+<li><a class="reference internal" href="#messages">Messages</a><ul>
+<li><a class="reference internal" href="#information">Information</a></li>
+<li><a class="reference internal" href="#warnings">Warnings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#see-also">See also</a></li>
+<li><a class="reference internal" href="#id2">Examples</a></li>
+<li><a class="reference internal" href="#id3">See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="segmentation_processing_widgets.html"
+                        title="previous chapter">Segmentation processing widgets</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="recode.html"
+                        title="next chapter">Recode</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/preprocess.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="recode.html" title="Recode"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="segmentation_processing_widgets.html" title="Segmentation processing widgets"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentation_processing_widgets.html" >Segmentation processing widgets</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

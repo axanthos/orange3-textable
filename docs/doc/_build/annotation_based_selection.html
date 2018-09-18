@@ -1,0 +1,152 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, annotation-based selection" name="description" />
+<meta content="Orange, Textable, documentation, annotation, selection" name="keywords" />
+
+    <title>3.6. Annotation-based selection &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Cookbook" href="cookbook.html" />
+    <link rel="prev" title="3.5. Merging units with annotations" href="merging_units_annotations.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cookbook.html" title="Cookbook"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="merging_units_annotations.html" title="3.5. Merging units with annotations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="annotations.html" accesskey="U">3. Annotations</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="annotation-based-selection">
+<h1>3.6. Annotation-based selection<a class="headerlink" href="#annotation-based-selection" title="Permalink to this headline">¶</a></h1>
+<p>Another common way of exploiting annotations consists in using them to select
+the segments that will be in-/excluded by an instance of <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> (see
+<a class="reference internal" href="partitioning_segmentations.html"><span class="doc">Partitioning segmentations</span></a>) or
+<a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> (see
+<a class="reference internal" href="using_segmentation_filter_another.html"><span class="doc">Using a segmentation to filter another</span></a>).
+Thus, in the case of the XML data example introduced
+<a class="reference internal" href="converting_xml_markup_annotations.html"><span class="doc">here</span></a> (and further developed
+<a class="reference internal" href="merging_units_annotations.html"><span class="doc">there</span></a>), we might insert an instance of
+<a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> between those of <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> and <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> (see
+<a class="reference internal" href="#annotation-based-selection-fig1"><span class="std std-ref">figure 1</span></a> below) in order to include
+only “content words”.</p>
+<div class="figure align-center" id="id1">
+<span id="annotation-based-selection-fig1"></span><a class="reference internal image-reference" href="_images/annotation_based_selection_schema.png"><img alt="Inserting an instance of Select to filter a segmentation" src="_images/annotation_based_selection_schema.png" style="width: 497.6px; height: 68.0px;" /></a>
+<p class="caption"><span class="caption-text">Figure 1: Inserting an instance of <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> to filter a segmentation.</span></p>
+</div>
+<p>In this simplified example, the <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> instance could thus be
+parameterized as indicated on <a class="reference internal" href="#annotation-based-selection-fig1"><span class="std std-ref">figure 2</span></a> below), so as to exclude (<strong>Mode:
+Exclude</strong>) those segments whose annotation value for key <em>type</em> (<strong>Annotation
+key</strong>: <em>type</em>) is <em>DET</em> or <em>PREP</em> (<strong>Regex:</strong> <code class="docutils literal notranslate"><span class="pre">^(DET|PREP)$</span></code>).</p>
+<div class="figure align-center" id="id2">
+<span id="annotation-based-selection-fig2"></span><img alt="Inserting an instance of Select to filter a segmentation" src="_images/select_annotation_example.png" />
+<p class="caption"><span class="caption-text">Figure 2: Excluding segments based on annotation values with <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a>.</span></p>
+</div>
+<div class="section" id="see-also">
+<h2>3.6.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="partitioning_segmentations.html"><span class="doc">Getting started: Partitioning segmentations</span></a></li>
+<li><a class="reference internal" href="using_segmentation_filter_another.html"><span class="doc">Getting started: Using a segmentation to filter another</span></a></li>
+<li><a class="reference internal" href="converting_xml_markup_annotations.html"><span class="doc">Getting started: Converting XML markup to annotations</span></a></li>
+<li><a class="reference internal" href="merging_units_annotations.html"><span class="doc">Getting started: Merging units with annotations</span></a></li>
+<li><a class="reference internal" href="select.html#select"><span class="std std-ref">Reference: Select widget</span></a></li>
+<li><a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Reference: Intersect widget</span></a></li>
+<li><a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Reference: Extract XML widget</span></a></li>
+<li><a class="reference internal" href="count.html#count"><span class="std std-ref">Reference: Count widget</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.6. Annotation-based selection</a><ul>
+<li><a class="reference internal" href="#see-also">3.6.1. See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="merging_units_annotations.html"
+                        title="previous chapter">3.5. Merging units with annotations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cookbook.html"
+                        title="next chapter">Cookbook</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/annotation_based_selection.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cookbook.html" title="Cookbook"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="merging_units_annotations.html" title="3.5. Merging units with annotations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="annotations.html" >3. Annotations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

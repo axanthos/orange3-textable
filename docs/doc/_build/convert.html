@@ -1,0 +1,508 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Convert widget" name="description" />
+<meta content="Orange, Textable, documentation, Convert, widget" name="keywords" />
+
+    <title>Convert &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Message" href="message.html" />
+    <link rel="prev" title="Conversion/export widgets" href="conversion_export_widgets.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="message.html" title="Message"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="conversion_export_widgets.html" title="Conversion/export widgets"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="conversion_export_widgets.html" accesskey="U">Conversion/export widgets</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="convert">
+<span id="id1"></span><h1>Convert<a class="headerlink" href="#convert" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/Convert_54.png" src="_images/Convert_54.png" />
+<p>Convert, transform, or export Orange Textable tables</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p>Inputs:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Textable</span> <span class="pre">Table</span></code></p>
+<p>Table in the internal format of Orange Textable.</p>
+</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Orange</span> <span class="pre">Table</span></code> (default)</p>
+<p>Data in the standard <em>Table</em> format of Orange Canvas (possibly transformed).</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Textable</span> <span class="pre">Table</span></code></p>
+<p>Table in the internal format of Orange Textable (possibly transformed).</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Segmentation</span></code></p>
+<p>Segmentation containing the output table in tab-delimited format.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><strong>Convert</strong>, inputs data in the internal format of Orange Textable and enables
+the user to modify them (sorting, normalization, etc.), to convert them to
+other formats, in particular the standard <em>Table</em> format of Orange Canvas
+(suitable for further processing within Orange Canvas), or to export them
+in tab-delimited text format (either to a file or to the clipboard).</p>
+<div class="section" id="table-formats">
+<span id="anchor-to-table-formats"></span><h3>Table formats<a class="headerlink" href="#table-formats" title="Permalink to this headline">¶</a></h3>
+<p>The table representation format of Orange Canvas (<em>Table</em> type) presents
+compatibility issues with Unicode encoded data. Since this encoding is
+emerging as the most widely used standard for languages of the world, Orange
+Textable provides its own Unicode-friendly table representation format.</p>
+<p>Widgets <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>, <a class="reference internal" href="length.html#length"><span class="std std-ref">Length</span></a>, <a class="reference internal" href="variety.html#variety"><span class="std std-ref">Variety</span></a>, <a class="reference internal" href="category.html#category"><span class="std std-ref">Category</span></a>, and
+<a class="reference internal" href="context.html#context"><span class="std std-ref">Context</span></a>) thus produce tables in Orange Textable format. In order to be
+manipulated by the numerous tabulated data processing widgets offered by
+Orange Canvas, these data must be converted to the standard <em>Table</em> format of
+Orange Canvas (and to an encoding supported by this latter format).</p>
+<p>Note that the internal Orange Textable <em>Table</em> type subdivides in several
+subtypes. In particular, the contingency tables (see <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> widget)
+belong to the <em>Crosstab</em> subtype which itself subdivides in <em>PivotCrosstab</em>,
+<em>FlatCrosstab</em>, and <em>WeightedFlatCrosstab</em>. These three subtypes are
+equivalent with regard to the information they allow the user to store, and
+the easiest way to understand what differentiates them is to see an example.</p>
+<p>Consider the following contingency table, of <em>IntPivotCrosstab</em> <a class="footnote-reference" href="#id4" id="id2">[1]</a> type
+(such as produced by the <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> widget):</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="43%" />
+<col width="29%" />
+<col width="29%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub"><em>__context__</em></th>
+<th class="head"><em>unit1</em></th>
+<th class="head"><em>unit2</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub"><em>context1</em></th>
+<td>1</td>
+<td>3</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>context2</em></th>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Here is the same information converted in <em>FlatCrosstab</em> format:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="38%" />
+<col width="38%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub"><em>__id__</em></th>
+<th class="head"><em>__unit__</em></th>
+<th class="head"><em>__context__</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub">1</th>
+<td><em>unit1</em></td>
+<td><em>context1</em></td>
+</tr>
+<tr class="row-odd"><th class="stub">2</th>
+<td><em>unit2</em></td>
+<td><em>context1</em></td>
+</tr>
+<tr class="row-even"><th class="stub">3</th>
+<td><em>unit2</em></td>
+<td><em>context1</em></td>
+</tr>
+<tr class="row-odd"><th class="stub">4</th>
+<td><em>unit2</em></td>
+<td><em>context1</em></td>
+</tr>
+<tr class="row-even"><th class="stub">5</th>
+<td><em>unit1</em></td>
+<td><em>context2</em></td>
+</tr>
+<tr class="row-odd"><th class="stub">6</th>
+<td><em>unit1</em></td>
+<td><em>context2</em></td>
+</tr>
+<tr class="row-even"><th class="stub">7</th>
+<td><em>unit2</em></td>
+<td><em>context2</em></td>
+</tr>
+</tbody>
+</table>
+<p>This representation contains three columns carrying the headers <em>__id__</em>,
+<em>__unit__</em> and <em>__context__</em>, and a number of rows equal to the total count of
+the contingency table. It is the standard way of encoding a contingency table
+in Orange Canvas, and it is required by widgets such as <em>Correspondence
+Analysis</em> (after conversion to the <em>Table</em> type defined by Orange Canvas).</p>
+<p>The <em>WeightedFlatCrosstab</em> format produces a more compact representation by
+keeping only one copy of each distinct unit–context pair and by adding a
+column <em>__count__</em> to save information on the number of repetition of each
+pair:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="18%" />
+<col width="27%" />
+<col width="27%" />
+<col width="27%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub"><em>__id__</em></th>
+<th class="head"><em>__unit__</em></th>
+<th class="head"><em>__context__</em></th>
+<th class="head"><em>__weight__</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub">1</th>
+<td><em>unit1</em></td>
+<td><em>context1</em></td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><th class="stub">2</th>
+<td><em>unit2</em></td>
+<td><em>context1</em></td>
+<td>3</td>
+</tr>
+<tr class="row-even"><th class="stub">3</th>
+<td><em>unit1</em></td>
+<td><em>context2</em></td>
+<td>2</td>
+</tr>
+<tr class="row-odd"><th class="stub">4</th>
+<td><em>unit2</em></td>
+<td><em>context2</em></td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>This format is sometimes used to represent contingency tables in third-party
+data analysis software. It is often called “sparse” matrix format.
+format.</p>
+</div>
+<div class="section" id="output-channels">
+<h3>Output channels<a class="headerlink" href="#output-channels" title="Permalink to this headline">¶</a></h3>
+<p>Regardless of the selected output table format (or the transforms that have
+been applied to the data, see <a class="reference internal" href="#advanced-interface">Advanced interface</a> below), the <strong>Convert</strong>
+widget emits data on three distinct output channels:</p>
+<ul class="simple">
+<li>The default output channel (<em>Orange Table</em>) emits data converted to
+standard <em>Table</em> format of Orange Canvas; it will typically be used for
+passing them to built-in Orange Canvas table processing widgets.</li>
+<li>The <em>Textable Table</em> channel outputs a table in the internal format of
+Orange Textable (usually after applying some set of transforms); it can then
+be sent to another instance of <strong>Convert</strong> (in cases where it is useful to
+apply transforms in distinct steps) or to an instance of the built-in
+<strong>Python script</strong> widget of Orange Canvas, for accessing the content of the
+table in a programmatic fashion.</li>
+<li>The <em>Segmentation</em> channel emits a segmentation with a single segment
+enclosing a version of the (possibly transformed) table in tab-delimited
+text format (in utf-8 encoding), which is suitable for further textual
+processing using Orange Textable widgets such as <a class="reference internal" href="recode.html#recode"><span class="std std-ref">Recode</span></a> or
+<a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> for instance.</li>
+</ul>
+</div>
+<div class="section" id="basic-interface">
+<h3>Basic interface<a class="headerlink" href="#basic-interface" title="Permalink to this headline">¶</a></h3>
+<p>The basic version of the widget (see <a class="reference internal" href="#convert-fig1"><span class="std std-ref">figure 1</span></a> below) is
+essentially limited to the <strong>Encoding</strong> section, which allows the user to
+select an encoding for the output data. This can be done separately for the
+data emitted in Orange Canvas <em>Table</em> format on the default output channel
+(<strong>Orange table</strong> drop-down menu) and for the data possibly exported to a text
+file in tab-delimited format (<strong>Output File</strong>). If certain characters cannot
+be converted to the specified encoding (for example accentuated characters in
+the ASCII encoding), they are automatically replaced by corresponding HTML
+entities (for example <em>&amp;#233</em>; for <em>é</em>).</p>
+<div class="figure align-center" id="id6">
+<span id="convert-fig1"></span><img alt="Basic interface of the Convert widget" src="_images/convert_basic_example.png" />
+<p class="caption"><span class="caption-text">Figure 1: <strong>Convert</strong> widget (basic interface).</span></p>
+</div>
+<p>The <strong>Export</strong> section allows the user to export a version of the
+(possibly transformed) table in tab-delimited text format, either to a text
+file (<strong>Export to file</strong>) or to the clipboard (<strong>Copy to clipboard</strong>), in
+order to paste it to a spreadsheet opened in a third-party program for
+instance. In the former case, the <strong>Output file</strong> drop-down menu (section
+<strong>Encoding</strong>) is used to indicate which encoding the data should be converted
+to before being saved; typically, except for a limit imposed by the further
+processing planned for the saved data (for example by a specific data analysis
+program), we will seek to keep here the maximum amount of information by
+specifying either the original encoding of the data, or a more general
+encoding (a variant of Unicode for example). Note that when the data are
+copied to the clipboard, the utf-8 encoding is used by default (regardless of
+what has been selected in the <strong>Encoding</strong> section).</p>
+</div>
+<div class="section" id="advanced-interface">
+<h3>Advanced interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h3>
+<p>The advanced version of the <strong>Convert</strong> widget (see <a class="reference internal" href="#convert-fig2"><span class="std std-ref">figure 2</span></a> below) contains an additional section (<strong>Transform</strong>) allowing
+the user to apply a number of standard modifications to the incoming table.
+The different operations defined in this section are applied to input
+data in the order in which they appear in the interface, top to bottom.
+The modified data can then be emitted on output connections or exported
+(either to a file or to the clipboard).</p>
+<div class="figure align-center" id="id7">
+<span id="convert-fig2"></span><img alt="Advanced interface of the Convert widget" src="_images/convert_advanced_example.png" />
+<p class="caption"><span class="caption-text">Figure 2: <strong>Convert</strong> widget (advanced interface).</span></p>
+</div>
+<p>The <strong>Sort rows by column</strong> checkbox triggers row sorting. If it is selected,
+the column headers of the table appear in the drop-down menu directly on the
+right and the user can thus select the column on the basis of which the rows
+will be sorted. If the <strong>Reverse</strong> box on the right of the drop-down menu
+is checked, rows will be sorted by <em>decreasing</em> value.</p>
+<p><strong>Sort columns by row</strong> controls in a similar way column sorting. It should be
+noted in this case that the first column (containing row headers) will always
+stay in the same position; the sorting only affects the following columns. To
+sort the columns based on the header row, you must select the first option in
+the <strong>Sort columns by row</strong> drop-down menu in the right. It will typically
+contain a name predefined by Orange Textable but which does not appear in the
+table (<em>__unit__</em> if it is a contingency table of <em>PivotCrosstab</em> type such as
+produced by the <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> widget, and the generic header <em>__col__</em> in
+every other case).</p>
+<p>The <strong>Transpose</strong> checkbox allows the user to transpose the table, which
+means invert its rows and columns. This option is only available for
+<em>PivotCrosstab</em> type contingency tables.</p>
+<p>The <strong>Normalize</strong> checkbox triggers the normalization of the table (in a
+rather loose sense of the term); it is only applicable for <em>PivotCrosstab</em>
+type contingency tables. If it is selected, the user can choose in the
+drop-down menu directly on the right whether the normalization should be
+applied by rows (<strong>rows</strong>) or by columns (<strong>columns</strong>); the <strong>Norm</strong> drop-down
+menu allows the user to select the type of normalization, either <strong>L1</strong>
+(division by the sum of the row/column) or <strong>L2</strong> (division by the root of the
+sum of the squares of the row/column).</p>
+<p>Three more operations (which are not usually classified as normalizations in
+the strict sense of the term) can be selected in the drop-down menu, each of
+which deactivates the <strong>Norm</strong> drop-down menu on the right:</p>
+<ul class="simple">
+<li>In <strong>quotients</strong> mode, the count stored in each cell of a contingency table
+(of <em>PivotCrosstab</em> type) is divided by the corresponding “theoretical”
+count under the hypothesis of independence between table rows and columns.
+This quotient is superior to 1 if the row and the column in question are in
+a mutual attraction relation, inferior to 1 in case of repulsion between the
+row and the column, finally equal to 1 if the row and column do not repulse
+nor attract each other particularly.</li>
+<li>In <strong>TF–IDF</strong> mode, the count stored in each cell of a contingency table
+(of <em>PivotCrosstab</em> type) is multiplied by the natural log of the ratio of
+the number of rows (i.e. contexts) having nonzero frequency for this column
+(i.e. unit) to the total number of rows.</li>
+<li>In <strong>presence/absence</strong> mode, counts greater than 1 are replaced by the
+value 1, so that the resulting table can contain only 0’s and 1’s.</li>
+</ul>
+<p>The common property of all operations available in the <strong>Normalize</strong> drop-down
+menu is that they preserve the original dimensions of the input contingency
+table. On the contrary, the <strong>Convert to</strong> checkbox (only applicable for
+<em>PivotCrosstab</em> type tables) allows the user to trigger the application of
+transforms which actually modify the dimensionality of the table :</p>
+<ul class="simple">
+<li>In <strong>document frequency</strong> mode, a new contingency table is created, which
+giver, for each column (i.e. unit) the number of distinct rows (i.e.
+contexts) that have nonzero frequency (hence the resulting table contains
+a single row).</li>
+<li>In <strong>association matrix</strong> mode, a new symmetric table is constructed, where
+each cell gives a measure of the (Markov) associativity between a pair of
+columns (i.e. units) in the original contigency table: two columns are thus
+strongly associated if they have similar profiles of attraction/repulsion
+with rows (i.e. contexts). Selecting this mode activates the <strong>Bias</strong>
+drop-down menu on the right, which allows the user to select between three
+predefined ways of weighing the contributions of high versus low frequencies
+in this computation: <strong>frequent</strong> emphasizes strong associations between
+frequent units; <strong>none</strong> provides a balanced compromise between frequent and
+rare units; <strong>rare</strong> emphasizes strong associations between rare units (note
+that in this particular case, values greater than 1 express an attraction
+and values lesser than 1 a repulsion) <a class="footnote-reference" href="#id5" id="id3">[2]</a>.</li>
+</ul>
+<p>It is worth mentioning that the <strong>Normalize</strong> and <strong>Convert to</strong> checkboxes
+are mutually exclusive and deactivate one another.</p>
+<p>Finally, the <strong>Reformat to sparse crosstab</strong> checkbox allows the user to
+convert a contingency table from the <em>PivotCrosstab</em> format to the
+<em>WeightedFlatCrosstab</em> or from <em>IntPivotCrosstab</em> to <em>IntWeightedFlatCrosstab</em>
+(see the <a class="reference internal" href="#table-formats">Table formats</a> section above). In turn, data in
+<em>IntWeightedFlatCrosstab</em> format can be converted to <em>FlatCrosstab</em> by further
+selecting option <strong>Encode counts by repeating rows</strong>; the latter option is
+only available when dealing with tables containing integer values.</p>
+<p>Compared to its basic version (see <a class="reference internal" href="#basic-interface">Basic interface</a> above), the advanced
+version of the <strong>Export</strong> section offers two extra controls. The <strong>Column
+delimiter</strong> drop-down menu allows the user to select the column separator that
+will be inserted between cell values when exporting a table in text format;
+possible choices are <em>tabulation (t)</em>, <em>comma (,)</em>, and <em>semi-colon (;)</em>.
+The <strong>Output Orange headers</strong> checkbox allows the user to indicate if the
+output should include every header line of the format <em>.tab</em> specific to
+Orange Canvas (<strong>Output Orange headers</strong>)–which is useful only for
+re-importing the exported table using the built-in <strong>File</strong> widget of Orange
+Canvas (and in fact often necessary in that case). Both parameters (<strong>Column
+delimiter</strong> and <strong>Output Orange headers</strong> also apply to the data sent on the
+<em>Segmentation</em> output channel)</p>
+<p>The <strong>Info</strong> section indicates the number of lines and columns in the output
+table, or the reasons why no table is emitted (no input data).</p>
+<p>The <strong>Send</strong> button triggers data emission to the output connection(s) (see
+<a class="reference internal" href="#output-channels">Output channels</a> above). When it is selected, the <strong>Send automatically</strong>
+checkbox disables the button and the widget attempts to automatically send
+data at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).</p>
+</div>
+</div>
+<div class="section" id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="information">
+<h3>Information<a class="headerlink" href="#information" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><em>Data correctly sent to output: table has &lt;n&gt; and &lt;m&gt; columns.</em></dt>
+<dd>This confirms that the widget has operated properly.</dd>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
+<dd>Settings and/or input have changed but the <strong>Send automatically</strong> checkbox
+has not been selected, so the user is prompted to click the <strong>Send</strong>
+button (or equivalently check the box) in order for computation and data
+emission to proceed.</dd>
+<dt><em>No data sent to output yet: no input table.</em></dt>
+<dd>The widget instance is not able to emit data to output because it receives
+none on its input channel(s).</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="converting_table_formats.html"><span class="doc">Getting started: Converting between table formats</span></a></li>
+<li><a class="reference internal" href="display_table.html"><span class="doc">Cookbook: Display table</span></a></li>
+<li><a class="reference internal" href="export_table.html"><span class="doc">Cookbook: Export table</span></a></li>
+</ul>
+</div>
+<div class="section" id="footnotes">
+<h2>Footnotes<a class="headerlink" href="#footnotes" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td><em>IntPivotCrosstab</em> is in turn a subtype of <em>PivotCrosstab</em> (and
+similarly <em>IntWeightedFlatCrosstab</em> is a subtype of
+<em>WeightedFlatCrosstab</em>), whose specificity is to be limited to integer
+values.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>For more details on the calculation of Markov associativities, see
+Bavaud F. and Xanthos A. (2005). Markov associativities. <em>Journal of
+Quantitative Linguistics, 12</em>:123–137. Details on the effect of the
+<strong>bias</strong> parameter can be found in Deneulin, P., Gautier, L., Le Fur,
+Y., and Bavaud, F. (2014). Corrélats textuels autour du concept de
+minéralité dans les vins. In Actes des 12èmes Journées
+internationales d’analyse statistique des données textuelles (JADT
+2014), pp. 209–223; the predefined values of this parameter
+(<strong>frequent</strong>, <strong>none</strong>, and <strong>rare</strong>) correspond respectively to
+values 1, 0.5 and 0 of parameter <em>alpha</em> in the above cited reference.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Convert</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#table-formats">Table formats</a></li>
+<li><a class="reference internal" href="#output-channels">Output channels</a></li>
+<li><a class="reference internal" href="#basic-interface">Basic interface</a></li>
+<li><a class="reference internal" href="#advanced-interface">Advanced interface</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#messages">Messages</a><ul>
+<li><a class="reference internal" href="#information">Information</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#see-also">See also</a></li>
+<li><a class="reference internal" href="#footnotes">Footnotes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="conversion_export_widgets.html"
+                        title="previous chapter">Conversion/export widgets</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="message.html"
+                        title="next chapter">Message</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/convert.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="message.html" title="Message"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="conversion_export_widgets.html" title="Conversion/export widgets"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="conversion_export_widgets.html" >Conversion/export widgets</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

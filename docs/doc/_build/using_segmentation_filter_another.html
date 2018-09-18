@@ -1,0 +1,201 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, using a segmentation to filter another" name="description" />
+<meta content="Orange, Textable, documentation, filter, stoplist, stopwords" name="keywords" />
+
+    <title>1.7. Using a segmentation to filter another &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. Tables" href="tables.html" />
+    <link rel="prev" title="1.6. Partitioning segmentations" href="partitioning_segmentations.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tables.html" title="2. Tables"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="partitioning_segmentations.html" title="1.6. Partitioning segmentations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentations.html" accesskey="U">1. Segmentations</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="using-a-segmentation-to-filter-another">
+<h1>1.7. Using a segmentation to filter another<a class="headerlink" href="#using-a-segmentation-to-filter-another" title="Permalink to this headline">¶</a></h1>
+<p>In some cases, the number of forms to be selectively included in or excluded
+from a segmentation is too large for using the <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> widget.
+A typical example is the removal of “stopwords” from a text: in English for
+instance, although the list of such words is finite, it is too long to try
+to encode it by means of a regex (cf. <a class="reference external" href="http://members.unine.ch/jacques.savoy/clef/englishST.txt">an example of such a list</a>).</p>
+<p>The purpose of widget <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> is precisely to solve that
+kind of problem. It takes two segmentations in input and lets the user include
+in or exclude from the first (<em>source</em>) segmentation those segments whose
+content is the same as that of a segment in the second (<em>filter</em>)
+segmentation. The widget’s basic interface is shown on
+<a class="reference internal" href="#using-segmentation-filter-another-fig1"><span class="std std-ref">figure 1</span></a> below).</p>
+<div class="figure align-center" id="id1">
+<span id="using-segmentation-filter-another-fig1"></span><img alt="Interface of widget Intersect configured for stopword removal" src="_images/intersect_example.png" />
+<p class="caption"><span class="caption-text">Figure 1: Interface of widget <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> configured for stopword removal.</span></p>
+</div>
+<p>Similarly to widget <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a>, user must choose between modes
+<strong>Include</strong> and <strong>Exclude</strong>. The next step is to specify which incoming
+segmentation plays the role of the <strong>Source</strong> segmentation and the <strong>Filter</strong>
+segmentation. (Here again, we will ignore the <strong>Annotation key</strong> option for
+the time being.)</p>
+<p>In order to try out the widget, set up a schema similar to the one shown on
+<a class="reference internal" href="#using-segmentation-filter-another-fig2"><span class="std std-ref">figure 2</span></a> below). The first
+instance of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> contains the text to process (for
+instance the
+<a class="reference external" href="http://www.un.org/en/documents/udhr/">Universal Declaration of Human Rights</a>),
+while the second instance, <em>Text Field (1)</em>, contains the list of English
+stopwords mentioned above. Both instances of <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> produce
+a word segmentation with regex <code class="docutils literal notranslate"><span class="pre">\w+</span></code>; the only difference in their
+configuration is the output segmentation label , i.e. <em>words</em> for <em>Segment</em>
+and <em>stopwords</em> for <em>Segment (1)</em>. Finally, the instance of
+<a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> is configured as shown on
+<a class="reference internal" href="#using-segmentation-filter-another-fig1"><span class="std std-ref">figure 1</span></a> above.</p>
+<div class="figure align-center" id="id2">
+<span id="using-segmentation-filter-another-fig2"></span><a class="reference internal image-reference" href="_images/intersect_example_schema.png"><img alt="Schema illustrating the use of the Intersect widget for stopword removal" src="_images/intersect_example_schema.png" style="width: 408.0px; height: 196.8px;" /></a>
+<p class="caption"><span class="caption-text">Figure 2: Example schema for removing stopword using widget <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> .</span></p>
+</div>
+<p>The content of the first segments of the resulting segmentation is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PREAMBLE</span>
+<span class="n">Whereas</span>
+<span class="n">recognition</span>
+<span class="n">inherent</span>
+<span class="n">dignity</span>
+<span class="n">equal</span>
+<span class="n">inalienable</span>
+<span class="n">rights</span>
+<span class="n">members</span>
+<span class="n">human</span>
+<span class="n">family</span>
+<span class="n">foundation</span>
+<span class="n">freedom</span>
+<span class="n">justice</span>
+<span class="n">peace</span>
+<span class="n">world</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p id="using-segmentation-filter-another-ex"><strong>Exercise:</strong> Based on an instance of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a>, produce
+a segmentation containing all words less than 4 letters long that appear at
+the beginning of each line, excluding <em>I, you, he, she, we</em>.
+(<a class="reference internal" href="#solution-using-segmentation-filter-another-ex"><span class="std std-ref">solution</span></a>)</p>
+<p id="solution-using-segmentation-filter-another-ex"><strong>Solution:</strong></p>
+<p><a class="reference internal" href="#using-segmentation-filter-another-fig3"><span class="std std-ref">Figure 3</span></a> below shows a possible
+solution. The 4 instances in the lower part of the schema (<em>Text Field (1)</em>,
+<em>Segment (1)</em>, <em>Intersect</em>, and <em>Display</em>) are configured as in
+<a class="reference internal" href="#using-segmentation-filter-another-fig2"><span class="std std-ref">figure 2</span></a> above–with
+<em>Text Field (1)</em> containing the list of pronouns to exclude.</p>
+<p>The difference lies in the addition of a <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> instance in
+the upper branch. In this branch, the first instance (<em>Segment</em>) produces a
+segmentation into lines with regex <code class="docutils literal notranslate"><span class="pre">.+</span></code> while <em>Segment (2)</em> extracts the
+first word of each line, provided it is shorter than 4 letters
+(regex <code class="docutils literal notranslate"><span class="pre">^\w{1,3}\b</span></code>). <em>Intersect</em> eventually takes care of excluding the
+pronouns listed above.</p>
+<div class="figure align-center" id="id3">
+<span id="using-segmentation-filter-another-fig3"></span><a class="reference internal image-reference" href="_images/solution_exercise_intersect.png"><img alt="Solution to the exercise illustrating the Intersect widget" src="_images/solution_exercise_intersect.png" style="width: 472.8px; height: 192.0px;" /></a>
+<p class="caption"><span class="caption-text">Figure 3: A possible solution.</span></p>
+</div>
+<p>(<a class="reference internal" href="#using-segmentation-filter-another-ex"><span class="std std-ref">back to the exercise</span></a>)</p>
+<div class="section" id="see-also">
+<h2>1.7.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="select.html#select"><span class="std std-ref">Reference: Select widget</span></a></li>
+<li><a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Reference: Intersect widget</span></a></li>
+<li><a class="reference internal" href="exclude_segments_based_on_stoplist.html"><span class="doc">Cookbook: Exclude segments based on a stoplist</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1.7. Using a segmentation to filter another</a><ul>
+<li><a class="reference internal" href="#see-also">1.7.1. See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="partitioning_segmentations.html"
+                        title="previous chapter">1.6. Partitioning segmentations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tables.html"
+                        title="next chapter">2. Tables</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/using_segmentation_filter_another.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tables.html" title="2. Tables"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="partitioning_segmentations.html" title="1.6. Partitioning segmentations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentations.html" >1. Segmentations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,130 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, annotations and their uses" name="description" />
+<meta content="Orange, Textable, documentation, annotations, uses" name="keywords" />
+
+    <title>3.1. Annotations and their uses &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3.2. Annotating by merging" href="annotating_merging.html" />
+    <link rel="prev" title="3. Annotations" href="annotations.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="annotating_merging.html" title="3.2. Annotating by merging"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="annotations.html" title="3. Annotations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="annotations.html" accesskey="U">3. Annotations</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="annotations-and-their-uses">
+<h1>3.1. Annotations and their uses<a class="headerlink" href="#annotations-and-their-uses" title="Permalink to this headline">¶</a></h1>
+<p>In Orange Textable, an <em>annotation</em> is a piece of information attached to a
+segment. Annotations consist of two parts: <em>key</em> and <em>value</em>. For instance, in
+the now classical case of the word segmentation of <em>a simple example</em>, segment
+<em>example</em> could be associated with the annotation <em>{part of speech: noun}</em>;
+this annotation’s key is <em>part of speech</em> and its value is <em>noun</em>. The same
+segment could be simultaneously associated with another annotation such as
+<em>{word category: lexical}</em>, or any <em>{key: value}</em> pair deemed relevant.</p>
+<p>Even though we have carefully ignored them so far, annotations play a
+fundamental role in text data processing and analysis. They make it possible
+to go beyond the basic level of forms that are “physically” present in a text
+and tap into the more abstract–and often more interesting–level of the
+<em>interpretation</em> of these forms.</p>
+<p>For instance, the texts composing a given corpus could be annotated with
+respect to their genre (<em>novel</em>, <em>short story</em>, and so on), and the parts of
+these texts might be annotated with regard to their discourse type
+(<em>narrative</em>, <em>description</em>, <em>dialogue</em>, and so on). Such data could be
+exploited to study the distribution of discourse types as a function of genre,
+which would be at best extremely difficult, if ever possible, without having
+encoded the relevant information by means of annotations.</p>
+<p>In the following sections, we will first see two simple methods for creating
+or importing annotations in Orange Textable, and then various ways of
+exploiting such annotations.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="annotations.html"
+                        title="previous chapter">3. Annotations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="annotating_merging.html"
+                        title="next chapter">3.2. Annotating by merging</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/annotations_uses.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="annotating_merging.html" title="3.2. Annotating by merging"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="annotations.html" title="3. Annotations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="annotations.html" >3. Annotations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

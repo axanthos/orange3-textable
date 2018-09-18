@@ -1,0 +1,182 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, merging segmentations together" name="description" />
+<meta content="Orange, Textable, documentation, merge, data, corpus" name="keywords" />
+
+    <title>1.3. Merging segmentations together &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1.4. A note on regular expressions" href="note_regular_expressions.html" />
+    <link rel="prev" title="1.2. Keyboard input and segmentation display" href="keyboard_input_segmentation_display.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="note_regular_expressions.html" title="1.4. A note on regular expressions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="keyboard_input_segmentation_display.html" title="1.2. Keyboard input and segmentation display"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentations.html" accesskey="U">1. Segmentations</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="merging-segmentations-together">
+<h1>1.3. Merging segmentations together<a class="headerlink" href="#merging-segmentations-together" title="Permalink to this headline">¶</a></h1>
+<p>Computerized text analysis often implies consolidating various text sources
+into a single <em>corpus</em>. In the framework of Orange Textable, this amounts
+to grouping segmentations together, and it is the purpose of the
+<a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> widget.</p>
+<p>To try out this widget, create on the canvas two instances of
+<a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a>, an instance of <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> and an
+instance of <a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a> (see
+<a class="reference internal" href="#merging-segmentations-together-fig1"><span class="std std-ref">figure 1</span></a> below). Type
+a different string in each <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance (e.g.
+<em>a simple example</em> and <em>another example</em>) and assign it a distinct label (e.g.
+<em>text_string</em> and <em>text_string2</em>). Eventually, connect the instances as
+shown on <a class="reference internal" href="#merging-segmentations-together-fig1"><span class="std std-ref">figure 1</span></a>.</p>
+<div class="figure align-center" id="id1">
+<span id="merging-segmentations-together-fig1"></span><a class="reference internal image-reference" href="_images/merge_example_schema.png"><img alt="Schema illustrating the usage of widget Merge" src="_images/merge_example_schema.png" style="width: 493.5px; height: 360.75px;" /></a>
+<p class="caption"><span class="caption-text">Figure 1: Grouping <em>a simple example</em> with <em>another example</em> using widget <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
+</div>
+<p>The interface of widget <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> (see
+<a class="reference internal" href="#merging-segmentations-together-fig2"><span class="std std-ref">figure 2</span></a> below) illustrates a
+feature shared by most Orange Textable widgets: the <strong>Advanced settings</strong>
+checkbox triggers the display of more complex controls offering more
+possibilities to the user. For now we will stick to the basic settings and
+leave the box unchecked.</p>
+<div class="figure align-center" id="id2">
+<span id="merging-segmentations-together-fig2"></span><img alt="Interface of widget merge" src="_images/merge_example.png" />
+<p class="caption"><span class="caption-text">Figure 2: Interface of widget <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
+</div>
+<p>Section <strong>Ordering</strong> of the widget’s interface lets the user view the labels
+of incoming segmentations and control the order in which they will appear in
+the output segmentation (by selecting them and clicking on <strong>Move Up</strong> /
+<strong>Down</strong>). The <strong>Output segmentation label</strong> can be set in section
+<strong>Options</strong>. We will return <a class="reference internal" href="annotating_merging.html"><span class="doc">later</span></a> to the purpose
+of checkbox <strong>Import labels with key</strong>; leave it unchecked for now.</p>
+<div class="figure align-center" id="id3">
+<span id="merging-segmentations-together-fig3"></span><img alt="Displaying a merged segmentation" src="_images/display_merged_example.png" />
+<p class="caption"><span class="caption-text">Figure 3: Merged segmentation.</span></p>
+</div>
+<p><a class="reference internal" href="#merging-segmentations-together-fig3"><span class="std std-ref">Figure 3</span></a> above shows the
+resulting merged segmentation, as displayed by widget
+<a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a>. As can be seen, <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> makes it easy
+to concatenate several strings into a single segmentation. If the incoming
+segmentations contained several segments, each of them would appear in the
+output segmentation, in the order specified under <strong>Ordering</strong> (and, within
+each incoming segmentation, in the original order of segments).</p>
+<p id="merging-segmentations-together-ex"><strong>Exercise:</strong> Can you add a new instance of <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> to the
+schema illustrated on <a class="reference internal" href="#merging-segmentations-together-fig1"><span class="std std-ref">figure 1</span></a>
+above and modify the connections (but not the configuration of existing
+widgets) so that the segmentation given in
+<a class="reference internal" href="#merging-segmentations-together-fig4"><span class="std std-ref">figure 4</span></a> below appears in the
+<a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a> widget?
+(<a class="reference internal" href="#solution-merging-segmentations-together-ex"><span class="std std-ref">solution</span></a>)</p>
+<div class="figure align-center" id="id4">
+<span id="merging-segmentations-together-fig4"></span><img alt="3 segments: &quot;a simple example&quot;, &quot;another example&quot;, &quot;another example&quot;" src="_images/goal_exercise_merge.png" />
+<p class="caption"><span class="caption-text">Figure 4: The segmentation requested in the <a class="reference internal" href="#merging-segmentations-together-ex"><span class="std std-ref">exercise</span></a>.</span></p>
+</div>
+<p id="solution-merging-segmentations-together-ex"><strong>Solution:</strong> (<a class="reference internal" href="#merging-segmentations-together-ex"><span class="std std-ref">back to the exercise</span></a>)</p>
+<div class="figure align-center" id="id5">
+<a class="reference internal image-reference" href="_images/solution_exercise_merge.png"><img alt="New Merge widget takes input from old one and Text field, and sends output to Display" src="_images/solution_exercise_merge.png" style="width: 542.5px; height: 217.7px;" /></a>
+<p class="caption"><span class="caption-text">Figure 5: Solution to the <a class="reference internal" href="#merging-segmentations-together-ex"><span class="std std-ref">exercise</span></a>.</span></p>
+</div>
+<div class="section" id="see-also">
+<h2>1.3.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="merge.html#merge"><span class="std std-ref">Reference: Merge widget</span></a></li>
+<li><a class="reference internal" href="merge_several_texts.html"><span class="doc">Cookbook: Merge several texts</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1.3. Merging segmentations together</a><ul>
+<li><a class="reference internal" href="#see-also">1.3.1. See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="keyboard_input_segmentation_display.html"
+                        title="previous chapter">1.2. Keyboard input and segmentation display</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="note_regular_expressions.html"
+                        title="next chapter">1.4. A note on regular expressions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/merging_segmentations_together.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="note_regular_expressions.html" title="1.4. A note on regular expressions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="keyboard_input_segmentation_display.html" title="1.2. Keyboard input and segmentation display"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentations.html" >1. Segmentations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

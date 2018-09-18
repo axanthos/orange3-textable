@@ -1,0 +1,179 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>File list (Text Files widget) &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="URL list (URLs widget)" href="json_url_list.html" />
+    <link rel="prev" title="Generalities" href="json_generalities.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="json_url_list.html" title="URL list (URLs widget)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="json_generalities.html" title="Generalities"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="json_format.html" accesskey="U">JSON im-/export format</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="file-list-text-files-widget">
+<h1>File list (Text Files widget)<a class="headerlink" href="#file-list-text-files-widget" title="Permalink to this headline">¶</a></h1>
+<p>The keys (and associated values) for the file lists are the following:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="22%" />
+<col width="11%" />
+<col width="11%" />
+<col width="22%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub">Key</th>
+<th class="head"><em>Type</em></th>
+<th class="head"><em>Default</em></th>
+<th class="head"><em>Value</em></th>
+<th class="head"><em>Remark</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub"><em>path</em></th>
+<td><em>string</em></td>
+<td>—</td>
+<td><em>file path (absolute or relative)</em></td>
+<td><em>be careful to escaping the backslash</em></td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>encoding</em></th>
+<td><em>string</em></td>
+<td>—</td>
+<td><em>file encoding</em></td>
+<td><em>cf.</em> <a class="reference external" href="http://docs.python.org/2/library/codecs.html#standard-encodings">Python doc (codecs)</a></td>
+</tr>
+<tr class="row-even"><th class="stub"><em>annotation_key</em></th>
+<td><em>string</em></td>
+<td>—</td>
+<td><em>annotation key</em></td>
+<td>—</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>annotation_value</em></th>
+<td><em>string</em></td>
+<td>&#160;</td>
+<td><em>annotation value</em></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">:</span>             <span class="s2">&quot;data</span><span class="se">\\</span><span class="s2">Balzac</span><span class="se">\\</span><span class="s2">Eugenie_Grandet.txt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;encoding&quot;</span><span class="p">:</span>         <span class="s2">&quot;iso-8859-1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;annotation_key&quot;</span><span class="p">:</span>   <span class="s2">&quot;auteur&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;annotation_value&quot;</span><span class="p">:</span> <span class="s2">&quot;Balzac&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">:</span>             <span class="s2">&quot;data</span><span class="se">\\</span><span class="s2">Balzac</span><span class="se">\\</span><span class="s2">Le_Pere_Goriot.txt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;encoding&quot;</span><span class="p">:</span>         <span class="s2">&quot;iso-8859-1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;annotation_key&quot;</span><span class="p">:</span>   <span class="s2">&quot;auteur&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;annotation_value&quot;</span><span class="p">:</span> <span class="s2">&quot;Balzac&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">:</span>             <span class="s2">&quot;data</span><span class="se">\\</span><span class="s2">Daudet</span><span class="se">\\</span><span class="s2">Lettres_de_mon_moulin.txt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;encoding&quot;</span><span class="p">:</span>         <span class="s2">&quot;iso-8859-15&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;annotation_key&quot;</span><span class="p">:</span>   <span class="s2">&quot;auteur&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;annotation_value&quot;</span><span class="p">:</span> <span class="s2">&quot;Daudet&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">:</span>             <span class="s2">&quot;data</span><span class="se">\\</span><span class="s2">Daudet</span><span class="se">\\</span><span class="s2">Tartarin_de_Tarascon.txt&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;encoding&quot;</span><span class="p">:</span>         <span class="s2">&quot;iso-8859-15&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;annotation_key&quot;</span><span class="p">:</span>   <span class="s2">&quot;auteur&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;annotation_value&quot;</span><span class="p">:</span> <span class="s2">&quot;Daudet&quot;</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="json_generalities.html"
+                        title="previous chapter">Generalities</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="json_url_list.html"
+                        title="next chapter">URL list (URLs widget)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/json_file_list.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="json_url_list.html" title="URL list (URLs widget)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="json_generalities.html" title="Generalities"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="json_format.html" >JSON im-/export format</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

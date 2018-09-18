@@ -1,0 +1,904 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Cooccurrence widget" name="description" />
+<meta content="Orange, Textable, documentation, Cooccurrence, widget" name="keywords" />
+
+    <title>Cooccurrence &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Context" href="context.html" />
+    <link rel="prev" title="Variety" href="variety.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="context.html" title="Context"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="variety.html" title="Variety"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="table_construction_widgets.html" accesskey="U">Table construction widgets</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cooccurrence">
+<span id="id1"></span><h1>Cooccurrence<a class="headerlink" href="#cooccurrence" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/Cooccurrence_54.png" src="_images/Cooccurrence_54.png" />
+<p>Measure the cooccurrence of segments in documents.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p>Inputs:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Segmentation</span></code> (multiple)</p>
+<p>Segmentation whose segments constitute the units subject to measurement of
+their cooccurrence or the contexts in which unit cooccurrence will be
+measured</p>
+</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Pivot</span> <span class="pre">Crosstab</span></code></p>
+<p>Table displaying the cooccurrence of units in the defined context</p>
+</li>
+</ul>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>This widget inputs one or several segmentations, measures the number of
+documents in which the input segments occur simultaneously, and sends the result
+in the form of a <em>cooccurrence matrix</em> <a class="footnote-reference" href="#id5" id="id2">[1]</a>.</p>
+<p>The cooccurrence matrix produced by this widget is of <em>IntPivotCrosstab</em> type,
+a subtype of the generic <em>Table</em> format (see <a class="reference internal" href="convert.html#convert"><span class="std std-ref">Convert</span></a> widget, section
+<a class="reference internal" href="convert.html#anchor-to-table-formats"><span class="std std-ref">Table formats</span></a>). Since this table is a
+cooccurrence matrix, both rows and columns correspond to <em>unit</em> types.
+The cell at the intersection of a given column and row represents the number of
+documents (<em>context</em> types) in which these two <em>unit</em> types occur
+simultaneously. As the measure of cooccurrence represents absolute frequency,
+the resulting table contains integer numbers, and as such it is of
+<em>IntPivotCrosstab</em> type, a subclass of <em>PivotCrosstab</em>.</p>
+<p>To take a simple example, consider two segmentations of the string <em>a simple
+example</em> <a class="footnote-reference" href="#id6" id="id3">[2]</a>:</p>
+<ol class="upperalpha simple">
+<li>label = <em>words</em></li>
+</ol>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="12%" />
+<col width="9%" />
+<col width="31%" />
+<col width="29%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">content</th>
+<th class="head">start</th>
+<th class="head">end</th>
+<th class="head"><em>part of speech</em></th>
+<th class="head"><em>word category</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><em>a</em></td>
+<td>1</td>
+<td>1</td>
+<td><em>article</em></td>
+<td><em>grammatical</em></td>
+</tr>
+<tr class="row-odd"><td><em>simple</em></td>
+<td>3</td>
+<td>8</td>
+<td><em>adjective</em></td>
+<td><em>lexical</em></td>
+</tr>
+<tr class="row-even"><td><em>example</em></td>
+<td>10</td>
+<td>16</td>
+<td><em>noun</em></td>
+<td><em>lexical</em></td>
+</tr>
+</tbody>
+</table>
+<ol class="upperalpha simple" start="2">
+<li>label = <em>letters</em> (extract)</li>
+</ol>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="18%" />
+<col width="13%" />
+<col width="48%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">content</th>
+<th class="head">start</th>
+<th class="head">end</th>
+<th class="head"><em>letter category</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><em>a</em></td>
+<td>1</td>
+<td>1</td>
+<td><em>vowel</em></td>
+</tr>
+<tr class="row-odd"><td><em>s</em></td>
+<td>3</td>
+<td>3</td>
+<td><em>consonant</em></td>
+</tr>
+<tr class="row-even"><td><em>i</em></td>
+<td>4</td>
+<td>4</td>
+<td><em>vowel</em></td>
+</tr>
+<tr class="row-odd"><td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr class="row-even"><td><em>e</em></td>
+<td>16</td>
+<td>16</td>
+<td><em>vowel</em></td>
+</tr>
+</tbody>
+</table>
+<p>Typically, we could define unit types based on the content of the segments
+of the <em>letters</em> segmentation.</p>
+<p>As for the context types, there are two distinct forms
+of contexts for measuring the cooccurrence of the units:
+* <strong>Sliding window*</strong> <strong>Containing segmentation</strong></p>
+<p><strong>Sliding window</strong> relies on the notion of a “window” of <em>n</em> segments that we
+progressively “slide” from the beginning to the end of the segmentation. In our
+example, by applying this principle to the <em>letters</em> segmentation and by setting
+the window size to 3 segments, we thus define the following contexts:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><em>a si</em></li>
+<li><em>sim</em></li>
+<li><em>imp</em></li>
+<li><em>mpl</em></li>
+<li><em>ple</em></li>
+<li><em>le e</em></li>
+<li><em>e ex</em></li>
+<li><em>exa</em></li>
+<li><em>xam</em></li>
+<li><em>amp</em></li>
+<li><em>mpl</em></li>
+<li><em>ple</em></li>
+</ol>
+</div></blockquote>
+<p>Considering the letter segmentation as that of the unit types, we would obtain
+the following cooccurrence matrix <a class="footnote-reference" href="#id7" id="id4">[3]</a>:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub"><em>__unit__</em></th>
+<th class="head"><em>a</em></th>
+<th class="head"><em>s</em></th>
+<th class="head"><em>i</em></th>
+<th class="head"><em>m</em></th>
+<th class="head"><em>p</em></th>
+<th class="head"><em>l</em></th>
+<th class="head"><em>e</em></th>
+<th class="head"><em>x</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub"><em>a</em></th>
+<td>4</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>s</em></th>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>i</em></th>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>m</em></th>
+<td>2</td>
+<td>1</td>
+<td>2</td>
+<td>6</td>
+<td>4</td>
+<td>2</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>p</em></th>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>4</td>
+<td>6</td>
+<td>4</td>
+<td>2</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>l</em></th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>4</td>
+<td>5</td>
+<td>3</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>e</em></th>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>3</td>
+<td>5</td>
+<td>2</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>x</em></th>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>Alternatively, we could consider the <em>annotation values</em> of the units instead of
+their content. For example, by defining units based on the annotations
+associated to the key <em>letter category</em> in the <em>letters</em> segmentation, and
+choosing the mode <strong>Sliding window</strong> for the context with the window size of 3
+(see <a class="reference internal" href="#cooccurrence-fig1"><span class="std std-ref">figure 1</span></a>), we would obtain the following
+cooccurrence
+matrix:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="38%" />
+<col width="25%" />
+<col width="38%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub"><em>__unit__</em></th>
+<th class="head"><em>vowel</em></th>
+<th class="head"><em>consonant</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub"><em>vowel</em></th>
+<td>10</td>
+<td>10</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>consonant</em></th>
+<td>10</td>
+<td>12</td>
+</tr>
+</tbody>
+</table>
+<p>The mode <strong>Containing segmentation</strong> consists in measuring the cooccurrence of
+units in context defined by another segmentation. In the above example we
+consider <em>letter</em> as the segmentation for unit types and <em>word</em> as the
+segmentation for context types, and thus the following cooccurrence matrix will
+be obtained and is symmetric by definition:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub"><em>__unit__</em></th>
+<th class="head"><em>a</em></th>
+<th class="head"><em>s</em></th>
+<th class="head"><em>i</em></th>
+<th class="head"><em>m</em></th>
+<th class="head"><em>p</em></th>
+<th class="head"><em>l</em></th>
+<th class="head"><em>e</em></th>
+<th class="head"><em>x</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub"><em>a</em></th>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>s</em></th>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>i</em></th>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>m</em></th>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>p</em></th>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>l</em></th>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>e</em></th>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>x</em></th>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Each cell at the above table represents the number of words (segments of the
+context types) in which the unit in the column and the unit in the row are
+used simultaneously. For example, “2” in the fifth column and forth row, shows
+that there are two words in which <em>p</em> and <em>m</em> occur together.</p>
+<p>In the <strong>Containing segmentation</strong> mode, it is also possible to measure the
+cooccurrence of units belonging to distinct segmentations. For instance this
+would enable us to know how many times a given vowel and a given consonant occur
+simultaneously in each word. By ticking the <strong>Secondary units</strong> checkbox
+in the interface of the widget, we will be able to define a segmentation for
+secondary unit types. In this case, the resulting cooccurrence matrix will no
+longer be symmetric. Therefore, in the above example, vowels as the primary
+units segmentation constitute the rows, and consonants as the secondary units
+segmentation constitute the columns of the resulting cooccurrence matrix
+(see <a class="reference internal" href="#cooccurrence-fig2"><span class="std std-ref">figure 2</span></a>):</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub"><em>__unit__</em></th>
+<th class="head"><em>s</em></th>
+<th class="head"><em>m</em></th>
+<th class="head"><em>p</em></th>
+<th class="head"><em>l</em></th>
+<th class="head"><em>x</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub"><em>a</em></th>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>i</em></th>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>e</em></th>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>As mentioned in the <strong>Sliding window</strong> mode, it is always possible to measure
+the cooccurrence of the annotation values of the units (primary and secondary)
+and those of the contexts instead of the content of segments. In the case
+of the above example with the secondary units, the resulting crosstab consists
+of only one cell indicating the number of words in which every letter with
+<em>vowel</em> and every letter with <em>consonant</em> annotation value have occurred at the
+same time:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub"><em>__unit__</em></th>
+<th class="head"><em>consonant</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub"><em>vowel</em></th>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p>Note that it is up to the user to provide a coherent definition of the units
+and contexts. In general, there are three conditions to be met in this
+respect: (a) the segment corresponding to the unit and the context are both
+associated to the same string, (b) the initial position of the unit segment
+in the string is higher or equal to that of the context segment, and
+(c) conversely the final position of the unit is lower or equal to that of the
+context. In short, the unit must be <em>contained</em> within the context.</p>
+<p>It is also noteworthy that in order to measure the cooccurrence, it is by
+definition necessary to specify a context. The context is set to the <strong>Sliding
+window</strong> mode by default.</p>
+<p>Finally, in every scenario considered here, we could also take an interest for
+the cooccurrence of sequences of 2, 3, …, <em>n</em> segments  (or <em>n–grams</em>) rather
+than for the frequency of isolated segments. The cooccurrence matrix of
+bigrams in <strong>Sliding window</strong> (size 3) is illustrated below:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub"><em>__unit__</em></th>
+<th class="head"><em>as</em></th>
+<th class="head"><em>si</em></th>
+<th class="head"><em>im</em></th>
+<th class="head"><em>mp</em></th>
+<th class="head"><em>pl</em></th>
+<th class="head"><em>le</em></th>
+<th class="head"><em>ee</em></th>
+<th class="head"><em>ex</em></th>
+<th class="head"><em>xa</em></th>
+<th class="head"><em>am</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub"><em>as</em></th>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>si</em></th>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>im</em></th>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>mp</em></th>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>4</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>pl</em></th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>4</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>le</em></th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>3</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>ee</em></th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>ex</em></th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>xa</em></th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>am</em></th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p>Hereafter the interface of the widget will be introduced (see
+figures <a class="reference internal" href="#cooccurrence-fig1"><span class="std std-ref">1</span></a> to <a class="reference internal" href="#cooccurrence-fig4"><span class="std std-ref">4</span></a>). It
+contains three separate sections for unit definition (<strong>Units</strong> and <strong>Secondary
+units</strong>) and context definition (<strong>Contexts</strong>).</p>
+<div class="figure align-center" id="id8">
+<span id="cooccurrence-fig1"></span><img alt="Cooccurrence widget in the default mode(&quot;Sliding window&quot;)" src="_images/cooc_example.png" />
+<p class="caption"><span class="caption-text">Figure 1: <strong>Cooccurrence</strong> widget (<strong>Sliding window</strong> mode as the default mode).</span></p>
+</div>
+<p>In the <strong>Units</strong> section, the <strong>Segmentation</strong> drop-down menu allows the user
+to select among the input segmentations, the one whose segment types will be
+subject to the cooccurrence measurement. The <strong>Annotation key</strong> menu displays
+the annotation keys associated to the chosen segmentation, if any; if one of the
+keys is selected, the corresponding annotation values will be considered; if on
+the other hand the value <em>(none)</em> is selected, the <em>content</em> of the segments
+will be taken into consideration. The <strong>Sequence length</strong> drop-down menu allows
+the user to indicate if isolated segments or segment <em>n–grams</em> should be
+considered; in the latter case, the (optional) string specified in the <strong>Intra
+sequence delimiter</strong> text field will be used to separate the content or the
+annotation value corresponding to each segment in the table headers.</p>
+<p>The <strong>Secondary units</strong> section has almost the same characteristics as the
+<strong>Units</strong> section, except for the fact that there is no <strong>Sequence length</strong>
+menu. This section is by default disabled due to the default mode of the
+<strong>Contexts</strong> section being <strong>Sliding window</strong>, in which only one unit
+segmentation can be considered for the measure of cooccurrence (see
+<a class="reference internal" href="#cooccurrence-fig1"><span class="std std-ref">figure 1</span></a>). When changing the mode to <em>Containing
+segmentation</em>, the box becomes automatically enabled (see
+<a class="reference internal" href="#cooccurrence-fig2"><span class="std std-ref">figure 2</span></a>).</p>
+<div class="figure align-center" id="id9">
+<span id="cooccurrence-fig2"></span><img alt="Secondary units box of Cooccurrence widget in mode &quot;Sliding window&quot;" src="_images/cooc_secondary_units_example.png" />
+<p class="caption"><span class="caption-text">Figure 2: <strong>Secondary units</strong> box of <strong>Cooccurrence</strong> widget.</span></p>
+</div>
+<p>The <strong>Contexts</strong> section is available in two forms, depending on the
+selected value in the <strong>Mode</strong> drop-down menu. This allows the user to
+choose between the two possible ways of defining contexts described earlier.
+The <strong>Sliding window</strong> mode (see <a class="reference internal" href="#cooccurrence-fig3"><span class="std std-ref">figure 3</span></a>) implements
+the notion of a “sliding window” introduced earlier. Typically, it allows the
+user to observe the cooccurrence of the unit types with one another throughout
+the unit segmentation. The only parameter is the window size (in number of
+segments), defined by the <strong>Window size</strong> cursor, set to 2 by default.</p>
+<div class="figure align-center" id="id10">
+<span id="cooccurrence-fig3"></span><img alt="Cooccurrence widget in mode &quot;Sliding window&quot;" src="_images/cooc_mode_sliding_window_example.png" />
+<p class="caption"><span class="caption-text">Figure 3: <strong>Cooccurrence</strong> widget (<strong>Sliding window</strong> mode).</span></p>
+</div>
+<div class="figure align-center" id="id11">
+<span id="cooccurrence-fig4"></span><img alt="Cooccurrence widget in mode &quot;Containing segmentation&quot;" src="_images/cooc_mode_containing_segmentation_example.png" />
+<p class="caption"><span class="caption-text">Figure 4: <strong>Cooccurrence</strong> widget (<strong>Containing segmentation</strong> mode).</span></p>
+</div>
+<p>Finally, the <strong>Containing segmentation</strong> mode (see <a class="reference internal" href="#cooccurrence-fig4"><span class="std std-ref">figure 4</span></a>) corresponds to the case where contexts are defined by the
+segment types that appear in another segmentation. This segmentation is selected
+among the input segmentations by means of the <strong>Segmentation</strong> drop-down menu.
+The <strong>Annotation key</strong> menu displays the annotation keys associated with the
+context segmentation, if any; if one of the keys is selected, the corresponding
+annotation value types will constitute the row headers; otherwise the value
+<em>(none)</em> is selected so that <em>content</em> of the segments will be exploited.</p>
+<p>The <strong>Info</strong> section indicates whether or not the data is correctly sent to the
+output table. If not, the respective error message will be given.</p>
+<p>The <strong>Compute</strong> button triggers the emission of a table in the internal format
+of Orange Textable, to the output connection(s). When it is selected, the
+<strong>Compute automatically</strong> checkbox disables the button and the widget attempts
+to automatically emit a segmentation at every modification of its interface or
+when its input data are modified (by deletion or addition of a connection, or
+because modified data is received through an existing connection).</p>
+</div>
+<div class="section" id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="information">
+<h3>Information<a class="headerlink" href="#information" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><em>Data correctly sent to output.</em></dt>
+<dd>This confirms that the widget has operated properly.</dd>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Compute’ when ready.</em></dt>
+<dd>Settings and/or input have changed but the <strong>Compute automatically</strong>
+checkbox has not been selected, so the user is prompted to click the
+<strong>Compute</strong> button (or equivalently check the box) in order for computation
+and data emission to proceed.</dd>
+<dt><em>No data sent to output yet: no input segmentation.</em></dt>
+<dd>The widget instance is not able to emit data to output because it receives
+none on its input channel(s).</dd>
+<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
+<dd>A problem with the instance’s parameters and/or input data prevents it
+from operating properly, and additional diagnostic information can be
+found in the <strong>Widget state</strong> box at the bottom of the instance’s
+interface (see <a class="reference internal" href="#warnings">Warnings</a> below).</dd>
+</dl>
+</div>
+<div class="section" id="warnings">
+<h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><em>Resulting table is empty.</em></dt>
+<dd>No table has been emitted because the widget instance couldn’t find a
+single element in its input segmentation(s). A likely cause for this
+problem (when using the <strong>Containing segmentation</strong> mode) is that the unit
+and context segmentations do not refer to the same strings, so that the
+units are in effect <em>not</em> contained in the contexts. This is typically a
+consequence of the improper use of widgets <a class="reference internal" href="preprocess.html#preprocess"><span class="std std-ref">Preprocess</span></a> and/or
+<a class="reference internal" href="recode.html#recode"><span class="std std-ref">Recode</span></a> (see <a class="reference internal" href="preprocess.html#anchor-to-caveat"><span class="std std-ref">Caveat</span></a>).</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="convert.html#anchor-to-table-formats"><span class="std std-ref">Reference: Convert widget (section “Table formats”)</span></a></li>
+</ul>
+</div>
+<div class="section" id="footnotes">
+<h2>Footnotes<a class="headerlink" href="#footnotes" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>The definition  of cooccurrence may vary depending on the discipline in
+which this notion is used. In text analytics, the cooccurrence is the
+number of the documents in which two textual units simultaneously occur.
+Here by convention, cooccurrence is the dot product of the transposed
+term-document matrix with itself, which is symmetric when considering
+only one unit type. As a result, and contrary to other definitions, the
+diagonal members of the matrix are not zero; rather, they indicate
+the document frequency of the corresponding textual unit (i.e. the
+number of context types in which it occurs).</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>By convention, we do not indicate here the string index associated with
+each segment but only its start and end positions, along with the
+various annotation values associated with it; moreover, for the sake of
+readability, we do indicate the content of each segment, though it is
+not formally part of the segmentation (but rather of the string to
+which the segmentation refers).</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td>The first column header, <em>__unit__</em>, is a name predefined by Orange
+Textable.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Cooccurrence</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#messages">Messages</a><ul>
+<li><a class="reference internal" href="#information">Information</a></li>
+<li><a class="reference internal" href="#warnings">Warnings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#see-also">See also</a></li>
+<li><a class="reference internal" href="#footnotes">Footnotes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="variety.html"
+                        title="previous chapter">Variety</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="context.html"
+                        title="next chapter">Context</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/cooccurrence.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="context.html" title="Context"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="variety.html" title="Variety"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="table_construction_widgets.html" >Table construction widgets</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

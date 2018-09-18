@@ -1,0 +1,196 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, cookbook, export text content" name="description" />
+<meta content="Orange, Textable, documentation, cookbook, export, text, content, encoding" name="keywords" />
+
+    <title>Export text content (and/or change text encoding) &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Convert text to lower or upper case" href="convert_text_to_lower_upper_case.html" />
+    <link rel="prev" title="Display text content" href="display_text_content.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="convert_text_to_lower_upper_case.html" title="Convert text to lower or upper case"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="display_text_content.html" title="Display text content"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="cookbook.html" accesskey="U">Cookbook</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="export-text-content-and-or-change-text-encoding">
+<h1>Export text content (and/or change text encoding)<a class="headerlink" href="#export-text-content-and-or-change-text-encoding" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="goal">
+<h2>Goal<a class="headerlink" href="#goal" title="Permalink to this headline">¶</a></h2>
+<p>Export the content of a text (segmentation).</p>
+</div>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>Some text has been imported in Orange Textable (see <a class="reference internal" href="cookbook.html#cookbook-toc-text-input-ref"><span class="std std-ref">Cookbook: Text input</span></a>) and possibly further processed (see
+<a class="reference internal" href="cookbook.html#cookbook-toc-segmentation-manipulation-ref"><span class="std std-ref">Cookbook: Segmentation manipulation</span></a>).</p>
+</div>
+<div class="section" id="ingredients">
+<h2>Ingredients<a class="headerlink" href="#ingredients" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="48%" />
+<col width="52%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>Widget</strong></td>
+<td><a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a></td>
+</tr>
+<tr class="row-even"><td><strong>Icon</strong></td>
+<td><img alt="display_icon" src="_images/Display_36.png" /></td>
+</tr>
+<tr class="row-odd"><td><strong>Quantity</strong></td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="procedure">
+<h2>Procedure<a class="headerlink" href="#procedure" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center" id="id1">
+<span id="export-text-content-fig1"></span><a class="reference internal image-reference" href="_images/export_text_content.png"><img alt="Export text with an instance of Display" src="_images/export_text_content.png" style="width: 535.2px; height: 369.6px;" /></a>
+<p class="caption"><span class="caption-text">Figure 1: Export text with an instance of <a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a>.</span></p>
+</div>
+<ol class="arabic simple">
+<li>Create an instance of <a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a> on the canvas.</li>
+<li>Drag and drop from the output connection (righthand side) of the widget
+instance that emits the segmentation to be displayed (e.g.
+<a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a>) to the <a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a> instance’s input connection
+(lefthand side).</li>
+<li>Open the <a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a> instance’s interface by double-clicking on its
+icon on the canvas to view the imported text.</li>
+<li>Tick the <strong>Advanced settings</strong> checkbox.</li>
+<li>In the <strong>Formatting</strong> section, tick the <strong>Apply custom formatting</strong>
+checkbox.</li>
+<li>In the <strong>Export</strong> section, you can choose the encoding for the text that
+will be exported using the <strong>File encoding</strong> drop-down menu.</li>
+<li>Click on <strong>Export to file</strong> button to open the file selection dialog.</li>
+<li>Select the location you want to export your file to and close the file
+selection dialog by clicking on <strong>Ok</strong>.</li>
+</ol>
+</div>
+<div class="section" id="comment">
+<h2>Comment<a class="headerlink" href="#comment" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>If you rather want to <em>copy</em> the text content in order to later paste it in
+another program, click on <strong>Copy to clipboard</strong>; note that in this case,
+the encoding is by default utf8 and cannot be changed.</li>
+<li>If the input data contains <em>several</em> texts (segments) you can specify a
+string that will be inserted between each successive text in <strong>Segment
+delimiter</strong>; note that the default segment delimiter <code class="docutils literal notranslate"><span class="pre">\n</span></code> represents a
+carriage return.</li>
+<li>If the input data consist of a large number of segments (thousands or more),
+the time necessary to display them can be prohibitively long.</li>
+</ul>
+</div>
+<div class="section" id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="display.html#display"><span class="std std-ref">Reference: Display widget</span></a></li>
+<li><a class="reference internal" href="cookbook.html#cookbook-toc-text-input-ref"><span class="std std-ref">Cookbook: Text input</span></a></li>
+<li><a class="reference internal" href="cookbook.html#cookbook-toc-segmentation-manipulation-ref"><span class="std std-ref">Cookbook: Segmentation manipulation</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Export text content (and/or change text encoding)</a><ul>
+<li><a class="reference internal" href="#goal">Goal</a></li>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li><a class="reference internal" href="#ingredients">Ingredients</a></li>
+<li><a class="reference internal" href="#procedure">Procedure</a></li>
+<li><a class="reference internal" href="#comment">Comment</a></li>
+<li><a class="reference internal" href="#see-also">See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="display_text_content.html"
+                        title="previous chapter">Display text content</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="convert_text_to_lower_upper_case.html"
+                        title="next chapter">Convert text to lower or upper case</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/export_text_content_change_encoding.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="convert_text_to_lower_upper_case.html" title="Convert text to lower or upper case"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="display_text_content.html" title="Display text content"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="cookbook.html" >Cookbook</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

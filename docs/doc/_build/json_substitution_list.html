@@ -1,0 +1,182 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Substitution list (Recode widget) &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Regular expression list (Segment widget)" href="json_regular_expression_list.html" />
+    <link rel="prev" title="URL list (URLs widget)" href="json_url_list.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="json_regular_expression_list.html" title="Regular expression list (Segment widget)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="json_url_list.html" title="URL list (URLs widget)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="json_format.html" accesskey="U">JSON im-/export format</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="substitution-list-recode-widget">
+<h1>Substitution list (Recode widget)<a class="headerlink" href="#substitution-list-recode-widget" title="Permalink to this headline">¶</a></h1>
+<p>The keys (and associated values) for the file lists are the following:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="20%" />
+<col width="10%" />
+<col width="20%" />
+<col width="20%" />
+<col width="30%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub">Key</th>
+<th class="head"><em>Type</em></th>
+<th class="head"><em>Default</em></th>
+<th class="head"><em>Value</em></th>
+<th class="head"><em>Remark</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub"><em>regex</em></th>
+<td><em>string</em></td>
+<td>—</td>
+<td><em>regular expression</em></td>
+<td><em>be careful to escape the slashes and backslash</em></td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>replacement_string</em></th>
+<td><em>string</em></td>
+<td><em>replacement string</em></td>
+<td>—</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>ignore_case</em></th>
+<td><em>Boolean</em></td>
+<td><em>false</em></td>
+<td><em>option -i</em></td>
+<td><em>cf.</em> <a class="reference external" href="http://docs.python.org/library/re.html#re.UNICODE">Python doc (re.UNICODE)</a></td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>multiline</em></th>
+<td><em>Boolean</em></td>
+<td><em>false</em></td>
+<td><em>option -m</em></td>
+<td><em>cf.</em> <a class="reference external" href="http://docs.python.org/library/re.html#re.MULTILINE">Python doc (re.MULTILINE)</a></td>
+</tr>
+<tr class="row-even"><th class="stub"><em>dot_all</em></th>
+<td><em>Boolean</em></td>
+<td><em>false</em></td>
+<td><em>option -s</em></td>
+<td><em>cf.</em> <a class="reference external" href="http://docs.python.org/library/re.html#re.DOTALL">Python doc (re.DOTALL)</a></td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>unicode_dependent</em></th>
+<td><em>Boolean</em></td>
+<td><em>false</em></td>
+<td><em>option -u</em></td>
+<td><em>cf.</em> <a class="reference external" href="http://docs.python.org/library/re.html#re.IGNORECASE">Python doc (re.IGNORECASE)</a></td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;regex&quot;</span><span class="p">:</span>              <span class="s2">&quot;&lt;.+?&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;replacement_string&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;regex&quot;</span><span class="p">:</span>              <span class="s2">&quot;(behavi|col|neighb)our&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;replacement_string&quot;</span><span class="p">:</span> <span class="s2">&quot;&amp;1or&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ignore_case&quot;</span><span class="p">:</span>        <span class="n">true</span><span class="p">,</span>
+        <span class="s2">&quot;unicode_dependent&quot;</span><span class="p">:</span>  <span class="n">true</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;regex&quot;</span><span class="p">:</span>              <span class="s2">&quot;a (</span><span class="se">\\</span><span class="s2">w+) of mine&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;replacement_string&quot;</span><span class="p">:</span> <span class="s2">&quot;my &amp;1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;unicode_dependent&quot;</span><span class="p">:</span>  <span class="n">true</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="json_url_list.html"
+                        title="previous chapter">URL list (URLs widget)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="json_regular_expression_list.html"
+                        title="next chapter">Regular expression list (Segment widget)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/json_substitution_list.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="json_regular_expression_list.html" title="Regular expression list (Segment widget)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="json_url_list.html" title="URL list (URLs widget)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="json_format.html" >JSON im-/export format</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

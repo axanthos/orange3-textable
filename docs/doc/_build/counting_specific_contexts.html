@@ -1,0 +1,442 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, counting in specific contexts" name="description" />
+<meta content="Orange, Textable, documentation, count, context, contigency table, document-term matrix, term-document matrix" name="keywords" />
+
+    <title>2.4. Counting in specific contexts &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3. Annotations" href="annotations.html" />
+    <link rel="prev" title="2.3. Counting segment types" href="counting_segment_types.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="annotations.html" title="3. Annotations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="counting_segment_types.html" title="2.3. Counting segment types"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="tables.html" accesskey="U">2. Tables</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="counting-in-specific-contexts">
+<h1>2.4. Counting in specific contexts<a class="headerlink" href="#counting-in-specific-contexts" title="Permalink to this headline">¶</a></h1>
+<p>Section <strong>Contexts</strong> of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>’s interface lets the
+user define the <em>contexts</em> in which units should be counted. Thus, while
+the settings of section <strong>Units</strong> affect the <em>columns</em> of the resulting table,
+those of section <strong>Contexts</strong> affect its <em>rows</em>.</p>
+<p>In the example of the <a class="reference internal" href="counting_segment_types.html"><span class="doc">previous section</span></a>,
+setting <strong>Mode</strong> to <strong>No context</strong> indicated that units were to be counted
+<em>globally</em> in the selected segmentation; as a result, the resulting table
+contained a single row (aside from the header row). Orange Textable offers
+three other modes corresponding to three different definitions of contexts.</p>
+<div class="figure align-center" id="id1">
+<span id="counting-specific-contexts-fig1"></span><img alt="Interface of widget Count, Sliding window mode" src="_images/count_mode_sliding_window_example.png" />
+<p class="caption"><span class="caption-text">Figure 1: Interface of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>, Sliding window mode.</span></p>
+</div>
+<p>When <strong>Mode</strong> is set to <strong>Sliding window</strong> (see
+<a class="reference internal" href="#counting-specific-contexts-fig1"><span class="std std-ref">figure 1</span></a> above), context is defined
+as a “window” of <em>n</em> consecutive segments which “slides” from the beginning
+to the end of the segmentation. In the case of the letter segmentation of
+<em>a simple example</em> (as obtained with the schema illustrated in
+the <a class="reference internal" href="counting_segment_types.html"><span class="doc">previous section</span></a>), setting the number
+of segments in the window (<strong>Window size</strong>) to 5 yields the following
+successive contexts: <em>asimp</em>, <em>simpl</em>, <em>imple</em>, <em>mplee</em>, <em>pleex</em>, and so on
+(see <a class="reference internal" href="#counting-specific-contexts-table1"><span class="std std-ref">table 1</span></a> below). This mode is
+useful for studying the evolution of unit frequencies throughout a
+segmentation.</p>
+<span id="counting-specific-contexts-table1"></span><table border="1" class="colwidths-given docutils" id="id2">
+<caption><span class="caption-text">Table 1: Frequency of letters in a “sliding window” of size 5.</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub">&#160;</th>
+<th class="head"><em>a</em></th>
+<th class="head"><em>e</em></th>
+<th class="head"><em>i</em></th>
+<th class="head"><em>m</em></th>
+<th class="head"><em>l</em></th>
+<th class="head"><em>p</em></th>
+<th class="head"><em>s</em></th>
+<th class="head"><em>x</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub"><em>1</em></th>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>2</em></th>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>3</em></th>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>4</em></th>
+<td>0</td>
+<td>2</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>5</em></th>
+<td>0</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>6</em></th>
+<td>1</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>7</em></th>
+<td>1</td>
+<td>2</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>8</em></th>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>9</em></th>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>10</em></th>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>When <strong>Mode</strong> is set to <strong>Left-right neighborhood</strong> (see <a class="reference internal" href="#counting-specific-contexts-fig2"><span class="std std-ref">figure 2</span></a>), context is defined on the basis of
+adjacent segment types occurring to the left and/or right of each position.</p>
+<div class="figure align-center" id="id3">
+<span id="counting-specific-contexts-fig2"></span><img alt="Interface of widget Count, Left-right neighborhood mode" src="_images/count_mode_left_right_neighborhood_example.png" />
+<p class="caption"><span class="caption-text">Figure 2: Interface of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>, Left-right neighborhood mode.</span></p>
+</div>
+<p>For instance, setting <strong>Left context size</strong> to 1 and <strong>Right context size</strong>
+to 0 amounts to counting the frequency of each segment type given the type
+that occurs immediately to its left. This particular table is often called
+“transition matrix” (see <a class="reference internal" href="#counting-specific-contexts-table2"><span class="std std-ref">table 2</span></a>
+below). The string selected in the <strong>Unit position marker</strong> string is used
+to indicate the position where units appear in the context. Thus,
+<a class="reference internal" href="#counting-specific-contexts-table2"><span class="std std-ref">table 2</span></a> shows that both <em>m</em> and <em>s</em>
+appear once immediately to the right of an <em>a</em> (i.e. in context <em>a_</em>).
+To take another example, setting <strong>Right context size</strong> to 2, we would find
+that <em>e</em> occurs once both in context <em>l_ex</em> and <em>e_xa</em>.</p>
+<span id="counting-specific-contexts-table2"></span><table border="1" class="colwidths-given docutils" id="id4">
+<caption><span class="caption-text">Table 2: Frequency of letter (row) to letter (column) transitions.</span><a class="headerlink" href="#id4" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+<col width="11%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head stub">&#160;</th>
+<th class="head"><em>a</em></th>
+<th class="head"><em>e</em></th>
+<th class="head"><em>i</em></th>
+<th class="head"><em>m</em></th>
+<th class="head"><em>l</em></th>
+<th class="head"><em>p</em></th>
+<th class="head"><em>s</em></th>
+<th class="head"><em>x</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><th class="stub"><em>a_</em></th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>s_</em></th>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>i_</em></th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>m_</em></th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>p_</em></th>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>l_</em></th>
+<td>0</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="row-even"><th class="stub"><em>e_</em></th>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="row-odd"><th class="stub"><em>x_</em></th>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>Finally, when <strong>Mode</strong> is set to <strong>Containing segmentation</strong>, unit types are
+counted whithin the segment types of a second segmentation, as illustrated in
+table 2 <a class="reference internal" href="segmentations_tables.html#segmentations-tables-table2"><span class="std std-ref">here</span></a> (frequency of letters
+whithin words). Segment <em>A</em> is considered to be contained within segment <em>B</em>
+if the following three conditions are met:</p>
+<ul class="simple">
+<li>A and B refer to the same string (their addresses have the same string index)</li>
+<li>A’s initial position is greater than or equal to B’s initial position</li>
+<li>A’s final position is lesser than or equal to B’s initial position</li>
+</ul>
+<p>To try this mode out, modify the schema used in the
+<a class="reference internal" href="counting_segment_types.html"><span class="doc">previous section</span></a> as illustrated on
+<a class="reference internal" href="#counting-specific-contexts-fig3"><span class="std std-ref">figure 3</span></a> below.</p>
+<div class="figure align-center" id="id5">
+<span id="counting-specific-contexts-fig3"></span><a class="reference internal image-reference" href="_images/count_mode_containing_segmentation_example_schema.png"><img alt="Schema for testing the Count widget (Containing segmentation mode)" src="_images/count_mode_containing_segmentation_example_schema.png" style="width: 528.0px; height: 154.4px;" /></a>
+<p class="caption"><span class="caption-text">Figure 3: Schema for testing the <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> widget (Containing segmentation mode).</span></p>
+</div>
+<p>The first instance of <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> produces a word segmentation (<strong>Regex:</strong>
+<code class="docutils literal notranslate"><span class="pre">\w+</span></code> and <strong>Output segmentation label:</strong> <em>words</em>) which the second instance
+(<em>Segment (1)</em>) further decomposes into letters (<strong>Regex:</strong> <code class="docutils literal notranslate"><span class="pre">\w</span></code> and
+<strong>Output segmentation label:</strong> <em>letters</em>). The instance of <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> is
+configured as shown on <a class="reference internal" href="#counting-specific-contexts-fig4"><span class="std std-ref">figure 4</span></a>
+below. The resulting table is the same as table 2
+<a class="reference internal" href="segmentations_tables.html#segmentations-tables-table2"><span class="std std-ref">here</span></a> (possibly with a different ordering
+of columns).</p>
+<div class="figure align-center" id="id6">
+<span id="counting-specific-contexts-fig4"></span><img alt="Interface of widget Count, Containing segmentation mode" src="_images/count_mode_containing_segmentation_example.png" />
+<p class="caption"><span class="caption-text">Figure 4: Configuration of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> for counting letters in words.</span></p>
+</div>
+<p>Note that in this mode, checking the <strong>Merge contexts</strong> box still restricts
+counting to those units that are contained whithin the segments of another
+segmentation, but without treating each context type separately. In the
+case of letters whithin words, there is no difference between this mode and
+mode <strong>No context</strong> (see <a class="reference internal" href="counting_segment_types.html"><span class="doc">previous section</span></a>).
+It does however make a difference in the case of letter bigram counting,
+because those bigrams that straddle a word boundary will be excluded in this
+case (contrary to what can be seen in table 1
+<a class="reference internal" href="counting_segment_types.html#counting-segment-types-table1"><span class="std std-ref">here</span></a>).</p>
+<div class="section" id="see-also">
+<h2>2.4.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="counting_segment_types.html"><span class="doc">Getting started: Counting segment types</span></a></li>
+<li><a class="reference internal" href="segmentations_tables.html"><span class="doc">Getting started: From segmentations to tables</span></a></li>
+<li><a class="reference internal" href="count.html#count"><span class="std std-ref">Reference: Count widget</span></a></li>
+<li><a class="reference internal" href="count_unit_frequency.html"><span class="doc">Cookbook: Count unit frequency</span></a></li>
+<li><a class="reference internal" href="count_occurrences_smaller_units_larger_segments.html"><span class="doc">Cookbook: Count occurrences of smaller units in larger segments</span></a></li>
+<li><a class="reference internal" href="count_transition_frequency_adjacent_units.html"><span class="doc">Cookbook: Count transition frequency between adjacent units</span></a></li>
+<li><a class="reference internal" href="examine_evolution_unit_frequency.html"><span class="doc">Cookbook: Examine the evolution of unit frequency along the text</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2.4. Counting in specific contexts</a><ul>
+<li><a class="reference internal" href="#see-also">2.4.1. See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="counting_segment_types.html"
+                        title="previous chapter">2.3. Counting segment types</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="annotations.html"
+                        title="next chapter">3. Annotations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/counting_specific_contexts.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="annotations.html" title="3. Annotations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="counting_segment_types.html" title="2.3. Counting segment types"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="tables.html" >2. Tables</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

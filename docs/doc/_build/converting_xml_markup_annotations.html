@@ -1,0 +1,159 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, converting XML markup to annotations" name="description" />
+<meta content="Orange, Textable, documentation, xml, markup, tag, extract, import, annotation" name="keywords" />
+
+    <title>3.3. Converting XML markup to annotations &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3.4. Tagging table rows with annotations" href="tagging_table_rows_annotations.html" />
+    <link rel="prev" title="3.2. Annotating by merging" href="annotating_merging.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tagging_table_rows_annotations.html" title="3.4. Tagging table rows with annotations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="annotating_merging.html" title="3.2. Annotating by merging"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="annotations.html" accesskey="U">3. Annotations</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="converting-xml-markup-to-annotations">
+<h1>3.3. Converting XML markup to annotations<a class="headerlink" href="#converting-xml-markup-to-annotations" title="Permalink to this headline">¶</a></h1>
+<p>Often, the best way (and sometimes the only way) to add a specific type of
+annotation to a text is by “manually” adding it to the data. This is
+frequently done with XML markup. For instance, the text that appears in the
+<a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance of
+<a class="reference internal" href="#converting-xml-markup-annotations-fig1"><span class="std std-ref">figure 1</span></a> below is segmented
+into words by means of <em>&lt;w&gt;</em> tags whose <em>type</em> attribute indicates the “part
+of speech” associated with each word (e.g. <em>DET</em>, <em>NOUN</em>, <em>PREP</em>, and so on).</p>
+<div class="figure align-center" id="id1">
+<span id="converting-xml-markup-annotations-fig1"></span><img alt="Specifying annotations values using the label of Text field instances" src="_images/text_field_xml_example.png" />
+<p class="caption"><span class="caption-text">Figure 1: Sample text annotated using XML markup.</span></p>
+</div>
+<p>The role of widget <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> is to convert XML markup into annotated
+segments (in the sense of Orange Textable). In its basic version (see
+<a class="reference internal" href="#converting-xml-markup-annotations-fig2"><span class="std std-ref">figure 2</span></a> below), the widget’s
+interface essentially requires the user to specify the name of the XML
+tags that must be imported, namely <em>w</em> in this example. The <strong>Remove markup</strong>
+checkbox indicates whether further markup (if any) detected <em>within</em>
+imported tags must be removed (there is no further markup in this example, so
+that this option has no effect here).</p>
+<div class="figure align-center" id="id2">
+<span id="converting-xml-markup-annotations-fig2"></span><img alt="Interface of the Extract XML widget" src="_images/extract_xml_example.png" />
+<p class="caption"><span class="caption-text">Figure 2: Interface of the <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> widget.</span></p>
+</div>
+<p>After connecting the above <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> and <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> instances,
+and the latter to an instance of <a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a>, the reader can verify that
+the resulting segmentation contains a segment for the content of each <em>&lt;w&gt;</em>
+tag in the input text, and that this segment is annotated with key <em>type</em> and
+value <em>DET</em>, <em>NOUN</em>, or <em>PREP</em> (the three first such segments are shown on
+<a class="reference internal" href="#converting-xml-markup-annotations-fig3"><span class="std std-ref">figure 3</span></a> below). Each
+attribute-value pair of each XML tag has indeed been automatically converted
+to a <em>{key: value}</em> annotation.</p>
+<div class="figure align-center" id="id3">
+<span id="converting-xml-markup-annotations-fig3"></span><img alt="Annotations imported using Extract XML" src="_images/display_xml_annotations_example.png" />
+<p class="caption"><span class="caption-text">Figure 3: Annotations imported using <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a>.</span></p>
+</div>
+<div class="section" id="see-also">
+<h2>3.3.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Reference: Text Field widget</span></a></li>
+<li><a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Reference: Extract XML widget</span></a></li>
+<li><a class="reference internal" href="convert_xml_tags_annotations.html"><span class="doc">Cookbook: Convert XML tags to Orange Textable annotations</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3.3. Converting XML markup to annotations</a><ul>
+<li><a class="reference internal" href="#see-also">3.3.1. See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="annotating_merging.html"
+                        title="previous chapter">3.2. Annotating by merging</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tagging_table_rows_annotations.html"
+                        title="next chapter">3.4. Tagging table rows with annotations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/converting_xml_markup_annotations.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tagging_table_rows_annotations.html" title="3.4. Tagging table rows with annotations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="annotating_merging.html" title="3.2. Annotating by merging"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="annotations.html" >3. Annotations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

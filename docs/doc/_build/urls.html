@@ -1,0 +1,337 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, URLs widget" name="description" />
+<meta content="Orange, Textable, documentation, URLs, widget" name="keywords" />
+
+    <title>URLs &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Segmentation processing widgets" href="segmentation_processing_widgets.html" />
+    <link rel="prev" title="Text Files" href="text_files.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="segmentation_processing_widgets.html" title="Segmentation processing widgets"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="text_files.html" title="Text Files"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="text_import_widgets.html" accesskey="U">Text import widgets</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="urls">
+<span id="id1"></span><h1>URLs<a class="headerlink" href="#urls" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/URLs_54.png" src="_images/URLs_54.png" />
+<p>Fetch text data from internet locations.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p>Inputs:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Message</span></code></p>
+<p>JSON Message controlling the list of imported URLs</p>
+</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Text</span> <span class="pre">data</span></code></p>
+<p>Segmentation covering the content of imported URLs</p>
+</li>
+</ul>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>This widget is designed to import the contents of one or several internet
+locations (URLs) in Orange Canvas. It outputs a segmentation containing a
+potentially annotated) segment for the content of each selected URL. The
+imported textual content is normalized in several ways:</p>
+<ul class="simple">
+<li>it is systematically converted to Unicode (from the encoding defined by the
+user)</li>
+<li>it is subjected to the <a class="reference external" href="http://unicode.org/reports/tr15">canonical Unicode decomposition-recomposition</a> technique (Unicode sequences such as
+<code class="docutils literal notranslate"><span class="pre">LATIN</span> <span class="pre">SMALL</span> <span class="pre">LETTER</span> <span class="pre">C</span> <span class="pre">(U+0063)</span></code> + <code class="docutils literal notranslate"><span class="pre">COMBINING</span> <span class="pre">CEDILLA</span> <span class="pre">(U+0327)</span></code> are
+systematically replaced by the combined equivalent, e.g. <code class="docutils literal notranslate"><span class="pre">LATIN</span> <span class="pre">SMALL</span> <span class="pre">LETTER</span>
+<span class="pre">C</span> <span class="pre">WITH</span> <span class="pre">CEDILLA</span> <span class="pre">(U+00C7)</span></code>)</li>
+<li>it is stripped from the <a class="reference external" href="https://en.wikipedia.org/wiki/Byte_order_mark#UTF-8">utf8 byte-order mark</a> (if any)</li>
+<li>various forms of line endings (in particular <code class="docutils literal notranslate"><span class="pre">\r\n</span></code> and <code class="docutils literal notranslate"><span class="pre">\r</span></code>) are
+converted to a single form (namely <code class="docutils literal notranslate"><span class="pre">\n</span></code>)</li>
+</ul>
+<p>The interface of <strong>URLs</strong> is available in two versions, according to whether or
+not the <strong>Advanced Settings</strong> checkbox is selected.</p>
+<div class="section" id="basic-interface">
+<h3>Basic interface<a class="headerlink" href="#basic-interface" title="Permalink to this headline">¶</a></h3>
+<p>In its basic version (see <a class="reference internal" href="#urls-fig1"><span class="std std-ref">figure 1</span></a> below), the <strong>URLs</strong>
+widget is limited to the import of a single URL’s content. The interface
+contains a <strong>Source</strong> section enabling the user to type the input URL and to
+select the encoding of its content.</p>
+<div class="figure align-center" id="id2">
+<span id="urls-fig1"></span><img alt="Basic interface of the URLs widget" src="_images/urls_basic_example.png" />
+<p class="caption"><span class="caption-text">Figure 1: <strong>URLs</strong> widget (basic interface).</span></p>
+</div>
+<p>The <strong>Options</strong> section allows the user to define the label of the output
+segmentation (<strong>Output segmentation label</strong>), here <em>url_content</em>.</p>
+<p>The <strong>Info</strong> section indicates the  the number of characters in the single
+segment contained in the output segmentation, or the reasons why no
+segmentation is emitted (inability to retrieve the data, encoding issue,
+etc.).</p>
+<p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface.</p>
+</div>
+<div class="section" id="advanced-interface">
+<h3>Advanced interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h3>
+<p>The advanced version of <strong>URLs</strong> allows the user to import the content of
+several URLs in a determined order; each URL can moreover be associated to a
+distinct encoding and specific annotations. The emitted segmentation contains
+a segment for the content of each imported URL.</p>
+<div class="figure align-center" id="id3">
+<span id="urls-fig2"></span><a class="reference internal image-reference" href="_images/urls_advanced_example.png"><img alt="Advanced interface of the URLs widget" src="_images/urls_advanced_example.png" style="width: 368.8px; height: 566.4px;" /></a>
+<p class="caption"><span class="caption-text">Figure 2: <strong>URLs</strong> widget (advanced interface).</span></p>
+</div>
+<p>The advanced interface (see <a class="reference internal" href="#urls-fig2"><span class="std std-ref">figure 2</span></a> above) presents
+similarities with that of the <a class="reference internal" href="text_files.html#text-files"><span class="std std-ref">Text Files</span></a>, <a class="reference internal" href="recode.html#recode"><span class="std std-ref">Recode</span></a>, and
+<a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> widgets. The <strong>Sources</strong> section  allows the user to specify
+the imported URL(s) as well as their content’s encoding, to determine the
+order in which they appear in the output segmentation, and optionally to
+assign an annotation. The list of imported URLs appears at the top of the
+window; the columns of this list indicate (a) the URL, (b) the corresponding
+annotation (if any), and (c) the encoding with which the content of each is
+associated.</p>
+<p>In <a class="reference internal" href="#urls-fig2"><span class="std std-ref">figure 2</span></a>, we can see that two URLs are imported (only
+the end of each URL is visible on the figure) and that each is provided with
+an annotation whose key is <em>author</em>. The first URL associates value <em>Dickens</em>
+with this key and is encoded in utf-8; the second one has value <em>Fitzgerald</em>
+and is encoded in iso-8859-1.</p>
+<p>The first buttons on the right of the imported URLs’ list enable the user to
+modify the order in which they appear in the output segmentation (<strong>Move Up</strong>
+and <strong>Move Down</strong>), to delete an URL from the list (<strong>Remove</strong>) or to
+completely empty it (<strong>Clear All</strong>). Except for <strong>Clear All</strong>, all these
+buttons require the user to previously select an entry from the list. <strong>Import
+List</strong> enables the user to import a list of URLs in JSON format (see
+<a class="reference internal" href="json_format.html"><span class="doc">JSON im-/export format</span></a>, <a class="reference internal" href="json_url_list.html"><span class="doc">URL list</span></a>)
+and to add it to the previously selected sources. In the opposite <strong>Export
+List</strong> enables the user to export the source list in a JSON file.</p>
+<p>The remainder of the <strong>Sources</strong> section allows the user to add new URLs to
+the list. these must first be inputted in the field with the same name before
+they can be added to the list by clicking on the <strong>Add</strong> button. In order for
+several URLs to be simultaneously added, they must be separated by the string
+” / ” (space + slash + space).</p>
+<p>Before adding one or more URLs to the list by clicking on <strong>Add</strong>, it is
+possible to select their encoding (<strong>Encoding</strong>), and to assign an annotation
+by specifying its key in the <strong>Annotation key</strong> field and the corresponding
+value in the <strong>Annotation value</strong> field. These three parameters (encoding,
+key, value) will be applied to each URL appearing in the <strong>URLs</strong> field
+at the moment of their addition to the list with <strong>Add</strong>.</p>
+<p>The <strong>Options</strong> section allows the user to specify the label affected to the
+output segmentation (<strong>Output segmentation label</strong>). The <strong>Import URLs
+with key</strong> checkbox enables the program to create for each imported URL an
+annotation whose value is the URL (as displayed in the list) and whose
+key is specified by the user in the text field on the right of the checkbox.
+Similarly the button <strong>Auto-number with key</strong> enables the program to
+automatically number the imported URLs and to associate the number to the
+annotation key specified in the text field on the right.</p>
+<p>In <a class="reference internal" href="#urls-fig2"><span class="std std-ref">figure 2</span></a>, it was thus decided to assign the label
+<em>novels</em> to the output segmentation, and to associate the name of each URL to
+the annotation key <em>url</em>. On the other hand, the auto-numbering option
+has not been enabled.</p>
+<p>The <strong>Info</strong> section indicates the length of the output segmentation in
+characters, or the reasons why no segmentation is emitted (inability to
+retrieve the data, encoding issue, etc.). In the example, the two segments
+corresponding to the imported URLs’ content thus total up to 1‘300‘344
+characters.</p>
+<p>The <strong>Send</strong> button triggers the emission of a segmentation to the output
+connection(s). When it is selected, the <strong>Send automatically</strong> checkbox
+disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface.</p>
+</div>
+<div class="section" id="remote-control">
+<span id="urls-remote-control-ref"></span><h3>Remote control<a class="headerlink" href="#remote-control" title="Permalink to this headline">¶</a></h3>
+<p><strong>URLs</strong> is one the widgets that can be controlled by means of the
+<a class="reference internal" href="message.html#message"><span class="std std-ref">Message</span></a> widget. Indeed, it can receive in input a message consisting
+of a URL list in JSON format (see <a class="reference internal" href="json_format.html"><span class="doc">JSON im-/export format</span></a>, <a class="reference internal" href="json_url_list.html"><span class="doc">URL list</span></a>), in which case the list
+of URLs specified in this message replaces previously imported sources (if
+any). Note that removing the incoming connection from the <strong>Message</strong> instance
+will not, by itself, remove the list of URLs imported in this way from the
+<strong>URLs</strong> instance’s interface; conversely, this list of files can be
+modified using buttons <strong>Move up/down</strong>, <strong>Remove</strong>, etc. even if the incoming
+connection from the <strong>Message</strong> instance has not been removed. Finally, note
+that if an <strong>URLs</strong> instance has the basic version of its interface activated
+when an incoming connection is created from an instance of <a class="reference internal" href="message.html#message"><span class="std std-ref">Message</span></a>, it
+automatically switches to the advanced interface.</p>
+</div>
+</div>
+<div class="section" id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="information">
+<h3>Information<a class="headerlink" href="#information" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><em>Data correctly sent to output: &lt;n&gt; segments (&lt;m&gt; characters).</em></dt>
+<dd>This confirms that the widget has operated properly.</dd>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
+<dd>Settings and/or input have changed but the <strong>Send automatically</strong> checkbox
+has not been selected, so the user is prompted to click the <strong>Send</strong>
+button (or equivalently check the box) in order for computation and data
+emission to proceed.</dd>
+<dt><em>No data sent to output yet: no URL selected.</em></dt>
+<dd>The widget instance is not able to emit data to output because no input
+URL has been selected.</dd>
+<dt><em>No data sent to output yet, see ‘Widget state’ below.</em></dt>
+<dd>A problem with the instance’s parameters and/or input data prevents it
+from operating properly, and additional diagnostic information can be
+found in the <strong>Widget state</strong> box at the bottom of the instance’s
+interface (see <a class="reference internal" href="#warnings">Warnings</a> and <a class="reference internal" href="#errors">Errors</a> below).</dd>
+</dl>
+</div>
+<div class="section" id="warnings">
+<h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><em>No label was provided.</em></dt>
+<dd>A label must be entered in the <strong>Output segmentation label</strong> field in
+order for computation and data emission to proceed.</dd>
+<dt><em>No annotation key was provided for auto-numbering.</em></dt>
+<dd>The <strong>Auto-number with key</strong> checkbox has been selected and an annotation
+key must be specified in the text field on the right in order for
+computation and data emission to proceed.</dd>
+<dt><em>JSON message on input connection doesn’t have the right keys and/or values.</em></dt>
+<dd>The widget instance has received a JSON message on its <code class="docutils literal notranslate"><span class="pre">Message</span></code> input
+channel and the keys and/or values specified in this message do not match
+those that are expected for this particular widget type (see <a class="reference internal" href="json_format.html"><span class="doc">JSON
+im-/export format</span></a>, <a class="reference internal" href="json_file_list.html"><span class="doc">File list</span></a>).</dd>
+<dt><em>JSON parsing error.</em></dt>
+<dd>The widget instance has received data on its <code class="docutils literal notranslate"><span class="pre">Message</span></code> input channel and
+the data couldn’t be correctly parsed. Please use a JSON validator to
+check the data’s well-formedness.</dd>
+</dl>
+</div>
+<div class="section" id="errors">
+<h3>Errors<a class="headerlink" href="#errors" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><em>Couldn’t retrieve &lt;URL&gt;.</em></dt>
+<dd>An URL couldn’t be retrieved and read, possibly because it is incorrect, or
+because the internet connexion has not been working properly.</dd>
+<dt><em>Encoding error</em> or <em>Encoding error: &lt;URL&gt;.</em></dt>
+<dd>An URL couldn’t be read with the specified encoding (it must be in another
+encoding).</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="import_text_internet_location.html"><span class="doc">Cookbook: Import text from internet location</span></a></li>
+</ul>
+</div>
+<div class="section" id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="json_format.html"><span class="doc">Reference: JSON im-/export format</span></a>, <a class="reference internal" href="json_url_list.html"><span class="doc">URL list</span></a></li>
+<li><a class="reference internal" href="message.html#message"><span class="std std-ref">Reference: Message widget</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">URLs</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#basic-interface">Basic interface</a></li>
+<li><a class="reference internal" href="#advanced-interface">Advanced interface</a></li>
+<li><a class="reference internal" href="#remote-control">Remote control</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#messages">Messages</a><ul>
+<li><a class="reference internal" href="#information">Information</a></li>
+<li><a class="reference internal" href="#warnings">Warnings</a></li>
+<li><a class="reference internal" href="#errors">Errors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#see-also">See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="text_files.html"
+                        title="previous chapter">Text Files</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="segmentation_processing_widgets.html"
+                        title="next chapter">Segmentation processing widgets</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/urls.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="segmentation_processing_widgets.html" title="Segmentation processing widgets"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="text_files.html" title="Text Files"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="text_import_widgets.html" >Text import widgets</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

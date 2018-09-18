@@ -1,0 +1,431 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, Display widget" name="description" />
+<meta content="Orange, Textable, documentation, Display, widget" name="keywords" />
+
+    <title>Display &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Table construction widgets" href="table_construction_widgets.html" />
+    <link rel="prev" title="Extract XML" href="extract_xml.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="table_construction_widgets.html" title="Table construction widgets"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="extract_xml.html" title="Extract XML"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentation_processing_widgets.html" accesskey="U">Segmentation processing widgets</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="display">
+<span id="id1"></span><h1>Display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/Display_54.png" src="_images/Display_54.png" />
+<p>Display or export the details of a segmentation.</p>
+<div class="section" id="signals">
+<h2>Signals<a class="headerlink" href="#signals" title="Permalink to this headline">¶</a></h2>
+<p>Inputs:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Segmentation</span></code></p>
+<p>Segmentation to be displayed or exported.</p>
+</li>
+</ul>
+<p>Outputs:</p>
+<ul>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Bypassed</span> <span class="pre">segmentation</span></code> (default)</p>
+<p>Exact copy of the input segmentation</p>
+</li>
+<li><p class="first"><code class="docutils literal notranslate"><span class="pre">Displayed</span> <span class="pre">segmentation</span></code></p>
+<p>Segmentation covering the entire string displayed in the widget’s interface</p>
+</li>
+</ul>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>This widget inputs a segmentation and displays on screen the content and the
+annotation of the segments that compose it. The widget allows the user
+notably to export the information in a text file. Moreover, it forwards the
+segmentation without any modification on its output connections. <a class="footnote-reference" href="#id6" id="id2">[1]</a></p>
+<p><strong>Display</strong> plays an essential role in schema construction: it is the best
+way to check that the configuration of the other segmentation processing
+widgets leads to the desired result in terms of segment and annotation
+creation or modification.</p>
+<p>It should be noted that for long segmentations, the widget may appear stuck
+for a certain time after the progress bar has run – a problem related to the
+graphic interface library on which Orange Canvas relies. Unless memory
+overflow occurs, the problem normally solves itself after a few moments.</p>
+<div class="section" id="basic-interface">
+<h3>Basic interface<a class="headerlink" href="#basic-interface" title="Permalink to this headline">¶</a></h3>
+<p>In its basic version, the widget formats the input segmentation in HTML and
+displays for each segment its number, its complete address (string index,
+start and end positions) as well as its annotations (see
+<a class="reference internal" href="#display-fig1"><span class="std std-ref">figure 1</span></a>). The <strong>Navigation</strong> section enables the
+program to directly show a particular segment using <strong>Go to segment</strong>.</p>
+<div class="figure align-center" id="id10">
+<span id="display-fig1"></span><img alt="Basic interface of the Display widget" src="_images/display_basic_interface.png" />
+<p class="caption"><span class="caption-text">Figure 1: <strong>Display</strong> widget (basic interface).</span></p>
+</div>
+<p>It can be noted that the basic interface of <strong>Display</strong> is more sober than
+those of the other widgets of Orange Textable: it does not include an <strong>Info</strong>
+section, neither a <strong>Send</strong> button nor a <strong>Send automatically</strong> checkbox.
+What motivates this design is the will to emphasize the fundamental
+functionality of visualization of the input segmentation content and
+annotations – main reason for the use of <strong>Display</strong> in most cases. In this
+context, by default, data are automatically sent on output connections.</p>
+</div>
+<div class="section" id="advanced-interface">
+<h3>Advanced interface<a class="headerlink" href="#advanced-interface" title="Permalink to this headline">¶</a></h3>
+<p>The widget’s advanced interface (see <a class="reference internal" href="#display-fig2"><span class="std std-ref">figure 2</span></a>) restores
+the <strong>Info</strong> section which indicates the number of segments in the input
+segmentation or the reasons why no segmentation is emitted (for example
+no input data). The <strong>Send</strong> button triggers the emission of a segmentation to
+the output connection(s). When it is selected, the <strong>Send automatically</strong>
+checkbox disables the button and the widget attempts to automatically emit a
+segmentation at every modification of its interface or when its input data are
+modified (by deletion or addition of a connection, or because modified data is
+received through an existing connection).</p>
+<div class="figure align-center" id="id11">
+<span id="display-fig2"></span><img alt="Advanced interface of the Display widget" src="_images/display_advanced_interface.png" />
+<p class="caption"><span class="caption-text">Figure 2: <strong>Display</strong> widget (advanced interface).</span></p>
+</div>
+<p>The <strong>Apply custom formatting</strong> button enables the program to produce a
+personalized rendering. In this mode, the formatting of each segment is
+determined by a string entered in the <strong>Format</strong> field. This string can
+contain text that will be reproduced as it is in the rendered output, as well
+as references to variables to insert in the output. These references take the
+following general form:</p>
+<blockquote>
+<div><em>%(variable_name)format</em></div></blockquote>
+<p>where <em>variable_name</em> designates the variable to insert and <em>format</em> the
+desired format for this variable. For a basic use, all you need is to know
+that the format code <em>s</em> designates a character string and <em>i</em> an integer.
+<a class="footnote-reference" href="#id7" id="id3">[2]</a> If the name of the variable is one of the following predefined strings,
+it will be interpreted as indicated in the right column: <a class="footnote-reference" href="#id8" id="id4">[3]</a></p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">variable name</th>
+<th class="head">meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><em>__content__</em></td>
+<td>segment content</td>
+</tr>
+<tr class="row-odd"><td><em>__num__</em></td>
+<td>segment number</td>
+</tr>
+<tr class="row-even"><td><em>__str_index__</em></td>
+<td>string index</td>
+</tr>
+<tr class="row-odd"><td><em>__str_index_raw__</em></td>
+<td>string index counting from 0</td>
+</tr>
+<tr class="row-even"><td><em>__start__</em></td>
+<td>initial position</td>
+</tr>
+<tr class="row-odd"><td><em>__start_raw__</em></td>
+<td>initial position counting from 0</td>
+</tr>
+<tr class="row-even"><td><em>__end__</em></td>
+<td>final position</td>
+</tr>
+</tbody>
+</table>
+<p>If on the contrary the name of the variable is not among those of the list,
+the program will interpret it as an annotation key and will attempt to
+display the corresponding value (or the string <em>__none__</em> if this key is not
+defined for the considered segment).</p>
+<p>The string entered in the <strong>Segment delimiter</strong> field, if any, will be
+inserted between each segment of the formatted segmentation. Use the sequence
+<em>n</em> for a line break and <em>t</em> for tabulation.</p>
+<p>The <strong>Header</strong> and <strong>Footer</strong> fields enable the user to specify strings that
+will be inserted respectively at the beginning and the end of the formatted
+segmentation.</p>
+<p>To take a simple example, consider the following (extract of a) segmentation
+of the string <em>a simple example</em> <a class="footnote-reference" href="#id9" id="id5">[4]</a>:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="18%" />
+<col width="13%" />
+<col width="48%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">content</th>
+<th class="head">start</th>
+<th class="head">end</th>
+<th class="head"><em>letter category</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><em>a</em></td>
+<td>1</td>
+<td>1</td>
+<td><em>vowel</em></td>
+</tr>
+<tr class="row-odd"><td><em>s</em></td>
+<td>3</td>
+<td>3</td>
+<td><em>consonant</em></td>
+</tr>
+<tr class="row-even"><td><em>i</em></td>
+<td>4</td>
+<td>4</td>
+<td><em>vowel</em></td>
+</tr>
+<tr class="row-odd"><td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+<tr class="row-even"><td><em>e</em></td>
+<td>16</td>
+<td>16</td>
+<td><em>vowel</em></td>
+</tr>
+</tbody>
+</table>
+<p>By entering:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">&lt;word&gt;\n</span></code> in the <strong>header</strong> field,</li>
+<li><code class="docutils literal notranslate"><span class="pre">&lt;letter</span> <span class="pre">pos=&quot;%(__num__)i&quot;</span> <span class="pre">type=&quot;%(letter</span> <span class="pre">category)s&quot;&gt;%(__content__)s&lt;/letter&gt;</span></code>
+in the <strong>format</strong> field,</li>
+<li><code class="docutils literal notranslate"><span class="pre">\n</span></code> in the <strong>segment delimiter</strong> field, and</li>
+<li><code class="docutils literal notranslate"><span class="pre">\n&lt;/word&gt;</span></code> in the <strong>footer</strong> field,</li>
+</ul>
+<p>we obtain the following formatting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">word</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;1&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;vowel&quot;</span><span class="o">&gt;</span><span class="n">a</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;2&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;consonant&quot;</span><span class="o">&gt;</span><span class="n">s</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;3&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;vowel&quot;</span><span class="o">&gt;</span><span class="n">i</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;4&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;consonant&quot;</span><span class="o">&gt;</span><span class="n">m</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;5&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;consonant&quot;</span><span class="o">&gt;</span><span class="n">p</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;6&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;consonant&quot;</span><span class="o">&gt;</span><span class="n">l</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;7&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;vowel&quot;</span><span class="o">&gt;</span><span class="n">e</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;8&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;vowel&quot;</span><span class="o">&gt;</span><span class="n">e</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;9&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;consonant&quot;</span><span class="o">&gt;</span><span class="n">x</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;10&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;vowel&quot;</span><span class="o">&gt;</span><span class="n">a</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;11&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;consonant&quot;</span><span class="o">&gt;</span><span class="n">m</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;12&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;consonant&quot;</span><span class="o">&gt;</span><span class="n">p</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;13&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;consonant&quot;</span><span class="o">&gt;</span><span class="n">l</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">letter</span> <span class="n">pos</span><span class="o">=</span><span class="s2">&quot;14&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;vowel&quot;</span><span class="o">&gt;</span><span class="n">e</span><span class="o">&lt;/</span><span class="n">letter</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">word</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The <strong>Export</strong> section of the widget interface also allows the user to export
+the displayed segmentation (standard HTML or user-defined format) in a file.
+The encoding can be selected (<strong>Encoding</strong>) then click on <strong>Export</strong> to open
+a file selection dialog. By clicking the <strong>Copy to clipboard</strong> button, the
+user may also to copy the displayed segmentation in order to paste it in
+another application for instance; in this case, the utf-8 encoding is used by
+default.</p>
+<p>When the option <strong>Apply custom formatting</strong> is not selected, the
+<strong>Navigation</strong> section is enabled and allows the user to view a particular
+segment through the <strong>Go to segment</strong> control.</p>
+</div>
+</div>
+<div class="section" id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="information">
+<h3>Information<a class="headerlink" href="#information" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><em>Data correctly sent to output: &lt;n&gt; segments.</em></dt>
+<dd>This confirms that the widget has operated properly.</dd>
+<dt><em>Settings were</em> (or <em>Input has</em>) <em>changed, please click ‘Send’ when ready.</em></dt>
+<dd>Settings and/or input have changed but the <strong>Send automatically</strong> checkbox
+has not been selected, so the user is prompted to click the <strong>Send</strong>
+button (or equivalently check the box) in order for computation and data
+emission to proceed.</dd>
+<dt><em>No data sent to output yet: no input segmentation.</em></dt>
+<dd>The widget instance is not able to emit data to output because it receives
+none on its input channel(s).</dd>
+<dt><em>No data sent to ‘Displayed segmentation’ channel, see ‘Widget state’ below.</em></dt>
+<dd>A problem with the ‘Format’ parameter prevents this widget instance
+from operating properly, and additional diagnostic information can be
+found in the <strong>Widget state</strong> box at the bottom of the instance’s
+interface (see and <a class="reference internal" href="#errors">Errors</a> below).</dd>
+</dl>
+</div>
+<div class="section" id="errors">
+<h3>Errors<a class="headerlink" href="#errors" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><em>Format mismatch error: a &lt;variable_type&gt; is required.</em></dt>
+<dd>In the advanced interface, the string entered in the <strong>Format</strong> field
+indicates that a variable of a certain type (e.g. float) is expected,
+but in at least one case, the corresponding value is of another type
+(e.g. string). The string type (e.g. <code class="docutils literal notranslate"><span class="pre">%(__content__)s</span></code>) is usually the
+safest bet.</dd>
+<dt><em>Format mismatch error: not enough arguments for format string.</em></dt>
+<dd>In the advanced interface, the string entered in the <strong>Format</strong> field
+indicates that a variable is expected but in at least one case, there is
+no corresponding value. Make sure that no placeholder is used without an
+explicit name (always use e.g. <code class="docutils literal notranslate"><span class="pre">%(__content__)s</span></code>, and never <code class="docutils literal notranslate"><span class="pre">%s</span></code>).</dd>
+<dt><em>Format error: missing variable type.</em></dt>
+<dd>In the advanced interface, a variable type indication is missing in the
+string entered in the <strong>Format</strong> field. Make sure that no placeholder is
+used without a variable type indication (always use e.g.
+<code class="docutils literal notranslate"><span class="pre">%(__content__)s</span></code>, and never <code class="docutils literal notranslate"><span class="pre">%(__content__)</span></code>).</dd>
+<dt><em>Format error: missing name.</em></dt>
+<dd>In the advanced interface, a variable name is missing in the string entered
+in the <strong>Format</strong> field. Make sure that no placeholder is used without a
+variable name (always use e.g. <code class="docutils literal notranslate"><span class="pre">%(__content__)s</span></code>, and never <code class="docutils literal notranslate"><span class="pre">%()s</span></code>).</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="keyboard_input_segmentation_display.html"><span class="doc">Getting started: Keyboard input and segmentation display</span></a></li>
+<li><a class="reference internal" href="display_text_content.html"><span class="doc">Cookbook: Display text content</span></a></li>
+<li><a class="reference internal" href="export_text_content_change_encoding.html"><span class="doc">Cookbook: Export text content (and/or change text encoding)</span></a></li>
+</ul>
+</div>
+<div class="section" id="footnotes">
+<h2>Footnotes<a class="headerlink" href="#footnotes" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[1]</a></td><td>The widget also sends, on a second channel not selected by default, a
+segmentation with a single segment containing the entire string as it
+is displayed in the widget’s interface.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>For more details on the syntax of format codes, see <a class="reference external" href="http://docs.python.org/library/stdtypes.html#string-formatting">Python
+documentation</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td>In general, predefined strings in Orange Textable have in common that
+they begin and end by two <em>underscore</em> characters (_); it is greatly
+recommended to avoid this form for every name supplied by the user (in
+particular for the segmentation labels, as well as for the keys and
+annotation values).</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id9" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[4]</a></td><td>By convention, we do not indicate here the string index associated with
+each segment but only its start and end positions, along with the
+annotation values associated with it; moreover, for the sake of
+readability, we do indicate the content of each segment, though it is
+not formally part of the segmentation (but rather of the string to
+which the segmentation refers).</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Display</a><ul>
+<li><a class="reference internal" href="#signals">Signals</a></li>
+<li><a class="reference internal" href="#description">Description</a><ul>
+<li><a class="reference internal" href="#basic-interface">Basic interface</a></li>
+<li><a class="reference internal" href="#advanced-interface">Advanced interface</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#messages">Messages</a><ul>
+<li><a class="reference internal" href="#information">Information</a></li>
+<li><a class="reference internal" href="#errors">Errors</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#footnotes">Footnotes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="extract_xml.html"
+                        title="previous chapter">Extract XML</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="table_construction_widgets.html"
+                        title="next chapter">Table construction widgets</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/display.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="table_construction_widgets.html" title="Table construction widgets"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="extract_xml.html" title="Extract XML"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentation_processing_widgets.html" >Segmentation processing widgets</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

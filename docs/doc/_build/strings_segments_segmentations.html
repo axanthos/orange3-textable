@@ -1,0 +1,248 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, strings, segments, and segmentation" name="description" />
+<meta content="Orange, Textable, documentation, strings, segments, segmentation" name="keywords" />
+
+    <title>1.1. Strings, segments, and segmentations &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1.2. Keyboard input and segmentation display" href="keyboard_input_segmentation_display.html" />
+    <link rel="prev" title="1. Segmentations" href="segmentations.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="keyboard_input_segmentation_display.html" title="1.2. Keyboard input and segmentation display"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="segmentations.html" title="1. Segmentations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentations.html" accesskey="U">1. Segmentations</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="strings-segments-and-segmentations">
+<h1>1.1. Strings, segments, and segmentations<a class="headerlink" href="#strings-segments-and-segmentations" title="Permalink to this headline">¶</a></h1>
+<p>The main purpose of Orange Textable is to build tables based on text strings.
+As we will see, there are several methods for importing text strings, the
+simplest of which is keyboard input using widget
+<a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> (see also <a class="reference internal" href="keyboard_input_segmentation_display.html"><span class="doc">Keyboard input and segmentation
+display</span></a> or
+<a class="reference internal" href="import_text_keyboard.html"><span class="doc">Cookbook: Import text from keyboard</span></a>.
+Whenever a new string is imported, it is assigned a unique identification number
+(called <em>string index</em>) and stays in memory as long as the widget that imported
+it.</p>
+<p>Consider the following string of 16 characters (note that whitespace counts as
+a character too), and let us suppose that its string index is 1:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="17%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><th class="stub">Character</th>
+<td><em>a</em></td>
+<td>&#160;</td>
+<td><em>s</em></td>
+<td><em>i</em></td>
+<td><em>m</em></td>
+<td><em>p</em></td>
+<td><em>l</em></td>
+<td><em>e</em></td>
+<td>&#160;</td>
+<td><em>e</em></td>
+<td><em>x</em></td>
+<td><em>a</em></td>
+<td><em>m</em></td>
+<td><em>p</em></td>
+<td><em>l</em></td>
+<td><em>e</em></td>
+</tr>
+<tr class="row-even"><th class="stub">Position</th>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+<td>7</td>
+<td>8</td>
+<td>9</td>
+<td>10</td>
+<td>11</td>
+<td>12</td>
+<td>13</td>
+<td>14</td>
+<td>15</td>
+<td>16</td>
+</tr>
+</tbody>
+</table>
+<p>In this context, a <em>segment</em> is basically a substring of characters. Every
+segment has an <em>address</em> consisting of three elements:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>string index</li>
+<li>initial position within the string</li>
+<li>final position</li>
+</ol>
+</div></blockquote>
+<p>In the case of <em>a simple example</em>, address (1, 3, 8) refers to substring
+<em>simple</em>, (1, 12, 12) to character <em>a</em>, and (1, 1, 16) to the entire string.
+The substring corresponding to a given address is called the segment’s
+<em>content</em>.</p>
+<p>A <em>segmentation</em> is an ordered list of segments. For instance, segmentation
+((1, 1, 1 ), (1, 3, 8), (1, 10, 16)) contains 3 word segments, ((1, 1, 1),
+(1, 2, 2 ), …, (1, 16, 16)) contains 16 character segments, and ((1, 1, 16))
+contains a single segment covering the whole string.</p>
+<p>As shown by the word segmentation example, every character in the string needs
+not be included in a segment. Moreover, a single character may belong to
+several segments simultaneously, as in ((1, 1, 1), (1, 1, 8), (1, 3, 8),
+(1, 3, 16), (1, 10, 16)).</p>
+<p id="string-segments-segmentations-ex1"><strong>Exercise 1:</strong> What is the content of each of the 5 segments in the previous
+example? (<a class="reference internal" href="#solution-string-segments-segmentations-ex1"><span class="std std-ref">solution</span></a>)</p>
+<p><strong>NB, new in version 2.0 and later:</strong> The order of segments in a segmentation
+must be the same as the order of the corresponding substrings in the string.
+For instance ((1, 1, 1), (1, 2, 1), (1, 2, 2)) is possible, but not ((1, 2, 1),
+(1, 1, 1)), because the second segment starts before the first. Similarly,
+((1, 2, 2), (1, 2, 1)) isn’t possible because the second segment ends before
+the first.</p>
+<p>In the previous examples, all the segments of a given segmentation refer to
+the same string. However, a segmentation may contain segments belonging to
+several distinct strings. Thus, if string <em>another example</em> has string index
+2, segmentation ((2, 1, 7), (1, 3, 16)) is perfectly valid.</p>
+<p id="string-segments-segmentations-ex2"><strong>Exercise 2:</strong> What is the content of the segments in the previous
+example? (<a class="reference internal" href="#solution-string-segments-segmentations-ex2"><span class="std std-ref">solution</span></a>)</p>
+<p><strong>NB, new in version 2.0 and later:</strong> In a single segmentation, two segment
+that have the same string index cannot be separated by a segment with a different
+string index. For instance ((<strong>1</strong>, 1, 1), (<strong>2</strong>, 1, 1), (<strong>2</strong>, 2, 1)) is
+possible, but not ((<strong>2</strong>, 1, 1), (<strong>1</strong>, 1, 1), (<strong>2</strong>, 2, 1)).</p>
+<p>In order to store segmentations and transmit them between widgets, Orange
+Textable uses the <em>Segmentation</em> data type. Aside from the segment addresses,
+this data type associates a <em>label</em> with each segmentation, i.e. an arbitrary
+string used to identify the segmentation among others. <a class="footnote-reference" href="#id2" id="id1">[1]</a></p>
+<p id="solution-string-segments-segmentations-ex1"><strong>Solution to exercise 1:</strong> <em>a</em>, <em>a simple</em>, <em>simple</em>, <em>simple example</em>, <em>example</em>
+(in this order).
+(<a class="reference internal" href="#string-segments-segmentations-ex1"><span class="std std-ref">back to the exercise</span></a>)</p>
+<p id="solution-string-segments-segmentations-ex2"><strong>Solution to exercise 2:</strong> <em>another</em>, <em>simple example</em>.
+(<a class="reference internal" href="#string-segments-segmentations-ex2"><span class="std std-ref">back to the exercise</span></a>)</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>As we will see <a class="reference internal" href="annotations.html"><span class="doc">later</span></a>, the <em>Segmentation</em> data type
+can also store annotations associated with segments.</td></tr>
+</tbody>
+</table>
+<div class="section" id="see-also">
+<h2>1.1.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="keyboard_input_segmentation_display.html"><span class="doc">Getting started: Keyboard input and segmentation display</span></a></li>
+<li><a class="reference internal" href="import_text_keyboard.html"><span class="doc">Cookbook: Import text from keyboard</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1.1. Strings, segments, and segmentations</a><ul>
+<li><a class="reference internal" href="#see-also">1.1.1. See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="segmentations.html"
+                        title="previous chapter">1. Segmentations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="keyboard_input_segmentation_display.html"
+                        title="next chapter">1.2. Keyboard input and segmentation display</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/strings_segments_segmentations.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="keyboard_input_segmentation_display.html" title="1.2. Keyboard input and segmentation display"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="segmentations.html" title="1. Segmentations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentations.html" >1. Segmentations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

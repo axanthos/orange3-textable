@@ -1,0 +1,209 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, cookbook, import text from internet location" name="description" />
+<meta content="Orange, Textable, documentation, cookbook, import, text, internet location" name="keywords" />
+
+    <title>Import text from internet location &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Display text content" href="display_text_content.html" />
+    <link rel="prev" title="Import text from file" href="import_text_file.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="display_text_content.html" title="Display text content"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="import_text_file.html" title="Import text from file"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="cookbook.html" accesskey="U">Cookbook</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="import-text-from-internet-location">
+<h1>Import text from internet location<a class="headerlink" href="#import-text-from-internet-location" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="goal">
+<h2>Goal<a class="headerlink" href="#goal" title="Permalink to this headline">¶</a></h2>
+<p>Import text content located at one or more URLs for further processing with
+Orange Textable.</p>
+</div>
+<div class="section" id="ingredients">
+<h2>Ingredients<a class="headerlink" href="#ingredients" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="54%" />
+<col width="46%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>Widget</strong></td>
+<td><a class="reference internal" href="urls.html#urls"><span class="std std-ref">URLs</span></a></td>
+</tr>
+<tr class="row-even"><td><strong>Icon</strong></td>
+<td><img alt="urls_icon" src="_images/URLs_36.png" /></td>
+</tr>
+<tr class="row-odd"><td><strong>Quantity</strong></td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="procedure">
+<h2>Procedure<a class="headerlink" href="#procedure" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="single-url">
+<h3>Single URL<a class="headerlink" href="#single-url" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-center" id="id1">
+<span id="import-text-internet-location-fig1"></span><img alt="Importing text from an internet location using the URLs widget" src="_images/urls_basic_example.png" />
+<p class="caption"><span class="caption-text">Figure 1: Importing text from an internet location using the <a class="reference internal" href="urls.html#urls"><span class="std std-ref">URLs</span></a>
+widget.</span></p>
+</div>
+<ol class="arabic simple">
+<li>Create an instance of <a class="reference internal" href="urls.html#urls"><span class="std std-ref">URLs</span></a> on the canvas.</li>
+<li>Open its interface by double-clicking on the created instance.</li>
+<li>Make sure the <strong>Advanced settings</strong> checkbox is <em>not</em> selected.</li>
+<li>In the <strong>URL</strong> field, type the URL whose content you want to import
+(including the <code class="docutils literal notranslate"><span class="pre">http://</span></code> prefix).</li>
+<li>In the <strong>Encoding</strong> drop-down menu, select the encoding that corresponds to
+this URL.</li>
+<li>Click the <strong>Send</strong> button (or make sure the <strong>Send automatically</strong>
+checkbox is selected).</li>
+<li>A segmentation covering the URL’s content is then available on the
+<a class="reference internal" href="urls.html#urls"><span class="std std-ref">URLs</span></a> instance’s output connections; to display or export it,
+see <a class="reference internal" href="cookbook.html#cookbook-toc-text-output-ref"><span class="std std-ref">Cookbook: Text output</span></a>.</li>
+</ol>
+</div>
+<div class="section" id="multiple-urls">
+<h3>Multiple URLs<a class="headerlink" href="#multiple-urls" title="Permalink to this headline">¶</a></h3>
+<div class="figure align-center" id="id2">
+<span id="import-text-internet-location-fig2"></span><a class="reference internal image-reference" href="_images/urls_advanced_example.png"><img alt="Importing text from several internet locations using the URLs widget" src="_images/urls_advanced_example.png" style="width: 368.8px; height: 566.4px;" /></a>
+<p class="caption"><span class="caption-text">Figure 2: Importing text from several internet locations using the
+<a class="reference internal" href="urls.html#urls"><span class="std std-ref">URLs</span></a> widget.</span></p>
+</div>
+<ol class="arabic simple">
+<li>Create an instance of <a class="reference internal" href="urls.html#urls"><span class="std std-ref">URLs</span></a> on the canvas.</li>
+<li>Open its interface by double-clicking on the created instance.</li>
+<li>Make sure the <strong>Advanced settings</strong> checkbox <em>is</em> selected.</li>
+<li>If needed, empty the list of imported URLs by clicking the <strong>Clear all</strong>
+button.</li>
+<li>In the <strong>URL(s)</strong> field, enter the URLs you want to import (including the
+<code class="docutils literal notranslate"><span class="pre">http://</span></code> prefix), separated by the string ” / ” (space + slash +
+space); make sure they all have the same encoding (you will be able to add
+URLs that have other encodings later).</li>
+<li>In the <strong>Encoding</strong> drop-down menu, select the encoding that corresponds
+to the set of selected URLs.</li>
+<li>Click the <strong>Add</strong> button to add the set of selected URLs to the list of
+imported URLs.</li>
+<li>Repeat steps 5 to 7 for adding URLs in other encoding(s).</li>
+<li>Click the <strong>Send</strong> button (or make sure the <strong>Send automatically</strong>
+checkbox is selected).</li>
+<li>A segmentation containing a segment covering each imported URL’s content
+is then available on the <a class="reference internal" href="urls.html#urls"><span class="std std-ref">URLs</span></a> instance’s output connections; to
+display or export it, see <a class="reference internal" href="cookbook.html#cookbook-toc-text-output-ref"><span class="std std-ref">Cookbook: Text output</span></a>.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="urls.html#urls"><span class="std std-ref">Reference: URLs widget</span></a></li>
+<li><a class="reference internal" href="cookbook.html#cookbook-toc-text-output-ref"><span class="std std-ref">Cookbook: Text output</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Import text from internet location</a><ul>
+<li><a class="reference internal" href="#goal">Goal</a></li>
+<li><a class="reference internal" href="#ingredients">Ingredients</a></li>
+<li><a class="reference internal" href="#procedure">Procedure</a><ul>
+<li><a class="reference internal" href="#single-url">Single URL</a></li>
+<li><a class="reference internal" href="#multiple-urls">Multiple URLs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#see-also">See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="import_text_file.html"
+                        title="previous chapter">Import text from file</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="display_text_content.html"
+                        title="next chapter">Display text content</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/import_text_internet_location.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="display_text_content.html" title="Display text content"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="import_text_file.html" title="Import text from file"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="cookbook.html" >Cookbook</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,144 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, case study, Moby Dick" name="description" />
+<meta content="Orange, Textable, documentation, case study, Moby Dick, term, frequency, comparison, Ahab, whales" name="keywords" />
+
+    <title>Term frequency comparison in Melville’s Moby Dick &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Stylometric analysis of Shakespeare’s Titus Andronicus" href="titus_andronicus.html" />
+    <link rel="prev" title="Case studies" href="case_studies.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="titus_andronicus.html" title="Stylometric analysis of Shakespeare’s Titus Andronicus"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="case_studies.html" title="Case studies"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="case_studies.html" accesskey="U">Case studies</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="term-frequency-comparison-in-melville-s-moby-dick">
+<h1>Term frequency comparison in Melville’s Moby Dick<a class="headerlink" href="#term-frequency-comparison-in-melville-s-moby-dick" title="Permalink to this headline">¶</a></h1>
+<p>(This use case was designed with the help of <a class="reference external" href="http://douglasduhaime.com/">Douglas Duhaime</a> and the following text was slightly adapted from
+a description kindly contributed by him.)</p>
+<p>This case study is adapted from Matthew Jocker’s excellent work <em>Text Analysis
+with R for Students of Literature</em> (46). The goal here is to visualize the
+frequency of the terms “Ahab” and “whale(s)” within Herman Melville’s
+masterpiece <em>Moby Dick</em>. The workflow reproduced on <a class="reference internal" href="#moby-dick-schema"><span class="std std-ref">figure 1</span></a> below retrieves the text from <a class="reference external" href="https://www.gutenberg.org/">Project
+Gutenberg</a>, splits the work into its constitutive
+chapters, and measures the degree to which each of the target terms appears in
+each chapter. <a class="footnote-reference" href="#id2" id="id1">[1]</a></p>
+<div class="figure align-center" id="id3">
+<span id="moby-dick-schema"></span><img alt="Orange Textable workflow for the Moby Dick use case" src="_images/moby_dick_schema.png" />
+<p class="caption"><span class="caption-text">Figure 1: Orange Textable workflow for visualizing term frequency in <em>Moby Dick</em>.</span></p>
+</div>
+<p>Clicking on the <strong>Scatter Plot</strong> instance, one can easily see the relative
+frequency of the term <em>whale(s)</em> in each chapter of Melville’s novel (see
+<a class="reference internal" href="#moby-dick-whales-vs-ahab"><span class="std std-ref">figure 2</span></a> below). By toggling the <strong>Y-axis
+Attribute</strong> dropdown box, one can select <em>Ahab</em> and visualize the frequency of
+<em>Ahab</em> in the novel.</p>
+<div class="figure align-center" id="moby-dick-whales-vs-ahab">
+<a class="reference internal image-reference" href="_images/moby_dick_freq_whales.png"><img alt="Relative frequency of term &quot;whale(s)&quot; in Moby Dick" src="_images/moby_dick_freq_whales.png" style="width: 615.0px; height: 414.75px;" /></a>
+</div>
+<div class="figure align-center" id="id4">
+<a class="reference internal image-reference" href="_images/moby_dick_freq_ahab.png"><img alt="Relative frequency of term &quot;Ahab&quot; in Moby Dick" src="_images/moby_dick_freq_ahab.png" style="width: 615.0px; height: 414.75px;" /></a>
+<p class="caption"><span class="caption-text">Figure 2: Negative correlation between the relative frequency of terms <em>whale(s)</em> (top) and <em>Ahab</em> (bottom) in Melville’s novel.</span></p>
+</div>
+<p>Although one might have supposed that the distribution of Captain Ahab would
+closely resemble that of whales within the novel, the plots above tell a
+different story. While Ahab is most present in early and then later chapters,
+whales are most present in the novel’s middle chapters, creating something of
+an inverse relationship between the two. For the literary critic, this
+relationship offers new evidence with which to evaluate the strategy and
+structure of Melville’s novel.</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>The schema can be downloaded from <a class="reference download internal" download="" href="_downloads/91be9c65b73b11d3073dde8f7ef42361/moby_dick_for_textable_v2.0a3.ows"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>.</td></tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="case_studies.html"
+                        title="previous chapter">Case studies</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="titus_andronicus.html"
+                        title="next chapter">Stylometric analysis of Shakespeare’s Titus Andronicus</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/moby_dick.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="titus_andronicus.html" title="Stylometric analysis of Shakespeare’s Titus Andronicus"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="case_studies.html" title="Case studies"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="case_studies.html" >Case studies</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

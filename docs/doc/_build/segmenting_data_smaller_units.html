@@ -1,0 +1,158 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, segmenting data into smaller units" name="description" />
+<meta content="Orange, Textable, documentation, segment, words, letters, units" name="keywords" />
+
+    <title>1.5. Segmenting data into smaller units &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1.6. Partitioning segmentations" href="partitioning_segmentations.html" />
+    <link rel="prev" title="1.4. A note on regular expressions" href="note_regular_expressions.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="partitioning_segmentations.html" title="1.6. Partitioning segmentations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="note_regular_expressions.html" title="1.4. A note on regular expressions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentations.html" accesskey="U">1. Segmentations</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="segmenting-data-into-smaller-units">
+<h1>1.5. Segmenting data into smaller units<a class="headerlink" href="#segmenting-data-into-smaller-units" title="Permalink to this headline">¶</a></h1>
+<p>We have seen <a class="reference internal" href="merging_segmentations_together.html"><span class="doc">previously</span></a> how to combine
+several segmentations into a single one. We will often be performing the
+inverse operation: create a segmentation whose segments are <em>parts</em> of another
+segmentation’s segments. Typically, we will be segmenting strings into words,
+characters, or any kind of text units that will be later counted, measured,
+and so on. This is precisely the purpose of widget <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a>.</p>
+<p>To try it out, create a new schema with an instance of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a>
+connected to an instance of <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a>, itself connected to an instance of
+<a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a> (see <a class="reference internal" href="#segmenting-data-smaller-units-fig1"><span class="std std-ref">figure 1</span></a>
+below). In what follows, we will suppose that the string typed in
+<a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> is <em>a simple example</em>.</p>
+<div class="figure align-center" id="id1">
+<span id="segmenting-data-smaller-units-fig1"></span><img alt="Schema illustrating the usage of widget Segment" src="_images/segment_example_schema.png" />
+<p class="caption"><span class="caption-text">Figure 1: A schema for testing the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> widget</span></p>
+</div>
+<p>In its basic form (i.e. with <strong>Advanced settings</strong> unchecked, see
+<a class="reference internal" href="#segmenting-data-smaller-units-fig2"><span class="std std-ref">figure 2</span></a> below),
+<a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> takes a single parameter (aside from the
+<strong>Output segmentation label</strong>), namely a regex. The widget then looks for all
+matches of the regex pattern in each successive input segment, and creates for
+every match a new segment in the output segmentation.</p>
+<div class="figure align-center" id="id2">
+<span id="segmenting-data-smaller-units-fig2"></span><img alt="Interface of widget Segment configured with regex &quot;\w+&quot;" src="_images/segment_example.png" />
+<p class="caption"><span class="caption-text">Figure 2: Interface of the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> widget, configured for word segmentation</span></p>
+</div>
+<p>For instance, the regex <code class="docutils literal notranslate"><span class="pre">\w+</span></code> divides each incoming segment into sequences
+of alphanumeric character (and underscore)–which in our case amounts to
+segmenting <em>a simple example</em> into three words. To obtain a segmentation
+into letters (or to be precise, alphanumeric characters or underscores),
+simply use <code class="docutils literal notranslate"><span class="pre">\w</span></code>.</p>
+<p>Of course, queries can be more specific. If the relevant unit is the word,
+regexes will often use the <code class="docutils literal notranslate"><span class="pre">\b</span></code> <em>anchor</em>, which represents a word boundary.
+For instance, words that contain less than 4 characters can be retrieved
+with <code class="docutils literal notranslate"><span class="pre">\b\w{1,3}\b</span></code>, those ending in <em>-tion</em> with <code class="docutils literal notranslate"><span class="pre">\b\w+tion\b</span></code>, and the
+inflected forms of <em>retrieve</em> with <code class="docutils literal notranslate"><span class="pre">\bretriev(e|es|ed|ing)\b</span></code>.</p>
+<div class="section" id="see-also">
+<h2>1.5.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="segment.html#segment"><span class="std std-ref">Reference: Segment widget</span></a></li>
+<li><a class="reference internal" href="segment_text.html"><span class="doc">Cookbook: Segment text in smaller units</span></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1.5. Segmenting data into smaller units</a><ul>
+<li><a class="reference internal" href="#see-also">1.5.1. See also</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="note_regular_expressions.html"
+                        title="previous chapter">1.4. A note on regular expressions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="partitioning_segmentations.html"
+                        title="next chapter">1.6. Partitioning segmentations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/segmenting_data_smaller_units.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="partitioning_segmentations.html" title="1.6. Partitioning segmentations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="note_regular_expressions.html" title="1.4. A note on regular expressions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="segmentations.html" >1. Segmentations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

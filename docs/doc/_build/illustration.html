@@ -1,0 +1,180 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, mining Humanist illustration" name="description" />
+<meta content="Orange, Textable, documentation, illustration, Humanist" name="keywords" />
+
+    <title>Illustration: mining Humanist &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Features" href="features.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="features.html" title="Features"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="introduction.html" accesskey="U">Introduction</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="illustration-mining-humanist">
+<h1>Illustration: mining Humanist<a class="headerlink" href="#illustration-mining-humanist" title="Permalink to this headline">¶</a></h1>
+<p>The following example is meant to show <em>what</em> Orange Textable typically does,
+without considering (for now) every detail of <em>how</em> it does it.</p>
+<p>In a paper reflecting on terminology in the field of Digital Humanities
+<a class="footnote-reference" href="#id3" id="id1">[1]</a>, Patrik Svensson compares the evolution of the frequency of expressions
+<em>Humanities Computing</em> and <em>Digital Humanities</em> over 20 years of archives of
+the <a class="reference external" href="http://dhhumanist.org/">Humanist discussion group</a>. He uses these
+figures to show that while the former denomination remains prevalent over
+these two decades, the latter has been quickly gaining ground since the 2000s.</p>
+<p>The same experiment can be run with Orange Textable, by building a “visual
+program” like the one shown on <a class="reference internal" href="#illustration-fig1"><span class="std std-ref">figure 1</span></a> below:</p>
+<div class="figure align-center" id="id5">
+<span id="illustration-fig1"></span><a class="reference internal image-reference" href="_images/mining_humanist_schema.png"><img alt="Mining Humanist with an Orange Textable schema" src="_images/mining_humanist_schema.png" style="width: 515.2px; height: 310.40000000000003px;" /></a>
+<p class="caption"><span class="caption-text">Figure 1: Mining Humanist with an Orange Textable schema.</span></p>
+</div>
+<p>Such a program is called a <em>schema</em>. Its visible part consists of a network
+of interconnected units called <em>widget instances</em>. Each instance belongs to a
+type, e.g. <a class="reference internal" href="urls.html#urls"><span class="std std-ref">URLs</span></a>, <a class="reference internal" href="recode.html#recode"><span class="std std-ref">Recode</span></a>, <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a>, and so on. Widgets
+are the basic blocks with which a variety of text analysis applications can be
+built. Each corresponds to a fundamental operation, such as “import data from
+an online source” (<a class="reference internal" href="urls.html#urls"><span class="std std-ref">URLs</span></a>) or “replace specific text patterns with
+others” (<a class="reference internal" href="recode.html#recode"><span class="std std-ref">Recode</span></a>) for example. Connections between instances determine
+the flow of data in the schema, and thus the order in which operations are
+carried on. Several parallel paths can be constructed, as demonstrated here
+by the <a class="reference internal" href="recode.html#recode"><span class="std std-ref">Recode</span></a> instance, which sends data to <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> as well as
+<a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>.</p>
+<p>Widget instances can (and indeed must) be individually parameterized in order
+to “fine-tune” their operation. For example, double-clicking on the
+<a class="reference internal" href="recode.html#recode"><span class="std std-ref">Recode</span></a> instance of <a class="reference internal" href="#illustration-fig1"><span class="std std-ref">figure 1</span></a> above displays
+the interface shown on <a class="reference internal" href="#illustration-fig2"><span class="std std-ref">figure 2</span></a> below. What this
+particular configuration means is that every line beginning with symbol <code class="docutils literal notranslate"><span class="pre">|</span></code>
+or <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> (<strong>Regex</strong> field) should be replaced with an empty string
+(<strong>Replacement string</strong>): in other words, remove those lines that are marked
+as being part of a reply to another message. There is a fair amount of
+variation between widget interfaces, but regular expressions play an important
+role in many of them and Orange Textable’s flexibility owes a lot to them.</p>
+<div class="figure align-center" id="id6">
+<span id="illustration-fig2"></span><img alt="Interface of Recode widget in the Humanist example" src="_images/mining_humanist_recode.png" />
+<p class="caption"><span class="caption-text">Figure 2: Interface of the <a class="reference internal" href="recode.html#recode"><span class="std std-ref">Recode</span></a> widget.</span></p>
+</div>
+<p>After executing the schema of <a class="reference internal" href="#illustration-fig1"><span class="std std-ref">figure 1</span></a> above, the
+resulting frequencies can be viewed by double-clicking on the <strong>Data Table</strong>
+instance, whose interface is shown on <a class="reference internal" href="#illustration-fig3"><span class="std std-ref">figure 3</span></a>
+below. On the whole, these figures lend themselves to the same interpretation
+as that of Patrik Svensson, but they differ wildly from the frequencies he
+reports. This might be explained by the fact that, in the present
+illustration, we have used <em>preprocessed</em> data <a class="reference external" href="http://dhhumanist.org/text.html">made available on the Humanist
+website</a>, or it might be that we have not
+processed the data exactly like Svensson did. The user can always refer to the
+Orange Textable schema (including the parameters of each instance) to
+understand exactly the operations that it performs. <a class="footnote-reference" href="#id4" id="id2">[2]</a> In this sense, Orange
+Textable does not only attempt to make the construction of text analysis
+programs easier; it aims to make <em>communicating</em> and <em>understanding</em> such
+programs easier.</p>
+<div class="figure align-center" id="id7">
+<span id="illustration-fig3"></span><img alt="Monitoring the frequency of two expressions over time" src="_images/mining_humanist_results.png" />
+<p class="caption"><span class="caption-text">Figure 3: Monitoring the frequency of <em>Humanities Computing</em> vs. <em>Digital Humanities</em>.</span></p>
+</div>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Svensson, P. (2009). Humanities Computing as Digital Humanities.
+<em>Digital Humanities Quarterly 3(3)</em>. Available <a class="reference external" href="http://digitalhumanities.org/dhq/vol/3/3/000065/000065.html">here</a>.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>The schema can be downloaded from <a class="reference download internal" download="" href="_downloads/e21788362bf074b8f195a7011b46073b/humanist_for_textable_v2.0a3.ows"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>. Note that two decades of
+Humanist archives weigh dozens of megabytes and that retrieving these
+data from the Internet can take a few minutes depending on bandwidth.
+Please be patient if Orange Textable appears to be stalled when the
+schema is being opened.</td></tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="features.html"
+                        title="previous chapter">Features</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="next chapter">Installation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/illustration.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="features.html" title="Features"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="introduction.html" >Introduction</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,148 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, case study, Titus Andronicus" name="description" />
+<meta content="Orange, Textable, documentation, case study, Titus Andronicus, stylometry, authorship" name="keywords" />
+
+    <title>Stylometric analysis of Shakespeare’s Titus Andronicus &#8212; Textable v3.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reference" href="reference.html" />
+    <link rel="prev" title="Term frequency comparison in Melville’s Moby Dick" href="moby_dick.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="reference.html" title="Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="moby_dick.html" title="Term frequency comparison in Melville’s Moby Dick"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="case_studies.html" accesskey="U">Case studies</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="stylometric-analysis-of-shakespeare-s-titus-andronicus">
+<h1>Stylometric analysis of Shakespeare’s Titus Andronicus<a class="headerlink" href="#stylometric-analysis-of-shakespeare-s-titus-andronicus" title="Permalink to this headline">¶</a></h1>
+<p>(This use case was designed with the help of <a class="reference external" href="http://douglasduhaime.com/">Douglas Duhaime</a> and the following text was slightly adapted from
+a description kindly contributed by him.)</p>
+<p>This is a case study in “stylometry”, or the quantitative analysis of a
+writer’s style. The data to be analyzed is William Shakespeare’s play <em>Titus
+Andronicus</em>, which scholars have long believed William Shakespeare did not
+write alone. Since the publication of John Robertson’s study <em>Did Shakespeare
+Write Titus Andronicus</em>, many have believed that particular scenes within the
+text have been written by other playwrights of the time: many believe that Act
+1 Scene 1, for instance, was written by Shakespeare’s contemporary George
+Peele.</p>
+<p>In order to test this hypothesis, the following Orange Textable workflow
+measures the degree to which the language in each scene within <em>Titus
+Andronicus</em> resembles the language within each other scene (<a class="reference internal" href="#titus-andronicus-schema"><span class="std std-ref">figure 1</span></a> below). <a class="footnote-reference" href="#id2" id="id1">[1]</a> By changing the <strong>Mode</strong> parameter
+within the <strong>Intersect</strong> instance, one can elect to focus only on content words
+or stopwords, and by changing the <strong>Distance Metrics</strong> parameter within the
+<strong>Example Distance</strong> isntance, one can change the similarity metric for the
+language comparison. Finally, by clicking on the <strong>Distance Map</strong> icon within
+this workflow, one can see at a glance how distinct the vocabulary within each
+scene is.</p>
+<div class="figure align-center" id="id3">
+<span id="titus-andronicus-schema"></span><a class="reference internal image-reference" href="_images/titus_andronicus_schema.png"><img alt="Orange Textable workflow for the Titus Andronicus use case" src="_images/titus_andronicus_schema.png" style="width: 615.75px; height: 327.0px;" /></a>
+<p class="caption"><span class="caption-text">Figure 1: Orange Textable workflow for the stylometric analysis of <em>Titus Andronicus*</em>.</span></p>
+</div>
+<p>Comparing the stopwords within each scene using a normalized Euclidean distance
+metric, one finds that Act 1 Scene 1 is indeed a significant outlier within
+<em>Titus Andronicus</em>. The scene remains an outlier when one performs TF-IDF
+normalization on the term-document matrix (within the <strong>Convert</strong> instance),
+and when one uses a normalized Manhattan distance metric. Iterating through
+each of the various distance metrics, and toggling between different
+normalization metrics, Act 1 Scene 1 remains the most consistent outlier. This
+adds further evidence to the argument that the scene’s stylistic fingerprint
+departs from that of that of the rest of the play.</p>
+<div class="figure align-center" id="id4">
+<span id="titus-andronicus-map"></span><a class="reference internal image-reference" href="_images/titus_andronicus_map.png"><img alt="Act 1 Scene 1 of Titus Andronicus is a consistent stylistic outlier." src="_images/titus_andronicus_map.png" style="width: 332.25px; height: 367.5px;" /></a>
+<p class="caption"><span class="caption-text">Figure 2: Act 1 Scene 1 is a consistent stylistic outlier in Shakespeare’s play.</span></p>
+</div>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>The schema can be downloaded from <a class="reference download internal" download="" href="_downloads/5a21ae15ffc7acab3f74688dcb639830/titus_andronicus_for_textable_v2.0a3.ows"><code class="xref download docutils literal notranslate"><span class="pre">here</span></code></a>.</td></tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="moby_dick.html"
+                        title="previous chapter">Term frequency comparison in Melville’s Moby Dick</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="reference.html"
+                        title="next chapter">Reference</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/titus_andronicus.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="reference.html" title="Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="moby_dick.html" title="Term frequency comparison in Melville’s Moby Dick"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="case_studies.html" >Case studies</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+    </div>
+  </body>
+</html>
