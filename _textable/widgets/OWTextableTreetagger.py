@@ -234,6 +234,7 @@ class Treetagger(OWTextableBaseWidget):
                     for item in segment.annotations.items()
                 ]
             )
+
             segment.annotations["tt_ax"] = attr
             copy_of_input_seg.append(segment)
 
@@ -244,6 +245,7 @@ class Treetagger(OWTextableBaseWidget):
             formatting="<ax_tt %(tt_ax)s>%(__content__)s</ax_tt>",
             display_all=True,
         )
+
         self.progressBar.advance()
 
         # Tag the segmentation contents...
