@@ -1,24 +1,24 @@
 """
 Class OWTextableCooccurrence
-Copyright 2012-2017 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2018 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange-Textable package v3.0.
 
-Orange-Textable v3.0 is free software: you can redistribute it and/or modify
+Orange-Textable v3 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Orange-Textable v3.0 is distributed in the hope that it will be useful,
+Orange-Textable v3 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
+along with Orange-Textable v3. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u'1.0.3'
+__version__ = u'1.0.4'
 __author__ = "Mahtab Mohammadi"
 __maintainer__ = "LangTech Sarl"
 
@@ -531,6 +531,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             self.containingSegmentationBox.setVisible(False)
             self.slidingWindowBox.setVisible(True)
             self.sequenceLengthSpin.setDisabled(False)
+            self.intraSeqDelimLineEdit.setDisabled(False)
 
             self.windowSizeSpin.setRange(
                 2,
@@ -546,6 +547,8 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             elif len(self.segmentations) >= 2:
                 self.units2Box.setDisabled(False)
             self.slidingWindowBox.setVisible(False)
+            self.sequenceLengthSpin.setDisabled(self.coocWithUnits2)
+            self.intraSeqDelimLineEdit.setDisabled(self.coocWithUnits2)
             self.containingSegmentationBox.setVisible(True)
             self.contextSegmentationCombo.clear()
             try:
@@ -581,7 +584,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                     self.unit2AnnotationKey = u'(none)'
                 self.unit2AnnotationKey = self.unit2AnnotationKey
                 self.sequenceLength = 1
-                self.sequenceLengthSpin.setDisabled(True)
 
     def handleNewSignals(self):
         """Overridden: called after multiple singnals have been added"""

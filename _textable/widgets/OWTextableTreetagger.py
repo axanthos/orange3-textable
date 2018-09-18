@@ -5,24 +5,26 @@ Based on an original prototype developed by Xavier Barros
 -------------------------------------------------------------------------------
 This file is part of the Orange-Textable package v3.0.
 
-Orange-Textable v3.0 is free software: you can redistribute it and/or modify
+Orange-Textable v3 is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Orange-Textable v3.0 is distributed in the hope that it will be useful,
+Orange-Textable v3 is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Orange-Textable v3.0. If not, see <http://www.gnu.org/licenses/>.
+along with Orange-Textable v3. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.8"
+__version__ = u"0.1.9"
 
 import os
 import re
+
+from xml.sax.saxutils import quoteattr
 
 from Orange.widgets import gui, settings
 
@@ -227,7 +229,10 @@ class Treetagger(OWTextableBaseWidget):
         copy_of_input_seg.label = self.segmentation.label
         for seg_idx, segment in enumerate(self.segmentation):
             attr = " ".join(
-                ["%s='%s'" % item for item in segment.annotations.items()]
+                [
+                    "%s=%s" % (item[0], quoteattr(item[1])) 
+                    for item in segment.annotations.items()
+                ]
             )
             segment.annotations["tt_ax"] = attr
             copy_of_input_seg.append(segment)
@@ -239,7 +244,6 @@ class Treetagger(OWTextableBaseWidget):
             formatting="<ax_tt %(tt_ax)s>%(__content__)s</ax_tt>",
             display_all=True,
         )
-
         self.progressBar.advance()
 
         # Tag the segmentation contents...
