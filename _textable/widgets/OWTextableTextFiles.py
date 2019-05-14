@@ -27,9 +27,9 @@ import re
 import json
 from unicodedata import normalize
 
-from PyQt4.QtCore import QTimer
-from PyQt4.QtGui import QFileDialog, QMessageBox
-from PyQt4.QtGui import QFont
+from PyQt5.QtCore import QTimer
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 from chardet.universaldetector import UniversalDetector
 
@@ -942,7 +942,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableTextFiles()
     ow.show()

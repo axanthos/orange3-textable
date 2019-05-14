@@ -22,7 +22,7 @@ __version__ = '0.15.7'
 
 import re
 
-from PyQt4.QtGui import QFont
+from PyQt5.QtGui import QFont
 
 import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
@@ -698,7 +698,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
 
     appl = QApplication(sys.argv)
     ow = OWTextableExtractXML()

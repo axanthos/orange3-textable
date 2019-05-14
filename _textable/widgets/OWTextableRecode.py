@@ -22,8 +22,8 @@ __version__ = '0.13.7'
 
 import os, re, codecs, json
 
-from PyQt4.QtGui import QFont
-from PyQt4.QtGui import QFileDialog, QMessageBox
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
@@ -796,7 +796,7 @@ class OWTextableRecode(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableRecode()
     ow.show()

@@ -962,7 +962,7 @@ class OWTextableSelect(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableSelect()
     ow.show()

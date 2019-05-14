@@ -430,7 +430,7 @@ class OWTextableCategory(OWTextableBaseWidget):
 if __name__ == '__main__':
     import sys
     import re
-    from PyQt4.QtGui import  QApplication
+    from PyQt5.QtWidgets import QApplication
     from LTTL.Input import Input
     from LTTL import Segmenter as segmenter
 
