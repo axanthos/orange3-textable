@@ -814,7 +814,7 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
             raise ValueError
         return [seq1.index(el) for el in seq2]
 
-    def settings_to_widget(self, widget):
+    def settings_to_widget(self, widget, *args, **kwargs):
         """
         Restore the saved `context` to `widget`.
         """
@@ -847,7 +847,7 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
             # Restore the stored order in the widget.
             setattr(widget, self.inputListFieldName, permuted)
 
-    def settings_from_widget(self, widget):
+    def settings_from_widget(self, widget, *args, **kwargs):
         """
         Get the settings from a widget.
         """
