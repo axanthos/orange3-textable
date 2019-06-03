@@ -19,10 +19,11 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.9"
+__version__ = u"0.1.10"
 
 import os
 import re
+import unicodedata
 
 from xml.sax.saxutils import quoteattr
 
@@ -42,7 +43,6 @@ from _textable.widgets.TextableUtils import (
 import appdirs
 import treetaggerwrapper
 import pycountry
-
 
 class Treetagger(OWTextableBaseWidget):
     """Orange widget for POS-tagging and lemmatization with Treetagger"""
@@ -230,7 +230,13 @@ class Treetagger(OWTextableBaseWidget):
         for seg_idx, segment in enumerate(self.segmentation):
             attr = " ".join(
                 [
-                    "%s=%s" % (item[0], quoteattr(item[1])) 
+                    "%s=%s" % (
+                        ''.join(
+                            c for c in unicodedata.normalize('NFD', item[0])
+                            if unicodedata.category(c) != 'Mn'
+                        ), 
+                        quoteattr(str(item[1])),
+                    ) 
                     for item in segment.annotations.items()
                 ]
             )
@@ -267,22 +273,27 @@ class Treetagger(OWTextableBaseWidget):
         tagged_input = Input("\n".join(tagged_lines))
         self.createdInputs.append(tagged_input)
 
-        # Re-segment to match the original segmentation structure.
-        tagged_segmentation = Segmenter.import_xml(tagged_input, "ax_tt")
+        # Replace <unknown> with [unknown] and " with &quot; then
+        # re-segment to match the original segmentation structure.
+        tagged_segmentation, _ = Segmenter.recode(
+            tagged_input,
+            substitutions = [
+                (re.compile(r"<unknown>"), "[unknown]"),
+                (re.compile(r'"""'), '"&quot;"'),
+            ],
+        )
+        tagged_segmentation = Segmenter.import_xml(tagged_segmentation, "ax_tt")
 
         self.progressBar.advance()
 
-        # Replace <unknown> with [unknown], " with &quot; and place
-        # each output line of Treetagger in an xml tag with annotations...
+        # Place each output line of Treetagger in an xml tag with annotations..
         xml_segmentation, _ = Segmenter.recode(
             tagged_segmentation,
             substitutions = [
-                (re.compile(r"<unknown>"), "[unknown]"),
                 (re.compile(
                     r"(.+)\t(.+)\t(.+?)(?=[\r\n])"),
                     '<w lemma="&3" pos-tag="&2">&1</w>'
                 ),
-                (re.compile(r'"""'), '"&quot;"'),
                 (re.compile(r'^\n|\n$'), ''),
             ],
         )

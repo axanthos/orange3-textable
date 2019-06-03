@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.7'
+__version__ = '0.13.8'
 
 import os, re, codecs, json
 
@@ -665,10 +665,10 @@ class OWTextableRecode(OWTextableBaseWidget):
         if self.selectedSubstLabels:
             index = self.selectedSubstLabels[0]
             if index > 0:
-                temp = self.substitutions[index - 1]
-                self.substitutions[index - 1] = self.substitutions[index]
+                temp = self.substitutions[index-1]
+                self.substitutions[index-1] = self.substitutions[index]
                 self.substitutions[index] = temp
-                self.selectedSubstLabels.listBox.item(index - 1).setSelected(1)
+                self.selectedSubstLabels = [index-1]
                 self.sendButton.settingsChanged()
 
     def moveDown(self):
@@ -676,10 +676,10 @@ class OWTextableRecode(OWTextableBaseWidget):
         if self.selectedSubstLabels:
             index = self.selectedSubstLabels[0]
             if index < len(self.substitutions) - 1:
-                temp = self.substitutions[index + 1]
-                self.substitutions[index + 1] = self.substitutions[index]
+                temp = self.substitutions[index+1]
+                self.substitutions[index+1] = self.substitutions[index]
                 self.substitutions[index] = temp
-                self.selectedSubstLabels.listBox.item(index + 1).setSelected(1)
+                self.selectedSubstLabels = [index+1]
                 self.sendButton.settingsChanged()
 
     def clearAll(self):
@@ -745,9 +745,7 @@ class OWTextableRecode(OWTextableBaseWidget):
             self.substLabels = self.substLabels
             if cachedLabel is not None:
                 self.sendButton.sendIfPreCallback = None
-                self.selectedSubstLabels.listBox.item(
-                    cachedLabel
-                ).setSelected(1)
+                self.selectedSubstLabels = [cachedLabel]
                 self.sendButton.sendIfPreCallback = self.updateGUI
             if self.newRegex:
                 self.addButton.setDisabled(False)

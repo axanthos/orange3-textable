@@ -844,21 +844,21 @@ class OWTextableSegment(OWTextableBaseWidget):
         if self.selectedRegexLabels:
             index = self.selectedRegexLabels[0]
             if index > 0:
-                temp = self.regexes[index - 1]
-                self.regexes[index - 1] = self.regexes[index]
+                temp = self.regexes[index-1]
+                self.regexes[index-1] = self.regexes[index]
                 self.regexes[index] = temp
-                self.selectedRegexLabels.listBox.item(index - 1).setSelected(1)
+                self.selectedRegexLabels = [index-1]
                 self.sendButton.settingsChanged()
 
     def moveDown(self):
         """Move regex downward in Regexes listbox"""
         if self.selectedRegexLabels:
             index = self.selectedRegexLabels[0]
-            if index < len(self.regexes) - 1:
-                temp = self.regexes[index + 1]
-                self.regexes[index + 1] = self.regexes[index]
+            if index < len(self.regexes)-1:
+                temp = self.regexes[index+1]
+                self.regexes[index+1] = self.regexes[index]
                 self.regexes[index] = temp
-                self.selectedRegexLabels.listBox.item(index + 1).setSelected(1)
+                self.selectedRegexLabels = [index+1]
                 self.sendButton.settingsChanged()
 
     def clearAll(self):
@@ -929,9 +929,7 @@ class OWTextableSegment(OWTextableBaseWidget):
             self.regexLabels = self.regexLabels
             if cachedLabel is not None:
                 self.sendButton.sendIfPreCallback = None
-                self.selectedRegexLabels.listBox.item(
-                    cachedLabel
-                ).setSelected(1)
+                self.selectedRegexLabels = [cachedLabel]
                 self.sendButton.sendIfPreCallback = self.updateGUI
             if self.newRegex:
                 if (

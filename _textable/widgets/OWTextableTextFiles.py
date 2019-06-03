@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.17.8'
+__version__ = '0.17.9'
 
 
 import codecs
@@ -804,10 +804,10 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         if self.selectedFileLabels:
             index = self.selectedFileLabels[0]
             if index > 0:
-                temp = self.files[index - 1]
-                self.files[index - 1] = self.files[index]
+                temp = self.files[index-1]
+                self.files[index-1] = self.files[index]
                 self.files[index] = temp
-                self.selectedFileLabels.listBox.item(index - 1).setSelected(1)
+                self.selectedFileLabels = [index-1]
                 self.sendButton.settingsChanged()
 
     def moveDown(self):
@@ -815,10 +815,10 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         if self.selectedFileLabels:
             index = self.selectedFileLabels[0]
             if index < len(self.files) - 1:
-                temp = self.files[index + 1]
-                self.files[index + 1] = self.files[index]
+                temp = self.files[index+1]
+                self.files[index+1] = self.files[index]
                 self.files[index] = temp
-                self.selectedFileLabels.listBox.item(index + 1).setSelected(1)
+                self.selectedFileLabels = [index+1]
                 self.sendButton.settingsChanged()
 
     def clearAll(self):
@@ -877,9 +877,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             self.fileLabels = self.fileLabels
             if cachedLabel is not None:
                 self.sendButton.sendIfPreCallback = None
-                self.selectedFileLabels.listBox.item(
-                    cachedLabel
-                ).setSelected(1)
+                self.selectedFileLabels = [cachedLabel]
                 self.sendButton.sendIfPreCallback = self.updateGUI
             if self.newFiles:
                 if (

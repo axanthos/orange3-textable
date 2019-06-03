@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange-Textable v3. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.14.8'
+__version__ = '0.14.9'
 
 import os
 import codecs
@@ -728,10 +728,10 @@ class OWTextableURLs(OWTextableBaseWidget):
         if self.selectedURLLabel:
             index = self.selectedURLLabel[0]
             if index > 0:
-                temp = self.URLs[index - 1]
-                self.URLs[index - 1] = self.URLs[index]
+                temp = self.URLs[index-1]
+                self.URLs[index-1] = self.URLs[index]
                 self.URLs[index] = temp
-                self.selectedURLLabel.listBox.item(index - 1).setSelected(1)
+                self.selectedURLLabel = [index-1]
                 self.sendButton.settingsChanged()
 
     def moveDown(self):
@@ -739,10 +739,10 @@ class OWTextableURLs(OWTextableBaseWidget):
         if self.selectedURLLabel:
             index = self.selectedURLLabel[0]
             if index < len(self.URLs) - 1:
-                temp = self.URLs[index + 1]
-                self.URLs[index + 1] = self.URLs[index]
+                temp = self.URLs[index+1]
+                self.URLs[index+1] = self.URLs[index]
                 self.URLs[index] = temp
-                self.selectedURLLabel.listBox.item(index + 1).setSelected(1)
+                self.selectedURLLabel = [index+1]
                 self.sendButton.settingsChanged()
 
     def clearAll(self):
@@ -800,7 +800,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             self.URLLabel = self.URLLabel
             if cachedLabel is not None:
                 self.sendButton.sendIfPreCallback = None
-                self.selectedURLLabel.listBox.item(cachedLabel).setSelected(1)
+                self.selectedURLLabel = [cachedLabel]
                 self.sendButton.sendIfPreCallback = self.updateGUI
             if self.newURL:
                 if (
