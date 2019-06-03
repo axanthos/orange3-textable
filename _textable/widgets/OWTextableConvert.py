@@ -24,7 +24,7 @@ import os
 import codecs
 import re
 
-from PyQt4.QtGui import QMessageBox, QApplication, QFileDialog
+from PyQt5.QtWidgets import QMessageBox, QApplication, QFileDialog
 import Orange.data
 from Orange.widgets import widget, gui, settings
 

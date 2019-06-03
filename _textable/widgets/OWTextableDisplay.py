@@ -25,8 +25,8 @@ import os
 import codecs
 import re
 
-from PyQt4.QtGui import QTextBrowser, QFileDialog, QMessageBox, QApplication
-from PyQt4.QtCore import QUrl
+from PyQt5.QtWidgets import QTextBrowser, QFileDialog, QMessageBox, QApplication
+from PyQt5.QtCore import QUrl
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input

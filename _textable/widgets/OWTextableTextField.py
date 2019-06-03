@@ -25,7 +25,7 @@ from unicodedata import normalize
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 
-from PyQt4.QtGui import QPlainTextEdit
+from PyQt5.QtWidgets import QPlainTextEdit
 
 from .TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
@@ -155,7 +155,7 @@ class OWTextableTextField(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt4.QtGui import  QApplication
+    from PyQt5.QtWidgets import  QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableTextField()
     ow.show()

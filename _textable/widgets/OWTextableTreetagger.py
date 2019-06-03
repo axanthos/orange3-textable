@@ -28,7 +28,7 @@ from xml.sax.saxutils import quoteattr
 
 from Orange.widgets import gui, settings
 
-from PyQt4.QtGui import QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
@@ -466,7 +466,7 @@ class Treetagger(OWTextableBaseWidget):
 
 if __name__ == "__main__":
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
 
     myApplication = QApplication(sys.argv)
     myWidget = Treetagger()

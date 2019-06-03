@@ -22,8 +22,8 @@ __version__ = '0.21.8'
 
 import os, re, codecs, json
 
-from PyQt4.QtGui import QFont
-from PyQt4.QtGui import QFileDialog, QMessageBox
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 import LTTL.Segmenter as Segmenter
 from LTTL.Segmentation import Segmentation
 
@@ -990,7 +990,7 @@ class OWTextableSegment(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     from LTTL.Input import Input
 
     appl = QApplication(sys.argv)

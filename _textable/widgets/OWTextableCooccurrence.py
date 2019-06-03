@@ -594,7 +594,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt5.QtWidgets import QApplication
     import LTTL.Segmenter as Segmenter
     from LTTL.Input import Input
 

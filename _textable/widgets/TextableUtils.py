@@ -906,8 +906,8 @@ class SegmentationContextHandler(VersionedSettingsHandlerMixin,
 
 
 from Orange.widgets import widget
-from PyQt4.QtCore import QTimer, QEventLoop
-from PyQt4.QtGui import QSizePolicy, QApplication
+from PyQt5.QtCore import QTimer, QEventLoop
+from PyQt5.QtWidgets import QSizePolicy, QApplication
 
 
 class OWTextableBaseWidget(widget.OWWidget):
