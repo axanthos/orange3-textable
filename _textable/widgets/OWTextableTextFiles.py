@@ -1,24 +1,24 @@
 """
 Class OWTextableTextFiles
-Copyright 2012-2018 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2019 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
-This file is part of the Orange-Textable package v3.0.
+This file is part of the Orange3-Textable package.
 
-Orange-Textable v3 is free software: you can redistribute it and/or modify
+Orange3-Textable is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Orange-Textable v3 is distributed in the hope that it will be useful,
+Orange3-Textable is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Orange-Textable v3. If not, see <http://www.gnu.org/licenses/>.
+along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.17.9'
+__version__ = '0.17.10'
 
 
 import codecs
@@ -674,7 +674,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
 
     def importList(self):
         """Display a FileDialog and import file list"""
-        filePath = QFileDialog.getOpenFileName(
+        filePath, _ = QFileDialog.getOpenFileName(
             self,
             u'Import File List',
             self.lastLocation,
@@ -743,7 +743,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             if myfile[2] and myfile[3]:
                 toDump[-1]['annotation_key'] = myfile[2]
                 toDump[-1]['annotation_value'] = myfile[3]
-        filePath =QFileDialog.getSaveFileName(
+        filePath, _ = QFileDialog.getSaveFileName(
             self,
             u'Export File List',
             self.lastLocation,
@@ -773,7 +773,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
     def browse(self):
         """Display a FileDialog and select files"""
         if self.displayAdvancedSettings:
-            filePathList = QFileDialog.getOpenFileNames(
+            filePathList, _ = QFileDialog.getOpenFileNames(
                 self,
                 u'Select Text File(s)',
                 self.lastLocation,
@@ -786,7 +786,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             self.lastLocation = os.path.dirname(filePathList[-1])
             self.updateGUI()
         else:
-            filePath = QFileDialog.getOpenFileName(
+            filePath, _ = QFileDialog.getOpenFileName(
                 self,
                 u'Open Text File',
                 self.lastLocation,

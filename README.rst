@@ -60,6 +60,7 @@ Extensibility
 
 Interoperability
 ~~~~~~~~~~~~~~~~
+
 * import text from keyboard, files, or URLs
 * process any kind of raw text format: TXT, HTML, XML, CSV, etc.
 * supports many text encodings, incl. Unicode

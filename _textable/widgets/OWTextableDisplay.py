@@ -1,24 +1,24 @@
 """
 Class OWTextableDisplay
-Copyright 2012-2018 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2019 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
-This file is part of the Orange-Textable package v3.0.
+This file is part of the Orange3-Textable package.
 
-Orange-Textable v3 is free software: you can redistribute it and/or modify
+Orange3-Textable is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-Orange-Textable v3 is distributed in the hope that it will be useful,
+Orange3-Textable is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with Orange-Textable v3. If not, see <http://www.gnu.org/licenses/>.
+along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.16.10'
+__version__ = '0.16.11'
 
 import sys
 import os
@@ -521,7 +521,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
 
     def exportFile(self):
         """Display a FileDialog and export segmentation to file"""
-        filePath = QFileDialog.getSaveFileName(
+        filePath, _ = QFileDialog.getSaveFileName(
             self,
             u'Export segmentation to File',
             self.lastLocation,
