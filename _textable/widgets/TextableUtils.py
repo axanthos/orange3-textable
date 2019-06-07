@@ -965,7 +965,12 @@ class OWTextableBaseWidget(widget.OWWidget):
         if self.want_message_bar:
             super().update_message_state()
 
+    def mousePressEvent(self, event):
+        # reimplemented; see orange3 github issue 3821
+        event.ignore()
+        return
 
+    
 class ProgressBar:
     def __init__(self, widget, iterations):
         self.iter = iterations
