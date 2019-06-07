@@ -1,26 +1,37 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta content="Orange Textable documentation, partitioning segmentations" name="description" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="Orange Textable documentation, partitioning segmentations" name="description" />
 <meta content="Orange, Textable, documentation, partition, filter" name="keywords" />
 
-    <title>1.6. Partitioning segmentations &#8212; Textable v3.1.0 documentation</title>
+    <title>1.6. Partitioning segmentations &#8212; Textable v3.1.3 documentation</title>
+    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.1.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="1.7. Using a segmentation to filter another" href="using_segmentation_filter_another.html" />
     <link rel="prev" title="1.5. Segmenting data into smaller units" href="segmenting_data_smaller_units.html" /> 
-  </head><body>
+  </head>
+  <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -33,7 +44,7 @@
         <li class="right" >
           <a href="segmenting_data_smaller_units.html" title="1.5. Segmenting data into smaller units"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="segmentations.html" accesskey="U">1. Segmentations</a> &#187;</li> 
       </ul>
@@ -50,7 +61,7 @@
 segments from a segmentation. For instance, a user might be want to exclude
 from a word segmentation all those that are less than 4 letters long. The
 <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> widget is tailored for such tasks.</p>
-<p>The widget’s interface (see <a class="reference internal" href="#partitioning-segmentations-fig1"><span class="std std-ref">figure 1</span></a>
+<p>The widget&#8217;s interface (see <a class="reference internal" href="#partitioning-segmentations-fig1"><span class="std std-ref">figure 1</span></a>
 below) offers a choice between two modes: <em>Include</em> and <em>Exclude</em>. Depending
 on this parameter, incoming segments that satisfy a given condition will be
 either included in or excluded from the output segmentation. By default (i.e.
@@ -64,8 +75,8 @@ successively. (For now, the option <strong>Annotation key: (none)</strong> can b
 <p>In the example of <a class="reference internal" href="#partitioning-segmentations-fig1"><span class="std std-ref">figure 1</span></a>, the
 widget is configured to exclude all incoming segments containing no more than
 3 letters. Note that without the <em>beginning of segment</em> and <em>end of segment</em>
-anchors (<code class="docutils literal notranslate"><span class="pre">^</span></code> and <code class="docutils literal notranslate"><span class="pre">$</span></code>), all words containing <em>at least</em> a sequence of 1 to
-3 letters–i.e. all the words–would be excluded.</p>
+anchors (<code class="docutils literal"><span class="pre">^</span></code> and <code class="docutils literal"><span class="pre">$</span></code>), all words containing <em>at least</em> a sequence of 1 to
+3 letters&#8211;i.e. all the words&#8211;would be excluded.</p>
 <p>Note that <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> automatically emits a second segmentation
 containing all the segments that have been discarded from the main output
 segmentation (in the case of <a class="reference internal" href="#partitioning-segmentations-fig1"><span class="std std-ref">figure 1</span></a>
@@ -82,7 +93,7 @@ connection and select <strong>Reset Signals</strong> (see
 </div>
 <p>This opens the dialog shown on
 <a class="reference internal" href="#partitioning-segmentations-fig3"><span class="std std-ref">figure 3</span></a> below, where the user can
-“drag-and-drop” from the gray box next to <strong>Discarded data</strong> up to the box
+&#8220;drag-and-drop&#8221; from the gray box next to <strong>Discarded data</strong> up to the box
 next to <strong>Segmentation</strong>, thus replacing the existing green connection.
 Clicking <strong>OK</strong> validates the modification and sends the discarded data
 through the connection.</p>
@@ -106,7 +117,7 @@ between two widgets.</span></p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table of Contents</a></h3>
+  <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">1.6. Partitioning segmentations</a><ul>
 <li><a class="reference internal" href="#see-also">1.6.1. See also</a></li>
@@ -129,14 +140,12 @@ between two widgets.</span></p>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -155,14 +164,14 @@ between two widgets.</span></p>
         <li class="right" >
           <a href="segmenting_data_smaller_units.html" title="1.5. Segmenting data into smaller units"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Textable v3.1.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting started</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="segmentations.html" >1. Segmentations</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2012-2018 LangTech Sarl, translation © 2014-2018 University of Lausanne.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0.
+        &#169; Copyright 2012-2019 LangTech Sarl, translation © 2014-2019 University of Lausanne.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

@@ -9,8 +9,7 @@ Orange Textable is an open-source add-on bringing advanced text-analytical
 functionalities to the `Orange Canvas <http://orange.biolab.si/>`_ data mining
 software package (itself open-source). It essentially enables users to build
 data tables on the basis of text data, by means of a flexible and intuitive
-interface. Look at the following :doc:`example <illustration>` to see it in
-typical action.
+interface. 
 
 Orange Textable was designed and implemented by `LangTech Sàrl
 <http://langtech.ch>`_ on behalf of the `department of language and
@@ -22,7 +21,6 @@ Lausanne <http://www.unil.ch>`_ (see :doc:`Credits <credits>` and
     :maxdepth: 2
    
     Features <features>
-    Illustration: mining Humanist <illustration>
     Installation <installation>
     Configuration <configuration>
     Credits <credits>

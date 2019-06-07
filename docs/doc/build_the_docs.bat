@@ -1,2 +1,2 @@
-sphinx-build -b html . _build
+C:\python34\scripts\sphinx-build -b html . _build
 pause

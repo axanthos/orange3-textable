@@ -21,7 +21,7 @@ along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
 
-import os
+from os import path, walk
 import sys
 
 if sys.version_info < (3, ):
@@ -38,7 +38,7 @@ VERSION = '3.1.3'  # package version
 
 DESCRIPTION = 'Textable add-on for Orange 3 data mining software package.'
 LONG_DESCRIPTION = open(
-    os.path.join(os.path.dirname(__file__), 'README.rst')
+    path.join(path.dirname(__file__), 'README.rst')
 ).read()
 AUTHOR = 'LangTech Sarl'
 AUTHOR_EMAIL = 'info@langtech.ch'
@@ -89,6 +89,8 @@ INSTALL_REQUIRES = (
 EXTRAS_REQUIRE = {
 }
 
+DATA_FILES = list()
+
 DEPENDENCY_LINKS = (
 )
 
@@ -104,7 +106,23 @@ ENTRY_POINTS = {
     ),
 }
 
+# def include_documentation(local_dir, install_dir):
+    # global DATA_FILES
+    # if 'bdist_wheel' in sys.argv and not path.exists(local_dir):
+        # print("Directory '{}' does not exist. "
+              # "Please build documentation before running bdist_wheel."
+              # .format(path.abspath(local_dir)))
+        # sys.exit(0)
+
+    # doc_files = []
+    # for dirpath, dirs, files in walk(local_dir):
+        # doc_files.append((dirpath.replace(local_dir, install_dir),
+                          # [path.join(dirpath, f) for f in files]))
+    # DATA_FILES.extend(doc_files)
+
+    
 if __name__ == '__main__':
+    # include_documentation('docs/doc/_build/', 'help/orange3-textable')
     setup(
         name=NAME,
         version=VERSION,
