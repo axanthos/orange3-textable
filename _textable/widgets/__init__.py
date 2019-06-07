@@ -50,7 +50,7 @@ WIDGET_HELP_PATH = (
     # Documentation included in wheel
     # Correct DATA_FILES entry is needed in setup.py and documentation has to be built
     # before the wheel is created.
-    ("{}/help/orange3-textable/index.html".format(sysconfig.get_path("data")), None),
+    # ("{}/help/orange3-textable/index.html".format(sysconfig.get_path("data")), None),
 
     # Online documentation url, used when the local documentation is not available.
     # Url should point to a page with a section Widgets. This section should
