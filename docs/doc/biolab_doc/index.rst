@@ -37,9 +37,9 @@ Text Import
 .. toctree::
    :maxdepth: 1
 
-   widgets/textimport/textfield
-   widgets/textimport/textfiles
-   widgets/textimport/urls
+   widget_ref/textimport/textfield
+   widget_ref/textimport/textfiles
+   widget_ref/textimport/urls
   
 
 Segmentation Processing
@@ -48,14 +48,14 @@ Segmentation Processing
 .. toctree::
    :maxdepth: 1
 
-   widgets/segmentationprocessing/preprocess
-   widgets/segmentationprocessing/recode
-   widgets/segmentationprocessing/merge
-   widgets/segmentationprocessing/segment
-   widgets/segmentationprocessing/select
-   widgets/segmentationprocessing/intersect
-   widgets/segmentationprocessing/extractxml
-   widgets/segmentationprocessing/display
+   widget_ref/segmentationprocessing/preprocess
+   widget_ref/segmentationprocessing/recode
+   widget_ref/segmentationprocessing/merge
+   widget_ref/segmentationprocessing/segment
+   widget_ref/segmentationprocessing/select
+   widget_ref/segmentationprocessing/intersect
+   widget_ref/segmentationprocessing/extractxml
+   widget_ref/segmentationprocessing/display
 
 
 Table Construction
@@ -64,12 +64,12 @@ Table Construction
 .. toctree::
    :maxdepth: 1
 
-   widgets/tableconstruction/count
-   widgets/tableconstruction/length
-   widgets/tableconstruction/variety
-   widgets/tableconstruction/cooccurrence
-   widgets/tableconstruction/context
-   widgets/tableconstruction/category
+   widget_ref/tableconstruction/count
+   widget_ref/tableconstruction/length
+   widget_ref/tableconstruction/variety
+   widget_ref/tableconstruction/cooccurrence
+   widget_ref/tableconstruction/context
+   widget_ref/tableconstruction/category
  
 
 Conversion/Export 
@@ -78,8 +78,8 @@ Conversion/Export
 .. toctree::
    :maxdepth: 1
 
-   widgets/conversionexport/convert
-   widgets/conversionexport/message
+   widget_ref/conversionexport/convert
+   widget_ref/conversionexport/message
 
 
 Tutorials

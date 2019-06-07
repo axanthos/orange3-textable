@@ -122,7 +122,7 @@ def include_documentation(local_dir, install_dir):
 
     
 if __name__ == '__main__':
-    include_documentation('docs/doc/_build/', 'help/orange3-textable')
+    # include_documentation('docs/doc/_build/', 'help/orange3-textable')
     setup(
         name=NAME,
         version=VERSION,
