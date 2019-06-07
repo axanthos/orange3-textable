@@ -60,7 +60,7 @@
 <p>Often, the best way (and sometimes the only way) to add a specific type of
 annotation to a text is by &#8220;manually&#8221; adding it to the data. This is
 frequently done with XML markup. For instance, the text that appears in the
-<a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance of
+<a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance of
 <a class="reference internal" href="#converting-xml-markup-annotations-fig1"><span class="std std-ref">figure 1</span></a> below is segmented
 into words by means of <em>&lt;w&gt;</em> tags whose <em>type</em> attribute indicates the &#8220;part
 of speech&#8221; associated with each word (e.g. <em>DET</em>, <em>NOUN</em>, <em>PREP</em>, and so on).</p>
@@ -68,7 +68,7 @@ of speech&#8221; associated with each word (e.g. <em>DET</em>, <em>NOUN</em>, <e
 <span id="converting-xml-markup-annotations-fig1"></span><img alt="Specifying annotations values using the label of Text field instances" src="_images/text_field_xml_example.png" />
 <p class="caption"><span class="caption-text">Figure 1: Sample text annotated using XML markup.</span></p>
 </div>
-<p>The role of widget <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> is to convert XML markup into annotated
+<p>The role of widget <a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> is to convert XML markup into annotated
 segments (in the sense of Orange Textable). In its basic version (see
 <a class="reference internal" href="#converting-xml-markup-annotations-fig2"><span class="std std-ref">figure 2</span></a> below), the widget&#8217;s
 interface essentially requires the user to specify the name of the XML
@@ -78,10 +78,10 @@ imported tags must be removed (there is no further markup in this example, so
 that this option has no effect here).</p>
 <div class="figure align-center" id="id2">
 <span id="converting-xml-markup-annotations-fig2"></span><img alt="Interface of the Extract XML widget" src="_images/extract_xml_example.png" />
-<p class="caption"><span class="caption-text">Figure 2: Interface of the <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> widget.</span></p>
+<p class="caption"><span class="caption-text">Figure 2: Interface of the <a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> widget.</span></p>
 </div>
-<p>After connecting the above <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> and <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> instances,
-and the latter to an instance of <a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a>, the reader can verify that
+<p>After connecting the above <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> and <a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> instances,
+and the latter to an instance of <a class="reference internal" href="widgets/display.html#display"><span class="std std-ref">Display</span></a>, the reader can verify that
 the resulting segmentation contains a segment for the content of each <em>&lt;w&gt;</em>
 tag in the input text, and that this segment is annotated with key <em>type</em> and
 value <em>DET</em>, <em>NOUN</em>, or <em>PREP</em> (the three first such segments are shown on
@@ -90,13 +90,13 @@ attribute-value pair of each XML tag has indeed been automatically converted
 to a <em>{key: value}</em> annotation.</p>
 <div class="figure align-center" id="id3">
 <span id="converting-xml-markup-annotations-fig3"></span><img alt="Annotations imported using Extract XML" src="_images/display_xml_annotations_example.png" />
-<p class="caption"><span class="caption-text">Figure 3: Annotations imported using <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a>.</span></p>
+<p class="caption"><span class="caption-text">Figure 3: Annotations imported using <a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a>.</span></p>
 </div>
 <div class="section" id="see-also">
 <h2>3.3.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Reference: Text Field widget</span></a></li>
-<li><a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Reference: Extract XML widget</span></a></li>
+<li><a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Reference: Text Field widget</span></a></li>
+<li><a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Reference: Extract XML widget</span></a></li>
 <li><a class="reference internal" href="convert_xml_tags_annotations.html"><span class="doc">Cookbook: Convert XML tags to Orange Textable annotations</span></a></li>
 </ul>
 </div>

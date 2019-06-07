@@ -57,21 +57,21 @@
             
   <div class="section" id="counting-segment-types">
 <h1>2.3. Counting segment types<a class="headerlink" href="#counting-segment-types" title="Permalink to this headline">¶</a></h1>
-<p>Widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> takes in input one or more segmentations and
+<p>Widget <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a> takes in input one or more segmentations and
 produces frequency tables such as tables 1 and 2
 <a class="reference internal" href="segmentations_tables.html"><span class="doc">here</span></a>. To try it out, create a schema such as
 illustrated on <a class="reference internal" href="#counting-segment-types-fig1"><span class="std std-ref">figure 1</span></a> below. As usual,
-we will suppose that the <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance contains
-<em>a simple example</em>. The <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> instance is configured for
+we will suppose that the <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance contains
+<em>a simple example</em>. The <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a> instance is configured for
 letter segmentation (<strong>Regex:</strong> <code class="docutils literal"><span class="pre">\w</span></code> and <strong>Output segmentation label:</strong>
 <em>letters</em>). The default configuration of the instances of
-<a class="reference internal" href="convert.html#convert"><span class="std std-ref">Convert</span></a> and <em>Data Table</em> (from the <strong>Data</strong> tab of Orange
+<a class="reference internal" href="widgets/convert.html#convert"><span class="std std-ref">Convert</span></a> and <em>Data Table</em> (from the <strong>Data</strong> tab of Orange
 Canvas) needs not be modified for this example.</p>
 <div class="figure align-center" id="id1">
 <span id="counting-segment-types-fig1"></span><a class="reference internal image-reference" href="_images/count_example_schema.png"><img alt="Schema for testing the Count widget" src="_images/count_example_schema.png" style="width: 466.40000000000003px; height: 69.60000000000001px;" /></a>
-<p class="caption"><span class="caption-text">Figure 1: Schema for testing the <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> widget.</span></p>
+<p class="caption"><span class="caption-text">Figure 1: Schema for testing the <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a> widget.</span></p>
 </div>
-<p>Basically, the purpose of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> is to determine the frequency
+<p>Basically, the purpose of widget <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a> is to determine the frequency
 of segment types in an input segmentation. The label of that segmentation must
 be indicated in the <strong>Segmentation</strong> menu of section <strong>Units</strong> in the widget&#8217;s
 interface, while other controls may be left in their default state for now
@@ -82,12 +82,12 @@ essentially the same data as table 1
 the order of columns).</p>
 <div class="figure align-center" id="id2">
 <span id="counting-segment-types-fig2"></span><img alt="Counting the frequency of letter types with widget :ref:`Count`" src="_images/count_example.png" />
-<p class="caption"><span class="caption-text">Figure 2: Counting the frequency of letter types with widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>.</span></p>
+<p class="caption"><span class="caption-text">Figure 2: Counting the frequency of letter types with widget <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a>.</span></p>
 </div>
 <p>Note that checkbox <em>Compute automatically</em> is unchecked by default so that
 the user must click on <strong>Compute</strong> to trigger computations. The motivation for
 this default setting is that
-<a class="reference internal" href="table_construction_widgets.html"><span class="doc">table construction widgets</span></a> can be quite
+<a class="reference internal" href="reference.html#table-construction-widgets"><span class="std std-ref">table construction widgets</span></a> can be quite
 slow when operating on large segmentations, and it can be annoying to see
 computations starting again whenever an interface element is modified.</p>
 <p>To obtain the frequency of letter <em>bigrams</em> (i.e. pairs of successive
@@ -144,8 +144,8 @@ nonzero frequency.</p>
 <h2>2.3.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference internal" href="segmentations_tables.html"><span class="doc">Getting started: From segmentations to tables</span></a></li>
-<li><a class="reference internal" href="count.html#count"><span class="std std-ref">Reference: Count widget</span></a></li>
-<li><a class="reference internal" href="table_construction_widgets.html"><span class="doc">Reference: Table construction widgets</span></a></li>
+<li><a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Reference: Count widget</span></a></li>
+<li><a class="reference internal" href="reference.html#table-construction-widgets"><span class="std std-ref">Reference: Table construction widgets</span></a></li>
 <li><a class="reference internal" href="count_unit_frequency.html"><span class="doc">Cookbook: Count unit frequency</span></a></li>
 </ul>
 </div>

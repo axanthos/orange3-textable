@@ -47,7 +47,7 @@ the order of columns).
 Note that checkbox *Compute automatically* is unchecked by default so that
 the user must click on **Compute** to trigger computations. The motivation for
 this default setting is that
-:doc:`table construction widgets <table_construction_widgets>` can be quite
+:ref:`table construction widgets <table_construction_widgets>` can be quite
 slow when operating on large segmentations, and it can be annoying to see
 computations starting again whenever an interface element is modified.
 
@@ -77,5 +77,5 @@ See also
 
 * :doc:`Getting started: From segmentations to tables <segmentations_tables>`
 * :ref:`Reference: Count widget <Count>`
-* :doc:`Reference: Table construction widgets <table_construction_widgets>`
+* :ref:`Reference: Table construction widgets <table_construction_widgets>`
 * :doc:`Cookbook: Count unit frequency <count_unit_frequency>`

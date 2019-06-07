@@ -103,6 +103,6 @@ See also
 * :ref:`Reference: Merge widget <Merge>`
 * :ref:`Reference: Segment widget <Segment>`
 * :ref:`Reference: Count widget <Count>`
-* :doc:`Reference: Table construction widgets <table_construction_widgets>`
+* :ref:`Reference: Table construction widgets <table_construction_widgets>`
 
 

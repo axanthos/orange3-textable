@@ -57,7 +57,7 @@
             
   <div class="section" id="keyboard-input-and-segmentation-display">
 <h1>1.2. Keyboard input and segmentation display<a class="headerlink" href="#keyboard-input-and-segmentation-display" title="Permalink to this headline">¶</a></h1>
-<p>Typing text in a <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> widget is the simplest way to
+<p>Typing text in a <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> widget is the simplest way to
 import a string in Orange Textable. This widget
 emits in output a segmentation containing a single segment whose address
 points to the entire string that was typed. This segmentation is assigned the
@@ -65,28 +65,28 @@ label specified in the <strong>Output segmentation label</strong> field (see
 <a class="reference internal" href="#keyboard-input-segmentation-fig1"><span class="std std-ref">figure 1</span></a> below):</p>
 <div class="figure align-center" id="id1">
 <span id="keyboard-input-segmentation-fig1"></span><img alt="Example usage of widget Text Field" src="_images/text_field_example.png" />
-<p class="caption"><span class="caption-text">Figure 1: Typing <em>a simple example</em> in widget <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a>.</span></p>
+<p class="caption"><span class="caption-text">Figure 1: Typing <em>a simple example</em> in widget <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a>.</span></p>
 </div>
 <p>This widget&#8217;s simplicity makes it most adequate for pedagogic purposes. Later,
 we will discover other, more powerful ways of importing strings.</p>
-<p>The <a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a> widget can be used to visualize the details
+<p>The <a class="reference internal" href="widgets/display.html#display"><span class="std std-ref">Display</span></a> widget can be used to visualize the details
 of a segmentation. By default, it shows the segmentation&#8217;s label followed by
 each successive segment&#8217;s address and content. A segmentation sent by a
-<a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance will contain a single segment
+<a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance will contain a single segment
 covering the whole string (see <a class="reference internal" href="#keyboard-input-segmentation-fig2"><span class="std std-ref">figure 2</span></a> below).</p>
 <div class="figure align-center" id="id2">
 <span id="keyboard-input-segmentation-fig2"></span><img alt="Example usage of widget Display" src="_images/display_example.png" />
-<p class="caption"><span class="caption-text">Figure 2: Viewing <em>a simple example</em> in widget <a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a>.</span></p>
+<p class="caption"><span class="caption-text">Figure 2: Viewing <em>a simple example</em> in widget <a class="reference internal" href="widgets/display.html#display"><span class="std std-ref">Display</span></a>.</span></p>
 </div>
-<p>By default, <a class="reference internal" href="display.html#display"><span class="std std-ref">Display</span></a> passes its input data without
+<p>By default, <a class="reference internal" href="widgets/display.html#display"><span class="std std-ref">Display</span></a> passes its input data without
 modification to its output connections. It is very useful for viewing
 intermediate results in an Orange Textable schema and making sure that other
 widgets process data as expected.</p>
 <div class="section" id="see-also">
 <h2>1.2.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Reference: Text Field widget</span></a></li>
-<li><a class="reference internal" href="display.html#display"><span class="std std-ref">Reference: Display widget</span></a></li>
+<li><a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Reference: Text Field widget</span></a></li>
+<li><a class="reference internal" href="widgets/display.html#display"><span class="std std-ref">Reference: Display widget</span></a></li>
 <li><a class="reference internal" href="import_text_keyboard.html"><span class="doc">Cookbook: Import text from keyboard</span></a></li>
 <li><a class="reference internal" href="display_text_content.html"><span class="doc">Cookbook: Display text content</span></a></li>
 </ul>

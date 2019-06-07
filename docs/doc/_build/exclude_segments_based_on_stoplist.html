@@ -77,9 +77,9 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><strong>Widget</strong></td>
-<td><a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a></td>
-<td><a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a></td>
-<td><a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a></td>
+<td><a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a></td>
+<td><a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a></td>
+<td><a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Intersect</span></a></td>
 </tr>
 <tr class="row-even"><td><strong>Icon</strong></td>
 <td><img alt="textfield_icon" src="_images/TextField_36.png" /></td>
@@ -100,23 +100,23 @@
 <div class="figure align-center" id="id1">
 <span id="exclude-segments-based-on-stoplist-fig1"></span><a class="reference internal image-reference" href="_images/exclude_segments.png"><img alt="Exclude segments based on a stoplist with instances of Text Field, Segment and Intersect" src="_images/exclude_segments.png" style="width: 584.0px; height: 500.0px;" /></a>
 <p class="caption"><span class="caption-text">Figure 1: Exclude segments based on a stoplist with instances of
-<a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a>, <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> and <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a></span></p>
+<a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a>, <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a> and <a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Intersect</span></a></span></p>
 </div>
 <ol class="arabic simple">
-<li>Create an instance of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> on the canvas and paste into it
+<li>Create an instance of <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> on the canvas and paste into it
 the stoplist you want to use.</li>
 <li>Follow the indications given in <a class="reference internal" href="segment_text.html"><span class="doc">Cookbook: Segment text in smaller
 units</span></a> in order to segment the stoplist into words; in what
 follows, it is assumed that the label of the resulting segmentation is
 <em>stop words</em>.</li>
-<li>Create an instance of <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> on the canvas.</li>
+<li>Create an instance of <a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Intersect</span></a> on the canvas.</li>
 <li>Drag and drop from the output connection (righthand side) of the widget
 instance that emits the segmentation to be filtered (here the top instance
-of <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a>) to the <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> instance&#8217;s input connection
+of <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a>) to the <a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Intersect</span></a> instance&#8217;s input connection
 (lefthand side).</li>
-<li>Likewise, connect the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> instance that emits the <em>stop words</em>
-segmentation to the <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> instance.</li>
-<li>Open the <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> instance&#8217;s interface by double-clicking on its
+<li>Likewise, connect the <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a> instance that emits the <em>stop words</em>
+segmentation to the <a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Intersect</span></a> instance.</li>
+<li>Open the <a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Intersect</span></a> instance&#8217;s interface by double-clicking on its
 icon on the canvas.</li>
 <li>In the <strong>Intersect</strong> section, choose <strong>Mode: Exclude</strong>.</li>
 <li>In the <strong>Source segmentation</strong> field, choose the label of the word
@@ -126,7 +126,7 @@ field, choose the label the segmentation containing the stopwords (here:
 <li>Click the <strong>Send</strong> button (or make sure the <strong>Send automatically</strong>
 checkbox is selected).</li>
 <li>A segmentation containing the filtered segmentation is then available on
-the <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> instance&#8217;s output connections; to display or export
+the <a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Intersect</span></a> instance&#8217;s output connections; to display or export
 it, see <a class="reference internal" href="cookbook.html#cookbook-toc-text-output-ref"><span class="std std-ref">Cookbook: Text output</span></a>.</li>
 </ol>
 </div>
@@ -140,7 +140,7 @@ it, see <a class="reference internal" href="cookbook.html#cookbook-toc-text-outp
 <h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference internal" href="using_segmentation_filter_another.html"><span class="doc">Getting started: Using a segmentation to filter another</span></a></li>
-<li><a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Reference: Intersect widget</span></a></li>
+<li><a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Reference: Intersect widget</span></a></li>
 <li><a class="reference internal" href="cookbook.html#cookbook-toc-text-input-ref"><span class="std std-ref">Cookbook: Text input</span></a></li>
 <li><a class="reference internal" href="segment_text.html"><span class="doc">Cookbook: Segment text in smaller units</span></a></li>
 <li><a class="reference internal" href="cookbook.html#cookbook-toc-text-output-ref"><span class="std std-ref">Cookbook: Text output</span></a></li>

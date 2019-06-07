@@ -12,7 +12,7 @@ limitation in the perspective of text processing. To overcome this issue (as
 much as possible), Orange Textable defines its own Unicode-friendly table
 representation format.
 
-Every :doc:`table construction widget <table_construction_widgets>` in Orange
+Every :ref:`table construction widget <table_construction_widgets>` in Orange
 Textable emits data in the internal format of Orange Textable. Instances of
 these widget must then be connected with an instance of :ref:`Convert`, which
 has mainly two purposes:
@@ -49,7 +49,7 @@ encoding is used by default. Export proper is performed by clicking the
 **Export** button and selecting the output file in the dialog that appears.
 
 The take-home message here is this: when you create an instance of a
-:doc:`table construction widget <table_construction_widgets>`, you may
+:ref:`table construction widget <table_construction_widgets>`, you may
 systematically create a new instance of :ref:`Convert` and connect
 them together. Usually, moreover, you will want to connect the
 :ref:`Convert` instance to a *Data Table* instance (from the *Data*
@@ -61,5 +61,5 @@ See also
 --------
 
 * :ref:`Reference: Convert widget <convert>`
-* :doc:`Reference: Table construction widgets <table_construction_widgets>`
+* :ref:`Reference: Table construction widgets <table_construction_widgets>`
 * :ref:`Cookbook: Table output <cookbook_toc_table_output_ref>`

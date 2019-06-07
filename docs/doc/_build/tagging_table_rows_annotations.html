@@ -60,22 +60,22 @@
 <p>There are several situations in which annotations attached to a segment can be
 used in place of this segment&#8217;s content. A particularly common case consists
 in using annotations for tagging the rows of a table built with an instance
-of <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>, <a class="reference internal" href="length.html#length"><span class="std std-ref">Length</span></a>, <a class="reference internal" href="variety.html#variety"><span class="std std-ref">Variety</span></a>, or <a class="reference internal" href="category.html#category"><span class="std std-ref">Category</span></a>.</p>
+of <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a>, <a class="reference internal" href="widgets/length.html#length"><span class="std std-ref">Length</span></a>, <a class="reference internal" href="widgets/variety.html#variety"><span class="std std-ref">Variety</span></a>, or <a class="reference internal" href="widgets/category.html#category"><span class="std std-ref">Category</span></a>.</p>
 <p>Consider the example of the texts in English and French introduced
 <a class="reference internal" href="annotating_merging.html"><span class="doc">here</span></a>. Suppose that after having merged them into
-a single segmentation with an instance of <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> (<strong>Output segmentation
+a single segmentation with an instance of <a class="reference internal" href="widgets/merge.html#merge"><span class="std std-ref">Merge</span></a> (<strong>Output segmentation
 label:</strong> <em>texts</em>), we segment these three texts into letters with an instance
-of <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> (<strong>Regex</strong> <code class="docutils literal"><span class="pre">\w</span></code>, <strong>Output segmentation label:</strong> <em>letters</em>),
+of <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a> (<strong>Regex</strong> <code class="docutils literal"><span class="pre">\w</span></code>, <strong>Output segmentation label:</strong> <em>letters</em>),
 as in the schema shown on
 <a class="reference internal" href="#tagging-table-rows-annotations-fig1"><span class="std std-ref">figure 1</span></a> below; both
 segmentations (<em>texts</em> and <em>letters</em>) can then be sent to an instance of
-<a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> for building a table with the frequency of each letter in
+<a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a> for building a table with the frequency of each letter in
 each text.</p>
 <div class="figure align-center" id="id1">
 <span id="tagging-table-rows-annotations-fig1"></span><a class="reference internal image-reference" href="_images/tagging_rows_annotations_schema.png"><img alt="Counting letter frequency in three texts" src="_images/tagging_rows_annotations_schema.png" style="width: 479.20000000000005px; height: 216.0px;" /></a>
 <p class="caption"><span class="caption-text">Figure 1: Schema for counting letter frequency in three texts.</span></p>
 </div>
-<p>Let us suppose, first, that the instance of <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> is configured as
+<p>Let us suppose, first, that the instance of <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a> is configured as
 shown on <a class="reference internal" href="#tagging-table-rows-annotations-fig2"><span class="std std-ref">figure 2</span></a> below, so that
 the definition of contexts&#8211;that is, rows of the frequency table&#8211;is based on
 the content of the three texts.</p>
@@ -190,7 +190,7 @@ application, where texts often contain thousand or even millions of
 characters. To avoid that, it is useful to tag the table&#8217;s rows with
 annotation values attached to segments rather than with these segments&#8217;
 content. To that effect, the desired annotation key must be selected in the
-<strong>Contexts</strong> section of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>&#8216;s interface.</p>
+<strong>Contexts</strong> section of widget <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a>&#8216;s interface.</p>
 <div class="figure align-center" id="id4">
 <span id="tagging-table-rows-annotations-fig3"></span><img alt="Tagging contexts with annotation values" src="_images/count_tagging_rows_annotations_language.png" />
 <p class="caption"><span class="caption-text">Figure 3: Tagging contexts with annotation values.</span></p>
@@ -288,10 +288,10 @@ the contexts that must be kept separated (e.g. <em>en_1</em> and <em>en_2</em>).
 <h2>3.4.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference internal" href="annotating_merging.html"><span class="doc">Getting started: Annotating by merging</span></a></li>
-<li><a class="reference internal" href="merge.html#merge"><span class="std std-ref">Reference: Merge widget</span></a></li>
-<li><a class="reference internal" href="segment.html#segment"><span class="std std-ref">Reference: Segment widget</span></a></li>
-<li><a class="reference internal" href="count.html#count"><span class="std std-ref">Reference: Count widget</span></a></li>
-<li><a class="reference internal" href="table_construction_widgets.html"><span class="doc">Reference: Table construction widgets</span></a></li>
+<li><a class="reference internal" href="widgets/merge.html#merge"><span class="std std-ref">Reference: Merge widget</span></a></li>
+<li><a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Reference: Segment widget</span></a></li>
+<li><a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Reference: Count widget</span></a></li>
+<li><a class="reference internal" href="reference.html#table-construction-widgets"><span class="std std-ref">Reference: Table construction widgets</span></a></li>
 </ul>
 </div>
 </div>

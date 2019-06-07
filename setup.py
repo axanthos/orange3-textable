@@ -102,23 +102,23 @@ ENTRY_POINTS = {
         'Textable = _textable.widgets',
     ),
     "orange.canvas.help": (
-        'html-index = _textable:WIDGET_HELP_PATH',
+        'html-index = _textable.widgets:WIDGET_HELP_PATH',
     ),
 }
 
-# def include_documentation(local_dir, install_dir):
-    # global DATA_FILES
-    # if 'bdist_wheel' in sys.argv and not path.exists(local_dir):
-        # print("Directory '{}' does not exist. "
-              # "Please build documentation before running bdist_wheel."
-              # .format(path.abspath(local_dir)))
-        # sys.exit(0)
+def include_documentation(local_dir, install_dir):
+    global DATA_FILES
+    if 'bdist_wheel' in sys.argv and not path.exists(local_dir):
+        print("Directory '{}' does not exist. "
+              "Please build documentation before running bdist_wheel."
+              .format(path.abspath(local_dir)))
+        sys.exit(0)
 
-    # doc_files = []
-    # for dirpath, dirs, files in walk(local_dir):
-        # doc_files.append((dirpath.replace(local_dir, install_dir),
-                          # [path.join(dirpath, f) for f in files]))
-    # DATA_FILES.extend(doc_files)
+    doc_files = []
+    for dirpath, dirs, files in walk(local_dir):
+        doc_files.append((dirpath.replace(local_dir, install_dir),
+                          [path.join(dirpath, f) for f in files]))
+    DATA_FILES.extend(doc_files)
 
     
 if __name__ == '__main__':

@@ -77,7 +77,7 @@ further processed (see <a class="reference internal" href="cookbook.html#cookboo
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><strong>Widget</strong></td>
-<td><a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a></td>
+<td><a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a></td>
 </tr>
 <tr class="row-even"><td><strong>Icon</strong></td>
 <td><img alt="extract_xml_icon" src="_images/ExtractXML_36.png" /></td>
@@ -94,22 +94,22 @@ further processed (see <a class="reference internal" href="cookbook.html#cookboo
 <div class="figure align-center" id="id1">
 <span id="convert-xml-tags-into-orange-textable-annotations-fig1"></span><a class="reference internal image-reference" href="_images/convert_xml_tags_widget_interfaces.png"><img alt="Convert XML tags into Orange Textable annotations with an instance of Extract XML" src="_images/convert_xml_tags_widget_interfaces.png" style="width: 512.0px; height: 384.0px;" /></a>
 <p class="caption"><span class="caption-text">Figure 1: Convert XML tags into Orange Textable annotations with an
-instance of <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a></span></p>
+instance of <a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a></span></p>
 </div>
 <ol class="arabic simple">
-<li>Create an instance of <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> on the canvas.</li>
+<li>Create an instance of <a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> on the canvas.</li>
 <li>Drag and drop from the output connection (righthand side) of the widget
-instance that emits the data containing XML markup (e.g. <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a>)
-to the <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> widget instance&#8217;s input connection (lefthand
+instance that emits the data containing XML markup (e.g. <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a>)
+to the <a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> widget instance&#8217;s input connection (lefthand
 side).</li>
-<li>Open the <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> instance&#8217;s interface by double-clicking on its
+<li>Open the <a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> instance&#8217;s interface by double-clicking on its
 icon on the canvas.</li>
 <li>In the <strong>XML Extraction</strong> section, insert the desired <strong>XML element</strong>
 (here <code class="docutils literal"><span class="pre">w</span></code>).</li>
 <li>Click the <strong>Send</strong> button (or make sure the <strong>Send automatically</strong>
 checkbox is selected).</li>
 <li>A segmentation containing a segment for each occurrence of the specified
-tag is then available on the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> instance&#8217;s output connections;
+tag is then available on the <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a> instance&#8217;s output connections;
 to display or export it, see <a class="reference internal" href="cookbook.html#cookbook-toc-text-output-ref"><span class="std std-ref">Cookbook: Text output</span></a>.</li>
 </ol>
 </div>
@@ -122,7 +122,7 @@ resulting segmentation: only their content is included in the output.</li>
 associated with the created segments.</li>
 <li>Note that it is only possible to extract instances of a single XML element
 type at a time (here <code class="docutils literal"><span class="pre">w</span></code>).</li>
-<li>However, it is possible to chain several <a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> instances in
+<li>However, it is possible to chain several <a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Extract XML</span></a> instances in
 order to successively extract instances of different XML elements. For
 example, a first instance to extract <code class="docutils literal"><span class="pre">div</span></code> type elements, a second to
 extract <code class="docutils literal"><span class="pre">w</span></code> type elements, and so on. In this case, it is important to
@@ -133,7 +133,7 @@ make sure that the <strong>Remove markup</strong> option is <em>not</em> selecte
 <h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><a class="reference internal" href="converting_xml_markup_annotations.html"><span class="doc">Getting started: Converting XML markup to annotations</span></a></li>
-<li><a class="reference internal" href="extract_xml.html#extract-xml"><span class="std std-ref">Reference: Extract XML widget</span></a></li>
+<li><a class="reference internal" href="widgets/extract_xml.html#extract-xml"><span class="std std-ref">Reference: Extract XML widget</span></a></li>
 <li><a class="reference internal" href="cookbook.html#cookbook-toc-text-input-ref"><span class="std std-ref">Cookbook: Text input</span></a></li>
 <li><a class="reference internal" href="cookbook.html#cookbook-toc-segmentation-manipulation-ref"><span class="std std-ref">Cookbook: Segmentation manipulation</span></a></li>
 <li><a class="reference internal" href="cookbook.html#cookbook-toc-text-output-ref"><span class="std std-ref">Cookbook: Text output</span></a></li>

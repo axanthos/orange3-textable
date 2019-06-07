@@ -28,8 +28,8 @@ Getting Started
    getting-started/installation
 
 
-Widgets
-=======
+Widget reference
+================
 
 Text Import
 -----------

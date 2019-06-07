@@ -57,49 +57,49 @@
             
   <div class="section" id="annotating-by-merging">
 <h1>3.2. Annotating by merging<a class="headerlink" href="#annotating-by-merging" title="Permalink to this headline">¶</a></h1>
-<p>Widget <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> makes it possible to convert the labels of its input
+<p>Widget <a class="reference internal" href="widgets/merge.html#merge"><span class="std std-ref">Merge</span></a> makes it possible to convert the labels of its input
 segmentations into annotation values. Suppose for instance that three
-instances of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> have been created: two instances containing a
+instances of <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> have been created: two instances containing a
 text in English, and one containing a text in French. We might want to merge
 these three segmentations into a single one, where each segment would be
 associated with an annotation whose key is <em>language</em> and whose value is
 either <em>en</em> or <em>fr</em>. The first step would then be to indicate in the label of
-each <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance the desired annotation value for this text, as
+each <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance the desired annotation value for this text, as
 shown on <a class="reference internal" href="#annotating-merging-fig1"><span class="std std-ref">figure 1</span></a> below.</p>
 <div class="figure align-center" id="id1">
 <span id="annotating-merging-fig1"></span><a class="reference internal image-reference" href="_images/annotation_text_field.png"><img alt="Specifying annotations values using the label of Text field instances" src="_images/annotation_text_field.png" style="width: 340.8px; height: 358.40000000000003px;" /></a>
-<p class="caption"><span class="caption-text">Figure 1: Specifying annotations values using the label of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instances.</span></p>
+<p class="caption"><span class="caption-text">Figure 1: Specifying annotations values using the label of <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instances.</span></p>
 </div>
-<p>The three instances of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> should then be connected to an
-instance of <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a> as shown on <a class="reference internal" href="#annotating-merging-fig2"><span class="std std-ref">figure 2</span></a>
+<p>The three instances of <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> should then be connected to an
+instance of <a class="reference internal" href="widgets/merge.html#merge"><span class="std std-ref">Merge</span></a> as shown on <a class="reference internal" href="#annotating-merging-fig2"><span class="std std-ref">figure 2</span></a>
 below.</p>
 <div class="figure align-center" id="id2">
 <span id="annotating-merging-fig2"></span><img alt="Creating annotations with Merge" src="_images/merge_annotations_example_schema.png" />
-<p class="caption"><span class="caption-text">Figure 2: Example schema for creating annotations with <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
+<p class="caption"><span class="caption-text">Figure 2: Example schema for creating annotations with <a class="reference internal" href="widgets/merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
 </div>
-<p>One must still specify, in the interface of <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>, the annotation key
+<p>One must still specify, in the interface of <a class="reference internal" href="widgets/merge.html#merge"><span class="std std-ref">Merge</span></a>, the annotation key
 to which values <em>en</em> and <em>fr</em> should be associated. This can be done by
 entering the string <em>language</em> in field <strong>Import labels with key</strong>, having
 previously ensured that labels would actually be converted into annotation
 values by checking the box at the left of this line (see <a class="reference internal" href="#annotating-merging-fig3"><span class="std std-ref">figure 3</span></a> below).</p>
 <div class="figure align-center" id="id3">
 <span id="annotating-merging-fig3"></span><img alt="Importing labels as annotation values with Merge" src="_images/merge_annotations_example.png" />
-<p class="caption"><span class="caption-text">Figure 3: Importing labels as annotation values with <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
+<p class="caption"><span class="caption-text">Figure 3: Importing labels as annotation values with <a class="reference internal" href="widgets/merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
 </div>
 <p>The result of these operations can be viewed using an instance of
-<a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>, whose output is shown on
+<a class="reference internal" href="widgets/merge.html#merge"><span class="std std-ref">Merge</span></a>, whose output is shown on
 <a class="reference internal" href="#annotating-merging-fig4"><span class="std std-ref">figure 4</span></a> below. Note that for each segment in
 the merged segmentation, an annotation value <em>en</em> or <em>fr</em> associated with key
 <em>language</em> is displayed between the segment&#8217;s address and its content.</p>
 <div class="figure align-center" id="id4">
 <span id="annotating-merging-fig4"></span><img alt="Annotations created with Merge" src="_images/display_merged_annotations_example.png" />
-<p class="caption"><span class="caption-text">Figure 4: Annotations created with <a class="reference internal" href="merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
+<p class="caption"><span class="caption-text">Figure 4: Annotations created with <a class="reference internal" href="widgets/merge.html#merge"><span class="std std-ref">Merge</span></a>.</span></p>
 </div>
 <div class="section" id="see-also">
 <h2>3.2.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Reference: Text Field widget</span></a></li>
-<li><a class="reference internal" href="merge.html#merge"><span class="std std-ref">Reference: Merge widget</span></a></li>
+<li><a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Reference: Text Field widget</span></a></li>
+<li><a class="reference internal" href="widgets/merge.html#merge"><span class="std std-ref">Reference: Merge widget</span></a></li>
 </ul>
 </div>
 </div>

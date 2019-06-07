@@ -8,7 +8,7 @@ From segmentations to tables
 The main purpose of Orange Textable is to build tables based on texts. Central
 to this process are the segmentations we have learned to create and manipulate
 earlier. Indeed, Orange Textable provides a number of
-:doc:`widgets for table construction <table_construction_widgets>`, and they
+:ref:`widgets for table construction <table_construction_widgets>`, and they
 all operate on the basis of one or more segmentations.
 
 For the time being, we will focus on the construction of frequency tables,
@@ -53,4 +53,4 @@ the attraction or repulsion between specific units and contexts).
 See also
 --------
  
-* :doc:`Reference: Table construction widgets <table_construction_widgets>`
+* :ref:`Reference: Table construction widgets <table_construction_widgets>`

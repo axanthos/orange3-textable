@@ -34,7 +34,7 @@ below):
   the application of Orange Textable to more complex and interesting problems 
   in text data analysis.
 
-* The :doc:`Reference <reference>` is an exhaustive explanation of the role
+* The :doc:`Widgets <reference>` section is an exhaustive explanation of the role
   and effect of every component of Orange Textable's interface. The purpose of
   this part of the documentation is to help you find a specific piece of
   information about Orange Textable's operation when using it for your own

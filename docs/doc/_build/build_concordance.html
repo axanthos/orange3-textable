@@ -76,8 +76,8 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><strong>Widget</strong></td>
-<td><a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a></td>
-<td><a class="reference internal" href="context.html#context"><span class="std std-ref">Context</span></a></td>
+<td><a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a></td>
+<td><a class="reference internal" href="widgets/context.html#context"><span class="std std-ref">Context</span></a></td>
 </tr>
 <tr class="row-even"><td><strong>Icon</strong></td>
 <td><img alt="segment_icon" src="_images/Segment_36.png" /></td>
@@ -98,29 +98,29 @@
 <p class="caption"><span class="caption-text">Figure 1: Widgets used build a concordance and their interfaces</span></p>
 </div>
 <ol class="arabic simple">
-<li>Create an instance of <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> and an instance of <a class="reference internal" href="context.html#context"><span class="std std-ref">Context</span></a> on
+<li>Create an instance of <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a> and an instance of <a class="reference internal" href="widgets/context.html#context"><span class="std std-ref">Context</span></a> on
 the canvas.</li>
 <li>Drag and drop from the output connection (righthand side) of the widget
 instance that emits the segmentation in which occurrences of the query
-string will be retrieved (e.g. <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a>) to the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a>
+string will be retrieved (e.g. <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a>) to the <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a>
 widget instance&#8217;s input connection (lefthand side).</li>
-<li>Also connect both the <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance and the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a>
-instance to the <a class="reference internal" href="context.html#context"><span class="std std-ref">Context</span></a> instance (thus forming a triangle).</li>
-<li>Open the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> instance&#8217;s interface by double-clicking on its
+<li>Also connect both the <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance and the <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a>
+instance to the <a class="reference internal" href="widgets/context.html#context"><span class="std std-ref">Context</span></a> instance (thus forming a triangle).</li>
+<li>Open the <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a> instance&#8217;s interface by double-clicking on its
 icon on the canvas and type the string whose context of occurrence will be
 examined in the <strong>Regex</strong> field (here: <code class="docutils literal"><span class="pre">hobbit</span></code>); assign it a
 recognizable <strong>Output segmentation label</strong>, such as <em>key_segments</em> for
 instance.</li>
 <li>Click the <strong>Send</strong> button (or make sure the <strong>Send automatically</strong>
 checkbox is selected).</li>
-<li>Open the <a class="reference internal" href="context.html#context"><span class="std std-ref">Context</span></a> instance&#8217;s interface by double-clicking on its
+<li>Open the <a class="reference internal" href="widgets/context.html#context"><span class="std std-ref">Context</span></a> instance&#8217;s interface by double-clicking on its
 icon on the canvas.</li>
 <li>In the <strong>Units</strong> section, select the segmentation that contains the
 occurrences of the query string (here: <em>key_segments</em>) using the
 <strong>Segmentation</strong> drop-down menu.</li>
 <li>In the <strong>Contexts</strong> section, choose <strong>Mode: Containing segmentation</strong>
 and select the segmentation that contains the original text (here:
-<em>text_string</em>, as emitted by the <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance) using the
+<em>text_string</em>, as emitted by the <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> instance) using the
 <strong>Segmentation</strong> drop-down menu.</li>
 <li>Tick the <strong>Max. length</strong> checkbox and set the maximum number of characters
 that should be displayed on either side of each occurrence of the query
@@ -128,14 +128,14 @@ string.</li>
 <li>Click the <strong>Compute</strong> button (or make sure the <strong>Compute automatically</strong>
 checkbox is selected).</li>
 <li>A table showing the results is then available at the output connection of
-the <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> instance; to display or export it, see <a class="reference internal" href="cookbook.html#cookbook-toc-table-output-ref"><span class="std std-ref">Cookbook:
+the <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a> instance; to display or export it, see <a class="reference internal" href="cookbook.html#cookbook-toc-table-output-ref"><span class="std std-ref">Cookbook:
 Table output</span></a>.</li>
 </ol>
 </div>
 <div class="section" id="comment">
 <h2>Comment<a class="headerlink" href="#comment" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>In the <strong>Regex</strong> field of the <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> widget you can use all the
+<li>In the <strong>Regex</strong> field of the <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a> widget you can use all the
 syntax of Python&#8217;s regular expression (<em>cf.</em> <a class="reference external" href="http://docs.python.org/library/re.html">Python documentation</a>); for instance, if you wish to
 restrict your search to entire words, you might frame the query string with
 word boundary anchors <code class="docutils literal"><span class="pre">\b</span></code> (in our example <code class="docutils literal"><span class="pre">\bhobbit\b</span></code>).</li>
@@ -144,8 +144,8 @@ word boundary anchors <code class="docutils literal"><span class="pre">\b</span>
 <div class="section" id="see-also">
 <h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="segment.html#segment"><span class="std std-ref">Reference: Segment widget</span></a></li>
-<li><a class="reference internal" href="context.html#context"><span class="std std-ref">Reference: Context widget</span></a></li>
+<li><a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Reference: Segment widget</span></a></li>
+<li><a class="reference internal" href="widgets/context.html#context"><span class="std std-ref">Reference: Context widget</span></a></li>
 <li><a class="reference internal" href="cookbook.html#cookbook-toc-text-input-ref"><span class="std std-ref">Cookbook: Text input</span></a></li>
 <li><a class="reference internal" href="cookbook.html#cookbook-toc-segmentation-manipulation-ref"><span class="std std-ref">Cookbook: Segmentation manipulation</span></a></li>
 <li><a class="reference internal" href="cookbook.html#cookbook-toc-table-output-ref"><span class="std std-ref">Cookbook: Table output</span></a></li>

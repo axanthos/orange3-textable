@@ -60,7 +60,7 @@
 <p>There are many situations where we might want so selectively in- or exclude
 segments from a segmentation. For instance, a user might be want to exclude
 from a word segmentation all those that are less than 4 letters long. The
-<a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> widget is tailored for such tasks.</p>
+<a class="reference internal" href="widgets/select.html#select"><span class="std std-ref">Select</span></a> widget is tailored for such tasks.</p>
 <p>The widget&#8217;s interface (see <a class="reference internal" href="#partitioning-segmentations-fig1"><span class="std std-ref">figure 1</span></a>
 below) offers a choice between two modes: <em>Include</em> and <em>Exclude</em>. Depending
 on this parameter, incoming segments that satisfy a given condition will be
@@ -70,19 +70,19 @@ by means of a regex, which will be applied to each incoming segment
 successively. (For now, the option <strong>Annotation key: (none)</strong> can be ignored.)</p>
 <div class="figure align-center" id="id1">
 <span id="partitioning-segmentations-fig1"></span><img alt="Example usage of widget Select" src="_images/select_example.png" />
-<p class="caption"><span class="caption-text">Figure 1: Excluding short words with widget <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a>.</span></p>
+<p class="caption"><span class="caption-text">Figure 1: Excluding short words with widget <a class="reference internal" href="widgets/select.html#select"><span class="std std-ref">Select</span></a>.</span></p>
 </div>
 <p>In the example of <a class="reference internal" href="#partitioning-segmentations-fig1"><span class="std std-ref">figure 1</span></a>, the
 widget is configured to exclude all incoming segments containing no more than
 3 letters. Note that without the <em>beginning of segment</em> and <em>end of segment</em>
 anchors (<code class="docutils literal"><span class="pre">^</span></code> and <code class="docutils literal"><span class="pre">$</span></code>), all words containing <em>at least</em> a sequence of 1 to
 3 letters&#8211;i.e. all the words&#8211;would be excluded.</p>
-<p>Note that <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> automatically emits a second segmentation
+<p>Note that <a class="reference internal" href="widgets/select.html#select"><span class="std std-ref">Select</span></a> automatically emits a second segmentation
 containing all the segments that have been discarded from the main output
 segmentation (in the case of <a class="reference internal" href="#partitioning-segmentations-fig1"><span class="std std-ref">figure 1</span></a>
 above, that would be all words less than 4 letters long). This feature is
 useful when both the selected <em>and</em> the discarded segments are to be further
-processed on distinct branches. By default, when <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> is connected to
+processed on distinct branches. By default, when <a class="reference internal" href="widgets/select.html#select"><span class="std std-ref">Select</span></a> is connected to
 another widget, the main segmentation is being emitted. In order to send the
 segmentation of discarded segments instead, right-click on the outgoing
 connection and select <strong>Reset Signals</strong> (see
@@ -105,7 +105,7 @@ between two widgets.</span></p>
 <div class="section" id="see-also">
 <h2>1.6.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="select.html#select"><span class="std std-ref">Reference: Select widget</span></a></li>
+<li><a class="reference internal" href="widgets/select.html#select"><span class="std std-ref">Reference: Select widget</span></a></li>
 <li><a class="reference internal" href="include_exclude_based_on_pattern.html"><span class="doc">Cookbook: Include/exclude segments based on a pattern</span></a></li>
 </ul>
 </div>

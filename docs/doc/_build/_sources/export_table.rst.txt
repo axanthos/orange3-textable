@@ -18,7 +18,7 @@ Some text has been imported in Orange Textable (see :ref:`Cookbook: Text input
 <cookbook_toc_text_input_ref>`) and possibly further processed (see
 :ref:`Cookbook: Segmentation manipulation
 <cookbook_toc_segmentation_manipulation_ref>`). A table has been created by
-means of one of Orange Textable's :doc:`table construction widgets
+means of one of Orange Textable's :ref:`table construction widgets
 <table_construction_widgets>` (see :ref:`Cookbook: Text analysis
 <cookbook_toc_text_analysis_ref>`).
 
@@ -72,7 +72,7 @@ See also
 --------
 
 * :ref:`Reference: Convert widget <Convert>`
-* :doc:`Reference: Table construction widgets <table_construction_widgets>`
+* :ref:`Reference: Table construction widgets <table_construction_widgets>`
 * :ref:`Cookbook: Text input <cookbook_toc_text_input_ref>`
 * :ref:`Cookbook: Segmentation manipulation
   <cookbook_toc_segmentation_manipulation_ref>`

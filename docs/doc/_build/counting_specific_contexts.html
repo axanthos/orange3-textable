@@ -57,7 +57,7 @@
             
   <div class="section" id="counting-in-specific-contexts">
 <h1>2.4. Counting in specific contexts<a class="headerlink" href="#counting-in-specific-contexts" title="Permalink to this headline">¶</a></h1>
-<p>Section <strong>Contexts</strong> of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>&#8216;s interface lets the
+<p>Section <strong>Contexts</strong> of widget <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a>&#8216;s interface lets the
 user define the <em>contexts</em> in which units should be counted. Thus, while
 the settings of section <strong>Units</strong> affect the <em>columns</em> of the resulting table,
 those of section <strong>Contexts</strong> affect its <em>rows</em>.</p>
@@ -68,7 +68,7 @@ contained a single row (aside from the header row). Orange Textable offers
 three other modes corresponding to three different definitions of contexts.</p>
 <div class="figure align-center" id="id1">
 <span id="counting-specific-contexts-fig1"></span><img alt="Interface of widget Count, Sliding window mode" src="_images/count_mode_sliding_window_example.png" />
-<p class="caption"><span class="caption-text">Figure 1: Interface of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>, Sliding window mode.</span></p>
+<p class="caption"><span class="caption-text">Figure 1: Interface of widget <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a>, Sliding window mode.</span></p>
 </div>
 <p>When <strong>Mode</strong> is set to <strong>Sliding window</strong> (see
 <a class="reference internal" href="#counting-specific-contexts-fig1"><span class="std std-ref">figure 1</span></a> above), context is defined
@@ -213,7 +213,7 @@ segmentation.</p>
 adjacent segment types occurring to the left and/or right of each position.</p>
 <div class="figure align-center" id="id3">
 <span id="counting-specific-contexts-fig2"></span><img alt="Interface of widget Count, Left-right neighborhood mode" src="_images/count_mode_left_right_neighborhood_example.png" />
-<p class="caption"><span class="caption-text">Figure 2: Interface of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a>, Left-right neighborhood mode.</span></p>
+<p class="caption"><span class="caption-text">Figure 2: Interface of widget <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a>, Left-right neighborhood mode.</span></p>
 </div>
 <p>For instance, setting <strong>Left context size</strong> to 1 and <strong>Right context size</strong>
 to 0 amounts to counting the frequency of each segment type given the type
@@ -348,19 +348,19 @@ if the following three conditions are met:</p>
 <a class="reference internal" href="#counting-specific-contexts-fig3"><span class="std std-ref">figure 3</span></a> below.</p>
 <div class="figure align-center" id="id5">
 <span id="counting-specific-contexts-fig3"></span><a class="reference internal image-reference" href="_images/count_mode_containing_segmentation_example_schema.png"><img alt="Schema for testing the Count widget (Containing segmentation mode)" src="_images/count_mode_containing_segmentation_example_schema.png" style="width: 528.0px; height: 154.4px;" /></a>
-<p class="caption"><span class="caption-text">Figure 3: Schema for testing the <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> widget (Containing segmentation mode).</span></p>
+<p class="caption"><span class="caption-text">Figure 3: Schema for testing the <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a> widget (Containing segmentation mode).</span></p>
 </div>
-<p>The first instance of <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> produces a word segmentation (<strong>Regex:</strong>
+<p>The first instance of <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a> produces a word segmentation (<strong>Regex:</strong>
 <code class="docutils literal"><span class="pre">\w+</span></code> and <strong>Output segmentation label:</strong> <em>words</em>) which the second instance
 (<em>Segment (1)</em>) further decomposes into letters (<strong>Regex:</strong> <code class="docutils literal"><span class="pre">\w</span></code> and
-<strong>Output segmentation label:</strong> <em>letters</em>). The instance of <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> is
+<strong>Output segmentation label:</strong> <em>letters</em>). The instance of <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a> is
 configured as shown on <a class="reference internal" href="#counting-specific-contexts-fig4"><span class="std std-ref">figure 4</span></a>
 below. The resulting table is the same as table 2
 <a class="reference internal" href="segmentations_tables.html#segmentations-tables-table2"><span class="std std-ref">here</span></a> (possibly with a different ordering
 of columns).</p>
 <div class="figure align-center" id="id6">
 <span id="counting-specific-contexts-fig4"></span><img alt="Interface of widget Count, Containing segmentation mode" src="_images/count_mode_containing_segmentation_example.png" />
-<p class="caption"><span class="caption-text">Figure 4: Configuration of widget <a class="reference internal" href="count.html#count"><span class="std std-ref">Count</span></a> for counting letters in words.</span></p>
+<p class="caption"><span class="caption-text">Figure 4: Configuration of widget <a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Count</span></a> for counting letters in words.</span></p>
 </div>
 <p>Note that in this mode, checking the <strong>Merge contexts</strong> box still restricts
 counting to those units that are contained whithin the segments of another
@@ -376,7 +376,7 @@ case (contrary to what can be seen in table 1
 <ul class="simple">
 <li><a class="reference internal" href="counting_segment_types.html"><span class="doc">Getting started: Counting segment types</span></a></li>
 <li><a class="reference internal" href="segmentations_tables.html"><span class="doc">Getting started: From segmentations to tables</span></a></li>
-<li><a class="reference internal" href="count.html#count"><span class="std std-ref">Reference: Count widget</span></a></li>
+<li><a class="reference internal" href="widgets/count.html#count"><span class="std std-ref">Reference: Count widget</span></a></li>
 <li><a class="reference internal" href="count_unit_frequency.html"><span class="doc">Cookbook: Count unit frequency</span></a></li>
 <li><a class="reference internal" href="count_occurrences_smaller_units_larger_segments.html"><span class="doc">Cookbook: Count occurrences of smaller units in larger segments</span></a></li>
 <li><a class="reference internal" href="count_transition_frequency_adjacent_units.html"><span class="doc">Cookbook: Count transition frequency between adjacent units</span></a></li>

@@ -58,11 +58,11 @@
   <div class="section" id="using-a-segmentation-to-filter-another">
 <h1>1.7. Using a segmentation to filter another<a class="headerlink" href="#using-a-segmentation-to-filter-another" title="Permalink to this headline">¶</a></h1>
 <p>In some cases, the number of forms to be selectively included in or excluded
-from a segmentation is too large for using the <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a> widget.
+from a segmentation is too large for using the <a class="reference internal" href="widgets/select.html#select"><span class="std std-ref">Select</span></a> widget.
 A typical example is the removal of &#8220;stopwords&#8221; from a text: in English for
 instance, although the list of such words is finite, it is too long to try
 to encode it by means of a regex (cf. <a class="reference external" href="http://members.unine.ch/jacques.savoy/clef/englishST.txt">an example of such a list</a>).</p>
-<p>The purpose of widget <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> is precisely to solve that
+<p>The purpose of widget <a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Intersect</span></a> is precisely to solve that
 kind of problem. It takes two segmentations in input and lets the user include
 in or exclude from the first (<em>source</em>) segmentation those segments whose
 content is the same as that of a segment in the second (<em>filter</em>)
@@ -70,28 +70,28 @@ segmentation. The widget&#8217;s basic interface is shown on
 <a class="reference internal" href="#using-segmentation-filter-another-fig1"><span class="std std-ref">figure 1</span></a> below).</p>
 <div class="figure align-center" id="id1">
 <span id="using-segmentation-filter-another-fig1"></span><img alt="Interface of widget Intersect configured for stopword removal" src="_images/intersect_example.png" />
-<p class="caption"><span class="caption-text">Figure 1: Interface of widget <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> configured for stopword removal.</span></p>
+<p class="caption"><span class="caption-text">Figure 1: Interface of widget <a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Intersect</span></a> configured for stopword removal.</span></p>
 </div>
-<p>Similarly to widget <a class="reference internal" href="select.html#select"><span class="std std-ref">Select</span></a>, user must choose between modes
+<p>Similarly to widget <a class="reference internal" href="widgets/select.html#select"><span class="std std-ref">Select</span></a>, user must choose between modes
 <strong>Include</strong> and <strong>Exclude</strong>. The next step is to specify which incoming
 segmentation plays the role of the <strong>Source</strong> segmentation and the <strong>Filter</strong>
 segmentation. (Here again, we will ignore the <strong>Annotation key</strong> option for
 the time being.)</p>
 <p>In order to try out the widget, set up a schema similar to the one shown on
 <a class="reference internal" href="#using-segmentation-filter-another-fig2"><span class="std std-ref">figure 2</span></a> below). The first
-instance of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a> contains the text to process (for
+instance of <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a> contains the text to process (for
 instance the
 <a class="reference external" href="http://www.un.org/en/documents/udhr/">Universal Declaration of Human Rights</a>),
 while the second instance, <em>Text Field (1)</em>, contains the list of English
-stopwords mentioned above. Both instances of <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> produce
+stopwords mentioned above. Both instances of <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a> produce
 a word segmentation with regex <code class="docutils literal"><span class="pre">\w+</span></code>; the only difference in their
 configuration is the output segmentation label , i.e. <em>words</em> for <em>Segment</em>
 and <em>stopwords</em> for <em>Segment (1)</em>. Finally, the instance of
-<a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> is configured as shown on
+<a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Intersect</span></a> is configured as shown on
 <a class="reference internal" href="#using-segmentation-filter-another-fig1"><span class="std std-ref">figure 1</span></a> above.</p>
 <div class="figure align-center" id="id2">
 <span id="using-segmentation-filter-another-fig2"></span><a class="reference internal image-reference" href="_images/intersect_example_schema.png"><img alt="Schema illustrating the use of the Intersect widget for stopword removal" src="_images/intersect_example_schema.png" style="width: 408.0px; height: 196.8px;" /></a>
-<p class="caption"><span class="caption-text">Figure 2: Example schema for removing stopword using widget <a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Intersect</span></a> .</span></p>
+<p class="caption"><span class="caption-text">Figure 2: Example schema for removing stopword using widget <a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Intersect</span></a> .</span></p>
 </div>
 <p>The content of the first segments of the resulting segmentation is:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">PREAMBLE</span>
@@ -113,7 +113,7 @@ and <em>stopwords</em> for <em>Segment (1)</em>. Finally, the instance of
 <span class="o">...</span>
 </pre></div>
 </div>
-<p id="using-segmentation-filter-another-ex"><strong>Exercise:</strong> Based on an instance of <a class="reference internal" href="text_field.html#text-field"><span class="std std-ref">Text Field</span></a>, produce
+<p id="using-segmentation-filter-another-ex"><strong>Exercise:</strong> Based on an instance of <a class="reference internal" href="widgets/text_field.html#text-field"><span class="std std-ref">Text Field</span></a>, produce
 a segmentation containing all words less than 4 letters long that appear at
 the beginning of each line, excluding <em>I, you, he, she, we</em>.
 (<a class="reference internal" href="#solution-using-segmentation-filter-another-ex"><span class="std std-ref">solution</span></a>)</p>
@@ -123,7 +123,7 @@ solution. The 4 instances in the lower part of the schema (<em>Text Field (1)</e
 <em>Segment (1)</em>, <em>Intersect</em>, and <em>Display</em>) are configured as in
 <a class="reference internal" href="#using-segmentation-filter-another-fig2"><span class="std std-ref">figure 2</span></a> above&#8211;with
 <em>Text Field (1)</em> containing the list of pronouns to exclude.</p>
-<p>The difference lies in the addition of a <a class="reference internal" href="segment.html#segment"><span class="std std-ref">Segment</span></a> instance in
+<p>The difference lies in the addition of a <a class="reference internal" href="widgets/segment.html#segment"><span class="std std-ref">Segment</span></a> instance in
 the upper branch. In this branch, the first instance (<em>Segment</em>) produces a
 segmentation into lines with regex <code class="docutils literal"><span class="pre">.+</span></code> while <em>Segment (2)</em> extracts the
 first word of each line, provided it is shorter than 4 letters
@@ -137,8 +137,8 @@ pronouns listed above.</p>
 <div class="section" id="see-also">
 <h2>1.7.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="select.html#select"><span class="std std-ref">Reference: Select widget</span></a></li>
-<li><a class="reference internal" href="intersect.html#intersect"><span class="std std-ref">Reference: Intersect widget</span></a></li>
+<li><a class="reference internal" href="widgets/select.html#select"><span class="std std-ref">Reference: Select widget</span></a></li>
+<li><a class="reference internal" href="widgets/intersect.html#intersect"><span class="std std-ref">Reference: Intersect widget</span></a></li>
 <li><a class="reference internal" href="exclude_segments_based_on_stoplist.html"><span class="doc">Cookbook: Exclude segments based on a stoplist</span></a></li>
 </ul>
 </div>

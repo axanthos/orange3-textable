@@ -62,9 +62,9 @@
 limitation in the perspective of text processing. To overcome this issue (as
 much as possible), Orange Textable defines its own Unicode-friendly table
 representation format.</p>
-<p>Every <a class="reference internal" href="table_construction_widgets.html"><span class="doc">table construction widget</span></a> in Orange
+<p>Every <a class="reference internal" href="reference.html#table-construction-widgets"><span class="std std-ref">table construction widget</span></a> in Orange
 Textable emits data in the internal format of Orange Textable. Instances of
-these widget must then be connected with an instance of <a class="reference internal" href="convert.html#convert"><span class="std std-ref">Convert</span></a>, which
+these widget must then be connected with an instance of <a class="reference internal" href="widgets/convert.html#convert"><span class="std std-ref">Convert</span></a>, which
 has mainly two purposes:</p>
 <blockquote>
 <div><ul class="simple">
@@ -86,7 +86,7 @@ Unicode should be avoided here since they are currently not well supported by
 other widgets in Orange Canvas.</p>
 <div class="figure align-center" id="id1">
 <span id="converting-table-formats-fig1"></span><img alt="Basic interface of widget Convert" src="_images/convert_basic_example.png" />
-<p class="caption"><span class="caption-text">Figure 1: Basic interface of widget <a class="reference internal" href="convert.html#convert"><span class="std std-ref">Convert</span></a>.</span></p>
+<p class="caption"><span class="caption-text">Figure 1: Basic interface of widget <a class="reference internal" href="widgets/convert.html#convert"><span class="std std-ref">Convert</span></a>.</span></p>
 </div>
 <p>The encoding for text file export can also be selected in this section
 (<strong>Output file</strong>); in this case there are no counter-indications to
@@ -94,18 +94,18 @@ the use of Unicode. Note that when exporting to the clipboard, the utf-8
 encoding is used by default. Export proper is performed by clicking the
 <strong>Export</strong> button and selecting the output file in the dialog that appears.</p>
 <p>The take-home message here is this: when you create an instance of a
-<a class="reference internal" href="table_construction_widgets.html"><span class="doc">table construction widget</span></a>, you may
-systematically create a new instance of <a class="reference internal" href="convert.html#convert"><span class="std std-ref">Convert</span></a> and connect
+<a class="reference internal" href="reference.html#table-construction-widgets"><span class="std std-ref">table construction widget</span></a>, you may
+systematically create a new instance of <a class="reference internal" href="widgets/convert.html#convert"><span class="std std-ref">Convert</span></a> and connect
 them together. Usually, moreover, you will want to connect the
-<a class="reference internal" href="convert.html#convert"><span class="std std-ref">Convert</span></a> instance to a <em>Data Table</em> instance (from the <em>Data</em>
+<a class="reference internal" href="widgets/convert.html#convert"><span class="std std-ref">Convert</span></a> instance to a <em>Data Table</em> instance (from the <em>Data</em>
 tab of Orange Canvas) in order to view the table just built&#8211;except in the
 case where it contains Unicode data that wouldn&#8217;t display correctly in
 <em>Data table</em>.</p>
 <div class="section" id="see-also">
 <h2>2.2.1. See also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="convert.html#convert"><span class="std std-ref">Reference: Convert widget</span></a></li>
-<li><a class="reference internal" href="table_construction_widgets.html"><span class="doc">Reference: Table construction widgets</span></a></li>
+<li><a class="reference internal" href="widgets/convert.html#convert"><span class="std std-ref">Reference: Convert widget</span></a></li>
+<li><a class="reference internal" href="reference.html#table-construction-widgets"><span class="std std-ref">Reference: Table construction widgets</span></a></li>
 <li><a class="reference internal" href="cookbook.html#cookbook-toc-table-output-ref"><span class="std std-ref">Cookbook: Table output</span></a></li>
 </ul>
 </div>
