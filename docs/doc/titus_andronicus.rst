@@ -59,4 +59,4 @@ departs from that of that of the rest of the play.
     Figure 2: Act 1 Scene 1 is a consistent stylistic outlier in Shakespeare's play.    
 
 .. [#] The schema can be downloaded from :download:`here
-       <schemas/titus_andronicus_for_textable_v2.0a3.ows>`.
+       <schemas/titus_andronicus_for_textable_v3.1.3.ows>`.
