@@ -9,6 +9,7 @@
 .. toctree::
    :maxdepth: 2
 
+=============================
 Orange Textable documentation
 =============================
 
@@ -45,7 +46,7 @@ below):
 
 
 Contents
---------
+========
 
 .. toctree::
     :maxdepth: 2
@@ -70,78 +71,72 @@ Contents
 .. _widgets:
 
 Widgets
-=======
+-------
 
-This part of the documentation explains the effect of every control of each
-Orange Textable widget. Widgets making up Orange Textable are grouped
-into 4 main categories based on the type of functionality they offer. A
-section of this part of the documentation covers each such category. The 
-last section documents the details of JSON formats that can be used for the 
-configuration of some of Orange Textable's widgets.
 
 .. _text_import_widgets:
 
 Text Import
------------
+~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-    Text Field <widgets/text_field>
-    Text Files <widgets/text_files>
-    URLs <widgets/urls>
+   widgets/text_field
+   widgets/text_files
+   widgets/urls
   
 
 .. _segmentation_processing_widgets:
 
 Segmentation Processing
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   Preprocess <widgets/preprocess>
-   Recode <widgets/recode>
-   Merge <widgets/merge>
-   Segment <widgets/segment>
-   Select <widgets/select>
-   Intersect <widgets/intersect>
-   Extract XML <widgets/extract_xml>
-   Display <widgets/display>
+   widgets/preprocess
+   widgets/recode
+   widgets/merge
+   widgets/segment
+   widgets/select
+   widgets/intersect
+   widgets/extract_xml
+   widgets/display
 
 
 .. _table_construction_widgets:
 
 Table Construction
-------------------
+~~~~~~~~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   Count <widgets/count>
-   Length <widgets/length>
-   Variety <widgets/variety>
-   Cooccurrence <widgets/cooccurrence>
-   Context <widgets/context>
-   Category <widgets/category>
+   widgets/count
+   widgets/length
+   widgets/variety
+   widgets/cooccurrence
+   widgets/context
+   widgets/category
  
 
 .. _conversion_export_widgets:
 
 Conversion/Export 
------------------
+~~~~~~~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 1
 
-   Convert <widgets/convert>
-   Message <widgets/message>
+   widgets/convert
+   widgets/message
 
    
 .. _json_format:
 
 JSON im-/export format
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 Beyond a restricted number of sources, substitutions, or regular expressions,
 it becomes tedious to configure instances of widgets :ref:`Text Files`,
