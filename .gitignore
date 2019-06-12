@@ -111,6 +111,5 @@ dist/*
 build/*
 *.pyc
 Thumbs.db
-docs/doc/_build/.doctree/*
-docs/doc/_build/.buildinfo
+docs/doc/_build/*
 release.bat
