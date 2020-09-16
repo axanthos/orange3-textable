@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.16.11'
+__version__ = '0.16.12'
 
 import sys
 import os
@@ -28,6 +28,7 @@ import re
 from PyQt5.QtWidgets import QTextBrowser, QFileDialog, QMessageBox, QApplication
 from PyQt5.QtCore import QUrl
 
+import LTTL
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 import LTTL.Segmenter as Segmenter
@@ -60,6 +61,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
     # Settings...
     displayAdvancedSettings = settings.Setting(False)
     customFormatting = settings.Setting(False)
+    limitNumberOfSegments = settings.Setting(True)
     customFormat = settings.Setting(u'%(__content__)s')
     segmentDelimiter = settings.Setting(u'\\n')
     header = settings.Setting(u'')
@@ -115,6 +117,29 @@ class OWTextableDisplay(OWTextableBaseWidget):
         )
         gui.separator(widget=self.controlArea, height=3)
 
+        # Options box...
+        optionsBox = gui.widgetBox(
+            widget=self.controlArea,
+            box=u'Options',
+            orientation='vertical',
+            addSpace=True,
+        )
+        gui.checkBox(
+            widget=optionsBox,
+            master=self,
+            value='limitNumberOfSegments',
+            label=u'Limit number of displayed segments',
+            callback=self.sendButton.settingsChanged,
+            tooltip=(
+                "By default, the number of displayed segments is limited to\n"
+                "%i, to keep the widget's execution time reasonably short.\n"
+                "Unchecking this box makes it possible to display all the\n"
+                "segments. Use with caution, as execution time can become\n"
+                "prohibitively long for segmentations with more than a few\n."
+                "thousand segments." % LTTL.Segmentation.MAX_SEGMENT_STRING
+            ),
+        )
+        
         # Custom formatting box...
         formattingBox = gui.widgetBox(
             widget=self.controlArea,
@@ -440,6 +465,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
                         codecs.decode(self.footer, 'unicode_escape'),
                         True,
                         progress_callback=progressBar.advance,
+                        display_all=not self.limitNumberOfSegments,
                     )
                     self.infoBox.settingsChanged()
                     self.advancedExportBox.setDisabled(False)
@@ -474,7 +500,16 @@ class OWTextableDisplay(OWTextableBaseWidget):
                     self,
                     iterations=len(self.segmentation)
                 )
-                if self.basicFormatHTML or self.displayAdvancedSettings:
+                if self.displayAdvancedSettings:
+                    displayedString, summarized = self.segmentation.to_html(
+                        True,
+                        progressBar.advance,
+                        display_all=not self.limitNumberOfSegments,
+                    )
+                    self.navigationBox.setEnabled(
+                        len(self.segmentation) > 1 and not summarized
+                    )
+                elif self.basicFormatHTML:
                     displayedString, summarized = self.segmentation.to_html(
                         True,
                         progressBar.advance,
@@ -487,6 +522,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
                         formatting="%(__content__)s",
                         segment_delimiter="\n",
                         progress_callback=progressBar.advance,
+                        #display_all=not self.limitNumberOfSegments,
                     )
                 self.browser.append(displayedString)
                 self.displayedSegmentation.update(

@@ -29,7 +29,7 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.31"   # file version
+__version__ = "1.0.32"   # file version
 
 NAME = 'Orange3-Textable'
 DOCUMENTATION_NAME = 'Textable'
@@ -79,7 +79,7 @@ INSTALL_REQUIRES = (
     'Orange3 >= 3.14.0',
     'setuptools',
     'future',
-    'LTTL >= 2.0.9',
+    'LTTL >= 2.0.11',
     'chardet',
     'treetaggerwrapper',
     'appdirs',
