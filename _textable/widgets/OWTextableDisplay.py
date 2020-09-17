@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.16.12'
+__version__ = '0.16.13'
 
 import sys
 import os
@@ -447,6 +447,11 @@ class OWTextableDisplay(OWTextableBaseWidget):
             self.mainArea.setDisabled(True)
             self.infoBox.setText(u"Processing, please wait...", "warning")
 
+            if len(self.segmentation) <= LTTL.Segmentation.MAX_SEGMENT_STRING:
+                display_all = None
+            else:
+                display_all = not self.limitNumberOfSegments
+
             if customFormatting:
                 self.navigationBox.setVisible(False)
                 self.navigationBox.setDisabled(True)
@@ -465,7 +470,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
                         codecs.decode(self.footer, 'unicode_escape'),
                         True,
                         progress_callback=progressBar.advance,
-                        display_all=not self.limitNumberOfSegments,
+                        display_all=display_all,
                     )
                     self.infoBox.settingsChanged()
                     self.advancedExportBox.setDisabled(False)
@@ -504,7 +509,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
                     displayedString, summarized = self.segmentation.to_html(
                         True,
                         progressBar.advance,
-                        display_all=not self.limitNumberOfSegments,
+                        display_all,
                     )
                     self.navigationBox.setEnabled(
                         len(self.segmentation) > 1 and not summarized
@@ -522,7 +527,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
                         formatting="%(__content__)s",
                         segment_delimiter="\n",
                         progress_callback=progressBar.advance,
-                        #display_all=not self.limitNumberOfSegments,
                     )
                 self.browser.append(displayedString)
                 self.displayedSegmentation.update(
