@@ -79,7 +79,7 @@ INSTALL_REQUIRES = (
     'Orange3 >= 3.14.0',
     'setuptools',
     'future',
-    'LTTL >= 2.0.11',
+    'LTTL >= 2.0.12',
     'chardet',
     'treetaggerwrapper',
     'appdirs',

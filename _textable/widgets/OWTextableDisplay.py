@@ -135,7 +135,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 "%i, to keep the widget's execution time reasonably short.\n"
                 "Unchecking this box makes it possible to display all the\n"
                 "segments. Use with caution, as execution time can become\n"
-                "prohibitively long for segmentations with more than a few\n."
+                "prohibitively long for segmentations with more than a few\n"
                 "thousand segments." % LTTL.Segmentation.MAX_SEGMENT_STRING
             ),
         )
