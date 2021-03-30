@@ -482,7 +482,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                     u'Please enter an annotation key for element import.',
                     'warning'
                 )
-                self.send('Extracted data', None)
+                self.send('Extracted data', None, self)
                 return
         else:
             importElementAs = None
