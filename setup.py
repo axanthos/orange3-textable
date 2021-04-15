@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """File setup.py
-Copyright 2012-2020 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2021 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable package.
 
@@ -29,12 +29,12 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.34"   # file version
+__version__ = "1.0.35"   # file version
 
 NAME = 'Orange3-Textable'
 DOCUMENTATION_NAME = 'Textable'
 
-VERSION = '3.1.8'  # package version
+VERSION = '3.1.9'  # package version
 
 DESCRIPTION = 'Textable add-on for Orange 3 data mining software package.'
 LONG_DESCRIPTION = open(
