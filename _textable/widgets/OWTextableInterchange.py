@@ -234,9 +234,9 @@ class OWTextableInterchange(OWTextableBaseWidget):
             new_segmentation = Segmentation(new_segments, self.captionTitle)
             msg_seg = u'%i segment@p' % len(new_segmentation)
             msg_seg = pluralize(msg_seg, len(new_segmentation))
-            self.send('Textable segmentation', new_segmentation)
+            self.send('Textable segmentation', new_segmentation, self)
         else:
-             self.send('Textable segmentation', None)
+             self.send('Textable segmentation', None, self)
 
         # Convert segmentation to corpus...
         if self.segmentation:
