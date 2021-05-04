@@ -13,55 +13,51 @@
 Orange Textable documentation
 =============================
 
-Welcome to the documentation of Orange Textable.
 
-This documentation is divided in five main sections (see detailed `contents`_
-below):
+Introduction
+============
 
-* The :doc:`Introduction <introduction>` offers a brief overview of what
-  Orange Textable can do, as well as how it should be installed and
-  configured. This is what you should read first if you are unsure whether
-  Orange Textable is the right piece of software for your needs or how to set
-  it up.
-
-* Section :doc:`Getting started <getting_started>` is a tutorial that
-  introduces the basic concepts underlying Orange Textable and its main usage
-  patterns. This should be your first reading once you've determined that
-  Orange Textable can be useful to you and installed it.
-
-* In the :doc:`Cookbook <cookbook>` section, you'll find a number of concise,
-  illustrated recipes describing how to perform various basic tasks with
-  Orange Textable. When starting a new project, you might want to skim through
-  this section in case some elementary operation you need is listed there.
-
-* Section :doc:`Case studies <case_studies>` presents several illustrations of 
-  the application of Orange Textable to more complex and interesting problems 
-  in text data analysis.
-
-* The :ref:`Widgets <widgets>` section is an exhaustive explanation of the role
-  and effect of every component of Orange Textable's interface. The purpose of
-  this part of the documentation is to help you find a specific piece of
-  information about Orange Textable's operation when using it for your own
-  projects.
-
-
-Contents
-========
+This section offers a brief overview of what Orange Textable can do, as well
+as how it should be installed and configured. This is what you should read
+first if you are unsure whether Orange Textable is the right piece of software
+for your needs or how to set it up.
 
 .. toctree::
     :maxdepth: 2
 
     Introduction <introduction>
 
+Getting started
+===============
+
+This section is a tutorial that introduces the basic concepts underlying
+Orange Textable and its main usage patterns. This should be your first reading
+once you've determined that Orange Textable can be useful to you and installed
+it.
+
 .. toctree::
     :maxdepth: 2
 
     Getting started <getting_started>
 
+Cookbook
+========
+
+In this section, you'll find a number of concise, illustrated recipes
+describing how to perform various basic tasks with Orange Textable. When
+starting a new project, you might want to skim through this section in case
+some elementary operation you need is listed there.
+
 .. toctree::
     :maxdepth: 2
 
     Cookbook <cookbook>
+
+Case studies
+============
+
+This section presents several illustrations of the application of Orange
+Textable to more complex and interesting problems in text data analysis.
 
 .. toctree::
     :maxdepth: 2
@@ -71,85 +67,73 @@ Contents
 .. _widgets:
 
 Widgets
--------
+=======
 
+This section is an exhaustive explanation of the role and effect of every
+component of Orange Textable's interface. The purpose of this part of the
+documentation is to help you find a specific piece of information about Orange
+Textable's operation when using it for your own projects.
 
 .. _text_import_widgets:
 
-Text Import
-~~~~~~~~~~~
+Text import widgets:
 
 .. toctree::
    :maxdepth: 1
 
-   widgets/text_field
-   widgets/text_files
-   widgets/urls
+   Text Field <widgets/text_field>
+   Text Files <widgets/text_files>
+   URLs <widgets/urls>
   
 
 .. _segmentation_processing_widgets:
 
-Segmentation Processing
-~~~~~~~~~~~~~~~~~~~~~~~
+Segmentation processing widgets:
 
 .. toctree::
    :maxdepth: 1
 
-   widgets/preprocess
-   widgets/recode
-   widgets/merge
-   widgets/segment
-   widgets/select
-   widgets/intersect
-   widgets/extract_xml
-   widgets/display
+   Preprocess <widgets/preprocess>
+   Recode <widgets/recode>
+   Merge <widgets/merge>
+   Segment <widgets/segment>
+   Select <widgets/select>
+   Intersect <widgets/intersect>
+   Extract XML <widgets/extract_xml>
+   Display <widgets/display>
 
 
 .. _table_construction_widgets:
 
-Table Construction
-~~~~~~~~~~~~~~~~~~
+Table construction widgets:
 
 .. toctree::
    :maxdepth: 1
 
-   widgets/count
-   widgets/length
-   widgets/variety
-   widgets/cooccurrence
-   widgets/context
-   widgets/category
+   Count <widgets/count>
+   Length <widgets/length>
+   Variety <widgets/variety>
+   Cooccurrence <widgets/cooccurrence>
+   Context <widgets/context>
+   Category <widgets/category>
  
 
 .. _conversion_export_widgets:
 
-Conversion/Export 
-~~~~~~~~~~~~~~~~~
+Conversion/export widgets:
 
 .. toctree::
    :maxdepth: 1
 
-   widgets/convert
-   widgets/message
+   Convert <widgets/convert>
+   Message <widgets/message>
 
    
 .. _json_format:
 
-JSON im-/export format
-~~~~~~~~~~~~~~~~~~~~~~
-
-Beyond a restricted number of sources, substitutions, or regular expressions,
-it becomes tedious to configure instances of widgets :ref:`Text Files`,
-:ref:`URLs`, :ref:`Recode`, and :ref:`Segment` using their advanced interface.
-To alleviate this issue, these widgets enable the user to import or export
-manually edited configuration lists in `JSON <http://www.json.org/>`_ format
-as described in the following sections.
+JSON im-/export format:
 
 .. toctree::
     :maxdepth: 1
-
-    Generalities <json_generalities>
-    File list <json_file_list>
-    URL list <json_url_list>
-    Substitution list <json_substitution_list>
-    Regular expression list <json_regular_expression_list>
+    
+    JSON import/export <json_import_export>

@@ -65,9 +65,9 @@ master_doc = 'index'
 # General information about the project.
 project = module_setup.DOCUMENTATION_NAME
 copyright = (
-      u'2012-2019 '
+      u'2012-2021 '
     + author
-    + u', translation \u00A9 2014-2019 University of Lausanne'
+    + u', translation \u00A9 2014-2021 University of Lausanne'
 )
 
 # The version info for the project you're documenting, acts as replacement for

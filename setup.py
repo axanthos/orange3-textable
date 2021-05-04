@@ -29,12 +29,12 @@ if sys.version_info < (3, ):
 
 from setuptools import setup, find_packages
 
-__version__ = "1.0.35"   # file version
+__version__ = "1.0.36"   # file version
 
 NAME = 'Orange3-Textable'
 DOCUMENTATION_NAME = 'Textable'
 
-VERSION = '3.1.9'  # package version
+VERSION = '3.1.10'  # package version
 
 DESCRIPTION = 'Textable add-on for Orange 3 data mining software package.'
 LONG_DESCRIPTION = open(
@@ -122,7 +122,7 @@ def include_documentation(local_dir, install_dir):
 
     
 if __name__ == '__main__':
-    # include_documentation('docs/doc/_build/', 'help/orange3-textable')
+    include_documentation('docs/doc/_build/', 'help/orange3-textable')
     setup(
         name=NAME,
         version=VERSION,
