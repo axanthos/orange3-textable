@@ -202,18 +202,18 @@ class Treetagger(OWTextableBaseWidget):
 
         if not self.TreetaggerPath:
             self.infoBox.setText(self.noTreetaggerPathWarning, "warning")
-            self.send("Tagged data", None)
+            self.send("Tagged data", None, self)
             return
         elif not self.getAvailableLanguages():
             self.infoBox.setText(self.noLanguageParameterWarning, "warning")
-            self.send("Tagged data", None)
+            self.send("Tagged data", None, self)
             return
         elif not self.segmentation:
             self.infoBox.setText(
                 u"Widget needs input",
                 "warning"
             )
-            self.send("Tagged data", None)
+            self.send("Tagged data", None, self)
             return
 
         # Initialize progress bar.
@@ -312,7 +312,7 @@ class Treetagger(OWTextableBaseWidget):
                     "XML, or it doesn't contain instances of '&#60;' and '\x3e'",
                     "error"
                 )
-                self.send("Tagged data", None)
+                self.send("Tagged data", None, self)
                 self.progressBar.finish()
                 self.controlArea.setDisabled(False)
                 return
