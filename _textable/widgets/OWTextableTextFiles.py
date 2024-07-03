@@ -559,7 +559,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                     encoding = detector.result['encoding']
                 fh = open(
                     filePath,
-                    mode='rU',
+                    mode='r',
                     encoding=encoding,
                 )
                 try:
