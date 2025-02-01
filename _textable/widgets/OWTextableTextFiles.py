@@ -1,6 +1,6 @@
 """
 Class OWTextableTextFiles
-Copyright 2012-2019 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2025 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable package.
 
@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.17.10'
+__version__ = '0.17.11'
 
 
 import codecs
@@ -35,16 +35,24 @@ from chardet.universaldetector import UniversalDetector
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
-import LTTL.Segmenter as Segmenter
+import LTTL.SegmenterThread as Segmenter
 
 from .TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     JSONMessage, InfoBox, SendButton, AdvancedSettings,
     addSeparatorAfterDefaultEncodings, addAutoDetectEncoding,
-    getPredefinedEncodings, normalizeCarriageReturns, pluralize
+    getPredefinedEncodings, normalizeCarriageReturns, pluralize,
+    Task
 )
 
 from Orange.widgets import widget, gui, settings
+
+# Threading
+from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
+import concurrent.futures
+from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
+from Orange.widgets.utils.widgetpreview import WidgetPreview
+from functools import partial
 
 CHUNK_LENGTH = 1000000
 CHUNK_NUM = 100
@@ -52,6 +60,10 @@ CHUNK_NUM = 100
 
 class OWTextableTextFiles(OWTextableBaseWidget):
     """Orange widget for loading text files"""
+    
+    # Signals
+    signal_prog = pyqtSignal((int, bool)) # Progress bar (value, init)
+    signal_text = pyqtSignal((str, str))  # Text label (text, infotype)
 
     name = "Text Files"
     description = "Import data from raw text files"
@@ -85,7 +97,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         super().__init__(*args, **kwargs)
 
         # Other attributes...
-        self.segmentation = None
         self.createdInputs = list()
         self.fileLabels = list()
         self.selectedFileLabels = list()
@@ -97,6 +108,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             widget=self.controlArea,
             master=self,
             callback=self.sendData,
+            cancelCallback=self.cancel_manually,
             infoBoxAttribute='infoBox',
             sendIfPreCallback=self.updateGUI,
         )
@@ -114,14 +126,14 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         # BASIC GUI...
 
         # Basic file box
-        basicFileBox = gui.widgetBox(
+        self.basicFileBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Source',
             orientation='vertical',
             addSpace=False,
         )
         basicFileBoxLine1 = gui.widgetBox(
-            widget=basicFileBox,
+            widget=self.basicFileBox,
             box=False,
             orientation='horizontal',
         )
@@ -147,9 +159,9 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"Open a dialog for selecting file."
             ),
         )
-        gui.separator(widget=basicFileBox, width=3)
+        gui.separator(widget=self.basicFileBox, width=3)
         advancedEncodingsCombobox = gui.comboBox(
-            widget=basicFileBox,
+            widget=self.basicFileBox,
             master=self,
             value='encoding',
             items=getPredefinedEncodings(),
@@ -164,21 +176,21 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         )
         addSeparatorAfterDefaultEncodings(advancedEncodingsCombobox)
         addAutoDetectEncoding(advancedEncodingsCombobox)
-        gui.separator(widget=basicFileBox, width=3)
-        self.advancedSettings.basicWidgets.append(basicFileBox)
+        gui.separator(widget=self.basicFileBox, width=3)
+        self.advancedSettings.basicWidgets.append(self.basicFileBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
         # ADVANCED GUI...
 
         # File box
-        fileBox = gui.widgetBox(
+        self.fileBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Sources',
             orientation='vertical',
             addSpace=False,
         )
         fileBoxLine1 = gui.widgetBox(
-            widget=fileBox,
+            widget=self.fileBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
@@ -246,7 +258,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         self.exportButton = gui.button(
             widget=fileBoxCol2,
             master=self,
-            label=u'Export List',
+            label=u'Export JSON',
             callback=self.exportList,
             tooltip=(
                 u"Open a dialog for selecting a file where the file\n"
@@ -256,7 +268,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         self.importButton = gui.button(
             widget=fileBoxCol2,
             master=self,
-            label=u'Import List',
+            label=u'Import JSON',
             callback=self.importList,
             tooltip=(
                 u"Open a dialog for selecting a file list to\n"
@@ -265,7 +277,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             ),
         )
         fileBoxLine2 = gui.widgetBox(
-            widget=fileBox,
+            widget=self.fileBox,
             box=False,
             orientation='vertical',
         )
@@ -373,18 +385,18 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"assigned a different encoding and annotation."
             ),
         )
-        self.advancedSettings.advancedWidgets.append(fileBox)
+        self.advancedSettings.advancedWidgets.append(self.fileBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
-        optionsBox = gui.widgetBox(
+        self.optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
             addSpace=False,
         )
         optionsBoxLine1 = gui.widgetBox(
-            widget=optionsBox,
+            widget=self.optionsBox,
             box=False,
             orientation='horizontal',
         )
@@ -409,9 +421,9 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"Annotation key for importing file names."
             ),
         )
-        gui.separator(widget=optionsBox, width=3)
+        gui.separator(widget=self.optionsBox, width=3)
         optionsBoxLine2 = gui.widgetBox(
-            widget=optionsBox,
+            widget=self.optionsBox,
             box=False,
             orientation='horizontal',
         )
@@ -436,107 +448,135 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"Annotation key for file auto-numbering."
             ),
         )
-        gui.separator(widget=optionsBox, width=3)
-        self.advancedSettings.advancedWidgets.append(optionsBox)
+        gui.separator(widget=self.optionsBox, width=3)
+        self.advancedSettings.advancedWidgets.append(self.optionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
+        
+        # Threading
+        self._task = None  # type: Optional[Task]
+        self._executor = ThreadExecutor()
+        self.cancel_operation = False
 
-        # Send button...
+        # Send button & Info box
         self.sendButton.draw()
-
-        # Info box...
         self.infoBox.draw()
-
         self.adjustSizeWithTimer()
         QTimer.singleShot(0, self.sendButton.sendIf)
+        
+        # Connect signals to slots
+        self.signal_prog.connect(self.update_progress_bar)
+        self.signal_text.connect(self.update_infobox)
+            
+    @pyqtSlot(concurrent.futures.Future)
+    def _task_finished(self, f):
+        assert self.thread() is QThread.currentThread()
+        assert self._task is not None
+        assert self._task.future is f
+        assert f.done()
 
-    def inputMessage(self, message):
-        """Handle JSON message on input connection"""
-        if not message:
-            return
-        self.displayAdvancedSettings = True
-        self.advancedSettings.setVisible(True)
-        self.clearAll()
-        self.infoBox.inputChanged()
+        self._task = None
+        
         try:
-            json_data = json.loads(message.content)
-            temp_files = list()
-            for entry in json_data:
-                path = entry.get('path', '')
-                encoding = entry.get('encoding', '')
-                annotationKey = entry.get('annotation_key', '')
-                annotationValue = entry.get('annotation_value', '')
-                if path == '' or encoding == '':
-                    self.infoBox.setText(
-                        u"Please verify keys and values of incoming "
-                        u"JSON message.",
-                        'error'
-                    )
-                    self.send('Text data', None, self)
-                    return
-                temp_files.append((
-                    path,
-                    encoding,
-                    annotationKey,
-                    annotationValue,
-                ))
-            self.files.extend(temp_files)
-            self.sendButton.settingsChanged()
-        except ValueError:
-            self.infoBox.setText(
-                u"Please make sure that incoming message is valid JSON.",
-                'error'
-            )
-            self.send('Text data', None, self)
-            return
+            # Data outputs
+            processed_data = f.result()
 
-    def sendData(self):
+            if processed_data:
+                message = u'%i segment@p sent to output ' % len(processed_data)
+                message = pluralize(message, len(processed_data))
+                numChars = 0
+                for segment in processed_data:
+                    segmentLength = len(Segmentation.get_data(segment.str_index))
+                    numChars += segmentLength
+                message += u'(%i character@p).' % numChars
+                message = pluralize(message, numChars)
+                self.infoBox.setText(message)
+                self.send('Text data', processed_data) # AS 11.2023: removed self
 
-        """Load files, create and send segmentation"""
+        except Exception as ex:
+            print(ex)
 
-        # Check that there's something on input...
-        if (
-            (self.displayAdvancedSettings and not self.files) or
-            not (self.file or self.displayAdvancedSettings)
-        ):
-            self.infoBox.setText(u'Please select input file.', 'warning')
-            self.send('Text data', None, self)
-            return
+            # Send None
+            self.send('Text data', None) # AS 11.2023: removed self
 
-        # Check that autoNumberKey is not empty (if necessary)...
-        if self.displayAdvancedSettings and self.autoNumber:
-            if self.autoNumberKey:
-                autoNumberKey = self.autoNumberKey
-            else:
-                self.infoBox.setText(
-                    u'Please enter an annotation key for auto-numbering.',
-                    'warning'
-                )
-                self.send('Text data', None, self)
-                return
+        finally:
+            # Manage GUI visibility
+            self.manageGuiVisibility(False) # Processing done/cancelled
+    
+    def cancel_manually(self):
+        """ Wrapper of cancel() method,
+        used for manual cancellations """
+        self.cancel(manualCancel=True)
+    
+    def cancel(self, manualCancel=False):
+        # Make loop break
+        self.cancel_operation = True
+
+        # Cancel current task
+        if self._task is not None:
+            self._task.cancel()
+            assert self._task.future.done()
+            # Disconnect slot
+            self._task.watcher.done.disconnect(self._task_finished)
+            self._task = None
+            
+            # Send None to output
+            self.send('Text data', None) # AS 11.2023: removed self
+            
+        if manualCancel:
+            self.infoBox.setText(u'Operation cancelled by user.', 'warning')
+            
+        # Manage GUI visibility
+        self.manageGuiVisibility(False) # Processing done/cancelled
+        
+    def manageGuiVisibility(self, processing=False):
+        """ Update GUI and make available (or not) elements
+        while the thread task is running in background """
+
+        # Thread currently running, freeze the GUI
+        if processing:
+            self.sendButton.mainButton.setDisabled(1) # Send button: DISABLED
+            self.sendButton.cancelButton.setDisabled(0) # Cancel button: ENABLED
+            self.sendButton.autoSendCheckbox.setDisabled(1) # Send automatically: DISABLED
+            self.basicFileBox.setDisabled(1) # Basic file box: DISABLED
+            self.fileBox.setDisabled(1) # File box: DISABLED
+            self.optionsBox.setDisabled(1) # Options box: DISABLED
+            self.advancedSettings.checkbox.setDisabled(1) # Advanced options checkbox: DISABLED
+
+        # Thread done or not running, unfreeze the GUI
         else:
-            autoNumberKey = None
-
-        # Clear created Inputs...
-        self.clearCreatedInputs()
+            # If "Send automatically" is disabled, reactivate "Send" button
+            if not self.sendButton.autoSendCheckbox.isChecked():
+                self.sendButton.mainButton.setDisabled(0) # Send: ENABLED
+            # Other buttons and layout
+            self.sendButton.cancelButton.setDisabled(1) # Cancel button: DISABLED
+            self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: ENABLED
+            self.basicFileBox.setDisabled(0) # Basic file box: ENABLED
+            self.fileBox.setDisabled(0) # File box: ENABLED
+            self.optionsBox.setDisabled(0) # Options box: ENABLED
+            self.advancedSettings.checkbox.setDisabled(0) # Advanced options checkbox: ENABLED
+            self.cancel_operation = False
+            self.signal_prog.emit(100, False) # 100% and do not re-init
+            self.sendButton.resetSettingsChangedFlag()
+            self.updateGUI()
+            
+    def process_data(self, myFiles):
+        """ Process data in a worker thread
+        instead of the main thread so that
+        the operations can be cancelled """
+        
+        # Emit 1%
+        self.signal_prog.emit(1, False)
+        
+        # Progress bar
+        max_itr = len(myFiles)
+        cur_itr = 1
 
         fileContents = list()
         annotations = list()
         counter = 1
-
-        if self.displayAdvancedSettings:
-            myFiles = self.files
-        else:
-            myFiles = [[self.file, self.encoding, u'', u'']]
-
-        self.infoBox.setText(u"Processing, please wait...", "warning")
-        self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(
-            self,
-            iterations=len(myFiles)
-        )
-
+    
         # Open and process each file successively...
         for myFile in myFiles:
             filePath = myFile[0]
@@ -547,6 +587,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
 
             # Try to open the file...
             self.error()
+
             try:
                 if encoding == "(auto-detect)":
                     detector = UniversalDetector()
@@ -575,28 +616,43 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                     if len(chunks):
                         fileContent += "".join(chunks)
                     del chunks
+
                 except UnicodeError:
-                    progressBar.finish()
                     if len(myFiles) > 1:
                         message = u"Please select another encoding "    \
                                   + u"for file %s." % filePath
                     else:
                         message = u"Please select another encoding."
-                    self.infoBox.setText(message, 'error')
-                    self.send('Text data', None, self)
-                    self.controlArea.setDisabled(False)
+                    
+                    # Emit message
+                    self.signal_text.emit(message, 'error')
+                    
+                    # Emit finished
+                    self.signal_prog.emit(100, False)
+                    
+                    # Send None
+                    self.send('Text data', None) # AS 11.2023: removed self
+                    
                     return
+
                 finally:
                     fh.close()
+
             except IOError:
-                progressBar.finish()
                 if len(myFiles) > 1:
                     message = u"Couldn't open file '%s'." % filePath
                 else:
                     message = u"Couldn't open file."
-                self.infoBox.setText(message, 'error')
-                self.send('Text data', None, self)
-                self.controlArea.setDisabled(False)
+                
+                # Emit message
+                self.signal_text.emit(message, 'error')
+                
+                # Emit finished
+                self.signal_prog.emit(100, False)
+                
+                # Send None
+                self.send('Text data', None) # AS 11.2023: removed self
+
                 return
 
             # Remove utf-8 BOM if necessary...
@@ -622,7 +678,15 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                     annotation[self.autoNumberKey] = counter
                     counter += 1
             annotations.append(annotation)
-            progressBar.advance()
+
+            # Update progress bar manually
+            self.signal_prog.emit(int(100*cur_itr/max_itr), False)
+            cur_itr += 1
+            
+            # Cancel operation if requested by uers
+            if self.cancel_operation:
+                self.signal_prog.emit(100, False)
+                return
 
         # Create an LTTL.Input for each file...
         if len(fileContents) == 1:
@@ -636,12 +700,18 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             myInput[0] = segment
             self.createdInputs.append(myInput)
 
+        # Update infobox and reset progress bar
+        self.signal_text.emit(u"Step 2/2: Post-processing...", "warning")
+        self.signal_prog.emit(1, True)
+
         # If there's only one file, the widget's output is the created Input.
         if len(fileContents) == 1:
-            self.segmentation = self.createdInputs[0]
-        # Otherwise the widget's output is a concatenation...
+            return self.createdInputs[0]
+
+        # Otherwise the widget's output is a concatenation...        
         else:
-            self.segmentation = Segmenter.concatenate(
+            return Segmenter.concatenate(
+                caller=self,
                 segmentations=self.createdInputs,
                 label=self.captionTitle,
                 copy_annotations=True,
@@ -649,23 +719,131 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 sort=False,
                 auto_number_as=None,
                 merge_duplicates=False,
-                progress_callback=None,
+            ) 
+
+    def sendData(self):
+
+        """Load files, create and send segmentation"""
+
+        # Check that there's something on input...
+        if (
+            (self.displayAdvancedSettings and not self.files) or
+            not (self.file or self.displayAdvancedSettings)
+        ):
+            self.infoBox.setText(u'Please select input file.', 'warning')
+            self.send('Text data', None) # AS 11.2023: removed self
+            return
+
+        # Check that autoNumberKey is not empty (if necessary)...
+        if self.displayAdvancedSettings and self.autoNumber:
+            if self.autoNumberKey:
+                autoNumberKey = self.autoNumberKey
+            else:
+                self.infoBox.setText(
+                    u'Please enter an annotation key for auto-numbering.',
+                    'warning'
+                )
+                self.send('Text data', None) # AS 11.2023: removed self
+                return
+        else:
+            autoNumberKey = None
+
+        # Clear created Inputs...
+        self.clearCreatedInputs()
+
+        if self.displayAdvancedSettings:
+            myFiles = self.files
+        else:
+            myFiles = [[self.file, self.encoding, u'', u'']]
+
+        # Infobox & progress bar
+        self.infoBox.setText(u"Step 1/2: Processing...", "warning")
+        self.progressBarInit()
+
+        # Partial function
+        threaded_function = partial(
+            self.process_data,
+            myFiles
+        )
+
+        # Threading ...
+        
+        # Cancel old tasks
+        if self._task is not None:
+            self.cancel()
+        assert self._task is None
+
+        self._task = task = Task()
+        
+        # Threading start, future, and watcher
+        task.future = self._executor.submit(threaded_function)
+        task.watcher = FutureWatcher(task.future)
+        task.watcher.done.connect(self._task_finished)
+        
+        # Manage GUI visibility
+        self.manageGuiVisibility(True) # Processing
+
+    # AS 09.2023
+    @pyqtSlot(int, bool)
+    def update_progress_bar(self, val, init):
+        """ Update progress bar in a thread-safe manner """
+        # Re-init progress bar, if needed
+        if init:
+            self.progressBarInit()
+        
+        # Update progress bar
+        if val >= 100:
+            self.progressBarFinished() # Finish progress bar     
+        elif val < 0:
+            self.progressBarSet(0)
+        else:
+            self.progressBarSet(val)
+
+    # AS 10.2023
+    @pyqtSlot(str, str)
+    def update_infobox(self, text, infotype):
+        """ Update info box in a thread-safe manner """
+        self.infoBox.setText(text, infotype) 
+
+    def inputMessage(self, message):
+        """Handle JSON message on input connection"""
+        if not message:
+            return
+        self.displayAdvancedSettings = True
+        self.advancedSettings.setVisible(True)
+        self.clearAll()
+        self.infoBox.inputChanged()
+        try:
+            json_data = json.loads(message.content)
+            temp_files = list()
+            for entry in json_data:
+                path = entry.get('path', '')
+                encoding = entry.get('encoding', '')
+                annotationKey = entry.get('annotation_key', '')
+                annotationValue = entry.get('annotation_value', '')
+                if path == '' or encoding == '':
+                    self.infoBox.setText(
+                        u"Please verify keys and values of incoming "
+                        u"JSON message.",
+                        'error'
+                    )
+                    self.send('Text data', None) # AS 11.2023: removed self
+                    return
+                temp_files.append((
+                    path,
+                    encoding,
+                    annotationKey,
+                    annotationValue,
+                ))
+            self.files.extend(temp_files)
+            self.sendButton.settingsChanged()
+        except ValueError:
+            self.infoBox.setText(
+                u"Please make sure that incoming message is valid JSON.",
+                'error'
             )
-
-        message = u'%i segment@p sent to output ' % len(self.segmentation)
-        message = pluralize(message, len(self.segmentation))
-        numChars = 0
-        for segment in self.segmentation:
-            segmentLength = len(Segmentation.get_data(segment.str_index))
-            numChars += segmentLength
-        message += u'(%i character@p).' % numChars
-        message = pluralize(message, numChars)
-        self.infoBox.setText(message)
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
-
-        self.send('Text data', self.segmentation, self)
-        self.sendButton.resetSettingsChangedFlag()
+            self.send('Text data', None) # AS 11.2023: removed self
+            return
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
@@ -930,6 +1108,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             changed = title != self.captionTitle
             super().setCaption(title)
             if changed:
+                self.cancel() # Cancel current operation
                 self.sendButton.settingsChanged()
         else:
             super().setCaption(title)

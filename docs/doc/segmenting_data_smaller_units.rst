@@ -1,23 +1,26 @@
 .. meta::
-   :description: Orange Textable documentation, segmenting data into smaller
-                 units
-   :keywords: Orange, Textable, documentation, segment, words, letters, units
+   :description: Orange Textable documentation, segmenting data
+   :keywords: Orange, Textable, documentation, segmenting, data
 
 Segmenting data into smaller units
 ==================================
 
-We have seen :doc:`previously <merging_segmentations_together>` how to combine
-several segmentations into a single one. We will often be performing the
-inverse operation: create a segmentation whose segments are *parts* of another
-segmentation's segments. Typically, we will be segmenting strings into words,
-characters, or any kind of text units that will be later counted, measured,
-and so on. This is precisely the purpose of widget :ref:`Segment`.
+We have seen previously how to combine several segmentations into a
+single one. We will often be performing the inverse operation: create a
+segmentation whose segments are *parts* of another segmentation’s
+segments. Typically, we will be segmenting strings into words,
+characters, or any kind of text units that will be later counted,
+measured, and so on. This is precisely the purpose of widget
+:doc:`Segment <segment>`.
 
-To try it out, create a new schema with an instance of :ref:`Text Field`
-connected to an instance of :ref:`Segment`, itself connected to an instance of
-:ref:`Display` (see :ref:`figure 1 <segmenting_data_smaller_units_fig1>`
-below). In what follows, we will suppose that the string typed in
-:ref:`Text Field` is *a simple example*.
+To try it out, create a new workflow with an instance of :doc:`Text Field <text_field>`
+connected to
+:doc:`Segment <segment>`,
+itself connected to
+:doc:`Display <display>`
+(see :ref:`figure 1 <segmenting_data_smaller_units_fig1>`
+below). In what follows, we will suppose that the string typed in :doc:`Text Field <text_field>`
+is *a simple example*.
 
 .. _segmenting_data_smaller_units_fig1:
 
@@ -25,37 +28,38 @@ below). In what follows, we will suppose that the string typed in
     :align: center
     :alt: Schema illustrating the usage of widget Segment
 
-    Figure 1: A schema for testing the :ref:`Segment` widget
-    
-In its basic form (i.e. with **Advanced settings** unchecked, see
-:ref:`figure 2 <segmenting_data_smaller_units_fig2>` below),
-:ref:`Segment` takes a single parameter (aside from the
-**Output segmentation label**), namely a regex. The widget then looks for all
-matches of the regex pattern in each successive input segment, and creates for
-every match a new segment in the output segmentation.
+    Figure 1: A workflow for testing the
+    :doc:`Segment <segment>`
+    widget
+
+The interface of
+:doc:`Segment <segment>`
+(see :ref:`figure 2 <segmenting_data_smaller_units_fig2>`
+below) illustrates a feature shared by most Orange Textable widgets: the
+**Advanced settings** checkbox triggers the display of more complex
+controls offering more possibilities to the user. For now we will stick
+to the basic settings and leave this box unchecked.
 
 .. _segmenting_data_smaller_units_fig2:
 
-.. figure:: figures/segment_example.png
+.. figure:: figures/segment_example2.png
     :align: center
     :alt: Interface of widget Segment configured with regex "\w+"
 
-    Figure 2: Interface of the :ref:`Segment` widget, configured for word segmentation
+    Figure 2: Interface of the :doc:`Segment <segment>` widget, configured for word segmentation
 
-For instance, the regex ``\w+`` divides each incoming segment into sequences
-of alphanumeric character (and underscore)--which in our case amounts to
-segmenting *a simple example* into three words. To obtain a segmentation
-into letters (or to be precise, alphanumeric characters or underscores),
-simply use ``\w``.
+:doc:`Segment <segment>`
+offers several parameters in the drop-down menu named segment type. Try
+using them to segment the text into lines, letters, or words, then check
+the result in
+:doc:`Display <display>`.
 
-Of course, queries can be more specific. If the relevant unit is the word,
-regexes will often use the ``\b`` *anchor*, which represents a word boundary.
-For instance, words that contain less than 4 characters can be retrieved
-with ``\b\w{1,3}\b``, those ending in *-tion* with ``\b\w+tion\b``, and the
-inflected forms of *retrieve* with ``\bretriev(e|es|ed|ing)\b``.
+The option of using a regular expression is quite powerful and we will
+return to it later in this tutorial..
+
 
 See also
---------
+-----------------
 
-* :ref:`Reference: Segment widget <Segment>`
-* :doc:`Cookbook: Segment text in smaller units <segment_text>`
+- :doc:`Reference: Segment widget <segment>`
+- :doc:`Cookbook: Segment text in smaller units <segment_text>`

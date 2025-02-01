@@ -1,6 +1,6 @@
 """
 Class OWTextableConvert
-Copyright 2012-2019 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2025 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable package.
 
@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.19.10'
+__version__ = '0.19.11'
 
 import os
 import codecs
@@ -28,15 +28,23 @@ from PyQt5.QtWidgets import QMessageBox, QApplication, QFileDialog
 import Orange.data
 from Orange.widgets import widget, gui, settings
 
-from LTTL.Table import Table, PivotCrosstab, IntPivotCrosstab, Crosstab
+from LTTL.TableThread import Table, PivotCrosstab, IntPivotCrosstab, Crosstab
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
 
 from .TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     InfoBox, SendButton, AdvancedSettings, pluralize,
-    getPredefinedEncodings, addSeparatorAfterDefaultEncodings
+    getPredefinedEncodings, addSeparatorAfterDefaultEncodings,
+    Task
 )
+
+# Threading
+from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
+import concurrent.futures
+from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
+from Orange.widgets.utils.widgetpreview import WidgetPreview
+from functools import partial
 
 ColumnDelimiters = [
     ('tabulation (\\t)', u'\t'),
@@ -46,6 +54,12 @@ ColumnDelimiters = [
 
 class OWTextableConvert(OWTextableBaseWidget):
     """Orange widget for converting a Textable table to an Orange table"""
+
+    # Signals
+    signal_prog = pyqtSignal((int, bool))   # Progress bar (value, init)
+    signal_text = pyqtSignal((str, str))    # Text label (text, infotype)
+    signal_cancel_button = pyqtSignal(bool) # Allow to Deactivate cancel
+                                            # button from worker thread
 
     name = "Convert"
     description = "Convert, transform, or export Orange Textable tables."
@@ -111,6 +125,7 @@ class OWTextableConvert(OWTextableBaseWidget):
             widget=self.controlArea,
             master=self,
             callback=self.sendData,
+            cancelCallback=self.cancel_manually,
             infoBoxAttribute='infoBox',
             sendIfPreCallback=self.updateGUI,
         )
@@ -405,19 +420,19 @@ class OWTextableConvert(OWTextableBaseWidget):
         self.advancedSettings.basicWidgets.append(dummyBox)
 
         # Conversion box
-        encodingBox = gui.widgetBox(
+        self.encodingBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Encoding',
             orientation='horizontal',
             addSpace=False,
         )
         gui.widgetLabel(
-            widget=encodingBox,
+            widget=self.encodingBox,
             labelWidth=180,
             label=u'Output file:',
         )
         conversionEncodingCombo = gui.comboBox(
-            widget=encodingBox,
+            widget=self.encodingBox,
             master=self,
             value='exportEncoding',
             items=type(self).encodings,
@@ -435,21 +450,21 @@ class OWTextableConvert(OWTextableBaseWidget):
         )
         conversionEncodingCombo.setMinimumWidth(150)
         addSeparatorAfterDefaultEncodings(conversionEncodingCombo)
-        gui.separator(widget=encodingBox, width=5)
+        gui.separator(widget=self.encodingBox, width=5)
         gui.widgetLabel(
-            widget=encodingBox,
+            widget=self.encodingBox,
             label='',
         )
 
         # Export box
-        exportBox = gui.widgetBox(
+        self.exportBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Export',
             orientation='vertical',
             addSpace=False,
         )
         exportBoxLine2 = gui.widgetBox(
-            widget=exportBox,
+            widget=self.exportBox,
             orientation='horizontal',
         )
         gui.widgetLabel(
@@ -474,9 +489,9 @@ class OWTextableConvert(OWTextableBaseWidget):
             widget=exportBoxLine2,
             label='',
         )
-        gui.separator(widget=exportBox, height=2)
+        gui.separator(widget=self.exportBox, height=2)
         gui.checkBox(
-            widget=exportBox,
+            widget=self.exportBox,
             master=self,
             value='includeOrangeHeaders',
             label=u'Include Orange headers',
@@ -484,9 +499,9 @@ class OWTextableConvert(OWTextableBaseWidget):
                 u"Include Orange table headers in output file."
             ),
         )
-        gui.separator(widget=exportBox, height=2)
+        gui.separator(widget=self.exportBox, height=2)
         exportBoxLine3 = gui.widgetBox(
-            widget=exportBox,
+            widget=self.exportBox,
             orientation='horizontal',
         )
         self.exportButton = gui.button(
@@ -510,18 +525,18 @@ class OWTextableConvert(OWTextableBaseWidget):
                 u"\n\nNote that the only possible encoding is utf-8."
             ),
         )
-        gui.separator(widget=exportBox, height=2)
-        self.advancedSettings.advancedWidgets.append(exportBox)
+        gui.separator(widget=self.exportBox, height=2)
+        self.advancedSettings.advancedWidgets.append(self.exportBox)
 
         # Export box
-        basicExportBox = gui.widgetBox(
+        self.basicExportBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Export',
             orientation='vertical',
             addSpace=True,
         )
         basicExportBoxLine1 = gui.widgetBox(
-            widget=basicExportBox,
+            widget=self.basicExportBox,
             orientation='horizontal',
         )
         self.basicExportButton = gui.button(
@@ -545,25 +560,278 @@ class OWTextableConvert(OWTextableBaseWidget):
                 u"\n\nNote that the only possible encoding is utf-8."
             ),
         )
-        gui.separator(widget=basicExportBox, height=2)
-        self.advancedSettings.basicWidgets.append(basicExportBox)
+        gui.separator(widget=self.basicExportBox, height=2)
+        self.advancedSettings.basicWidgets.append(self.basicExportBox)
 
         gui.rubber(self.controlArea)
+        
+        # Threading
+        self._task = None
+        self._executor = ThreadExecutor()
+        self.cancel_operation = False
 
-        # Send button...
+        # Send button & Info box
         self.sendButton.draw()
-
-        # Info box...
         self.infoBox.draw()
-
         self.sendButton.sendIf()
         self.adjustSizeWithTimer()
 
-    def inputData(self, newInput):
-        """Process incoming data."""
-        self.table = newInput
-        self.infoBox.inputChanged()
-        self.sendButton.sendIf()
+        # Connect signals to slots
+        self.signal_prog.connect(self.update_progress_bar) 
+        self.signal_text.connect(self.update_infobox)
+        self.signal_cancel_button.connect(self.disable_cancel_button)
+        
+        # Progress bar variables
+        self.progress_bar_max = 0
+        self.progress_bar_cur = 0
+        
+    @pyqtSlot(concurrent.futures.Future)
+    def _task_finished(self, f):
+        assert self.thread() is QThread.currentThread()
+        assert self._task is not None
+        assert self._task.future is f
+        assert f.done()
+
+        self._task = None
+        
+        try:
+            # Data outputs
+            transformed_table, orangeTable, outputString = f.result()
+
+            if transformed_table and orangeTable and outputString:
+
+                if self.segmentation is None:
+                    self.segmentation = Input(label=u'table', text=outputString)
+                else:
+                    self.segmentation.update(outputString, label=u'table')
+                
+                message = 'Table with %i row@p' % len(transformed_table.row_ids)
+                message = pluralize(message, len(transformed_table.row_ids))
+                message += ' and %i column@p ' % (len(transformed_table.col_ids) + 1)
+                message = pluralize(message, len(transformed_table.col_ids) + 1)
+                message += 'sent to output.'
+
+                self.infoBox.setText(message)
+
+                self.send('Orange table', orangeTable)
+                self.send('Textable table', transformed_table)
+                self.send('Segmentation', self.segmentation) # AS 11.2023: removed self
+                
+            else:
+                self.send('Orange table', None)
+                self.send('Textable table', None)
+                self.send('Segmentation', None)
+
+        except Exception as ex:
+            print(ex)
+
+            # Send None
+            self.send('Orange table', None)
+            self.send('Textable table', None)
+            self.send('Segmentation', None)
+
+        finally:
+            # Manage GUI visibility
+            self.manageGuiVisibility(False) # Processing done/cancelled
+    
+    def cancel_manually(self):
+        """ Wrapper of cancel() method,
+        used for manual cancellations """
+        self.cancel(manualCancel=True)
+    
+    def cancel(self, manualCancel=False):
+        # Make loop break
+        self.cancel_operation = True
+
+        # Cancel current task
+        if self._task is not None:
+            self._task.cancel()
+            assert self._task.future.done()
+            # Disconnect slot
+            self._task.watcher.done.disconnect(self._task_finished)
+            self._task = None
+            
+            # Send None to output
+            self.send('Orange table', None)
+            self.send('Textable table', None)
+            self.send('Segmentation', None)
+            
+        if manualCancel:
+            self.infoBox.setText(u'Operation cancelled by user.', 'warning')
+            
+        # Manage GUI visibility
+        self.manageGuiVisibility(False) # Processing done/cancelled
+        
+    def manageGuiVisibility(self, processing=False):
+        """ Update GUI and make available (or not) elements
+        while the thread task is running in background """
+
+        # Thread currently running, freeze the GUI
+        if processing:
+            self.sendButton.mainButton.setDisabled(1) # Send button: DISABLED
+            self.sendButton.cancelButton.setDisabled(0) # Cancel button: ENABLED
+            self.sendButton.autoSendCheckbox.setDisabled(1) # Send automatically: DISABLED
+            self.transformBox.setDisabled(1) # Transform box: DISABLED
+            self.encodingBox.setDisabled(1) # Encoding box: DISABLED
+            self.exportBox.setDisabled(1) # Export box: DISABLED
+            self.basicExportBox.setDisabled(1) # Basic export box: DISABLED
+            self.advancedSettings.checkbox.setDisabled(1) # Advanced options checkbox: DISABLED
+
+        # Thread done or not running, unfreeze the GUI
+        else:
+            # If "Send automatically" is disabled, reactivate "Send" button
+            if not self.sendButton.autoSendCheckbox.isChecked():
+                self.sendButton.mainButton.setDisabled(0) # Send: ENABLED
+            # Other buttons and layout
+            self.sendButton.cancelButton.setDisabled(1) # Cancel button: DISABLED
+            self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: ENABLED
+            self.transformBox.setDisabled(0) # Transform box: ENABLED
+            self.encodingBox.setDisabled(0) # Encoding box: ENABLED
+            self.exportBox.setDisabled(0) # Export box: ENABLED
+            self.basicExportBox.setDisabled(0) # Basic export box: ENABLED
+            self.advancedSettings.checkbox.setDisabled(0) # Advanced options checkbox: ENABLED
+            self.cancel_operation = False
+            self.signal_prog.emit(100, False) # 100% and do not re-init
+            self.sendButton.resetSettingsChangedFlag()
+            self.updateGUI()
+
+    def process_data(self, caller, transformed_table, numIterations):
+        """ Process data in a worker thread
+        instead of the main thread so that
+        the operations can be cancelled """
+
+        if self.displayAdvancedSettings:
+            # Set max iterations
+            self.progress_bar_max = numIterations
+            self.progress_bar_cur = 0
+
+            # Sort if needed...
+            if self.sortRows or self.sortCols:
+                if self.sortRows:
+                    if self.sortRowsKeyId == 0:
+                        key_col_id = transformed_table.header_col_id
+                    else:
+                        key_col_id = transformed_table.col_ids[
+                            self.sortRowsKeyId - 1
+                        ]
+                else:
+                    key_col_id = None
+
+                if self.sortCols:
+                    if self.sortColsKeyId == 0:
+                        key_row_id = transformed_table.header_row_id
+                    else:
+                        key_row_id = transformed_table.row_ids[
+                            self.sortColsKeyId - 1
+                        ]
+                else:
+                    key_row_id = None
+
+                transformed_table = transformed_table.to_sorted(
+                    key_col_id,
+                    self.sortRowsReverse,
+                    key_row_id,
+                    self.sortColsReverse,
+                    caller=caller,
+                )
+
+            # Check if thread was cancelled
+            if not transformed_table:
+                caller.signal_prog.emit(100, False)
+                return
+
+            # Transpose if needed...
+            if self.transpose:
+                transformed_table = transformed_table.to_transposed(
+                    caller=caller,
+                )
+                
+            # Check if thread was cancelled
+            if not transformed_table:
+                caller.signal_prog.emit(100, False)
+                return
+
+            # Normalize if needed...
+            if self.normalize:
+                transformed_table = transformed_table.to_normalized(
+                    mode=self.normalizeMode,
+                    type=self.normalizeType.lower(),
+                    caller=self,
+                )
+                
+            # Check if thread was cancelled
+            if not transformed_table:
+                caller.signal_prog.emit(100, False)
+                return
+
+            # Convert if needed...
+            elif self.convert:
+                if self.conversionType == 'document frequency':
+                    transformed_table = transformed_table.to_document_frequency(
+                        caller=self,
+                    )
+                elif self.conversionType == 'association matrix':
+                    transformed_table = transformed_table.to_association_matrix(
+                        bias=self.associationBias,
+                        caller=self,
+                    )
+                    
+            # Check if thread was cancelled
+            if not transformed_table:
+                caller.signal_prog.emit(100, False)
+                return
+
+            # Reformat if needed...
+            if self.reformat:
+                if self.unweighted:
+                    transformed_table = transformed_table.to_flat(
+                        caller=self,
+                    )
+                else:
+                    transformed_table = transformed_table.to_weighted_flat(
+                        caller=self,
+                    )
+
+            # Check if thread was cancelled
+            if not transformed_table:
+                caller.signal_prog.emit(100, False)
+                return
+
+        self.transformed_table = transformed_table
+
+        # Post-processing: Orange table
+        caller.signal_text.emit('Step 2/3: Post-processing...', 'warning')
+        caller.signal_prog.emit(1, True)
+
+        orangeTable = transformed_table.to_orange_table(caller=self)
+        
+        # Check if thread was cancelled
+        if not orangeTable:
+            caller.signal_prog.emit(100, False)
+            return
+        
+        # Post-processing: Output string
+        caller.signal_text.emit('Step 3/3: Post-processing...', 'warning')
+        caller.signal_prog.emit(1, True)
+
+        if self.displayAdvancedSettings:
+            colDelimiter = self.colDelimiter
+            includeOrangeHeaders = self.includeOrangeHeaders
+        else:
+            colDelimiter = '\t'
+            includeOrangeHeaders = False
+            
+        outputString = transformed_table.to_string(
+            output_orange_headers=includeOrangeHeaders,
+            col_delimiter=colDelimiter,
+        )
+        
+        # Check if thread was cancelled
+        if not outputString:
+            caller.signal_prog.emit(100, False)
+            return
+        
+        return transformed_table, orangeTable, outputString
 
     def sendData(self):
 
@@ -574,18 +842,18 @@ class OWTextableConvert(OWTextableBaseWidget):
             self.infoBox.setText(u'Widget needs input.', 'warning')
             self.send('Orange table', None)
             self.send('Textable table', None)
-            self.send('Segmentation', None, self)
+            self.send('Segmentation', None)
             if self.segmentation is not None:
                 self.segmentation.clear()
                 self.segmentation = None
             return
 
         transformed_table = self.table
+        numIterations = 0
 
         if self.displayAdvancedSettings:
 
             # Precompute number of iterations...
-            numIterations = 0
             if self.transpose:
                 num_cols = len(transformed_table.row_ids)
                 num_rows = len(transformed_table.col_ids)
@@ -607,105 +875,99 @@ class OWTextableConvert(OWTextableBaseWidget):
                 numIterations += num_cols
             if self.reformat:
                 numIterations += num_rows
+            
+            # Info box & progress bar
+            self.infoBox.setText(u"Step 1/3: Processing...", "warning")
+            self.progressBarInit()
 
-            self.controlArea.setDisabled(True)
-            self.infoBox.setText(u"Processing, please wait...", "warning")
-            progressBar = ProgressBar(self, numIterations)
+        # Threading...
 
-            # Sort if needed...
-            if self.sortRows or self.sortCols:
-                if self.sortRows:
-                    if self.sortRowsKeyId == 0:
-                        key_col_id = transformed_table.header_col_id
-                    else:
-                        key_col_id = transformed_table.col_ids[
-                            self.sortRowsKeyId - 1
-                        ]
-                else:
-                    key_col_id = None
-                if self.sortCols:
-                    if self.sortColsKeyId == 0:
-                        key_row_id = transformed_table.header_row_id
-                    else:
-                        key_row_id = transformed_table.row_ids[
-                            self.sortColsKeyId - 1
-                        ]
-                else:
-                    key_row_id = None
-                transformed_table = transformed_table.to_sorted(
-                    key_col_id,
-                    self.sortRowsReverse,
-                    key_row_id,
-                    self.sortColsReverse,
-                )
-
-            # Transpose if needed...
-            if self.transpose:
-                transformed_table = transformed_table.to_transposed()
-
-            # Normalize if needed...
-            if self.normalize:
-                transformed_table = transformed_table.to_normalized(
-                    self.normalizeMode,
-                    self.normalizeType.lower(),
-                    progressBar.advance
-                )
-
-            # Convert if needed...
-            elif self.convert:
-                if self.conversionType == 'document frequency':
-                    transformed_table = transformed_table.to_document_frequency(
-                        progress_callback=progressBar.advance
-                    )
-                elif self.conversionType == 'association matrix':
-                    transformed_table = transformed_table.to_association_matrix(
-                        bias=self.associationBias,
-                        progress_callback=progressBar.advance
-                    )
-
-            # Reformat if needed...
-            if self.reformat:
-                if self.unweighted:
-                    transformed_table = transformed_table.to_flat(
-                        progress_callback=progressBar.advance
-                    )
-                else:
-                    transformed_table = transformed_table.to_weighted_flat(
-                        progress_callback=progressBar.advance
-                    )
-
-            progressBar.finish()
-            self.controlArea.setDisabled(False)
-
-        self.transformed_table = transformed_table
-
-        orangeTable = transformed_table.to_orange_table()
-
-        self.send('Orange table', orangeTable)
-        self.send('Textable table', transformed_table)
-        if self.displayAdvancedSettings:
-            colDelimiter = self.colDelimiter
-            includeOrangeHeaders = self.includeOrangeHeaders
-        else:
-            colDelimiter = '\t'
-            includeOrangeHeaders = False
-        outputString = transformed_table.to_string(
-            output_orange_headers=includeOrangeHeaders,
-            col_delimiter=colDelimiter,
+        # Partial function
+        threaded_function = partial(
+            self.process_data,
+            self,
+            transformed_table,
+            numIterations,
         )
 
-        if self.segmentation is None:
-            self.segmentation = Input(label=u'table', text=outputString)
+        # Threading ...
+
+        # Cancel old tasks
+        if self._task is not None:
+            self.cancel()
+        assert self._task is None
+
+        self._task = task = Task()
+
+        # Threading start, future, and watcher
+        task.future = self._executor.submit(threaded_function)
+        task.watcher = FutureWatcher(task.future)
+        task.watcher.done.connect(self._task_finished)
+
+        # Manage GUI visibility
+        self.manageGuiVisibility(True) # Processing            
+
+    # AS 11.2023
+    @pyqtSlot(bool)
+    def disable_cancel_button(self, disable):
+        """ Disables cancel button in a thread-safe manner """
+        if disable:
+            self.sendButton.cancelButton.setDisabled(1)
         else:
-            self.segmentation.update(outputString, label=u'table')
-        self.send('Segmentation', self.segmentation, self)
-        message = 'Table with %i row@p' % len(transformed_table.row_ids)
-        message = pluralize(message, len(transformed_table.row_ids))
-        message += ' and %i column@p ' % (len(transformed_table.col_ids) + 1)
-        message = pluralize(message, len(transformed_table.col_ids) + 1)
-        message += 'sent to output.'
-        self.infoBox.setText(message)
-        self.sendButton.resetSettingsChangedFlag()
+            self.sendButton.cancelButton.setDisabled(0)
+
+    # AS 11.2023
+    @pyqtSlot(int, bool)
+    def update_progress_bar(self, val, init):
+        """ Increase progress bar in a thread-safe manner.
+            Equivalent to progressBar.advance """
+        # Re-init progress bar, if needed
+        if init:
+            self.progressBarInit()
+        
+        # Compute new progression if val is not specified
+        if val < 0:
+            self.progress_bar_cur += 1
+
+            try:
+                current_progress = 1 + int(
+                    self.progress_bar_cur / self.progress_bar_max
+                * 99)
+            except ZeroDivisionError:
+                current_progress = 1
+    
+            # Update progress bar
+            if current_progress >= 100:
+                self.progressBarFinished() # Finish progress bar     
+            elif current_progress < 0:
+                self.progressBarSet(0)
+            else:
+                self.progressBarSet(current_progress)
+
+        # Display specified val otherwise
+        else:
+            # Update progress bar
+            if val >= 100:
+                self.progressBarFinished() # Finish progress bar     
+            elif val < 0:
+                self.progressBarSet(0)
+            else:
+                self.progressBarSet(val)
+
+    # AS 11.2023
+    @pyqtSlot(str, str)
+    def update_infobox(self, text, infotype):
+        """ Update info box in a thread-safe manner """
+        self.infoBox.setText(text, infotype)
+        
+    def inputData(self, newInput):
+        """Process incoming data."""
+        # Cancel pending tasks, if any
+        self.cancel()
+
+        self.table = newInput
+        self.infoBox.inputChanged()
+        self.sendButton.sendIf()
 
     def exportFile(self):
         """Display a FileDialog and save table to file"""

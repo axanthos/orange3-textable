@@ -1,6 +1,6 @@
 """
 Module TextableUtils.py
-Copyright 2012-2019 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2025 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable package.
 
@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 -----------------------------------------------------------------------------
 Provides classes:
+- Task
 - SendButton
 - AdvancedSettings
 - InfoBox
@@ -37,13 +38,27 @@ Provides functions:
 - getPredefinedEncodings
 """
 
-__version__ = '0.15'
+__version__ = '0.16'
 
 import re, os, uuid
 
 from Orange.widgets import gui, settings, utils as widgetutils
 from Orange.widgets.utils.buttons import VariableTextPushButton
 
+import concurrent.futures
+
+class Task:
+    """ Class for storing threaded tasks """
+
+    future = ...   # type: concurrent.futures.Future
+    watcher = ...  # type: FutureWatcher
+    cancelled = False
+
+    def cancel(self):
+        """ Cancel the task """
+        self.cancelled = True
+        self.future.cancel()
+        concurrent.futures.wait([self.future])
 
 class SendButton(object):
     """A class encapsulating send button operations in Textable"""
@@ -53,6 +68,7 @@ class SendButton(object):
         widget,
         master,
         callback,
+        cancelCallback=None,
         checkboxValue='autoSend',
         changedFlag='settingsChanged',
         buttonLabel=u'Send',
@@ -65,6 +81,7 @@ class SendButton(object):
         self.widget = widget
         self.master = master
         self.callback = callback
+        self.cancelCallback = cancelCallback
         self.checkboxValue = checkboxValue
         self.changedFlag = changedFlag
         self.buttonLabel = buttonLabel
@@ -76,17 +93,17 @@ class SendButton(object):
     def draw(self):
         """Draw the send button and stopper on window"""
         box = gui.hBox(self.widget, box=True, addSpace=False)
-        autoSendCheckbox = gui.checkBox(
+        self.autoSendCheckbox = gui.checkBox(
             widget=box,
             master=self.master,
             value=self.checkboxValue,
             label="",
             tooltip=u"Process and send data whenever settings change.",
         )
-        autoSendCheckbox.setSizePolicy(QSizePolicy.Fixed,
+        self.autoSendCheckbox.setSizePolicy(QSizePolicy.Fixed,
                                        QSizePolicy.Fixed)
         box.layout().addSpacing(10)
-        sendButton = VariableTextPushButton(
+        self.mainButton = VariableTextPushButton(
             text=self.buttonLabel,
             default=True,
             toolTip=u"Process input data and send results to output.",
@@ -94,14 +111,26 @@ class SendButton(object):
         )
 
         if getattr(self.master, self.checkboxValue):
-            sendButton.setText(self.checkboxLabel)
+            self.mainButton.setText(self.checkboxLabel)
 
-        sendButton.clicked.connect(self.callback)
+        self.mainButton.clicked.connect(self.callback)
 
-        box.layout().addWidget(sendButton)
+        box.layout().addWidget(self.mainButton)
 
-        autoSendCheckbox.disables.append((-1, sendButton))
-        sendButton.setDisabled(autoSendCheckbox.isChecked())
+        self.autoSendCheckbox.disables.append((-1, self.mainButton))
+        self.mainButton.setDisabled(self.autoSendCheckbox.isChecked())
+                
+        # Cancel button
+        if self.cancelCallback:
+            self.cancelButton = gui.button(
+                box,
+                self,
+                "Cancel",
+                callback=self.cancelCallback,
+                toolTip=u"Cancel current processing.",    
+            )
+            self.cancelButton.setDisabled(1) # Disabled by default
+            box.layout().addWidget(self.cancelButton)
 
         def sendOnToggle(state):
             # invoke send callback when autoSend checkbox is checked
@@ -110,11 +139,11 @@ class SendButton(object):
                 self.callback()
 
         def updateTextOnToggle(state):
-            sendButton.setText(
+            self.mainButton.setText(
                 self.checkboxLabel if state else self.buttonLabel)
 
-        autoSendCheckbox.toggled[bool].connect(sendOnToggle)
-        autoSendCheckbox.toggled[bool].connect(updateTextOnToggle)
+        self.autoSendCheckbox.toggled[bool].connect(sendOnToggle)
+        self.autoSendCheckbox.toggled[bool].connect(updateTextOnToggle)
 
         self.resetSettingsChangedFlag()
 
@@ -171,7 +200,7 @@ class AdvancedSettings(object):
             widget=self.widget,
             height=1,
         )
-        gui.checkBox(
+        self.checkbox = gui.checkBox(
             widget=self.widget,
             master=self.master,
             value=self.checkboxValue,
@@ -771,6 +800,7 @@ class SegmentationListContextHandler(VersionedSettingsHandlerMixin,
         for inputid, segmentation in segmentationlist:
             label = segmentation.label
             annot = tuple(sorted(segmentation.get_annotation_keys()))
+            
             uuid = input_uuid(inputid)
             encoded.append((label, annot, uuid))
 
@@ -977,7 +1007,7 @@ class ProgressBar:
         self.widget = widget
         self.count = 0
         self.finished = False
-        self.widget.setBlocking(True)  # not accepting inputs from the canvas
+        self.widget.setBlocking(False)  # not accepting inputs from the canvas
         self.widget.progressBarInit(processEvents=None)
         QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
 

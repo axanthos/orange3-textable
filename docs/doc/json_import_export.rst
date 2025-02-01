@@ -2,8 +2,8 @@ JSON import/export
 ==================
 
 Beyond a restricted number of sources, substitutions, or regular expressions,
-it becomes tedious to configure instances of widgets :ref:`Text Files`,
-:ref:`URLs`, :ref:`Recode`, and :ref:`Segment` using their advanced interface.
+it becomes tedious to configure instances of widgets :doc:`Text Files <text_files>`,
+:doc:`URLs <urls>`, :doc:`Recode <recode>`, and :doc:`Segment <segment>` using their advanced interface.
 To alleviate this issue, these widgets enable the user to import or export
 manually edited configuration lists in `JSON <http://www.json.org/>`_ format
 as described in the following sections.

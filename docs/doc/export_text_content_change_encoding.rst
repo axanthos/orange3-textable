@@ -1,29 +1,22 @@
-.. meta::
-   :description: Orange Textable documentation, cookbook, export text content
-   :keywords: Orange, Textable, documentation, cookbook, export, text,
-              content, encoding
-
 Export text content (and/or change text encoding)
-=================================================
+=====================================================
 
 Goal
-----
+--------
 
 Export the content of a text (segmentation).
 
 Prerequisites
--------------
+-----------------
 
-Some text has been imported in Orange Textable (see :ref:`Cookbook: Text input
-<cookbook_toc_text_input_ref>`) and possibly further processed (see
-:ref:`Cookbook: Segmentation manipulation
-<cookbook_toc_segmentation_manipulation_ref>`).
+Some text has been imported in Orange Textable (see :doc:`Cookbook: Text input <text_input>`)
+and possibly further processed (see :doc:`Cookbook: Segmentation manipulation <segmentation_manipulation>`).
 
 Ingredients
------------
+---------------
 
   ==============  =======
-   **Widget**      :ref:`Display`
+   **Widget**      :doc:`Display <display>`
    **Icon**        |display_icon|
    **Quantity**    1
   ==============  =======
@@ -31,7 +24,7 @@ Ingredients
 .. |display_icon| image:: figures/Display_36.png
 
 Procedure
----------
+-------------
 
 .. _export_text_content_fig1:
 
@@ -40,43 +33,50 @@ Procedure
    :alt: Export text with an instance of Display
    :scale: 80%
    
-   Figure 1: Export text with an instance of :ref:`Display`.
+   Figure 1: Export text with an instance of :doc:`Display <display>`.
 
- 
-1. Create an instance of :ref:`Display` on the canvas.
-2. Drag and drop from the output connection (righthand side) of the widget
-   instance that emits the segmentation to be displayed (e.g.
-   :ref:`Text Field`) to the :ref:`Display` instance's input connection
+1. Create an instance of :doc:`Display <display>`.
+
+2. Drag and drop from the output (righthand side) of the widget that
+   emits the segmentation to be displayed, here :doc:`Text Field <text_field>`
+   (*Hamlet*), to the :doc:`Display <display>`
    (lefthand side).
-3. Open the :ref:`Display` instance's interface by double-clicking on its
-   icon on the canvas to view the imported text.
-4. Tick the **Advanced settings** checkbox.
-5. In the **Formatting** section, tick the **Apply custom formatting**
+
+3. Double-click on the icon of :doc:`Display <display>`
+   to open its interface and view the imported text.
+
+4. Uncheck the **Display segmentation in rich text format (HTML)**
    checkbox.
-6. In the **Export** section, you can choose the encoding for the text that
-   will be exported using the **File encoding** drop-down menu.
-7. Click on **Export to file** button to open the file selection dialog.
-8. Select the location you want to export your file to and close the file 
-   selection dialog by clicking on **Ok**.
+
+5. Click on the **Save to file** button to open the file selection
+   dialog.
+
+6. Select the location you want to export your file to and close the
+   file selection dialog by clicking on **Ok**.
+
 
 Comment
--------
+-----------
 
-* If you rather want to *copy* the text content in order to later paste it in 
-  another program, click on **Copy to clipboard**; note that in this case, 
-  the encoding is by default utf8 and cannot be changed.
-* If the input data contains *several* texts (segments) you can specify a
-  string that will be inserted between each successive text in **Segment
-  delimiter**; note that the default segment delimiter ``\n`` represents a
-  carriage return.
-* If the input data consist of a large number of segments (thousands or more),
-  the time necessary to display them can be prohibitively long.
-  
+-  The default output encoding is utf8; it can be changed by ticking the
+   **Advanced Settings** checkbox.
+
+-  If you rather want to *copy* the text content in order to later paste
+   it in another program, click on **Copy to clipboard**.
+
+-  If the input segmentation is large (>1000 segments), only the first 5
+   segments and the last 5 segments are displayed, and thus exported, by
+   default. If you want all segments exported, tick the **Advanced
+   Settings** checkbox then uncheck **Limit number of displayed
+   segments**.
+
+-  More options for formatting the exported text are available by
+   ticking the **Advanced settings** checkbox.
+
+
 See also
---------
+------------
 
-* :ref:`Reference: Display widget <Display>`
-* :ref:`Cookbook: Text input <cookbook_toc_text_input_ref>`
-* :ref:`Cookbook: Segmentation manipulation
-  <cookbook_toc_segmentation_manipulation_ref>`
-
+- :doc:`Reference: Display widget <display>`
+- :doc:`Cookbook: Text input <text_input>`
+- :doc:`Cookbook: Segmentation manipulation <segmentation_manipulation>`

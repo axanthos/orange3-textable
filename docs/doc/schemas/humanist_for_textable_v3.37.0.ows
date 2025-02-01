@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="" description="">
+	<nodes>
+		<node id="0" name="URLs" qualified_name="_textable.widgets.OWTextableURLs.OWTextableURLs" project_name="Orange3-Textable" version="" title="URLs" position="(300, 300)" />
+		<node id="1" name="Recode" qualified_name="_textable.widgets.OWTextableRecode.OWTextableRecode" project_name="Orange3-Textable" version="" title="Recode" position="(450, 300)" />
+		<node id="2" name="Segment" qualified_name="_textable.widgets.OWTextableSegment.OWTextableSegment" project_name="Orange3-Textable" version="" title="Segment" position="(556.0, 389.0)" />
+		<node id="3" name="Segment" qualified_name="_textable.widgets.OWTextableSegment.OWTextableSegment" project_name="Orange3-Textable" version="" title="Segment (1)" position="(656.0, 389.0)" />
+		<node id="4" name="Count" qualified_name="_textable.widgets.OWTextableCount.OWTextableCount" project_name="Orange3-Textable" version="" title="Count" position="(750, 300)" />
+		<node id="5" name="Convert" qualified_name="_textable.widgets.OWTextableConvert.OWTextableConvert" project_name="Orange3-Textable" version="" title="Convert" position="(900, 300)" />
+		<node id="6" name="Data Table" qualified_name="Orange.widgets.data.owtable.OWTable" project_name="Orange3" version="" title="Data Table" position="(1050, 300)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Text data" sink_channel="Segmentation" enabled="true" />
+		<link id="1" source_node_id="1" sink_node_id="2" source_channel="Recoded data" sink_channel="Segmentation" enabled="true" />
+		<link id="2" source_node_id="2" sink_node_id="3" source_channel="Segmented data" sink_channel="Segmentation" enabled="true" />
+		<link id="3" source_node_id="3" sink_node_id="4" source_channel="Segmented data" sink_channel="Segmentation" enabled="true" />
+		<link id="4" source_node_id="1" sink_node_id="4" source_channel="Recoded data" sink_channel="Segmentation" enabled="true" />
+		<link id="5" source_node_id="4" sink_node_id="5" source_channel="Textable pivot crosstab" sink_channel="Textable table" enabled="true" />
+		<link id="6" source_node_id="5" sink_node_id="6" source_channel="Orange table" sink_channel="Data" enabled="true" sink_channel_id="data" />
+	</links>
+	<annotations />
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="literal">{'URL': 'https://www.gutenberg.org/cache/epub/1513/pg1513.txt', 'URLs': [('https://dhhumanist.org/archives/Converted_Text/humanist.1987-1988.txt', '(auto-detect)', 'year', '1987-1988'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1988-1989.txt', '(auto-detect)', 'year', '1988-1989'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1989-1990.txt', '(auto-detect)', 'year', '1989-1990'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1990-1991.txt', '(auto-detect)', 'year', '1990-1991'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1991-1992.txt', '(auto-detect)', 'year', '1991-1992'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1992-1993.txt', '(auto-detect)', 'year', '1992-1993'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1993-1994.txt', '(auto-detect)', 'year', '1993-1994'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1994-1995.txt', '(auto-detect)', 'year', '1994-1995'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1995-1996.txt', '(auto-detect)', 'year', '1995-1996'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1996-1997.txt', '(auto-detect)', 'year', '1996-1997'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1997-1998.txt', '(auto-detect)', 'year', '1997-1998'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1998-1999.txt', '(auto-detect)', 'year', '1998-1999'), ('https://dhhumanist.org/archives/Converted_Text/humanist.1999-2000.txt', '(auto-detect)', 'year', '1999-2000'), ('https://dhhumanist.org/archives/Converted_Text/humanist.2000-2001.txt', '(auto-detect)', 'year', '2000-2001'), ('https://dhhumanist.org/archives/Converted_Text/humanist.2001-2002.txt', '(auto-detect)', 'year', '2001-2002'), ('https://dhhumanist.org/archives/Converted_Text/humanist.2002-2003.txt', '(auto-detect)', 'year', '2002-2003'), ('https://dhhumanist.org/archives/Converted_Text/humanist.2003-2004.txt', '(auto-detect)', 'year', '2003-2004'), ('https://dhhumanist.org/archives/Converted_Text/humanist.2004-2005.txt', '(auto-detect)', 'year', '2004-2005'), ('https://dhhumanist.org/archives/Converted_Text/humanist.2005-2006.txt', '(auto-detect)', 'year', '2005-2006'), ('https://dhhumanist.org/archives/Converted_Text/humanist.2006-2007.txt', '(auto-detect)', 'year', '2006-2007'), ('https://dhhumanist.org/archives/Converted_Text/humanist.2007-2008.txt', '(auto-detect)', 'year', '2007-2008')], 'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': False, 'controlAreaVisible': True, 'displayAdvancedSettings': True, 'encoding': '(auto-detect)', 'importURLs': True, 'importURLsKey': 'url', 'lastLocation': 'E:/Downloads', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x01k\x00\x00\x00\xc0\x00\x00\x04\x8a\x00\x00\x03s\x00\x00\x01l\x00\x00\x00\xdf\x00\x00\x04\x89\x00\x00\x03r\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90\x00\x00\x01l\x00\x00\x00\xdf\x00\x00\x04\x89\x00\x00\x03r', 'uuid': '3541e499-38e5-49cd-ac79-e2345e3fe824', '__version__': 1, '_TextableUtils_settings_version__': (0, 14)}</properties>
+		<properties node_id="1" format="literal">{'autoSend': True, 'controlAreaVisible': True, 'copyAnnotations': True, 'displayAdvancedSettings': False, 'lastLocation': '.', 'regex': '^[|&gt;].+(?m)', 'replString': '', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02M\x00\x00\x02Z\x00\x00\x03\xa3\x00\x00\x03u\x00\x00\x02N\x00\x00\x02y\x00\x00\x03\xa2\x00\x00\x03t\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90\x00\x00\x02N\x00\x00\x02y\x00\x00\x03\xa2\x00\x00\x03t', 'substitutions': [('^[|&gt;].+(?m)', '', False, True, False, False)], 'uuid': 'bb9810ee-3461-4401-a395-2f6a75077321', '__version__': 1, '_TextableUtils_settings_version__': (0, 13)}</properties>
+		<properties node_id="2" format="literal">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': True, 'controlAreaVisible': True, 'displayAdvancedSettings': False, 'importAnnotations': True, 'lastLocation': '.', 'mergeDuplicates': True, 'mode': 'Tokenize', 'regex': '(?&lt;=\\(.\\))(.|\\n)*?(?=(From|\\Z))(?s)', 'regexes': [('.', 'type', 'other', False, True, False, False, 'Tokenize'), ('\\w', 'type', 'consonant', False, True, False, False, 'Tokenize'), ('[aeiouy]', 'type', 'vowel', False, True, False, False, 'Tokenize'), ('[0-9]', 'type', 'digit', False, True, False, False, 'Tokenize')], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x03\x0f\x00\x00\x00%\x00\x00\x04\n\x00\x00\x028\x00\x00\x03\x10\x00\x00\x00D\x00\x00\x04\t\x00\x00\x027\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90\x00\x00\x03\x10\x00\x00\x00D\x00\x00\x04\t\x00\x00\x027', 'segmentType': 'Use a regular expression', 'uuid': '14d029e5-2c8c-481a-9e39-3a96659f221d', '__version__': 1, '_TextableUtils_settings_version__': (0, 21)}</properties>
+		<properties node_id="3" format="literal">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': True, 'controlAreaVisible': True, 'displayAdvancedSettings': True, 'importAnnotations': True, 'lastLocation': '.', 'mergeDuplicates': True, 'mode': 'Tokenize', 'regex': '\\b(Digital Humanities|Humanities Computing)\\b', 'regexes': [('Humanities Computing', 'type', 'Humanities Computing', True, True, False, False, 'Tokenize'), ('Digital Humanities', 'type', 'Digital Humanities', True, True, False, False, 'Tokenize')], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02\xbc\x00\x00\x00*\x00\x00\x04\x12\x00\x00\x03\x1b\x00\x00\x02\xbd\x00\x00\x00I\x00\x00\x04\x11\x00\x00\x03\x1a\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90\x00\x00\x02\xbd\x00\x00\x00I\x00\x00\x04\x11\x00\x00\x03\x1a', 'segmentType': 'Use a regular expression', 'uuid': 'eca99630-041e-40ac-bfef-bd4305acf2e2', '__version__': 1, '_TextableUtils_settings_version__': (0, 21)}</properties>
+		<properties node_id="4" format="pickle">gASVtwUAAAAAAAB9lCiMCGF1dG9TZW5klIiMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjA1pbnRyYVNl
+cURlbGltlIwBI5SMDW1lcmdlQ29udGV4dHOUiYwMbWVyZ2VTdHJpbmdzlIiME3NhdmVkV2lkZ2V0
+R2VvbWV0cnmUQ0IB2dDLAAMAAAAAAx0AAAAxAAAEfwAAAhAAAAMeAAAAUAAABH4AAAIPAAAAAAAA
+AAAGkAAAAx4AAABQAAAEfgAAAg+UjA5zZXF1ZW5jZUxlbmd0aJRLAYwNdW5pdFBvc01hcmtlcpSM
+AV+UjAR1dWlklIwkY2QzNGE2YWItMzFlMy00YzQ1LThkOTItMDU3OWUzZDE1ZjVjlIwLX192ZXJz
+aW9uX1+USwGMEGNvbnRleHRfc2V0dGluZ3OUXZQojBVvcmFuZ2V3aWRnZXQuc2V0dGluZ3OUjAdD
+b250ZXh0lJOUKYGUfZQojAZ2YWx1ZXOUfZQojAlfY29udGV4dHOUSwCMFGNvbnRleHRBbm5vdGF0
+aW9uS2V5lIwEeWVhcpSMD2xlZnRDb250ZXh0U2l6ZZRLAIwEbW9kZZSMF0NvbnRhaW5pbmcgc2Vn
+bWVudGF0aW9ulIwQcmlnaHRDb250ZXh0U2l6ZZRLAIwRdW5pdEFubm90YXRpb25LZXmUjAYobm9u
+ZSmUjAV1bml0c5RLAIwKd2luZG93U2l6ZZRLAYwNc2VnbWVudGF0aW9uc5RdlCiMC1NlZ21lbnQg
+KDEplIwEdHlwZZSMA3VybJSMBHllYXKUh5ROh5SMBlJlY29kZZRoJ2gohpROh5RlaA5LAXWMB2Vu
+Y29kZWSUaA1oJIaUdWJoEymBlH2UKGgWfZQoaBhK/////2gZjAYobm9uZSmUaBtLAGgcjApObyBj
+b250ZXh0lGgeSwBoH4wAlGghSv////9oIksBaCNdlGgOSwF1aC5oDWg2hpR1YmgTKYGUfZQoaBZ9
+lCiMCV9jb250ZXh0c5RLAIwUY29udGV4dEFubm90YXRpb25LZXmUaBqMD2xlZnRDb250ZXh0U2l6
+ZZRLAIwEbW9kZZRoHYwQcmlnaHRDb250ZXh0U2l6ZZRLAIwRdW5pdEFubm90YXRpb25LZXmUaDOM
+BXVuaXRzlEsAjAp3aW5kb3dTaXpllEsBjA1zZWdtZW50YXRpb25zlF2UjAZSZWNvZGWUjAN1cmyU
+jAR5ZWFylIaUToeUYWgOSwF1aC5oDWhEhpR1YmgTKYGUfZQoaBZ9lChoO0sAaDxoGmg9SwBoPmgd
+aD9LAGhAaDNoQUsBaEJLAWhDXZQoaEVoRmhHhpROh5SMC1NlZ21lbnQgKDEplGhGaEeGlE6HlGVo
+DksBdWguaA1oToaUdWJoEymBlH2UKGgWfZQoaDtLAGg8jAN1cmyUaD1LAGg+aB1oP0sAaEBoM2hB
+SwFoQksBaENdlChoRWhGhZROh5RoUWhGhZROh5RlaA5LAXVoLmgNaFmGlHViaBMpgZR9lChoFn2U
+KGg7Sv////9oPGgzaD1LAGg+jApObyBjb250ZXh0lGg/SwBoQGgzaEFLAGhCSwFoQ12UaEVoRoWU
+ToeUYWgOSwF1aC5oDWhjhpR1YmgTKYGUfZQoaBZ9lCiMCV9jb250ZXh0c5RK/////4wUY29udGV4
+dEFubm90YXRpb25LZXmUjAYobm9uZSmUjA9sZWZ0Q29udGV4dFNpemWUSwCMBG1vZGWUjApObyBj
+b250ZXh0lIwQcmlnaHRDb250ZXh0U2l6ZZRLAIwRdW5pdEFubm90YXRpb25LZXmUaGyMBXVuaXRz
+lEsAjAp3aW5kb3dTaXpllEsBjA1zZWdtZW50YXRpb25zlF2UaFFoRoWUToeUYWgOSwF1aC5oDWh1
+hpR1YmWMIV9UZXh0YWJsZVV0aWxzX3NldHRpbmdzX3ZlcnNpb25fX5RLAEsVhpR1Lg==
+</properties>
+		<properties node_id="5" format="literal">{'associationBias': 'none', 'autoSend': True, 'colDelimiter_idx': 0, 'controlAreaVisible': True, 'conversionType': 'association matrix', 'convert': False, 'displayAdvancedSettings': True, 'exportEncoding': 'utf8', 'includeOrangeHeaders': False, 'lastLocation': '.', 'normalize': False, 'normalizeMode': 'rows', 'normalizeType': 'l1', 'reformat': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x03\x81\x00\x00\x00Y\x00\x00\x05m\x00\x00\x02\xd5\x00\x00\x03\x82\x00\x00\x00w\x00\x00\x05l\x00\x00\x02\xd4\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x03\x82\x00\x00\x00w\x00\x00\x05l\x00\x00\x02\xd4', 'sortCols': False, 'sortColsReverse': False, 'sortRows': False, 'sortRowsReverse': False, 'transpose': False, 'unweighted': False, 'uuid': '702bcf8b-fdc8-4ff4-aa35-4bcab307e761', '__version__': 1, '_TextableUtils_settings_version__': (0, 19)}</properties>
+		<properties node_id="6" format="literal">{'auto_commit': True, 'color_by_class': True, 'controlAreaVisible': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x00\xae\x00\x00\x00\xcc\x00\x00\x03\xcf\x00\x00\x02\xdf\x00\x00\x00\xaf\x00\x00\x00\xeb\x00\x00\x03\xce\x00\x00\x02\xde\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90\x00\x00\x00\xaf\x00\x00\x00\xeb\x00\x00\x03\xce\x00\x00\x02\xde', 'select_rows': True, 'show_attribute_labels': True, 'show_distributions': False, 'stored_selection': {'rows': [], 'columns': []}, 'stored_sort': [], '__version__': 1}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>

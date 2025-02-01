@@ -12,9 +12,10 @@ will learn how to go from the ones to the others.
     :maxdepth: 1
    
     From segmentations to tables <segmentations_tables>
-    Converting between table formats <converting_table_formats>
     Counting segment types <counting_segment_types>
     Counting in specific contexts <counting_specific_contexts>
+    Tagging table rows with segments and labels <tagging_table_rows_label_segment>
+    Viewing and processing tables <viewing_processing_tables>
 
 
 

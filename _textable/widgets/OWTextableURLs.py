@@ -1,6 +1,6 @@
 """
 Class OWTextableURLs
-Copyright 2012-2019 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2025 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable package.
 
@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.14.10'
+__version__ = '0.14.11'
 
 import os
 import codecs
@@ -36,20 +36,32 @@ import chardet
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
-import LTTL.Segmenter as Segmenter
+import LTTL.SegmenterThread as Segmenter
 
 from .TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     JSONMessage, InfoBox, SendButton, AdvancedSettings,
     addSeparatorAfterDefaultEncodings, addAutoDetectEncoding,
-    normalizeCarriageReturns, getPredefinedEncodings, pluralize
+    normalizeCarriageReturns, getPredefinedEncodings, pluralize,
+    Task
 )
 
 from Orange.widgets import widget, gui, settings
 
+# Threading
+from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
+import concurrent.futures
+from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
+from Orange.widgets.utils.widgetpreview import WidgetPreview
+from functools import partial
+
 
 class OWTextableURLs(OWTextableBaseWidget):
     """Orange widget for fetching text from URLs"""
+    
+    # Signals
+    signal_prog = pyqtSignal((int, bool)) # Progress bar (value, init)
+    signal_text = pyqtSignal((str, str))  # Text label (text, infotype)
 
     name = "URLs"
     description = "Fetch text data online"
@@ -93,6 +105,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             widget=self.controlArea,
             master=self,
             callback=self.sendData,
+            cancelCallback=self.cancel_manually,
             infoBoxAttribute='infoBox',
             sendIfPreCallback=self.updateGUI,
         )
@@ -110,14 +123,14 @@ class OWTextableURLs(OWTextableBaseWidget):
         # BASIC GUI...
 
         # Basic URL box
-        basicURLBox = gui.widgetBox(
+        self.basicURLBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Source',
             orientation='vertical',
             addSpace=False,
         )
         basicURLBoxLine1 = gui.widgetBox(
-            widget=basicURLBox,
+            widget=self.basicURLBox,
             box=False,
             orientation='horizontal',
         )
@@ -133,9 +146,9 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"The URL whose content will be imported."
             ),
         )
-        gui.separator(widget=basicURLBox, height=3)
+        gui.separator(widget=self.basicURLBox, height=3)
         advancedEncodingsCombobox = gui.comboBox(
-            widget=basicURLBox,
+            widget=self.basicURLBox,
             master=self,
             value='encoding',
             items=getPredefinedEncodings(),
@@ -150,21 +163,21 @@ class OWTextableURLs(OWTextableBaseWidget):
         )
         addSeparatorAfterDefaultEncodings(advancedEncodingsCombobox)
         addAutoDetectEncoding(advancedEncodingsCombobox)
-        gui.separator(widget=basicURLBox, height=3)
-        self.advancedSettings.basicWidgets.append(basicURLBox)
+        gui.separator(widget=self.basicURLBox, height=3)
+        self.advancedSettings.basicWidgets.append(self.basicURLBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
         # ADVANCED GUI...
 
         # URL box
-        URLBox = gui.widgetBox(
+        self.URLBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Sources',
             orientation='vertical',
             addSpace=False,
         )
         URLBoxLine1 = gui.widgetBox(
-            widget=URLBox,
+            widget=self.URLBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
@@ -232,7 +245,7 @@ class OWTextableURLs(OWTextableBaseWidget):
         self.exportButton = gui.button(
             widget=URLBoxCol2,
             master=self,
-            label=u'Export List',
+            label=u'Export JSON',
             callback=self.exportList,
             tooltip=(
                 u"Open a dialog for selecting a file where the URL\n"
@@ -242,7 +255,7 @@ class OWTextableURLs(OWTextableBaseWidget):
         self.importButton = gui.button(
             widget=URLBoxCol2,
             master=self,
-            label=u'Import List',
+            label=u'Import JSON',
             callback=self.importList,
             tooltip=(
                 u"Open a dialog for selecting an URL list to\n"
@@ -251,7 +264,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             ),
         )
         URLBoxLine2 = gui.widgetBox(
-            widget=URLBox,
+            widget=self.URLBox,
             box=False,
             orientation='vertical',
         )
@@ -336,18 +349,18 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"text field to the list."
             ),
         )
-        self.advancedSettings.advancedWidgets.append(URLBox)
+        self.advancedSettings.advancedWidgets.append(self.URLBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
-        optionsBox = gui.widgetBox(
+        self.optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
             addSpace=False,
         )
         optionsBoxLine1 = gui.widgetBox(
-            widget=optionsBox,
+            widget=self.optionsBox,
             box=False,
             orientation='horizontal',
         )
@@ -372,9 +385,9 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"Annotation key for importing URLs."
             ),
         )
-        gui.separator(widget=optionsBox, height=3)
+        gui.separator(widget=self.optionsBox, height=3)
         optionsBoxLine2 = gui.widgetBox(
-            widget=optionsBox,
+            widget=self.optionsBox,
             box=False,
             orientation='horizontal',
         )
@@ -399,107 +412,135 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"Annotation key for URL auto-numbering."
             ),
         )
-        gui.separator(widget=optionsBox, height=3)
-        self.advancedSettings.advancedWidgets.append(optionsBox)
+        gui.separator(widget=self.optionsBox, height=3)
+        self.advancedSettings.advancedWidgets.append(self.optionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
+        
+        # Threading
+        self._task = None  # type: Optional[Task]
+        self._executor = ThreadExecutor()
+        self.cancel_operation = False
 
-        # Send button...
+        # Send button & Info box
         self.sendButton.draw()
-
-        # Info box...
         self.infoBox.draw()
-
         self.adjustSizeWithTimer()
         QTimer.singleShot(0, self.sendButton.sendIf)
+        
+        # Connect signals to slots
+        self.signal_prog.connect(self.update_progress_bar)
+        self.signal_text.connect(self.update_infobox)
+        
+    @pyqtSlot(concurrent.futures.Future)
+    def _task_finished(self, f):
+        assert self.thread() is QThread.currentThread()
+        assert self._task is not None
+        assert self._task.future is f
+        assert f.done()
 
-    def inputMessage(self, message):
-        """Handle JSON message on input connection"""
-        if not message:
-            return
-        self.displayAdvancedSettings = True
-        self.advancedSettings.setVisible(True)
-        self.clearAll()
-        self.infoBox.inputChanged()
+        self._task = None
+        
         try:
-            json_data = json.loads(message.content)
-            temp_URLs = list()
-            for entry in json_data:
-                URL = entry.get('url', '')
-                encoding = entry.get('encoding', '')
-                annotationKey = entry.get('annotation_key', '')
-                annotationValue = entry.get('annotation_value', '')
-                if URL == '' or encoding == '':
-                    self.infoBox.setText(
-                        u"Please verify keys and values of incoming "
-                        u"JSON message.",
-                        'error'
-                    )
-                    self.send('Text data', None, self)
-                    return
-                temp_URLs.append((
-                    URL,
-                    encoding,
-                    annotationKey,
-                    annotationValue,
-                ))
-            self.URLs.extend(temp_URLs)
-            self.sendButton.settingsChanged()
-        except ValueError:
-            self.infoBox.setText(
-                u"Please make sure that incoming message is valid JSON.",
-                'error'
-            )
-            self.send('Text data', None, self)
-            return
+            # Data outputs of Segment.Recode
+            processed_data = f.result()
 
-    def sendData(self):
+            if processed_data:
+                message = u'%i segment@p sent to output ' % len(processed_data)
+                message = pluralize(message, len(processed_data))
+                numChars = 0
+                for segment in processed_data:
+                    segmentLength = len(Segmentation.get_data(segment.str_index))
+                    numChars += segmentLength
+                message += u'(%i character@p).' % numChars
+                message = pluralize(message, numChars)
+                self.infoBox.setText(message)
+                self.send('Text data', processed_data) # AS 11.2023: removed self
 
-        """Fetch URL content, create and send segmentation"""
+        except Exception as ex:
+            print(ex)
 
-        # Check that there's something on input...
-        if (
-            (self.displayAdvancedSettings and not self.URLs) or
-            not (self.URL or self.displayAdvancedSettings)
-        ):
-            self.infoBox.setText(u'Please select source URL.', 'warning')
-            self.send('Text data', None, self)
-            return
+            # Send None
+            self.send('Text data', None) # AS 11.2023: removed self
 
-        # Check that autoNumberKey is not empty (if necessary)...
-        if self.displayAdvancedSettings and self.autoNumber:
-            if self.autoNumberKey:
-                autoNumberKey = self.autoNumberKey
-            else:
-                self.infoBox.setText(
-                    u'Please enter an annotation key for auto-numbering.',
-                    'warning'
-                )
-                self.send('Text data', None, self)
-                return
+        finally:
+            # Manage GUI visibility
+            self.manageGuiVisibility(False) # Processing done/cancelled
+    
+    def cancel_manually(self):
+        """ Wrapper of cancel() method,
+        used for manual cancellations """
+        self.cancel(manualCancel=True)
+    
+    def cancel(self, manualCancel=False):
+        # Make loop break
+        self.cancel_operation = True
+
+        # Cancel current task
+        if self._task is not None:
+            self._task.cancel()
+            assert self._task.future.done()
+            # Disconnect slot
+            self._task.watcher.done.disconnect(self._task_finished)
+            self._task = None
+            
+            # Send None to output
+            self.send('Text data', None) # AS 11.2023: removed self
+            
+        if manualCancel:
+            self.infoBox.setText(u'Operation cancelled by user.', 'warning')
+            
+        # Manage GUI visibility
+        self.manageGuiVisibility(False) # Processing done/cancelled
+        
+    def manageGuiVisibility(self, processing=False):
+        """ Update GUI and make available (or not) elements
+        while the thread task is running in background """
+
+        # Thread currently running, freeze the GUI
+        if processing:
+            self.sendButton.mainButton.setDisabled(1) # Send button: DISABLED
+            self.sendButton.cancelButton.setDisabled(0) # Cancel button: ENABLED
+            self.sendButton.autoSendCheckbox.setDisabled(1) # Send automatically: DISABLED
+            self.basicURLBox.setDisabled(1) # Basic URL box: DISABLED
+            self.URLBox.setDisabled(1) # URL box: DISABLED
+            self.optionsBox.setDisabled(1) # Options box: DISABLED
+            self.advancedSettings.checkbox.setDisabled(1) # Advanced options checkbox: DISABLED
+
+        # Thread done or not running, unfreeze the GUI
         else:
-            autoNumberKey = None
-
-        # Clear created Inputs...
-        self.clearCreatedInputs()
-
+            # If "Send automatically" is disabled, reactivate "Send" button
+            if not self.sendButton.autoSendCheckbox.isChecked():
+                self.sendButton.mainButton.setDisabled(0) # Send: ENABLED
+            # Other buttons and layout
+            self.sendButton.cancelButton.setDisabled(1) # Cancel button: DISABLED
+            self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: ENABLED
+            self.basicURLBox.setDisabled(0) # Basic URL box: ENABLED
+            self.URLBox.setDisabled(0) # URL box: ENABLED
+            self.optionsBox.setDisabled(0) # Options box: ENABLED
+            self.advancedSettings.checkbox.setDisabled(0) # Advanced options checkbox: ENABLED
+            self.cancel_operation = False
+            self.signal_prog.emit(100, False) # 100% and do not re-init
+            self.sendButton.resetSettingsChangedFlag()
+            self.updateGUI()
+            
+    def process_data(self, myURLs):
+        """ Process data in a worker thread
+        instead of the main thread so that
+        the operations can be cancelled """
+        
+        # Emit 1%
+        self.signal_prog.emit(1, False)
+        
+        # Progress bar
+        max_itr = len(myURLs)
+        cur_itr = 1
+        
         URLContents = list()
         annotations = list()
         counter = 1
-
-        if self.displayAdvancedSettings:
-            myURLs = self.URLs
-        else:
-            myURLs = [[self.URL, self.encoding, u'', u'']]
-
-        self.infoBox.setText(u"Processing, please wait...", "warning")
-        self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(
-            self,
-            iterations=len(myURLs)
-        )
-
+        
         # Process each URL successively...
         for myURL in myURLs:
 
@@ -521,29 +562,42 @@ class OWTextableURLs(OWTextableBaseWidget):
             except http.client.IncompleteRead as e:
                 URLContent = e.partial
             except IOError:
-                progressBar.finish()
                 if len(myURLs) > 1:
                     message = u"Couldn't retrieve %s." % URL
                 else:
                     message = u"Couldn't retrieve URL."
-                self.infoBox.setText(message, 'error')
-                self.send('Text data', None, self)
-                self.controlArea.setDisabled(False)
+                
+                # Emit message
+                self.signal_text.emit(message, 'error')
+                
+                # Emit finished
+                self.signal_prog.emit(100, False)
+                
+                # Send None
+                self.send('Text data', None) # AS 11.2023: removed self
+                
                 return
             try:
                 if encoding == "(auto-detect)":
                     encoding = chardet.detect(URLContent)['encoding']
                 URLContent = URLContent.decode(encoding)
+
             except UnicodeError:
-                progressBar.finish()
                 if len(myURLs) > 1:
                     message = u"Please select another encoding "    \
                               + u"for URL %s." % URL
                 else:
                     message = u"Please select another encoding."
-                self.infoBox.setText(message, 'error')
-                self.send('Text data', None, self)
-                self.controlArea.setDisabled(False)
+
+                # Emit message
+                self.signal_text.emit(message, 'error')
+                
+                # Emit finished
+                self.signal_prog.emit(100, False)
+                
+                # Send None
+                self.send('Text data', None) # AS 11.2023: removed self
+
                 return
 
             # Replace newlines with '\n'...
@@ -574,7 +628,15 @@ class OWTextableURLs(OWTextableBaseWidget):
                     annotation[self.autoNumberKey] = counter
                     counter += 1
             annotations.append(annotation)
-            progressBar.advance()
+            
+            # Update progress bar manually
+            self.signal_prog.emit(int(100*cur_itr/max_itr), False)
+            cur_itr += 1
+            
+            # Cancel operation if requested by uers
+            if self.cancel_operation:
+                self.signal_prog.emit(100, False)
+                return
 
         # Create an LTTL.Input for each URL...
         if len(URLContents) == 1:
@@ -587,13 +649,18 @@ class OWTextableURLs(OWTextableBaseWidget):
             segment.annotations.update(annotations[index])
             myInput[0] = segment
             self.createdInputs.append(myInput)
+            
+        # Update infobox and reset progress bar
+        self.signal_text.emit(u"Step 2/2: Post-processing...", "warning")
+        self.signal_prog.emit(1, True)
 
         # If there's only one URL, the widget's output is the created Input.
         if len(URLContents) == 1:
-            self.segmentation = self.createdInputs[0]
+            return self.createdInputs[0]
         # Otherwise the widget's output is a concatenation...
         else:
-            self.segmentation = Segmenter.concatenate(
+            return Segmenter.concatenate(
+                caller=self,
                 segmentations=self.createdInputs,
                 label=self.captionTitle,
                 copy_annotations=True,
@@ -601,23 +668,131 @@ class OWTextableURLs(OWTextableBaseWidget):
                 sort=False,
                 auto_number_as=None,
                 merge_duplicates=False,
-                progress_callback=None,
             )
 
-        message = u'%i segment@p sent to output ' % len(self.segmentation)
-        message = pluralize(message, len(self.segmentation))
-        numChars = 0
-        for segment in self.segmentation:
-            segmentLength = len(Segmentation.get_data(segment.str_index))
-            numChars += segmentLength
-        message += u'(%i character@p).' % numChars
-        message = pluralize(message, numChars)
-        self.infoBox.setText(message)
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
+    def sendData(self):
 
-        self.send('Text data', self.segmentation, self)
-        self.sendButton.resetSettingsChangedFlag()
+        """Fetch URL content, create and send segmentation"""
+
+        # Check that there's something on input...
+        if (
+            (self.displayAdvancedSettings and not self.URLs) or
+            not (self.URL or self.displayAdvancedSettings)
+        ):
+            self.infoBox.setText(u'Please select source URL.', 'warning')
+            self.send('Text data', None) # AS 11.2023: removed self
+            return
+
+        # Check that autoNumberKey is not empty (if necessary)...
+        if self.displayAdvancedSettings and self.autoNumber:
+            if self.autoNumberKey:
+                autoNumberKey = self.autoNumberKey
+            else:
+                self.infoBox.setText(
+                    u'Please enter an annotation key for auto-numbering.',
+                    'warning'
+                )
+                self.send('Text data', None) # AS 11.2023: removed self
+                return
+        else:
+            autoNumberKey = None
+
+        # Clear created Inputs...
+        self.clearCreatedInputs()
+
+        if self.displayAdvancedSettings:
+            myURLs = self.URLs
+        else:
+            myURLs = [[self.URL, self.encoding, u'', u'']]
+
+        # Infobox & progress bar
+        self.infoBox.setText(u"Step 1/2: Processing...", "warning")
+        self.progressBarInit()        
+
+        # Partial function
+        threaded_function = partial(
+            self.process_data,
+            myURLs
+        )
+
+        # Threading ...
+        
+        # Cancel old tasks
+        if self._task is not None:
+            self.cancel()
+        assert self._task is None
+
+        self._task = task = Task()
+        
+        # Threading start, future, and watcher
+        task.future = self._executor.submit(threaded_function)
+        task.watcher = FutureWatcher(task.future)
+        task.watcher.done.connect(self._task_finished)
+        
+        # Manage GUI visibility
+        self.manageGuiVisibility(True) # Processing
+
+    # AS 09.2023
+    @pyqtSlot(int, bool)
+    def update_progress_bar(self, val, init):
+        """ Update progress bar in a thread-safe manner """
+        # Re-init progress bar, if needed
+        if init:
+            self.progressBarInit()
+        
+        # Update progress bar
+        if val >= 100:
+            self.progressBarFinished() # Finish progress bar     
+        elif val < 0:
+            self.progressBarSet(0)
+        else:
+            self.progressBarSet(val)
+
+    # AS 10.2023
+    @pyqtSlot(str, str)
+    def update_infobox(self, text, infotype):
+        """ Update info box in a thread-safe manner """
+        self.infoBox.setText(text, infotype) 
+        
+    def inputMessage(self, message):
+        """Handle JSON message on input connection"""
+        if not message:
+            return
+        self.displayAdvancedSettings = True
+        self.advancedSettings.setVisible(True)
+        self.clearAll()
+        self.infoBox.inputChanged()
+        try:
+            json_data = json.loads(message.content)
+            temp_URLs = list()
+            for entry in json_data:
+                URL = entry.get('url', '')
+                encoding = entry.get('encoding', '')
+                annotationKey = entry.get('annotation_key', '')
+                annotationValue = entry.get('annotation_value', '')
+                if URL == '' or encoding == '':
+                    self.infoBox.setText(
+                        u"Please verify keys and values of incoming "
+                        u"JSON message.",
+                        'error'
+                    )
+                    self.send('Text data', None) # AS 11.2023: removed self
+                    return
+                temp_URLs.append((
+                    URL,
+                    encoding,
+                    annotationKey,
+                    annotationValue,
+                ))
+            self.URLs.extend(temp_URLs)
+            self.sendButton.settingsChanged()
+        except ValueError:
+            self.infoBox.setText(
+                u"Please make sure that incoming message is valid JSON.",
+                'error'
+            )
+            self.send('Text data', None) # AS 11.2023: removed self
+            return
 
     def clearCreatedInputs(self):
         for i in self.createdInputs:
@@ -853,6 +1028,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             changed = title != self.captionTitle
             super().setCaption(title)
             if changed:
+                self.cancel() # Cancel current operation
                 self.sendButton.settingsChanged()
         else:
             super().setCaption(title)

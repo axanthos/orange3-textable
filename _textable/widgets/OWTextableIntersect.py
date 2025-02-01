@@ -1,6 +1,6 @@
 """
 Class OWTextableIntersect
-Copyright 2012-2019 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2025 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable package.
 
@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.15.2'
+__version__ = '0.15.3'
 
 
 import LTTL.Segmenter as Segmenter

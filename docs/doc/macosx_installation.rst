@@ -5,9 +5,8 @@
 MacOS X installation
 ====================
 
-1. On the `Orange 2.7 download page <http://orange.biolab.si/orange2/>`_, 
-   download the software installer by following the *Orange 2.7 bundle for OSX* 
-   link.
+1. On the `Orange 3.37.0 download page <https://orangedatamining.com/download/>`_, 
+   download the software installer by following the corresponding link under *MacOS*.
 
 2. In the window that opens at the end of the download, drag the Orange Canvas
    icon and drop it over the *Applications* folder icon.

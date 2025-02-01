@@ -1,6 +1,6 @@
 """
 Class OWTextableExtractXML
-Copyright 2012-2019 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2025 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable package.
 
@@ -18,25 +18,38 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.15.7'
+__version__ = '0.15.8'
 
 import re
 
 from PyQt5.QtGui import QFont
 
-import LTTL.Segmenter as Segmenter
+import LTTL.SegmenterThread as Segmenter
 from LTTL.Segmentation import Segmentation
 
 from .TextableUtils import (
-    OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
-    pluralize,SendButton, InfoBox, AdvancedSettings
+    OWTextableBaseWidget, VersionedSettingsHandler,
+    pluralize,SendButton, InfoBox, AdvancedSettings,
+    Task
 )
 
+import Orange
 from Orange.widgets import widget, gui, settings
 
+# Threading
+from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
+import concurrent.futures
+from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
+from Orange.widgets.utils.widgetpreview import WidgetPreview
+from functools import partial
 
 class OWTextableExtractXML(OWTextableBaseWidget):
     """Orange widget for xml markup extraction"""
+    
+    # AS 10.2023
+    # Signals
+    signal_prog = pyqtSignal((int, bool)) # Progress bar (value, init)
+    signal_text = pyqtSignal((str, str))  # Text label (text, infotype)
 
     name = "Extract XML"
     description = "Create a new segmentation based on XML markup"
@@ -85,6 +98,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             widget=self.controlArea,
             master=self,
             callback=self.sendData,
+            cancelCallback=self.cancel_manually,
             infoBoxAttribute='infoBox',
             sendIfPreCallback=self.updateGUI,
         )
@@ -99,13 +113,13 @@ class OWTextableExtractXML(OWTextableBaseWidget):
         self.advancedSettings.draw()
 
         # XML extraction box
-        xmlExtractionBox = gui.widgetBox(
+        self.xmlExtractionBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'XML Extraction',
             orientation='vertical',
         )
         gui.lineEdit(
-            widget=xmlExtractionBox,
+            widget=self.xmlExtractionBox,
             master=self,
             value='element',
             orientation='horizontal',
@@ -117,9 +131,9 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"input segmentation."
             ),
         )
-        gui.separator(widget=xmlExtractionBox, height=3)
+        gui.separator(widget=self.xmlExtractionBox, height=3)
         xmlExtractionBoxLine2 = gui.widgetBox(
-            widget=xmlExtractionBox,
+            widget=self.xmlExtractionBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
@@ -147,7 +161,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             ),
         )
         gui.checkBox(
-            widget=xmlExtractionBox,
+            widget=self.xmlExtractionBox,
             master=self,
             value='deleteMarkup',
             label=u'Remove markup',
@@ -157,9 +171,9 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"within the above specified XML element."
             ),
         )
-        gui.separator(widget=xmlExtractionBox, height=3)
+        gui.separator(widget=self.xmlExtractionBox, height=3)
         gui.checkBox(
-            widget=xmlExtractionBox,
+            widget=self.xmlExtractionBox,
             master=self,
             value='preserveLeaves',
             label=u'Prioritize shallow attributes',
@@ -176,9 +190,9 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"shallow element."
             ),
         )
-        gui.separator(widget=xmlExtractionBox, height=3)
+        gui.separator(widget=self.xmlExtractionBox, height=3)
         conditionsBox = gui.widgetBox(
-            widget=xmlExtractionBox,
+            widget=self.xmlExtractionBox,
             box=u'Conditions',
             orientation='vertical',
         )
@@ -338,18 +352,18 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"Add the current condition to the list."
             ),
         )
-        self.advancedSettings.advancedWidgets.append(xmlExtractionBox)
+        self.advancedSettings.advancedWidgets.append(self.xmlExtractionBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
-        optionsBox = gui.widgetBox(
+        self.optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
             addSpace=False,
         )
         optionsBoxLine2 = gui.widgetBox(
-            widget=optionsBox,
+            widget=self.optionsBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
@@ -377,7 +391,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             ),
         )
         gui.checkBox(
-            widget=optionsBox,
+            widget=self.optionsBox,
             master=self,
             value='importAnnotations',
             label=u'Import annotations',
@@ -388,9 +402,9 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"input segment."
             ),
         )
-        gui.separator(widget=optionsBox, height=3)
+        gui.separator(widget=self.optionsBox, height=3)
         gui.checkBox(
-            widget=optionsBox,
+            widget=self.optionsBox,
             master=self,
             value='mergeDuplicates',
             label=u'Fuse duplicates',
@@ -403,19 +417,19 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"the value of the last one will be kept."
             ),
         )
-        gui.separator(widget=optionsBox, height=2)
-        self.advancedSettings.advancedWidgets.append(optionsBox)
+        gui.separator(widget=self.optionsBox, height=2)
+        self.advancedSettings.advancedWidgets.append(self.optionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Basic) XML extraction box
-        basicXmlExtractionBox = gui.widgetBox(
+        self.basicXmlExtractionBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'XML Extraction',
             orientation='vertical',
             addSpace=False,
         )
         gui.lineEdit(
-            widget=basicXmlExtractionBox,
+            widget=self.basicXmlExtractionBox,
             master=self,
             value='element',
             orientation='horizontal',
@@ -427,9 +441,9 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"input segmentation."
             ),
         )
-        gui.separator(widget=basicXmlExtractionBox, height=3)
+        gui.separator(widget=self.basicXmlExtractionBox, height=3)
         gui.checkBox(
-            widget=basicXmlExtractionBox,
+            widget=self.basicXmlExtractionBox,
             master=self,
             value='deleteMarkup',
             label=u'Remove markup',
@@ -439,35 +453,136 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"within the above specified XML element."
             ),
         )
-        gui.separator(widget=basicXmlExtractionBox, height=2)
-        self.advancedSettings.basicWidgets.append(basicXmlExtractionBox)
+        gui.separator(widget=self.basicXmlExtractionBox, height=2)
+        self.advancedSettings.basicWidgets.append(self.basicXmlExtractionBox)
         self.advancedSettings.basicWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
+        
+        # Threading
+        self._task = None
+        self._executor = ThreadExecutor()
+        self.cancel_operation = False
 
-        # Send button...
+        # Send button & Info box
         self.sendButton.draw()
-
-        # Info box...
         self.infoBox.draw()
-
         self.sendButton.sendIf()
         self.adjustSizeWithTimer()
+        
+        # Connect signals to slots
+        self.signal_prog.connect(self.update_progress_bar) 
+        self.signal_text.connect(self.update_infobox)
+
+    @pyqtSlot(concurrent.futures.Future)
+    def _task_finished(self, f):    
+        assert self.thread() is QThread.currentThread()
+        assert self._task is not None
+        assert self._task.future is f
+        assert f.done()
+
+        self._task = None
+        
+        try:
+            # Data outputs
+            xml_extracted_data = f.result()
+            
+            # Data treatment
+            message = u'%i segment@p sent to output.' % len(xml_extracted_data)
+            message = pluralize(message, len(xml_extracted_data))
+            self.infoBox.setText(message)
+            self.send('Extracted data', xml_extracted_data) # AS 10.2023: removed self
+            
+        except ValueError:
+            self.infoBox.setText(
+                message=u'Please make sure that input is well-formed XML.',
+                state='error',
+            )
+            self.send('Extracted data', None) # AS 10.2023: removed self
+
+        except Exception as ex:
+            print(ex)
+
+            # Send None
+            self.send('Extracted data', None) # AS 10.2023: removed self
+
+        finally:
+            # Manage GUI visibility
+            self.manageGuiVisibility(False) # Processing done/cancelled!
+
+    def cancel_manually(self):
+        """ Wrapper of cancel() method,
+        used for manual cancellations """
+        self.cancel(manualCancel=True)
+
+    def cancel(self, manualCancel=False):
+        # Make loop break in LTTL/SegmenterThread.py 
+        self.cancel_operation = True
+        self.signal_prog.emit(100, False)
+    
+        # Cancel current task
+        if self._task is not None:
+            self._task.cancel()
+            assert self._task.future.done()
+            
+            # Disconnect slot
+            self._task.watcher.done.disconnect(self._task_finished)
+            self._task = None
+            
+            # Send None to output
+            self.send('Extracted data', None) # AS 10.2023: removed self
+
+        # If cancelled manually
+        if manualCancel:
+            self.infoBox.setText(u'Operation cancelled by user.', 'warning')        
+
+        # Manage GUI visibility
+        self.manageGuiVisibility(False) # Processing done/cancelled
+
+    def manageGuiVisibility(self, processing=False):
+        """ Update GUI and make available (or not) elements
+        while the thread task is running in the background """
+        
+        # Thread currently running, freeze the GUI
+        if processing:
+            self.sendButton.cancelButton.setDisabled(0) # Cancel: ENABLED
+            self.sendButton.mainButton.setDisabled(1) # Send: DISABLED
+            self.sendButton.autoSendCheckbox.setDisabled(1) # Send automatically: DISABLED
+            self.basicXmlExtractionBox.setDisabled(1) # Basic settings: DISABLED
+            self.xmlExtractionBox.setDisabled(1) # Advanced settings: DISABLED
+            self.optionsBox.setDisabled(1) # Advanced settings options: DISABLED
+            self.advancedSettings.checkbox.setDisabled(1) # Advanced options checkbox: DISABLED
+
+        # Thread done or not running, unfreeze the GUI
+        else:
+            # If "Send automatically" is disabled, reactivate "Send" button
+            if not self.sendButton.autoSendCheckbox.isChecked():
+                self.sendButton.mainButton.setDisabled(0) # Send: ENABLED
+            # Other buttons and layout
+            self.sendButton.cancelButton.setDisabled(1) # Cancel: DISABLED
+            self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: ENABLED
+            self.basicXmlExtractionBox.setDisabled(0) # Basic settings: ENABLED
+            self.xmlExtractionBox.setDisabled(0) # Advanced settings: ENABLED
+            self.optionsBox.setDisabled(0) # Advanced settings options: ENABLED
+            self.advancedSettings.checkbox.setDisabled(0) # Advanced options checkbox: ENABLED
+            self.cancel_operation = False # Restore to default
+            self.signal_prog.emit(100, False) # 100%
+            self.sendButton.resetSettingsChangedFlag()
+            self.updateGUI()
 
     def sendData(self):
-
         """(Have LTTL.Segmenter) perform the actual tokenization"""
 
         # Check that there's something on input...
         if not self.inputSegmentation:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Extracted data', None, self)
+            self.send('Extracted data', None) # AS 10.2023: removed self
             return
 
         # Check that element field is not empty...
         if not self.element:
             self.infoBox.setText(u'Please type an XML element', 'warning')
-            self.send('Extracted data', None, self)
+            self.send('Extracted data', None) # AS 10.2023: removed self
             return
 
         # TODO: update docs to indicate that angle brackets are optional
@@ -482,7 +597,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                     u'Please enter an annotation key for element import.',
                     'warning'
                 )
-                self.send('Extracted data', None, self)
+                self.send('Extracted data', None) # AS 10.2023: removed self
                 return
         else:
             importElementAs = None
@@ -497,7 +612,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                     u'Please enter an annotation key for auto-numbering.',
                     'warning'
                 )
-                self.send('Extracted data', None, self)
+                self.send('Extracted data', None) # AS 10.2023: removed self
                 return
         else:
             autoNumberKey = None
@@ -522,7 +637,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                         flags += 'm'
                     if condition[5]:
                         flags += 's'
-                    regex_string += '(?%s)' % flags
+                    regex_string = f"(?{flags}){regex_string}"
 
                 try:
                     conditions[attribute] = re.compile(regex_string)
@@ -539,7 +654,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                             message += u' (condition #%i)' % (condition_idx + 1)
                         message += u'.'
                     self.infoBox.setText(message, 'error')
-                    self.send('Extracted data', None, self)
+                    self.send('Extracted data', None) # AS 10.2023: removed self
                     return
 
         # Basic settings...
@@ -554,43 +669,85 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             mergeDuplicates = False
             preserveLeaves = False
 
-        # Perform tokenization...
-        self.controlArea.setDisabled(True)
-        self.infoBox.setText(u"Processing, please wait...", "warning")
-        progressBar = ProgressBar(
-            self,
-            iterations=num_iterations
+        # Threading ...
+        
+        # Cancel old tasks
+        if self._task is not None:
+            self.cancel()
+        assert self._task is None
+
+        self._task = task = Task()
+        
+        # Deal with amount of steps
+        total_steps = 1 # minimum amount of steps
+        if mergeDuplicates:
+            total_steps += 1
+        if autoNumberKey:
+            total_steps += 1
+
+        # Infobox and progress bar
+        self.progressBarInit()
+        
+        if total_steps == 1:
+            self.infoBox.setText(u'Processing...', 'warning')
+        else:
+            self.infoBox.setText(f'Step 1/{total_steps}: Processing...', 'warning')
+
+        # Partial function for threading
+        threaded_function = partial(
+            Segmenter.import_xml,
+            segmentation=self.inputSegmentation,
+            element=self.element,
+            caller=self,
+            conditions=conditions,
+            import_element_as=importElementAs,
+            label=self.captionTitle,
+            import_annotations=importAnnotations,
+            auto_number_as=autoNumberKey,
+            remove_markup=self.deleteMarkup,
+            merge_duplicates=mergeDuplicates,
+            preserve_leaves=preserveLeaves,
+            total_steps=total_steps
         )
-        try:
-            xml_extracted_data = Segmenter.import_xml(
-                segmentation=self.inputSegmentation,
-                element=self.element,
-                conditions=conditions,
-                import_element_as=importElementAs,
-                label=self.captionTitle,
-                import_annotations=importAnnotations,
-                auto_number_as=autoNumberKey,
-                remove_markup=self.deleteMarkup,
-                merge_duplicates=mergeDuplicates,
-                preserve_leaves=preserveLeaves,
-                progress_callback=progressBar.advance,
-            )
-            message = u'%i segment@p sent to output.' % len(xml_extracted_data)
-            message = pluralize(message, len(xml_extracted_data))
-            self.infoBox.setText(message)
-            self.send('Extracted data', xml_extracted_data, self)
-        except ValueError:
-            self.infoBox.setText(
-                message=u'Please make sure that input is well-formed XML.',
-                state='error',
-            )
-            self.send('Extracted data', None, self)
-        self.sendButton.resetSettingsChangedFlag()
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
+
+        # Restore to default
+        self.cancel_operation = False
+        
+        # Threading start, future, and watcher
+        task.future = self._executor.submit(threaded_function)
+        task.watcher = FutureWatcher(task.future)
+        task.watcher.done.connect(self._task_finished)
+        
+        # Manage GUI visibility
+        self.manageGuiVisibility(True) # Processing
+        
+    # AS 09.2023
+    @pyqtSlot(int, bool)
+    def update_progress_bar(self, val, init):
+        """ Update progress bar in a thread-safe manner """
+        # Re-init progress bar, if needed
+        if init:
+            self.progressBarInit()
+        
+        # Update progress bar
+        if val >= 100:
+            self.progressBarFinished() # Finish progress bar     
+        elif val < 0:
+            self.progressBarSet(0)
+        else:
+            self.progressBarSet(val)
+
+    # AS 10.2023
+    @pyqtSlot(str, str)
+    def update_infobox(self, text, infotype):
+        """ Update info box in a thread-safe manner """
+        self.infoBox.setText(text, infotype)
 
     def inputData(self, segmentation):
         """Process incoming segmentation"""
+        # Cancel pending tasks, if any
+        self.cancel()
+        
         self.inputSegmentation = segmentation
         self.infoBox.inputChanged()
         self.sendButton.sendIf()
@@ -691,10 +848,10 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             changed = title != self.captionTitle
             super().setCaption(title)
             if changed:
+                self.cancel() # Cancel current operation
                 self.sendButton.settingsChanged()
         else:
             super().setCaption(title)
-
 
 if __name__ == '__main__':
     import sys

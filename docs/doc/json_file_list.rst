@@ -18,27 +18,27 @@ Example::
 
     [
         {
-            "path":             "data\\Balzac\\Eugenie_Grandet.txt",
+            "path":             "data\\Shakespeare\\Romeo_and_Juliet.txt",
             "encoding":         "iso-8859-1",
-            "annotation_key":   "auteur",
-            "annotation_value": "Balzac"
+            "annotation_key":   "author",
+            "annotation_value": "Shakespeare"
         },
         {
-            "path":             "data\\Balzac\\Le_Pere_Goriot.txt",
+            "path":             "data\\Shakespeare\\Hamlet.txt",
             "encoding":         "iso-8859-1",
-            "annotation_key":   "auteur",
-            "annotation_value": "Balzac"
+            "annotation_key":   "author",
+            "annotation_value": "Shakespeare"
         },
         {
-            "path":             "data\\Daudet\\Lettres_de_mon_moulin.txt",
+            "path":             "data\\Dickens\\Oliver_Twist.txt",
             "encoding":         "iso-8859-15",
-            "annotation_key":   "auteur",
-            "annotation_value": "Daudet"
+            "annotation_key":   "author",
+            "annotation_value": "Dickens"
         },
         {
-            "path":             "data\\Daudet\\Tartarin_de_Tarascon.txt",
+            "path":             "data\\Defoe\\Robinson_Crusoe.txt",
             "encoding":         "iso-8859-15",
-            "annotation_key":   "auteur",
-            "annotation_value": "Daudet"
+            "annotation_key":   "author",
+            "annotation_value": "Defoe"
         }
     ]

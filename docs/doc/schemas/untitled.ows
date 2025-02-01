@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="" description="">
+	<nodes>
+		<node id="0" name="Text Files" qualified_name="_textable.widgets.OWTextableTextFiles.OWTextableTextFiles" project_name="Orange3-Textable" version="" title="Text Files" position="(150, 150)" />
+	</nodes>
+	<links />
+	<annotations />
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="literal">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': True, 'controlAreaVisible': True, 'displayAdvancedSettings': False, 'encoding': 'utf8', 'file': 'F:\\Cours\\TICT\\P24\\corr_test_ecrit\\Ilana Senape_2944433_assignsubmission_file\\Examen_Ilana_senape\\Textes\\les_voyages_de_guillivier_clean_P4.txt', 'files': [('clair_de_lune_clean.txt', 'utf8', 'type', 'nouvelles'), ('la_maison_tellier_clean.txt', 'utf8', 'type', 'nouvelles'), ('fort_comme_la_mort_clean.txt', 'utf8', 'type', 'romans'), ('une_vie_clean.txt', 'utf8', 'type', 'romans')], 'importFilenames': True, 'importFilenamesKey': 'filename', 'lastLocation': 'F:/Cours/TICT/P24/corr_test_ecrit/Ilana Senape_2944433_assignsubmission_file/Examen_Ilana_senape/Textes', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02\x0b\x00\x00\x00%\x00\x00\x03n\x00\x00\x028\x00\x00\x02\x0c\x00\x00\x00D\x00\x00\x03m\x00\x00\x027\x00\x00\x00\x00\x00\x00\x00\x00\x06\x90\x00\x00\x02\x0c\x00\x00\x00D\x00\x00\x03m\x00\x00\x027', 'uuid': '776f80e2-3cdb-4e03-9eda-53d443609f2e', '__version__': 1, '_TextableUtils_settings_version__': (0, 17)}</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>

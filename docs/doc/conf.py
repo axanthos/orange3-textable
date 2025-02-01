@@ -65,9 +65,9 @@ master_doc = 'index'
 # General information about the project.
 project = module_setup.DOCUMENTATION_NAME
 copyright = (
-      u'2012-2021 '
+      u'2012-2025 '
     + author
-    + u', translation \u00A9 2014-2021 University of Lausanne'
+    + u', documentation \u00A9 2014-2025 University of Lausanne'
 )
 
 # The version info for the project you're documenting, acts as replacement for
@@ -84,7 +84,7 @@ release = version
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -171,7 +171,14 @@ html_title = title
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-#html_static_path = ['_static']
+html_static_path = ['_static']
+
+# Add any CSS files here, relative to this directory.
+# These CSS files are included after the default Sphinx CSS files,
+# so they can be used to override the default styling.
+# For example, custom.css is used here to add custom styles, such as
+# rounding the corners of images.
+html_css_files = ['custom.css', ]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -205,7 +212,7 @@ html_title = title
 
 # If false, no index is generated.
 #
-# html_use_index = True
+html_use_index = False
 
 # If true, the index is split into individual pages for each letter.
 #
@@ -357,4 +364,5 @@ texinfo_documents = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+#intersphinx_mapping = {'https://docs.python.org/': None}
+

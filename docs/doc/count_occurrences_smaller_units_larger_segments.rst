@@ -1,34 +1,26 @@
-.. meta::
-   :description: Orange Textable documentation, count occurrences of smaller 
-                 units in larger segments
-   :keywords: Orange, Textable, documentation, cookbook, count, occurrences, 
-              units, contexts, term-document matrix, document-term matrix,
-              contingency table
-
 Count occurrences of smaller units in larger segments
-=====================================================
+=========================================================
 
 Goal
-----
+--------
 
 Count the occurrences of smaller units (for instance letters) in larger
 segments (for instance words), and report the results by means of a
-two-dimensional contingency table (e.g. with words in rows and letters in
-columns).
+two-dimensional contingency table (e.g. with words in rows and letters
+in columns).
 
 Prerequisites
--------------
+-----------------
 
-Some text has been imported in Orange Textable (see :ref:`Cookbook: Text input
-<cookbook_toc_text_input_ref>`) and it has been segmented in at least two
-hierarchical levels, e.g. words and letters (see :doc:`Cookbook: Segment text
-in smaller units <segment_text>`).
+Some text has been imported in Orange Textable (see :doc:`Cookbook: Text input <text_input>`)
+and it has been segmented in at least two hierarchical levels, e.g.
+words and letters (see :doc:`Cookbook: Segment text in smaller units <segment_text>`).
 
 Ingredients
------------
+---------------
 
   ==============  =============
-   **Widget**      :ref:`Count`   
+   **Widget**      :doc:`Count <count>`   
    **Icon**        |count_icon|  
    **Quantity**    1          
   ==============  =============
@@ -36,7 +28,7 @@ Ingredients
 .. |count_icon| image:: figures/Count_36.png
 
 Procedure
----------
+-------------
 
 .. _count_occurrences_smaller_units_in_larger_segments_fig1:
 
@@ -46,46 +38,58 @@ Procedure
          instance of Count
 
    Figure 1: Count occurrences of smaller units in larger segments with an 
-   instance of :ref:`Count`
+   instance of :doc:`Count <count>`
 
-1. Create an instance of :ref:`Count` on the canvas.
-2. Drag and drop from the output connection (righthand side) of both widget
-   instances that have been used to segment the text
-   (here the two instances of :ref:`Segment`) to the :ref:`Count` widget
-   instance's input connection (lefthand side), thus forming a triangle.
-3. Open the :ref:`Count` instance's interface by double-clicking on its
-   icon on the canvas.
-4. In the **Units** section, select the segmentation into smaller units (here:
-   *letters*).
+1. Create an instance of :doc:`Count <count>`.
+
+2. Drag and drop from the output (righthand side) of both widgets that
+   have been used to segment the text, here
+   :doc:`Segment <segment>`
+   (*words*) and
+   :doc:`Segment <segment>`
+   (*letters*), to the input of :doc:`Count <count>`
+   (lefthand side), thus forming a triangle.
+
+3. Double-click on the icon of :doc:`Count <count>`
+   to open its interface.
+
+4. In the **Units** section, select the segmentation into smaller units
+   (here: *letters*).
+
 5. In the **Context** section, choose **Mode: Containing segmentation**.
-6. In the **Segmentation** field, select the context segmentation, i.e. the
-   segmentation into larger segments (here *words*).
-7. Click the **Compute** button (or make sure the **Compute automatically**
-   checkbox is selected).
-8. A table showing the results is then available at the output connection of
-   the :ref:`Count` instance; to display or export it, see :ref:`Cookbook:
-   Table output <cookbook_toc_table_output_ref>`.
+
+6. In the **Segmentation** field, select the context segmentation, i.e.
+   the segmentation into larger segments (here *words*).
+
+7. Click the **Send** button or tick the **Send automatically**
+   checkbox.
+
+8. A table showing the results is then available at the output of :doc:`Count <count>`;
+   to display or export it, see :doc:`Cookbook: Table output <table_output>`.
 
 Comment
--------
-* The total number of segments in your segmentation appears in the **Info**
-  section (here: 14).
-* It is also possible to define units as segment pairs (*bigrams*), triples
-  (*trigrams*), and so on, by increasing the **Sequence length** parameter in
-  the **Units** section.
-* If **Sequence length** is set to a value greater than 1, the string
-  appearing in the **Intra-sequence delimiter** field will be inserted between
-  the elements composing each *n*-gram in the column headers, which can
-  enhance their readability. The default is ``#`` but you can change it by
-  inserting the delimiter of your choice.
+-----------
+
+-  The total number of segments in your segmentation appears at the
+   bottom of
+   :doc:`Count <count>`’s
+   interface (here: 14).
+
+-  It is also possible to define units as segment pairs (*bigrams*),
+   triples (*trigrams*), and so on, by increasing the **Sequence
+   length** parameter in the **Units** section.
+
+-  If **Sequence length** is set to a value greater than 1, the string
+   appearing in the **Intra-sequence delimiter** field will be inserted
+   between the elements composing each *n*-gram in the column headers,
+   which can enhance their readability. The default is ``#`` but you can
+   change it to the delimiter of your choice.
 
 See also
---------
+------------
 
-* :doc:`Getting started: Counting in specific contexts
-  <counting_specific_contexts>`
-* :ref:`Reference: Count widget <Count>`
-* :ref:`Cookbook: Text input <cookbook_toc_text_input_ref>`
-* :doc:`Cookbook: Segment text in smaller units <segment_text>`
-* :ref:`Cookbook: Table output <cookbook_toc_table_output_ref>`
-
+-  :doc:`Textable's Basics: Counting in specific contexts <counting_specific_contexts>`
+-  :doc:`Reference: Count widget <count>`
+-  :doc:`Cookbook: Text input <text_input>`
+-  :doc:`Cookbook: Segment text in smaller units <segment_text>`
+-  :doc:`Cookbook: Table output <table_output>`

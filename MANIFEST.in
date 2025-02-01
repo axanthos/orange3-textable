@@ -1,5 +1,5 @@
 recursive-include _textable *.png *.svg
-recursive-include docs/rst *
+recursive-include docs/doc/_build/*
 include docs/Makefile
 include LICENSE
 include *.py *.rst

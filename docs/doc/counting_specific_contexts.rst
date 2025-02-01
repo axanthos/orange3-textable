@@ -1,6 +1,6 @@
 .. meta::
    :description: Orange Textable documentation, counting in specific contexts
-   :keywords: Orange, Textable, documentation, count, context, contigency
+   :keywords: Orange, Textable, documentation, count, context, contingency
               table, document-term matrix, term-document matrix
 
 Counting in specific contexts
@@ -71,7 +71,7 @@ For instance, setting **Left context size** to 1 and **Right context size**
 to 0 amounts to counting the frequency of each segment type given the type
 that occurs immediately to its left. This particular table is often called
 "transition matrix" (see :ref:`table 2 <counting_specific_contexts_table2>`
-below). The string selected in the **Unit position marker** string is used
+below). The string typed in the **Unit position marker** field is used
 to indicate the position where units appear in the context. Thus,
 :ref:`table 2 <counting_specific_contexts_table2>` shows that both *m* and *s*
 appear once immediately to the right of an *a* (i.e. in context *a_*).

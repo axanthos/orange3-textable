@@ -1,6 +1,6 @@
 """
 Class OWTextableVariety
-Copyright 2012-2019 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2025 LangTech Sarl (info@langtech.ch)
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable package.
 
@@ -18,23 +18,37 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.7'
+__version__ = '0.13.8'
 
 
-from LTTL.Table import Table
+from LTTL.TableThread import Table
 from LTTL.Segmentation import Segmentation
-import LTTL.Processor as Processor
+import LTTL.ProcessorThread as Processor
 
 from .TextableUtils import (
     OWTextableBaseWidget, SegmentationListContextHandler, ProgressBar,
-    SegmentationsInputList, InfoBox, SendButton, updateMultipleInputs
+    SegmentationsInputList, InfoBox, SendButton, updateMultipleInputs,
+    Task
 )
 import Orange.data
 from Orange.widgets import widget, gui, settings
 
+# Threading
+from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
+import concurrent.futures
+from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
+from Orange.widgets.utils.widgetpreview import WidgetPreview
+from functools import partial
 
 class OWTextableVariety(OWTextableBaseWidget):
     """Orange widget for measuring variety of text units"""
+    
+    # AS 10.2023
+    # Signals
+    signal_prog = pyqtSignal((int, bool)) # Progress bar (value, init)
+    signal_text = pyqtSignal((str, str))  # Text label (text, infotype)
+    signal_cancel_button = pyqtSignal(bool) # Allow to Deactivate cancel
+                                            # button from worker thread
 
     name = "Variety"
     description = "Measure the variety of segments"
@@ -84,6 +98,7 @@ class OWTextableVariety(OWTextableBaseWidget):
             widget=self.controlArea,
             master=self,
             callback=self.sendData,
+            cancelCallback=self.cancel_manually, # Manual cancel button
             infoBoxAttribute='infoBox',
             buttonLabel=u'Send',
             checkboxLabel=u'Send automatically',
@@ -218,7 +233,7 @@ class OWTextableVariety(OWTextableBaseWidget):
             ),
         )
         gui.separator(widget=iBox, height=3)
-        gui.checkBox(
+        self.adjustSubsampleSizeCheckbox = gui.checkBox(
             widget=iBox,
             master=self,
             value='adjustSubsampleSize',
@@ -411,45 +426,124 @@ class OWTextableVariety(OWTextableBaseWidget):
         gui.separator(widget=self.resamplingBox, height=3)
 
         gui.rubber(self.controlArea)
+        
+        # Threading
+        self._task = None
+        self._executor = ThreadExecutor()
+        self.cancel_operation = False
 
-        # Send button...
+        # Send button & Info box
         self.sendButton.draw()
-
-        # Info box...
         self.infoBox.draw()
-
         self.sendButton.sendIf()
         self.adjustSizeWithTimer()
 
-    def inputData(self, newItem, newId=None):
-        """Process incoming data."""
-        self.closeContext()
-        updateMultipleInputs(
-            self.segmentations,
-            newItem,
-            newId,
-            self.onInputRemoval
-        )
-        self.infoBox.inputChanged()
-        self.updateGUI()
+        # Connect signals to slots
+        self.signal_prog.connect(self.update_progress_bar) 
+        self.signal_text.connect(self.update_infobox)
+        self.signal_cancel_button.connect(self.disable_cancel_button)
 
-    def onInputRemoval(self, index):
-        """Handle removal of input with given index"""
-        if index < self.units:
-            self.units -= 1
-        elif index == self.units and self.units == len(self.segmentations) - 1:
-            self.units -= 1
-        if self.mode == u'Containing segmentation':
-            if index == self._contexts:
-                self.mode = u'No context'
-                self._contexts = -1
-            elif index < self._contexts:
-                self._contexts -= 1
-                if self._contexts < 0:
-                    self.mode = u'No context'
+    @pyqtSlot(concurrent.futures.Future)
+    def _task_finished(self, f):    
+        assert self.thread() is QThread.currentThread()
+        assert self._task is not None
+        assert self._task.future is f
+        assert f.done()
+
+        self._task = None
+        
+        try:
+            # Result data
+            textable_table, orange_table = f.result()
+
+            if not len(textable_table.row_ids):
+                self.infoBox.setText(u'Resulting table is empty.', 'warning')
+                self.send('Textable table', None)
+                self.send('Orange table', None)
+            else:
+                self.infoBox.setText(u'Table sent to output.')
+                self.send('Textable table', textable_table)
+                self.send('Orange table', orange_table)
+
+        except Exception as ex:
+            print(ex)
+
+            # Send None
+            self.send('Textable table', None)
+            self.send('Orange table', None)
+            self.infoBox.setText(u'An error has occured.', 'error')   
+
+        finally:
+            # Manage GUI visibility
+            self.manageGuiVisibility(False) # Processing done/cancelled!
+        
+    def cancel_manually(self):
+        """ Wrapper of cancel() method,
+        used for manual cancellations """
+        self.cancel(manualCancel=True)
+            
+    def cancel(self, manualCancel=False):
+        # Make loop break in LTTL/SegmenterThread.py 
+        self.cancel_operation = True
+
+        # Cancel current task
+        if self._task is not None:
+            self._task.cancel()
+            assert self._task.future.done()
+            
+            # Disconnect slot
+            self._task.watcher.done.disconnect(self._task_finished)
+            self._task = None
+            
+            # Send None to output
+            try:
+                self.send('Textable table', None)
+                self.send('Orange table', None)
+                
+            except KeyError:
+                # Exception occurs when widget is deleted
+                # when the thread is running...
+                return
+
+        # If cancelled manually
+        if manualCancel:
+            self.infoBox.setText(u'Operation cancelled by user.', 'warning')        
+
+        # Manage GUI visibility
+        self.manageGuiVisibility(False) # Processing done/cancelled
+
+    def manageGuiVisibility(self, processing=False):
+        """ Update GUI and make available (or not) elements
+        while the thread task is running in the background """
+        
+        # Thread currently running, freeze the GUI
+        if processing:
+            self.sendButton.cancelButton.setDisabled(0) # Cancel: ENABLED
+            self.sendButton.mainButton.setDisabled(1) # Send: DISABLED
+            self.sendButton.autoSendCheckbox.setDisabled(1) # Send automatically: DISABLED
+            self.unitsBox.setDisabled(1) # Units box: DISABLED
+            self.categoriesBox.setDisabled(1) # Categories box: DISABLED
+            self.contextsBox.setDisabled(1) # Contexts box: DISABLED
+            self.resamplingBox.setDisabled(1) # Resampling box: DISABLED
+
+        # Thread done or not running, unfreeze the GUI
+        else:
+            # If "Send automatically" is disabled, reactivate "Send" button
+            if not self.sendButton.autoSendCheckbox.isChecked():
+                self.sendButton.mainButton.setDisabled(0) # Send: ENABLED
+            # Other buttons and layout
+            self.sendButton.cancelButton.setDisabled(1) # Cancel: DISABLED
+            self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: ENABLED
+            self.unitsBox.setDisabled(0) # Units box: ENABLED
+            self.categoriesBox.setDisabled(0) # Categories box: ENABLED
+            self.contextsBox.setDisabled(0) # Contexts box: ENABLED
+            self.resamplingBox.setDisabled(0) # Resampling box: ENABLED
+            self.cancel_operation = False # Restore to default
+            self.signal_prog.emit(100, False) # 100%
+            self.sendButton.resetSettingsChangedFlag()
+            self.updateGUI()
 
     def sendData(self):
-
         """Check input, compute variety, then send table"""
 
         # Check that there's something on input...
@@ -478,8 +572,17 @@ class OWTextableVariety(OWTextableBaseWidget):
         if categories['annotation_key'] == u'(none)':
             categories['annotation_key'] = None
 
-        self.infoBox.setText(u"Processing, please wait...", "warning")
-        self.controlArea.setDisabled(True)
+        # Threading ...
+        
+        # Cancel old tasks
+        if self._task is not None:
+            self.cancel()
+        assert self._task is None
+
+        self._task = task = Task()
+        
+        # Infobox and progress bar
+        self.progressBarInit()
 
         # Case 1: sliding window...
         if self.mode == 'Sliding window':
@@ -494,21 +597,17 @@ class OWTextableVariety(OWTextableBaseWidget):
                 num_iterations = num_rows / 2
 
             # Measure...
-            progressBar = ProgressBar(
-                self,
-                iterations=num_iterations
-            )
-            table = Processor.variety_in_window(
-                units,
-                categories,
+            threaded_function = partial(
+                Processor.variety_in_window,
+                caller=self,
+                units=units,
+                categories=categories,
                 measure_per_category=self.measurePerCategory,
                 window_size=self.windowSize,
                 apply_resampling=self.applyResampling,
                 subsample_size=self.subsampleSize,
                 num_subsamples=self.numSubsamples,
-                progress_callback=progressBar.advance,
             )
-            progressBar.finish()
 
         # Case 2: Containing segmentation or no context...
         else:
@@ -537,39 +636,92 @@ class OWTextableVariety(OWTextableBaseWidget):
                 if self.measurePerCategory and self.applyResampling:
                     num_iterations *= 2
 
-
             # Measure...
-            progressBar = ProgressBar(
-                self,
-                iterations=num_iterations
-            )
-            table = Processor.variety_in_context(
-                units,
-                categories,
-                contexts,
+            threaded_function = partial(
+                Processor.variety_in_context,
+                caller=self,
+                units=units,
+                categories=categories,
+                contexts=contexts,
                 measure_per_category=self.measurePerCategory,
                 apply_resampling=self.applyResampling,
                 subsample_size=self.subsampleSize,
                 num_subsamples=self.numSubsamples,
-                progress_callback=progressBar.advance,
             )
-            progressBar.finish()
 
-        self.controlArea.setDisabled(False)
+        # Restore to default
+        self.cancel_operation = False
+        
+        # Threading start, future, and watcher
+        task.future = self._executor.submit(threaded_function)
+        task.watcher = FutureWatcher(task.future)
+        task.watcher.done.connect(self._task_finished)
+        
+        # Manage GUI visibility
+        self.manageGuiVisibility(True) # Processing
 
-        if not len(table.row_ids):
-            self.infoBox.setText(u'Resulting table is empty.', 'warning')
-            self.send('Textable table', None)
-            self.send('Orange table', None)
+    # AS 09.2023
+    @pyqtSlot(int, bool)
+    def update_progress_bar(self, val, init):
+        """ Update progress bar in a thread-safe manner """
+        # Update progress bar
+        if val >= 100:
+            self.progressBarFinished() # Finish progress bar     
+        elif val < 0:
+            self.progressBarSet(0)
         else:
-            self.infoBox.setText(u'Table sent to output.')
-            self.send('Textable table', table)
-            self.send('Orange table', table.to_orange_table())
+            self.progressBarSet(val)
 
-        self.sendButton.resetSettingsChangedFlag()
+        # Re-init progress bar, if needed
+        if init:
+            self.progressBarInit()
+
+    # AS 10.2023
+    @pyqtSlot(str, str)
+    def update_infobox(self, text, infotype):
+        """ Update info box in a thread-safe manner """
+        self.infoBox.setText(text, infotype)
+        
+    # AS 10.2023
+    @pyqtSlot(bool)
+    def disable_cancel_button(self, disable):
+        """ Disables cancel button in a thread-safe manner """
+        if disable:
+            self.sendButton.cancelButton.setDisabled(1)
+        else:
+            self.sendButton.cancelButton.setDisabled(0)
+        
+    def inputData(self, newItem, newId=None):
+        """Process incoming data."""
+        # Cancel pending tasks, if any
+        self.cancel()
+        
+        self.closeContext()
+        updateMultipleInputs(
+            self.segmentations,
+            newItem,
+            newId,
+            self.onInputRemoval
+        )
+        self.infoBox.inputChanged()
+        self.updateGUI()
+
+    def onInputRemoval(self, index):
+        """Handle removal of input with given index"""
+        if index < self.units:
+            self.units -= 1
+        elif index == self.units and self.units == len(self.segmentations) - 1:
+            self.units -= 1
+        if self.mode == u'Containing segmentation':
+            if index == self._contexts:
+                self.mode = u'No context'
+                self._contexts = -1
+            elif index < self._contexts:
+                self._contexts -= 1
+                if self._contexts < 0:
+                    self.mode = u'No context'
 
     def updateGUI(self):
-
         """Update GUI state"""
 
         self.unitSegmentationCombo.clear()
@@ -577,6 +729,8 @@ class OWTextableVariety(OWTextableBaseWidget):
         self.unitAnnotationCombo.addItem(u'(none)')
         self.categoryAnnotationCombo.clear()
         self.categoryAnnotationCombo.addItem(u'(none)')
+
+        self.adjustSubsampleSizeCheckbox.setDisabled(not self.applyResampling)
 
         if self.mode == u'No context':
             self.containingSegmentationBox.setVisible(False)
@@ -590,6 +744,7 @@ class OWTextableVariety(OWTextableBaseWidget):
             self.categoriesBox.setDisabled(True)
             self.mode = 'No context'
             self.contextsBox.setDisabled(True)
+            self.resamplingBox.setDisabled(True)
             return
         else:
             if len(self.segmentations) == 1:
@@ -619,6 +774,7 @@ class OWTextableVariety(OWTextableBaseWidget):
             # if self.mode == u'Sliding window':
             #     self.numSubsampleSpin.setDisabled(False)
             # else:
+            self.resamplingBox.setDisabled(False)
             self.numSubsampleSpin.setDisabled(
                 not(self.measurePerCategory or self.unitWeighting)
             )

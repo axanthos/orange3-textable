@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="" description="">
+	<nodes>
+		<node id="0" name="URLs" qualified_name="_textable.widgets.OWTextableURLs.OWTextableURLs" project_name="Orange3-Textable" version="" title="URLs" position="(300, 300)" />
+		<node id="1" name="Segment" qualified_name="_textable.widgets.OWTextableSegment.OWTextableSegment" project_name="Orange3-Textable" version="" title="Segment" position="(450, 300)" />
+		<node id="2" name="Segment" qualified_name="_textable.widgets.OWTextableSegment.OWTextableSegment" project_name="Orange3-Textable" version="" title="Segment (1)" position="(594.0, 231.0)" />
+		<node id="3" name="Count" qualified_name="_textable.widgets.OWTextableCount.OWTextableCount" project_name="Orange3-Textable" version="" title="Count" position="(750, 300)" />
+		<node id="4" name="Convert" qualified_name="_textable.widgets.OWTextableConvert.OWTextableConvert" project_name="Orange3-Textable" version="" title="Convert" position="(900, 300)" />
+		<node id="5" name="Data Table" qualified_name="Orange.widgets.data.owtable.OWTable" project_name="Orange3" version="" title="Data Table" position="(995.0, 217.0)" />
+		<node id="6" name="Scatter Plot" qualified_name="Orange.widgets.visualize.owscatterplot.OWScatterPlot" project_name="Orange3" version="" title="Scatter Plot" position="(995.0, 376.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="0" sink_node_id="1" source_channel="Text data" sink_channel="Segmentation" enabled="true" />
+		<link id="1" source_node_id="1" sink_node_id="2" source_channel="Segmented data" sink_channel="Segmentation" enabled="true" />
+		<link id="2" source_node_id="2" sink_node_id="3" source_channel="Segmented data" sink_channel="Segmentation" enabled="true" />
+		<link id="3" source_node_id="1" sink_node_id="3" source_channel="Segmented data" sink_channel="Segmentation" enabled="true" />
+		<link id="4" source_node_id="3" sink_node_id="4" source_channel="Textable pivot crosstab" sink_channel="Textable table" enabled="true" />
+		<link id="5" source_node_id="4" sink_node_id="5" source_channel="Orange table" sink_channel="Data" enabled="true" sink_channel_id="data" />
+		<link id="6" source_node_id="4" sink_node_id="6" source_channel="Orange table" sink_channel="Data" enabled="true" sink_channel_id="data" />
+	</links>
+	<annotations />
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="literal">{'URL': 'https://www.gutenberg.org/cache/epub/1513/pg1513.txt', 'URLs': [('https://www.gutenberg.org/cache/epub/2701/pg2701.txt', '(auto-detect)', '', '')], 'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': True, 'controlAreaVisible': True, 'displayAdvancedSettings': True, 'encoding': '(auto-detect)', 'importURLs': True, 'importURLsKey': 'url', 'lastLocation': 'E:/Downloads', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02\xd6\x00\x00\x00H\x00\x00\x05Z\x00\x00\x02\xf4\x00\x00\x02\xd7\x00\x00\x00f\x00\x00\x05Y\x00\x00\x02\xf3\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x02\xd7\x00\x00\x00f\x00\x00\x05Y\x00\x00\x02\xf3', 'uuid': '2cf275e3-4758-44f4-8427-f48ac1760db2', '__version__': 1, '_TextableUtils_settings_version__': (0, 14)}</properties>
+		<properties node_id="1" format="literal">{'autoNumber': True, 'autoNumberKey': 'num', 'autoSend': False, 'controlAreaVisible': True, 'displayAdvancedSettings': True, 'importAnnotations': True, 'lastLocation': '.', 'mergeDuplicates': False, 'mode': 'Tokenize', 'regex': '(?=From:|$)(?s)', 'regexes': [('^(CHAPTER|Epilogue).+?(?=(CHAPTER |Epilogue|End of P))', '', '', False, True, True, True, 'Tokenize')], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x03\x0f\x00\x00\x00&amp;\x00\x00\x05\x9f\x00\x00\x03&amp;\x00\x00\x03\x10\x00\x00\x00D\x00\x00\x05\x9e\x00\x00\x03%\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x03\x10\x00\x00\x00D\x00\x00\x05\x9e\x00\x00\x03%', 'segmentType': 'Segment into words', 'uuid': 'cd23a2d7-68b7-4671-9ac2-a19f76abff3a', '__version__': 1, '_TextableUtils_settings_version__': (0, 21)}</properties>
+		<properties node_id="2" format="literal">{'autoNumber': False, 'autoNumberKey': 'num', 'autoSend': False, 'controlAreaVisible': True, 'displayAdvancedSettings': True, 'importAnnotations': True, 'lastLocation': '.', 'mergeDuplicates': False, 'mode': 'Tokenize', 'regex': '(whale|ahab)', 'regexes': [('\\bwhales?\\b', 'type', 'whale(s)', True, False, False, False, 'Tokenize'), ('\\bahab?\\b', 'type', 'Ahab', True, False, False, False, 'Tokenize')], 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x03\x0f\x00\x00\x00&amp;\x00\x00\x04S\x00\x00\x03&amp;\x00\x00\x03\x10\x00\x00\x00D\x00\x00\x04R\x00\x00\x03%\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x03\x10\x00\x00\x00D\x00\x00\x04R\x00\x00\x03%', 'segmentType': 'Use a regular expression', 'uuid': '03db497c-9fb3-4945-92a1-fb445d6d9f96', '__version__': 1, '_TextableUtils_settings_version__': (0, 21)}</properties>
+		<properties node_id="3" format="pickle">gASV1AQAAAAAAAB9lCiMCGF1dG9TZW5klIiMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjA1pbnRyYVNl
+cURlbGltlIwBI5SMDW1lcmdlQ29udGV4dHOUiYwMbWVyZ2VTdHJpbmdzlIiME3NhdmVkV2lkZ2V0
+R2VvbWV0cnmUQ0IB2dDLAAMAAAAAA7cAAAA4AAAFDwAAAhYAAAO4AAAAVgAABQ4AAAIVAAAAAAAA
+AAAGAAAAA7gAAABWAAAFDgAAAhWUjA5zZXF1ZW5jZUxlbmd0aJRLAYwNdW5pdFBvc01hcmtlcpSM
+AV+UjAR1dWlklIwkNjQ1NGZlZDAtMzZjMy00YmE4LWJlMjQtZWZlMzE3OTBiMTk1lIwLX192ZXJz
+aW9uX1+USwGMEGNvbnRleHRfc2V0dGluZ3OUXZQojBVvcmFuZ2V3aWRnZXQuc2V0dGluZ3OUjAdD
+b250ZXh0lJOUKYGUfZQojAZ2YWx1ZXOUfZQojAlfY29udGV4dHOUSwCMFGNvbnRleHRBbm5vdGF0
+aW9uS2V5lIwDbnVtlIwPbGVmdENvbnRleHRTaXpllEsAjARtb2RllIwXQ29udGFpbmluZyBzZWdt
+ZW50YXRpb26UjBByaWdodENvbnRleHRTaXpllEsAjBF1bml0QW5ub3RhdGlvbktleZSMBHR5cGWU
+jAV1bml0c5RLAIwKd2luZG93U2l6ZZRLAYwNc2VnbWVudGF0aW9uc5RdlCiMC1NlZ21lbnQgKDEp
+lIwDbnVtlIwEdHlwZZSMA3VybJSHlE6HlIwHU2VnbWVudJRoJmgohpROh5RlaA5LAXWMB2VuY29k
+ZWSUaA1oJIaUdWJoEymBlH2UKGgWfZQoaBhLAGgZjAR3b3JklGgbSwBoHIwXQ29udGFpbmluZyBz
+ZWdtZW50YXRpb26UaB5LAGgfjAYobm9uZSmUaCFLAGgiSwFoI12UKGglaCiMBHdvcmSUhpROh5Ro
+K2gmaCiGlE6HlGVoDksBdWguaA1oNoaUdWJoEymBlH2UKGgWfZQoaBhLAGgZaDNoG0sAaBxoNGge
+SwBoH2g1aCFLAGgiSwFoI12UaCVoKGg3hpROh5RhaA5LAXVoLmgNaECGlHViaBMpgZR9lChoFn2U
+KGgYSwFoGWgzaBtLAGgcaDRoHksAaB9oNWghSwBoIksBaCNdlChoK2gohZROh5RoJWgoaDeGlE6H
+lGVoDksBdWguaA1oR4aUdWJoEymBlH2UKGgWfZQoaBhK/////2gZaDVoG0sAaByMCk5vIGNvbnRl
+eHSUaB5LAGgfaDVoIUsAaCJLAWgjXZRoK2gohZROh5RhaA5LAXVoLmgNaFGGlHViaBMpgZR9lCho
+Fn2UKGgYSwBoGWg1aBtLAGgcjBdDb250YWluaW5nIHNlZ21lbnRhdGlvbpRoHksAaB9oNWghSwFo
+IksBaCNdlChoJWgohZROh5RoK2gohZROh5RlaA5LAXVoLmgNaFmGlHViaBMpgZR9lChoFn2UKGgY
+Sv////9oGWg1aBtLAGgcaFBoHksAaB9oNWghSwBoIksBaCNdlGglaCiFlE6HlGFoDksBdWguaA1o
+YoaUdWJljCFfVGV4dGFibGVVdGlsc19zZXR0aW5nc192ZXJzaW9uX1+USwBLFYaUdS4=
+</properties>
+		<properties node_id="4" format="literal">{'associationBias': 'none', 'autoSend': True, 'colDelimiter_idx': 0, 'controlAreaVisible': True, 'conversionType': 'association matrix', 'convert': False, 'displayAdvancedSettings': True, 'exportEncoding': 'utf8', 'includeOrangeHeaders': False, 'lastLocation': '.', 'normalize': True, 'normalizeMode': 'rows', 'normalizeType': 'l1', 'reformat': False, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x02D\x00\x00\x00n\x00\x00\x040\x00\x00\x02\xea\x00\x00\x02E\x00\x00\x00\x8c\x00\x00\x04/\x00\x00\x02\xe9\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x02E\x00\x00\x00\x8c\x00\x00\x04/\x00\x00\x02\xe9', 'sortCols': False, 'sortColsReverse': False, 'sortRows': False, 'sortRowsReverse': False, 'transpose': False, 'unweighted': False, 'uuid': '178d6ab4-616f-46d8-9fa8-6c215510ecd1', '__version__': 1, '_TextableUtils_settings_version__': (0, 19)}</properties>
+		<properties node_id="5" format="literal">{'auto_commit': True, 'color_by_class': True, 'controlAreaVisible': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x01K\x00\x00\x00\xb0\x00\x00\x04l\x00\x00\x02\xc2\x00\x00\x01L\x00\x00\x00\xce\x00\x00\x04k\x00\x00\x02\xc1\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x00\x01L\x00\x00\x00\xce\x00\x00\x04k\x00\x00\x02\xc1', 'select_rows': True, 'show_attribute_labels': True, 'show_distributions': False, 'stored_selection': {'rows': [], 'columns': []}, 'stored_sort': [], '__version__': 1}</properties>
+		<properties node_id="6" format="pickle">gASVsgUAAAAAAAB9lCiMC2F1dG9fY29tbWl0lIiMC2F1dG9fc2FtcGxllIiMEmNvbnRyb2xBcmVh
+VmlzaWJsZZSIjBNzYXZlZFdpZGdldEdlb21ldHJ5lENCAdnQywADAAAAAADQAAAAOgAABTEAAAMU
+AAAA0QAAAFgAAAUwAAADEwAAAAAAAAAABgAAAADRAAAAWAAABTAAAAMTlIwJc2VsZWN0aW9ulE6M
+EXRvb2x0aXBfc2hvd3NfYWxslIiMD3Zpc3VhbF9zZXR0aW5nc5R9lIwFZ3JhcGiUfZQojAthbHBo
+YV92YWx1ZZRL/4wNY2xhc3NfZGVuc2l0eZSJjBFqaXR0ZXJfY29udGludW91c5SIjAtqaXR0ZXJf
+c2l6ZZRLB4wTbGFiZWxfb25seV9zZWxlY3RlZJSJjBZvcnRob25vcm1hbF9yZWdyZXNzaW9ulImM
+C3BvaW50X3dpZHRolEsBjAlzaG93X2dyaWSUiIwLc2hvd19sZWdlbmSUiIwNc2hvd19yZWdfbGlu
+ZZSJdYwLX192ZXJzaW9uX1+USwWMEGNvbnRleHRfc2V0dGluZ3OUXZQojBVvcmFuZ2V3aWRnZXQu
+c2V0dGluZ3OUjAdDb250ZXh0lJOUKYGUfZQojAZ2YWx1ZXOUfZQojAphdHRyX2NvbG9ylE5K/v//
+/4aUjAphdHRyX2xhYmVslE5K/v///4aUjAphdHRyX3NoYXBllE5K/v///4aUjAlhdHRyX3NpemWU
+Tkr+////hpSMBmF0dHJfeJSMC19fY29udGV4dF9flEtmhpSMBmF0dHJfeZSMCHdoYWxlKHMplEtm
+hpRoCn2UaBZLBXWMCmF0dHJpYnV0ZXOUfZQoaClLAowEQWhhYpRLAmgsSwJ1jAVtZXRhc5R9lHVi
+aBspgZR9lChoHn2UKGggTkr+////hpRoIk5K/v///4aUaCROSv7///+GlGgmTkr+////hpRoKGgx
+S2aGlGgraCxLZoaUaAp9lGgWSwV1aC99lChoMUsCaCxLAnVoMn2UaClLA3N1YmgbKYGUfZQoaB59
+lChoIE5K/v///4aUaCJOSv7///+GlGgkTkr+////hpRoJk5K/v///4aUaCiMBXdoYWxllEtmhpRo
+K2hHS2aGlGgKfZRoFksFdWgvfZQojARBaGFilEsCjAVXaGFsZZRLAowGV2hhbGVzlEsCjAV3aGFs
+ZZRLAowFV0hBTEWUSwKMBndoYWxlc5RLAowEQUhBQpRLAnVoMn2UaClLA3N1YmgbKYGUfZQoaB59
+lChoIE5K/v///4aUaCJOSv7///+GlGgkTkr+////hpRoJk5K/v///4aUaCiMBXdoYWxllEtmhpRo
+K2hbS2aGlGgKfZRoFksFdWgvfZQojAVXaGFsZZRLAowFV0hBTEWUSwKMBEFoYWKUSwKMBldoYWxl
+c5RLAowFd2hhbGWUSwKMBndoYWxlc5RLAowGV0hBTEVTlEsCjARBSEFClEsCdWgyfZRoKUsDc3Vi
+aBspgZR9lChoHn2UKGggTkr+////hpRoIk5K/v///4aUaCROSv7///+GlGgmTkr+////hpRoKIwF
+d2hhbGWUS2aGlGgraHBLZoaUaAp9lGgWSwV1aC99lGhwSwJzaDJ9lIwIX191bml0X1+USwNzdWJo
+GymBlH2UKGgefZQoaCBOSv7///+GlGgiTkr+////hpRoJE5K/v///4aUaCZOSv7///+GlGgojApf
+X2dsb2JhbF9flEtmhpRoK2h+S2aGlGgKfZRoFksFdWgvfZRofksCc2gyfZRodksDc3ViaBspgZR9
+lChoHn2UKGggTkr+////hpRoIk5K/v///4aUaCROSv7///+GlGgmTkr+////hpRoKIwFd2hhbGWU
+S2aGlGgraItLZoaUaAp9lGgWSwV1aC99lGiLSwJzaDJ9lGgpSwNzdWJldS4=
+</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>
