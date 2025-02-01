@@ -15,12 +15,10 @@
 
 import sys, os
 
-import imp
-module_setup = imp.load_source('module_setup', os.path.join(os.path.dirname(__file__), '..', '..', 'setup.py'))
-version = module_setup.VERSION
-author = module_setup.AUTHOR
+version = "3.2.0"
+author = "LangTech Sarl"
 
-title = "%s v%s documentation" % (module_setup.DOCUMENTATION_NAME, version)
+title = "Textable"
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -63,7 +61,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = module_setup.DOCUMENTATION_NAME
+project = "Textable"
 copyright = (
       u'2012-2025 '
     + author
