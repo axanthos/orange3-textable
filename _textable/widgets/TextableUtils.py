@@ -38,7 +38,7 @@ Provides functions:
 - getPredefinedEncodings
 """
 
-__version__ = '0.16'
+__version__ = '0.18'
 
 import re, os, uuid
 
@@ -938,9 +938,13 @@ class SegmentationContextHandler(VersionedSettingsHandlerMixin,
 from Orange.widgets import widget
 from PyQt5.QtCore import QTimer, QEventLoop
 from PyQt5.QtWidgets import QSizePolicy, QApplication
+# Threading
+from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
+from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
+from functools import partial
 
 
-class OWTextableBaseWidget(widget.OWWidget):
+class OWTextableBaseWidget(widget.OWWidget, openclass=True):
     """
     A base widget for other concrete orange-textable widgets.
 
@@ -948,6 +952,12 @@ class OWTextableBaseWidget(widget.OWWidget):
     widgets.
 
     """
+    
+    # Signals
+    signal_prog = pyqtSignal((int, bool)) # Progress bar (value, init)
+    signal_text = pyqtSignal((str, str))  # Text label (text, infotype)
+    signal_cancel_button = pyqtSignal(bool)     # Allow to Deactivate cancel
+                                                # button from worker thread
 
     #: Auto commit/send the output on any change
     autoSend = settings.Setting(False)  # type: bool
@@ -971,6 +981,19 @@ class OWTextableBaseWidget(widget.OWWidget):
         # for OWWidget's layout not propagating `heightForWidth` size hints
         self.controlArea.setSizePolicy(QSizePolicy.Minimum,
                                        QSizePolicy.Minimum)
+        
+        # Threading
+        self._task = None  # type: Optional[Task]
+        self._executor = ThreadExecutor()
+        self.cancel_operation = False
+
+        # Connect signals to slots
+        self.signal_prog.connect(self.update_progress_bar) 
+        self.signal_text.connect(self.update_infobox)
+        self.signal_cancel_button.connect(self.disable_cancel_button)
+
+        # Attribute to handle GUI visibility
+        self.guiElements = []
 
     def adjustSizeWithTimer(self):
         self.ensurePolished()
@@ -999,7 +1022,200 @@ class OWTextableBaseWidget(widget.OWWidget):
         # reimplemented; see orange3 github issue 3821
         event.ignore()
         return
+    
+    def sendNoneToOutputs(self):
+        # Sends none to all widget outputs
+        for output in self.outputs:
+            self.send(output.name, None)
 
+    def manageGuiVisibility(self, processing=False):
+        # Update GUI and make available (or not) elements
+        #while the thread task is running in background
+
+        # Thread currently running, freeze the GUI
+        if processing:
+            for guiElement in self.guiElements:
+                if guiElement.__class__.__name__ == "AdvancedSettings":
+                    guiElement.checkbox.setDisabled(1)
+                else:
+                    guiElement.setDisabled(1)
+
+            #self.optionsBox.setDisabled(1) # Options: DISABLED
+            self.sendButton.mainButton.setDisabled(1) # Send button: DISABLED
+            self.sendButton.cancelButton.setDisabled(0) # Cancel button: ENABLED
+            self.sendButton.autoSendCheckbox.setDisabled(1) # Send automatically: DISABLED
+
+        # Thread done or not running, unfreeze the GUI
+        else:
+            # If "Send automatically" is disabled, reactivate "Send" button
+            if not self.sendButton.autoSendCheckbox.isChecked():
+                self.sendButton.mainButton.setDisabled(0) # Send: ENABLED
+            # Other buttons and layout
+            for guiElement in self.guiElements:
+                if guiElement.__class__.__name__ == "AdvancedSettings":
+                    guiElement.checkbox.setDisabled(0)
+                else:
+                    guiElement.setDisabled(0)
+            #self.optionsBox.setDisabled(0) # Options: ENABLED
+            self.sendButton.cancelButton.setDisabled(1) # Cancel button: DISABLED
+            self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: ENABLED
+            self.cancel_operation = False
+            self.signal_prog.emit(100, False) # 100% and do not re-init
+            self.sendButton.resetSettingsChangedFlag()
+            self.updateGUI()
+    
+    def cancel_manually(self):
+        """ Wrapper of cancel() method,
+        used for manual cancellations """
+        self.cancel(manualCancel=True)
+    
+    def cancel(self, manualCancel=False):
+        # Make loop break
+        self.cancel_operation = True
+
+        # Cancel current task
+        if self._task is not None:
+            self._task.cancel()
+            assert self._task.future.done()
+            # Disconnect slot
+            self._task.watcher.done.disconnect(self.task_finished)
+            self._task = None
+            
+            # Send None to output
+            self.sendNoneToOutputs()
+            
+        if manualCancel:
+            self.infoBox.setText(u'Operation cancelled by user.', 'warning')
+            
+        # Manage GUI visibility
+        if manualCancel:
+            QTimer.singleShot(250, partial(self.manageGuiVisibility, processing=False)) # Processing done/cancelled
+        else:
+            QTimer.singleShot(250, partial(self.manageGuiVisibility)) # Processing done/cancelled
+    
+    # AS 09.2023
+    @pyqtSlot(int, bool)
+    def update_progress_bar(self, val, init):
+        """ Update progress bar in a thread-safe manner """
+        # Re-init progress bar, if needed
+        if init:
+            self.progressBarInit()
+        
+        # Update progress bar
+        if val >= 100:
+            self.progressBarFinished() # Finish progress bar     
+        elif val < 0:
+            self.progressBarSet(0)
+        else:
+            self.progressBarSet(val)
+
+    # AS 10.2023
+    @pyqtSlot(str, str)
+    def update_infobox(self, text, infotype):
+        """ Update info box in a thread-safe manner """
+        self.infoBox.setText(text, infotype) 
+    
+    @pyqtSlot(bool)
+    def disable_cancel_button(self, disable):
+        """ Disables cancel button in a thread-safe manner """
+        if disable:
+            self.sendButton.cancelButton.setDisabled(1)
+        else:
+            self.sendButton.cancelButton.setDisabled(0)
+
+    def threading(self, threaded_function):
+        """ Checks for tasks and start threading"""
+
+        # Threading ...
+
+        # Cancel old tasks
+        if self._task is not None:
+            self.cancel()
+        assert self._task is None
+
+        self.cancel_operation = False
+
+        self._task = task = Task()
+        
+        # Threading start, future, and watcher
+        task.future = self._executor.submit(threaded_function)
+        task.watcher = FutureWatcher(task.future)
+        task.watcher.done.connect(self.task_finished)
+        
+        # Manage GUI visibility
+        self.manageGuiVisibility(True) # Processing
+    
+    def task_decorator(task_function):
+            """ Decorator for the task_finished function """
+            @pyqtSlot(concurrent.futures.Future)
+            def _task_finished(self, f):
+                assert self.thread() is QThread.currentThread()
+                assert self._task is not None
+                assert self._task.future is f
+                assert f.done()
+
+                self._task = None
+                
+                try:
+                    task_function(self, f)
+                
+                # Exceptions handling for different widgets
+                except ValueError:
+                    self.infoBox.setText(
+                    message=u'Please make sure that input is well-formed XML.',
+                    state='error',
+                    )
+                    self.sendNoneToOutputs()
+                    
+                except IndexError:
+                    self.infoBox.setText(
+                    u'Reference to unmatched group in annotation key and/or value.',
+                    'error'
+                )
+                    self.sendNoneToOutputs()
+
+                except KeyError:
+                    return
+                
+                except re.error as re_error:
+                    try:
+                        message = u'Please enter a valid regex (error: %s).' % \
+                                re_error.msg
+                    except AttributeError:
+                        message = u'Please enter a valid regex.'
+                    self.infoBox.setText(message, 'error')
+                    self.sendNoneToOutputs()
+
+                except Exception as ex:
+                    print(ex)
+                    self.sendNoneToOutputs()
+                    self.infoBox.setText(u'An error occured.', 'error')
+
+                finally:
+                    # Manage GUI visibility
+                    self.manageGuiVisibility(False) # Processing done/cancelled
+            return _task_finished
+    
+    def create_widgetbox(self, box, orientation, addSpace=False):
+        """ WidgetBox creator wrapper """
+        self.widgetbox = gui.widgetBox(
+            widget = self.controlArea,
+            box = box,
+            orientation = orientation,
+            addSpace = addSpace,
+        )
+        self.guiElements.append(self.widgetbox)
+        return self.widgetbox
+    
+    def create_advancedSettings(self):
+        """ Advanced Settings creator wrapper """
+        self.advancedSettings = AdvancedSettings(
+            widget=self.controlArea,
+            master=self,
+            callback=self.sendButton.settingsChanged,
+        )
+        self.guiElements.append(self.advancedSettings)
+        return self.advancedSettings
     
 class ProgressBar:
     def __init__(self, widget, iterations):

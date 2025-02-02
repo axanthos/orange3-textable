@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.10'
+__version__ = '0.13.11'
 
 import os, re, codecs, json
 
@@ -45,10 +45,6 @@ from functools import partial
 
 class OWTextableRecode(OWTextableBaseWidget):
     """Orange widget for regex-based recoding"""
-    
-    # AS 10.2023
-    # Signal
-    signal_prog = pyqtSignal((int, bool)) # Progress bar (value, init)
 
     name= "Recode"
     description = "Custom text recoding using regular expressions"
@@ -100,23 +96,19 @@ class OWTextableRecode(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
             sendIfPreCallback=self.updateGUI,
         )
-        self.advancedSettings = AdvancedSettings(
-            widget=self.controlArea,
-            master=self,
-            callback=self.sendButton.settingsChanged,
-        )
+        self.advancedSettings = self.create_advancedSettings()
 
         # GUI...
 
         self.advancedSettings.draw()
 
         # Substitutions box
-        self.substBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.substBox = self.create_widgetbox(
             box=u'Substitutions',
             orientation='vertical',
             addSpace=False,
-        )
+            )
+
         substBoxLine1 = gui.widgetBox(
             widget=self.substBox,
             box=False,
@@ -321,12 +313,12 @@ class OWTextableRecode(OWTextableBaseWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Advanced) Options box...
-        self.optionsBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.optionsBox = self.create_widgetbox(
             box=u'Options',
             orientation='vertical',
             addSpace=False,
-        )
+            )
+
         gui.checkBox(
             widget=self.optionsBox,
             master=self,
@@ -342,12 +334,12 @@ class OWTextableRecode(OWTextableBaseWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Basic) Substitution box...
-        self.basicSubstBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.basicSubstBox = self.create_widgetbox(
             box=u'Substitution',
             orientation='vertical',
             addSpace=False,
-        )
+            )
+
         gui.lineEdit(
             widget=self.basicSubstBox,
             master=self,
@@ -380,123 +372,31 @@ class OWTextableRecode(OWTextableBaseWidget):
         self.advancedSettings.basicWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
-        
-        # Threading
-        self._task = None  # type: Optional[Task]
-        self._executor = ThreadExecutor()
-        self.cancel_operation = False
 
         # Send button and Info box
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
         self.adjustSizeWithTimer()
-
-        # Connect signal to slot
-        self.signal_prog.connect(self.update_progress_bar)
-
-    @pyqtSlot(concurrent.futures.Future)
-    def _task_finished(self, f):
-        assert self.thread() is QThread.currentThread()
-        assert self._task is not None
-        assert self._task.future is f
-        assert f.done()
-
-        self._task = None
-
-        try:
-            # Recoded data
-            recoded_data, num_subs = f.result()
-            
-            # Compute difference
-            newNumInputs = len(Segmentation.data)
-            self.createdInputIndices = range(self.previousNumInputs, newNumInputs)
-            
-            message = u'%i segment@p sent to output' % len(recoded_data)
-            message = pluralize(message, len(recoded_data))
-            if num_subs:
-                message += u' (%i replacement@p performed).' % num_subs
-                message = pluralize(message, num_subs)
-            else:
-                message += u" (no replacements performed)."
-            self.infoBox.setText(message)
-            self.send('Recoded data', recoded_data) # AS 10.2023: removed self
-
-        except re.error as re_error:
-            try:
-                if str(re_error) == 'invalid group reference':
-                    message = u'Reference to unmatched group in ' +   \
-                              u' annotation key and/or value.'
-                else:
-                    message = u'Please enter a valid regex (error: %s).' %   \
-                              str(re_error)
-            except AttributeError:
-                message = u'Please enter a valid regex.'
-            self.infoBox.setText(
-                message, 'error'
-            )
-            self.send('Recoded data', None) # AS 10.2023: removed self
-
-        finally:
-            # Manage GUI visibility
-            self.manageGuiVisibility(False) # Processing done/cancelled
-
-    def cancel_manually(self):
-        """ Wrapper of cancel() method,
-        used for manual cancellations """
-        self.cancel(manualCancel=True)
     
-    def cancel(self, manualCancel=False):
-        # Make loop break in LTTL/SegmenterThread.py 
-        self.cancel_operation = True
-
-        # Cancel current task
-        if self._task is not None:
-            self._task.cancel()
-            assert self._task.future.done()
-            # Disconnect slot
-            self._task.watcher.done.disconnect(self._task_finished)
-            self._task = None
+    @OWTextableBaseWidget.task_decorator
+    def task_finished(self, f):
+        # Recoded data
+        recoded_data, num_subs = f.result()
             
-            # Send None to output
-            self.send('Recoded data', None) # AS 10.2023: removed self
-
-        if manualCancel:
-            self.infoBox.setText(u'Operation cancelled by user.', 'warning')
-
-        # Manage GUI visibility
-        self.manageGuiVisibility(False) # Processing done/cancelled
-        
-    def manageGuiVisibility(self, processing=False):
-        """ Update GUI and make available (or not) elements
-        while the thread task is running in background """
-
-        # Thread currently running, freeze the GUI
-        if processing:
-            self.sendButton.mainButton.setDisabled(1) # Send button: DISABLED
-            self.sendButton.cancelButton.setDisabled(0) # Cancel button: ENABLED
-            self.sendButton.autoSendCheckbox.setDisabled(1) # Send automatically: DISABLED
-            self.basicSubstBox.setDisabled(1) # Basic subst box: DISABLED
-            self.substBox.setDisabled(1) # Advanced subst box: DISABLED
-            self.optionsBox.setDisabled(1) # Advanced options box: DISABLED
-            self.advancedSettings.checkbox.setDisabled(1) # Advanced options checkbox: DISABLED
-
-        # Thread done or not running, unfreeze the GUI
+        # Compute difference
+        newNumInputs = len(Segmentation.data)
+        self.createdInputIndices = range(self.previousNumInputs, newNumInputs)
+            
+        message = u'%i segment@p sent to output' % len(recoded_data)
+        message = pluralize(message, len(recoded_data))
+        if num_subs:
+            message += u' (%i replacement@p performed).' % num_subs
+            message = pluralize(message, num_subs)
         else:
-            # If "Send automatically" is disabled, reactivate "Send" button
-            if not self.sendButton.autoSendCheckbox.isChecked():
-                self.sendButton.mainButton.setDisabled(0) # Send: ENABLED
-            # Other buttons and layout
-            self.basicSubstBox.setDisabled(0) # Basic subst box: ENABLED
-            self.substBox.setDisabled(0) # Advanced subst box: ENABLED
-            self.optionsBox.setDisabled(0) # Advanced options box: ENABLED
-            self.advancedSettings.checkbox.setDisabled(0) # Advanced options checkbox: ENABLED
-            self.sendButton.cancelButton.setDisabled(1) # Cancel button: DISABLED
-            self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: ENABLED
-            self.cancel_operation = False
-            self.signal_prog.emit(100, False) # 100% and do not re-init
-            self.sendButton.resetSettingsChangedFlag()
-            self.updateGUI()
+            message += u" (no replacements performed)."
+        self.infoBox.setText(message)
+        self.send('Recoded data', recoded_data) # AS 10.2023: removed self
 
     def sendData(self):
         """(Have LTTL.Segmenter) perform the actual recoding"""
@@ -583,15 +483,6 @@ class OWTextableRecode(OWTextableBaseWidget):
         self.infoBox.setText(u'Processing...', 'warning')
         self.progressBarInit()
         
-        # Threading ...
-        
-        # Cancel old tasks
-        if self._task is not None:
-            self.cancel()
-        assert self._task is None
-
-        self._task = task = Task()
-        
         # Partial function
         threaded_function = partial(
             Segmenter.recode,
@@ -603,30 +494,9 @@ class OWTextableRecode(OWTextableBaseWidget):
             check_overlap=False,
         )
 
-        # Threading start, future, and watcher
-        task.future = self._executor.submit(threaded_function)
-        task.watcher = FutureWatcher(task.future)
-        task.watcher.done.connect(self._task_finished)
-        
-        # Manage GUI visibility
-        self.manageGuiVisibility(True) # Processing
-        
-    # AS 09.2023
-    @pyqtSlot(int, bool)
-    def update_progress_bar(self, val, init):
-        """ Update progress bar in a thread-safe manner """
-        # Re-init progress bar, if needed
-        if init:
-            self.progressBarInit()
-        
-        # Update progress bar
-        if val >= 100:
-            self.progressBarFinished() # Finish progress bar     
-        elif val < 0:
-            self.progressBarSet(0)
-        else:
-            self.progressBarSet(val)
-        
+        # Threading ...
+        self.threading(threaded_function)
+
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
         if not message:

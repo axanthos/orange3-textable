@@ -1,6 +1,6 @@
 """
 Class OWTextableTreetagger
-Copyright 2017-2019 LangTech Sarl
+Copyright 2017-2025 LangTech Sarl
 Based on an original prototype developed by Xavier Barros
 -------------------------------------------------------------------------------
 This file is part of the Orange3-Textable package.

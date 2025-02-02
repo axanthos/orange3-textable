@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.6'
+__version__ = '0.13.7'
 
 from unicodedata import normalize
 
@@ -42,6 +42,8 @@ class OWTextableTextField(OWTextableBaseWidget):
     icon = "icons/TextField.png"
     priority = 1
 
+    openclass = True
+    
     # Input and output channels...
     inputs = [('Text data', Segmentation, "inputTextData", widget.Single)]
     outputs = [('Text data', Segmentation)]
@@ -121,7 +123,7 @@ class OWTextableTextField(OWTextableBaseWidget):
                 message=u'Please type or paste some text above.',
                 state='warning',
             )
-            self.send('Text data', None, self)
+            self.send('Text data', None)
             return
 
         # TODO: remove message 'No label was provided.' from docs
@@ -136,7 +138,7 @@ class OWTextableTextField(OWTextableBaseWidget):
         self.segmentation.update(textFieldContent, label=self.captionTitle)
 
         # Send token...
-        self.send('Text data', self.segmentation, self)
+        self.send('Text data', self.segmentation)
         self.sendButton.resetSettingsChangedFlag()
 
     def setCaption(self, title):

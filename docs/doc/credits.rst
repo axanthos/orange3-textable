@@ -62,7 +62,9 @@ Faculty of Arts <http://www.unil.ch/lettres>`_ made it possible to hire
 three student assistants to work on the software’s documentation (Lliana
 Doudot and André da Gloria Santiago) and its performance and responsiveness 
 (Antonin Schnyder). This collective effort has led to the release of version 
-3.2.0.
+3.2.0. The new responsiveness code was then further refactored by Johan Cuda as 
+part of his MA project in Humanities computing at UNIL, leading to the release 
+of version 3.2.1.
 
 Besides `LangTech Sàrl <http://langtech.ch>`_ and `Aris
 Xanthos <http://www.unil.ch/unisciences/arisxanthos>`_ who have been

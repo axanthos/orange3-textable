@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.8'
+__version__ = '0.21.9'
 
 
 from LTTL.TableThread import IntPivotCrosstab
@@ -36,21 +36,11 @@ import Orange
 from Orange.widgets import widget, gui, settings
 
 # Threading
-from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
-import concurrent.futures
-from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableCount(OWTextableBaseWidget):
     """Orange widget for counting text units"""
-
-    # AS 10.2023
-    # Signals
-    signal_prog = pyqtSignal((int, bool))       # Progress bar (value, init)
-    signal_text = pyqtSignal((str, str))        # Text label (text, infotype)
-    signal_cancel_button = pyqtSignal(bool)     # Allow to Deactivate cancel
-                                                # button from worker thread
 
     name = "Count"
     description = "Count segment types"
@@ -109,12 +99,12 @@ class OWTextableCount(OWTextableBaseWidget):
         # GUI...
 
         # Units box
-        self.unitsBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.unitsBox = self.create_widgetbox(
             box=u'Units',
             orientation='vertical',
             addSpace=True,
-        )
+            )
+
         self.unitSegmentationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
@@ -185,12 +175,12 @@ class OWTextableCount(OWTextableBaseWidget):
         gui.separator(widget=self.unitsBox, height=3)
 
         # Contexts box...
-        self.contextsBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.contextsBox = self.create_widgetbox(
             box=u'Contexts',
             orientation='vertical',
             addSpace=True,
-        )
+            )
+
         self.modeCombo = gui.comboBox(
             widget=self.contextsBox,
             master=self,
@@ -373,117 +363,32 @@ class OWTextableCount(OWTextableBaseWidget):
 
         gui.rubber(self.controlArea)
 
-        # Threading
-        self._task = None
-        self._executor = ThreadExecutor()
-        self.cancel_operation = False
-
         # Send button & Info box
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
         self.adjustSizeWithTimer()
 
-        # Connect signals to slots
-        self.signal_prog.connect(self.update_progress_bar) 
-        self.signal_text.connect(self.update_infobox)
-        self.signal_cancel_button.connect(self.disable_cancel_button)
+    
+    @OWTextableBaseWidget.task_decorator
+    def task_finished(self, f):
+        # Table outputs
+        textable_table, orange_table = f.result()
 
-    @pyqtSlot(concurrent.futures.Future)
-    def _task_finished(self, f):    
-        assert self.thread() is QThread.currentThread()
-        assert self._task is not None
-        assert self._task.future is f
-        assert f.done()
-
-        self._task = None
-
-        try:
-            # Table outputs
-            textable_table, orange_table = f.result()
-
-            # Send data treatment
-            total = sum([i for i in textable_table.values.values()])
+        # Send data treatment
+        total = sum([i for i in textable_table.values.values()])
             
-            if total == 0:
-                self.infoBox.setText(u'Resulting table is empty.', 'warning')
-                self.send('Textable pivot crosstab', None) # AS 10.2023: removed self
-                self.send('Orange table', None) # AS 10.2023: removed self
-            else:
-                self.send('Textable pivot crosstab', textable_table) # AS 10.2023: removed self
-                self.send('Orange table', orange_table) # AS 10.2023: removed self
-                
-                message = u'Table with %i occurrence@p sent to output.' % total
-                message = pluralize(message, total)
-                self.infoBox.setText(message)
-
-        except Exception as ex:
-            print(ex)
-
-            # Send None
+        if total == 0:
+            self.infoBox.setText(u'Resulting table is empty.', 'warning')
             self.send('Textable pivot crosstab', None) # AS 10.2023: removed self
             self.send('Orange table', None) # AS 10.2023: removed self
-            self.infoBox.setText(u'An error occured.', 'error')
-
-        finally:
-            # Manage GUI visibility
-            self.manageGuiVisibility(False) # Processing done/cancelled!
-
-    def cancel_manually(self):
-        """ Wrapper of cancel() method,
-        used for manual cancellations """
-        self.cancel(manualCancel=True)
-
-    def cancel(self, manualCancel=False):
-        # Make loop break in LTTL/ProcessorThread.py 
-        self.cancel_operation = True
-
-        # Cancel current task
-        if self._task is not None:
-            self._task.cancel()
-            assert self._task.future.done()
-            
-            # Disconnect slot
-            self._task.watcher.done.disconnect(self._task_finished)
-            self._task = None
-            
-            # Send None to output 
-            self.send('Textable pivot crosstab', None) # AS 10.2023: removed self
-            self.send('Orange table', None) # AS 10.2023: removed self
-
-        # If cancelled manually
-        if manualCancel:
-            self.infoBox.setText(u'Operation cancelled by user.', 'warning')
-
-        # Manage GUI visibility
-        self.manageGuiVisibility(False) # Processing done/cancelled
-
-    def manageGuiVisibility(self, processing=False):
-        """ Update GUI and make available (or not) elements
-        while the thread task is running in background """
-        
-        # Thread currently running, freeze the GUI
-        if processing:
-            self.sendButton.cancelButton.setDisabled(0) # Cancel: ENABLED
-            self.sendButton.mainButton.setDisabled(1) # Send: DISABLED
-            self.sendButton.autoSendCheckbox.setDisabled(1) # Send automatically: DISABLED
-            self.unitsBox.setDisabled(1) # Units box: DISABLED
-            self.contextsBox.setDisabled(1) # Contexts box: DISABLED
-
-        # Thread done or not running, unfreeze the GUI
         else:
-            # If "Send automatically" is disabled, reactivate "Send" button
-            if not self.sendButton.autoSendCheckbox.isChecked():
-                self.sendButton.mainButton.setDisabled(0) # Send: ENABLED
-            # Other buttons and layout
-            self.sendButton.cancelButton.setDisabled(1) # Cancel: DISABLED
-            self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: DISABLED
-            self.unitsBox.setDisabled(0) # Units box: ENABLED
-            self.contextsBox.setDisabled(0) # Contexts box: ENABLED
-            self.cancel_operation = False # Restore to default
-            self.signal_prog.emit(100, False) # 100% and do not re-init
-            self.sendButton.resetSettingsChangedFlag()
-            self.updateGUI()
+            self.send('Textable pivot crosstab', textable_table) # AS 10.2023: removed self
+            self.send('Orange table', orange_table) # AS 10.2023: removed self
+                
+            message = u'Table with %i occurrence@p sent to output.' % total
+            message = pluralize(message, total)
+            self.infoBox.setText(message)
 
     def sendData(self):
         """Check input, compute frequency tables, then send them"""
@@ -508,15 +413,6 @@ class OWTextableCount(OWTextableBaseWidget):
         # Infobox and progress bar
         self.infoBox.setText(u'Step 1/2: Processing...', 'warning')
         self.progressBarInit()
-
-        # Threading ...
-        
-        # Cancel old tasks
-        if self._task is not None:
-            self.cancel()
-        assert self._task is None
-
-        self._task = task = Task()
 
         # Case 1: sliding window...
         if self.mode == 'Sliding window':
@@ -586,47 +482,8 @@ class OWTextableCount(OWTextableBaseWidget):
                 contexts=contexts,
             )
 
-        # Restore to default
-        self.cancel_operation = False
-
-        # Threading start, future, and watcher
-        task.future = self._executor.submit(threaded_function)
-        task.watcher = FutureWatcher(task.future)
-        task.watcher.done.connect(self._task_finished)
-        
-        # Manage GUI visibility
-        self.manageGuiVisibility(True) # Processing
-
-    # AS 09.2023
-    @pyqtSlot(int, bool)
-    def update_progress_bar(self, val, init):
-        """ Update progress bar in a thread-safe manner """
-        # Re-init progress bar, if needed
-        if init:
-            self.progressBarInit()
-        
-        # Update progress bar
-        if val >= 100:
-            self.progressBarFinished() # Finish progress bar     
-        elif val < 0:
-            self.progressBarSet(0)
-        else:
-            self.progressBarSet(val)
-
-    # AS 10.2023
-    @pyqtSlot(str, str)
-    def update_infobox(self, text, infotype):
-        """ Update info box in a thread-safe manner """
-        self.infoBox.setText(text, infotype)
-
-    # AS 10.2023
-    @pyqtSlot(bool)
-    def disable_cancel_button(self, disable):
-        """ Disables cancel button in a thread-safe manner """
-        if disable:
-            self.sendButton.cancelButton.setDisabled(1)
-        else:
-            self.sendButton.cancelButton.setDisabled(0)
+        # Threading
+        self.threading(threaded_function)
             
     def inputData(self, newItem, newId=None):
         """Process incoming data."""        

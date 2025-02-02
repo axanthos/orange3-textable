@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.14.11'
+__version__ = '0.14.12'
 
 import os
 import codecs
@@ -49,19 +49,12 @@ from .TextableUtils import (
 from Orange.widgets import widget, gui, settings
 
 # Threading
-from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
-import concurrent.futures
-from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 
 class OWTextableURLs(OWTextableBaseWidget):
     """Orange widget for fetching text from URLs"""
-    
-    # Signals
-    signal_prog = pyqtSignal((int, bool)) # Progress bar (value, init)
-    signal_text = pyqtSignal((str, str))  # Text label (text, infotype)
 
     name = "URLs"
     description = "Fetch text data online"
@@ -109,11 +102,8 @@ class OWTextableURLs(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
             sendIfPreCallback=self.updateGUI,
         )
-        self.advancedSettings = AdvancedSettings(
-            widget=self.controlArea,
-            master=self,
-            callback=self.sendButton.settingsChanged,
-        )
+        self.advancedSettings = self.create_advancedSettings()
+
 
         # GUI...
 
@@ -123,12 +113,12 @@ class OWTextableURLs(OWTextableBaseWidget):
         # BASIC GUI...
 
         # Basic URL box
-        self.basicURLBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.basicURLBox = self.create_widgetbox(
             box=u'Source',
             orientation='vertical',
             addSpace=False,
-        )
+            )
+
         basicURLBoxLine1 = gui.widgetBox(
             widget=self.basicURLBox,
             box=False,
@@ -170,12 +160,12 @@ class OWTextableURLs(OWTextableBaseWidget):
         # ADVANCED GUI...
 
         # URL box
-        self.URLBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.URLBox = self.create_widgetbox(
             box=u'Sources',
             orientation='vertical',
             addSpace=False,
-        )
+            )
+
         URLBoxLine1 = gui.widgetBox(
             widget=self.URLBox,
             box=False,
@@ -353,12 +343,12 @@ class OWTextableURLs(OWTextableBaseWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
-        self.optionsBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.optionsBox = self.create_widgetbox(
             box=u'Options',
             orientation='vertical',
             addSpace=False,
-        )
+            )
+
         optionsBoxLine1 = gui.widgetBox(
             widget=self.optionsBox,
             box=False,
@@ -417,113 +407,29 @@ class OWTextableURLs(OWTextableBaseWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
-        
-        # Threading
-        self._task = None  # type: Optional[Task]
-        self._executor = ThreadExecutor()
-        self.cancel_operation = False
 
         # Send button & Info box
         self.sendButton.draw()
         self.infoBox.draw()
         self.adjustSizeWithTimer()
         QTimer.singleShot(0, self.sendButton.sendIf)
-        
-        # Connect signals to slots
-        self.signal_prog.connect(self.update_progress_bar)
-        self.signal_text.connect(self.update_infobox)
-        
-    @pyqtSlot(concurrent.futures.Future)
-    def _task_finished(self, f):
-        assert self.thread() is QThread.currentThread()
-        assert self._task is not None
-        assert self._task.future is f
-        assert f.done()
-
-        self._task = None
-        
-        try:
-            # Data outputs of Segment.Recode
-            processed_data = f.result()
-
-            if processed_data:
-                message = u'%i segment@p sent to output ' % len(processed_data)
-                message = pluralize(message, len(processed_data))
-                numChars = 0
-                for segment in processed_data:
-                    segmentLength = len(Segmentation.get_data(segment.str_index))
-                    numChars += segmentLength
-                message += u'(%i character@p).' % numChars
-                message = pluralize(message, numChars)
-                self.infoBox.setText(message)
-                self.send('Text data', processed_data) # AS 11.2023: removed self
-
-        except Exception as ex:
-            print(ex)
-
-            # Send None
-            self.send('Text data', None) # AS 11.2023: removed self
-
-        finally:
-            # Manage GUI visibility
-            self.manageGuiVisibility(False) # Processing done/cancelled
     
-    def cancel_manually(self):
-        """ Wrapper of cancel() method,
-        used for manual cancellations """
-        self.cancel(manualCancel=True)
-    
-    def cancel(self, manualCancel=False):
-        # Make loop break
-        self.cancel_operation = True
+    @OWTextableBaseWidget.task_decorator
+    def task_finished(self, f):
+        # Data outputs of Segment.Recode
+        processed_data = f.result()
 
-        # Cancel current task
-        if self._task is not None:
-            self._task.cancel()
-            assert self._task.future.done()
-            # Disconnect slot
-            self._task.watcher.done.disconnect(self._task_finished)
-            self._task = None
-            
-            # Send None to output
-            self.send('Text data', None) # AS 11.2023: removed self
-            
-        if manualCancel:
-            self.infoBox.setText(u'Operation cancelled by user.', 'warning')
-            
-        # Manage GUI visibility
-        self.manageGuiVisibility(False) # Processing done/cancelled
-        
-    def manageGuiVisibility(self, processing=False):
-        """ Update GUI and make available (or not) elements
-        while the thread task is running in background """
-
-        # Thread currently running, freeze the GUI
-        if processing:
-            self.sendButton.mainButton.setDisabled(1) # Send button: DISABLED
-            self.sendButton.cancelButton.setDisabled(0) # Cancel button: ENABLED
-            self.sendButton.autoSendCheckbox.setDisabled(1) # Send automatically: DISABLED
-            self.basicURLBox.setDisabled(1) # Basic URL box: DISABLED
-            self.URLBox.setDisabled(1) # URL box: DISABLED
-            self.optionsBox.setDisabled(1) # Options box: DISABLED
-            self.advancedSettings.checkbox.setDisabled(1) # Advanced options checkbox: DISABLED
-
-        # Thread done or not running, unfreeze the GUI
-        else:
-            # If "Send automatically" is disabled, reactivate "Send" button
-            if not self.sendButton.autoSendCheckbox.isChecked():
-                self.sendButton.mainButton.setDisabled(0) # Send: ENABLED
-            # Other buttons and layout
-            self.sendButton.cancelButton.setDisabled(1) # Cancel button: DISABLED
-            self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: ENABLED
-            self.basicURLBox.setDisabled(0) # Basic URL box: ENABLED
-            self.URLBox.setDisabled(0) # URL box: ENABLED
-            self.optionsBox.setDisabled(0) # Options box: ENABLED
-            self.advancedSettings.checkbox.setDisabled(0) # Advanced options checkbox: ENABLED
-            self.cancel_operation = False
-            self.signal_prog.emit(100, False) # 100% and do not re-init
-            self.sendButton.resetSettingsChangedFlag()
-            self.updateGUI()
+        if processed_data:
+            message = u'%i segment@p sent to output ' % len(processed_data)
+            message = pluralize(message, len(processed_data))
+            numChars = 0
+            for segment in processed_data:
+                segmentLength = len(Segmentation.get_data(segment.str_index))
+                numChars += segmentLength
+            message += u'(%i character@p).' % numChars
+            message = pluralize(message, numChars)
+            self.infoBox.setText(message)
+            self.send('Text data', processed_data) # AS 11.2023: removed self
             
     def process_data(self, myURLs):
         """ Process data in a worker thread
@@ -633,7 +539,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             self.signal_prog.emit(int(100*cur_itr/max_itr), False)
             cur_itr += 1
             
-            # Cancel operation if requested by uers
+            # Cancel operation if requested by user
             if self.cancel_operation:
                 self.signal_prog.emit(100, False)
                 return
@@ -716,43 +622,7 @@ class OWTextableURLs(OWTextableBaseWidget):
         )
 
         # Threading ...
-        
-        # Cancel old tasks
-        if self._task is not None:
-            self.cancel()
-        assert self._task is None
-
-        self._task = task = Task()
-        
-        # Threading start, future, and watcher
-        task.future = self._executor.submit(threaded_function)
-        task.watcher = FutureWatcher(task.future)
-        task.watcher.done.connect(self._task_finished)
-        
-        # Manage GUI visibility
-        self.manageGuiVisibility(True) # Processing
-
-    # AS 09.2023
-    @pyqtSlot(int, bool)
-    def update_progress_bar(self, val, init):
-        """ Update progress bar in a thread-safe manner """
-        # Re-init progress bar, if needed
-        if init:
-            self.progressBarInit()
-        
-        # Update progress bar
-        if val >= 100:
-            self.progressBarFinished() # Finish progress bar     
-        elif val < 0:
-            self.progressBarSet(0)
-        else:
-            self.progressBarSet(val)
-
-    # AS 10.2023
-    @pyqtSlot(str, str)
-    def update_infobox(self, text, infotype):
-        """ Update info box in a thread-safe manner """
-        self.infoBox.setText(text, infotype) 
+        self.threading(threaded_function)
         
     def inputMessage(self, message):
         """Handle JSON message on input connection"""

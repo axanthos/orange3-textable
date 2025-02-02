@@ -18,20 +18,24 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.15.3'
+__version__ = '0.15.4'
 
 
-import LTTL.Segmenter as Segmenter
+import LTTL.SegmenterThread as Segmenter
 from LTTL.Segmentation import Segmentation
 
 from .TextableUtils import (
     OWTextableBaseWidget, InfoBox, SendButton, AdvancedSettings,
     pluralize, updateMultipleInputs, SegmentationListContextHandler,
-    SegmentationsInputList, ProgressBar
+    SegmentationsInputList, ProgressBar,
+    Task
 )
 
 from Orange.widgets import widget, gui, settings
 
+# Threading
+from Orange.widgets.utils.widgetpreview import WidgetPreview
+from functools import partial
 
 class OWTextableIntersect(OWTextableBaseWidget):
     """Orange widget for segment in-/exclusion based on other segmentation"""
@@ -75,14 +79,11 @@ class OWTextableIntersect(OWTextableBaseWidget):
             widget=self.controlArea,
             master=self,
             callback=self.sendData,
+            cancelCallback=self.cancel_manually,
             infoBoxAttribute='infoBox',
             sendIfPreCallback=self.updateGUI,
         )
-        self.advancedSettings = AdvancedSettings(
-            widget=self.controlArea,
-            master=self,
-            callback=self.sendButton.settingsChanged,
-        )
+        self.advancedSettings = self.create_advancedSettings()
 
         # GUI...
 
@@ -91,12 +92,12 @@ class OWTextableIntersect(OWTextableBaseWidget):
         self.advancedSettings.draw()
 
         # Intersect box
-        self.intersectBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.intersectBox = self.create_widgetbox(
             box=u'Intersect',
             orientation='vertical',
             addSpace=False,
-        )
+            )
+
         self.modeCombo = gui.comboBox(
             widget=self.intersectBox,
             master=self,
@@ -185,14 +186,14 @@ class OWTextableIntersect(OWTextableBaseWidget):
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
-        optionsBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.optionsBox = self.create_widgetbox(
             box=u'Options',
             orientation='vertical',
-            addSpace=False
-        )
+            addSpace=False,
+            )
+
         optionsBoxLine2 = gui.widgetBox(
-            widget=optionsBox,
+            widget=self.optionsBox,
             box=False,
             orientation='horizontal',
             addSpace=True,
@@ -220,7 +221,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
             ),
         )
         gui.checkBox(
-            widget=optionsBox,
+            widget=self.optionsBox,
             master=self,
             value='copyAnnotations',
             label=u'Copy annotations',
@@ -229,16 +230,16 @@ class OWTextableIntersect(OWTextableBaseWidget):
                 u"Copy all annotations from input to output segments."
             ),
         )
-        gui.separator(widget=optionsBox, height=2)
-        self.advancedSettings.advancedWidgets.append(optionsBox)
+        gui.separator(widget=self.optionsBox, height=2)
+        self.advancedSettings.advancedWidgets.append(self.optionsBox)
         self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Basic intersect box
-        self.basicIntersectBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.basicIntersectBox = self.create_widgetbox(
             box=u'Intersect',
             orientation='vertical',
-        )
+            )
+
         self.basicModeCombo = gui.comboBox(
             widget=self.basicIntersectBox,
             master=self,
@@ -292,24 +293,33 @@ class OWTextableIntersect(OWTextableBaseWidget):
 
         gui.rubber(self.controlArea)
 
-        # Send button...
+        # Send button & Infobox
         self.sendButton.draw()
-
-        # Info box...
         self.infoBox.draw()
-
         self.sendButton.sendIf()
         self.adjustSizeWithTimer()
+    
+    @OWTextableBaseWidget.task_decorator
+    def task_finished(self, f):
+        # Outputs
+        filtered_data, discarded_data = f.result()
+
+        # Send data
+        message = u'%i segment@p sent to output.' % len(filtered_data)
+        message = pluralize(message, len(filtered_data))
+        self.infoBox.setText(message)
+
+        self.send('Selected data', filtered_data) # AS 11.2023: removed self
+        self.send('Discarded data', discarded_data) # AS 11.2023: removed self
 
     def sendData(self):
-
         """(Have LTTL.Segmenter) perform the actual filtering"""
 
         # Check that there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Selected data', None, self)
-            self.send('Discarded data', None, self)
+            self.send('Selected data', None) # 11.2023: Removed self
+            self.send('Discarded data', None) # 11.2023: Removed self
             return
 
         assert self.source >= 0
@@ -335,18 +345,16 @@ class OWTextableIntersect(OWTextableBaseWidget):
         if self.displayAdvancedSettings and self.autoNumber:
             if self.autoNumberKey:
                 autoNumberKey = self.autoNumberKey
-                num_iterations = 2 * len(source['segmentation'])
             else:
                 self.infoBox.setText(
                     u'Please enter an annotation key for auto-numbering.',
                     'warning'
                 )
-                self.send('Selected data', None, self)
-                self.send('Discarded data', None, self)
+                self.send('Selected data', None) # 11.2023: Removed self
+                self.send('Discarded data', None) # 11.2023: Removed self
                 return
         else:
             autoNumberKey = None
-            num_iterations = len(source)
 
         # Basic settings...
         if self.displayAdvancedSettings:
@@ -354,14 +362,18 @@ class OWTextableIntersect(OWTextableBaseWidget):
         else:
             copyAnnotations = True
 
-        # Perform filtering...
-        self.infoBox.setText(u"Processing, please wait...", "warning")
-        self.controlArea.setDisabled(True)
-        progressBar = ProgressBar(
-            self,
-            iterations=num_iterations
-        )
-        (filtered_data, discarded_data) = Segmenter.intersect(
+        # Infobox and progress bar
+        if self.autoNumber and self.displayAdvancedSettings:
+            self.infoBox.setText(f"Step 1/3: Processing...", "warning")
+        else:
+            self.infoBox.setText(u"Processing...", "warning")
+
+        self.progressBarInit()
+
+        # Threaded function
+        threaded_function = partial(
+            Segmenter.intersect,
+            caller=self,
             source=source,
             source_annotation_key=source_annotation_key,
             filtering=filtering,
@@ -370,20 +382,16 @@ class OWTextableIntersect(OWTextableBaseWidget):
             label=self.captionTitle,
             copy_annotations=self.copyAnnotations,
             auto_number_as=autoNumberKey,
-            progress_callback=progressBar.advance,
         )
-        progressBar.finish()
-        self.controlArea.setDisabled(False)
-        message = u'%i segment@p sent to output.' % len(filtered_data)
-        message = pluralize(message, len(filtered_data))
-        self.infoBox.setText(message)
 
-        self.send('Selected data', filtered_data, self)
-        self.send('Discarded data', discarded_data, self)
-        self.sendButton.resetSettingsChangedFlag()
+        # Threading ...
+        self.threading(threaded_function)
 
     def inputData(self, newItem, newId=None):
         """Process incoming data."""
+        # Cancel pending tasks, if any
+        self.cancel()
+        
         self.closeContext()
         updateMultipleInputs(
             self.segmentations,
@@ -461,6 +469,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
             changed = title != self.captionTitle
             super().setCaption(title)
             if changed:
+                self.cancel() # Cancel current operation
                 self.sendButton.settingsChanged()
         else:
             super().setCaption(title)

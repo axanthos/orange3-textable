@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u'1.0.5'
+__version__ = u'1.0.6'
 __author__ = "Mahtab Mohammadi"
 __maintainer__ = "LangTech Sarl"
 
@@ -39,20 +39,11 @@ from Orange.widgets import widget, gui, settings
 import re
 
 # Threading
-from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
-import concurrent.futures
-from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableCooccurrence(OWTextableBaseWidget):
     """Orange widget for calculating co-occurrences of text units"""
-
-    # Signals
-    signal_prog = pyqtSignal((int, bool))       # Progress bar (value, init)
-    signal_text = pyqtSignal((str, str))        # Text label (text, infotype)
-    signal_cancel_button = pyqtSignal(bool)     # Allow to Deactivate cancel
-                                                # button from worker thread
 
     name = "Cooccurrence"
     description = "Measure cooccurrence between segment types"
@@ -105,12 +96,12 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         # GUI...
 
         # Units box
-        self.unitsBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.unitsBox = self.create_widgetbox(
             box=u'Units',
             orientation='vertical',
             addSpace=True,
-        )
+            )
+
         self.unitsegmentationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
@@ -188,12 +179,12 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         gui.separator(widget=self.unitsBox, height=3)
 
         # Secondary unit
-        self.units2Box = gui.widgetBox(
-            widget=self.controlArea,
+        self.units2Box = self.create_widgetbox(
             box=u'Secondary units',
             orientation='vertical',
             addSpace=True,
-        )
+            )
+
         self.coocWithUnits2Checkbox = gui.checkBox(
             widget=self.units2Box,
             master=self,
@@ -253,12 +244,12 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         gui.separator(widget=self.units2Box, height=3)
 
         # Context box...
-        self._contextsBox = gui.widgetBox(
-            widget=self.controlArea,
+        self._contextsBox = self.create_widgetbox(
             box=u'Contexts',
             orientation='vertical',
             addSpace=True,
-        )
+            )
+
         self.modeCombo = gui.comboBox(
             widget=self._contextsBox,
             master=self,
@@ -342,118 +333,30 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         gui.separator(widget=self.containingSegmentationBox, height=3)
 
         gui.rubber(self.controlArea)
-        
-        # Threading
-        self._task = None
-        self._executor = ThreadExecutor()
-        self.cancel_operation = False
 
         # Send button & Info box
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
         self.adjustSizeWithTimer()
+    
+    @OWTextableBaseWidget.task_decorator
+    def task_finished(self, f):
+        # Table outputs
+        textable_table, orange_table = f.result()
 
-        # Connect signals to slots
-        self.signal_prog.connect(self.update_progress_bar) 
-        self.signal_text.connect(self.update_infobox)
-        self.signal_cancel_button.connect(self.disable_cancel_button)
-
-    @pyqtSlot(concurrent.futures.Future)
-    def _task_finished(self, f):    
-        assert self.thread() is QThread.currentThread()
-        assert self._task is not None
-        assert self._task.future is f
-        assert f.done()
-
-        self._task = None
-
-        try:
-            # Table outputs
-            textable_table, orange_table = f.result()
-
-            # Send data 
-            if len(textable_table.row_ids) == 0:
-                self.infoBox.setText(u'Resulting table is empty.', 'warning')
-                self.send('Textable pivot crosstab', None)
-                self.send('Orange table', None)
-            else:
-                total = sum([i for i in textable_table.values.values()])
-                message = u'Table with %i cooccurrence@p sent to output.' % total
-                message = pluralize(message, total)
-                self.infoBox.setText(message)
-                self.send('Textable pivot crosstab', textable_table)
-                self.send('Orange table', orange_table)
-
-        except Exception as ex:
-            print(ex)
-
-            # Send None
+        # Send data 
+        if len(textable_table.row_ids) == 0:
+            self.infoBox.setText(u'Resulting table is empty.', 'warning')
             self.send('Textable pivot crosstab', None)
             self.send('Orange table', None)
-            self.infoBox.setText(u'An error occured.', 'error')
-
-        finally:
-            # Manage GUI visibility
-            self.manageGuiVisibility(False) # Processing done/cancelled!
-
-    def cancel_manually(self):
-        """ Wrapper of cancel() method,
-        used for manual cancellations """
-        self.cancel(manualCancel=True)
-
-    def cancel(self, manualCancel=False):
-        # Make loop break in LTTL/ProcessorThread.py 
-        self.cancel_operation = True
-
-        # Cancel current task
-        if self._task is not None:
-            self._task.cancel()
-            assert self._task.future.done()
-            
-            # Disconnect slot
-            self._task.watcher.done.disconnect(self._task_finished)
-            self._task = None
-            
-            # Send None to output
-            self.send('Textable pivot crosstab', None)
-            self.send('Orange table', None)
-
-        # If cancelled manually
-        if manualCancel:
-            self.infoBox.setText(u'Operation cancelled by user.', 'warning')
-
-        # Manage GUI visibility
-        self.manageGuiVisibility(False) # Processing done/cancelled
-
-    def manageGuiVisibility(self, processing=False):
-        """ Update GUI and make available (or not) elements
-        while the thread task is running in background """
-        
-        # Thread currently running, freeze the GUI
-        if processing:
-            self.sendButton.cancelButton.setDisabled(0) # Cancel: ENABLED
-            self.sendButton.mainButton.setDisabled(1) # Send: DISABLED
-            self.sendButton.autoSendCheckbox.setDisabled(1) # Send automatically: DISABLED
-            self.unitsBox.setDisabled(1) # Units Box: DISABLED
-            self.units2Box.setDisabled(1) # Units Box 2: DISABLED
-            self._contextsBox.setDisabled(1) # Contents Box: DISABLED
-
-        # Thread done or not running, unfreeze the GUI
         else:
-            # If "Send automatically" is disabled, reactivate "Send" button
-            if not self.sendButton.autoSendCheckbox.isChecked():
-                self.sendButton.mainButton.setDisabled(0) # Send: ENABLED
-            # Other buttons and layout
-            self.sendButton.cancelButton.setDisabled(1) # Cancel: DISABLED
-            self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: DISABLED
-            self.unitsBox.setDisabled(0) # Units Box: ENABLED
-            self.units2Box.setDisabled(0) # Units Box 2: ENABLED
-            self._contextsBox.setDisabled(0) # Contents Box: ENABLED
-            self.cancel_operation = False # Restore to default
-            self.signal_prog.emit(100, False) # 100% and do not re-init
-            self.sendButton.resetSettingsChangedFlag()
-            self.updateGUI()
+            total = sum([i for i in textable_table.values.values()])
+            message = u'Table with %i cooccurrence@p sent to output.' % total
+            message = pluralize(message, total)
+            self.infoBox.setText(message)
+            self.send('Textable pivot crosstab', textable_table)
+            self.send('Orange table', orange_table)
 
     def sendData(self):
         """Check input, compute co-occurrence, then send tabel"""
@@ -532,56 +435,8 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         self.infoBox.setText(u"Step 1/3: Pre-processing (count units)...", "warning")
         self.progressBarInit()
         
-        # Restore to default
-        self.cancel_operation = False
-        
         # Threading ...
-        
-        # Cancel old tasks
-        if self._task is not None:
-            self.cancel()
-        assert self._task is None
-
-        self._task = task = Task()
-
-        # Threading start, future, and watcher
-        task.future = self._executor.submit(threaded_function)
-        task.watcher = FutureWatcher(task.future)
-        task.watcher.done.connect(self._task_finished)
-        
-        # Manage GUI visibility
-        self.manageGuiVisibility(True) # Processing
-
-    # AS 11.2023
-    @pyqtSlot(int, bool)
-    def update_progress_bar(self, val, init):
-        """ Update progress bar in a thread-safe manner """
-        # Re-init progress bar, if needed
-        if init:
-            self.progressBarInit()
-        
-        # Update progress bar
-        if val >= 100:
-            self.progressBarFinished() # Finish progress bar     
-        elif val < 0:
-            self.progressBarSet(0)
-        else:
-            self.progressBarSet(val)
-
-    # AS 11.2023
-    @pyqtSlot(str, str)
-    def update_infobox(self, text, infotype):
-        """ Update info box in a thread-safe manner """
-        self.infoBox.setText(text, infotype)
-
-    # AS 10.2023
-    @pyqtSlot(bool)
-    def disable_cancel_button(self, disable):
-        """ Disables cancel button in a thread-safe manner """
-        if disable:
-            self.sendButton.cancelButton.setDisabled(1)
-        else:
-            self.sendButton.cancelButton.setDisabled(0)
+        self.threading(threaded_function)
         
     def inputData(self, newItem, newId=None):
         """Process incoming data."""

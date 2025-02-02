@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.19.11'
+__version__ = '0.19.12'
 
 import os
 import codecs
@@ -40,9 +40,6 @@ from .TextableUtils import (
 )
 
 # Threading
-from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
-import concurrent.futures
-from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
 from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
@@ -54,12 +51,6 @@ ColumnDelimiters = [
 
 class OWTextableConvert(OWTextableBaseWidget):
     """Orange widget for converting a Textable table to an Orange table"""
-
-    # Signals
-    signal_prog = pyqtSignal((int, bool))   # Progress bar (value, init)
-    signal_text = pyqtSignal((str, str))    # Text label (text, infotype)
-    signal_cancel_button = pyqtSignal(bool) # Allow to Deactivate cancel
-                                            # button from worker thread
 
     name = "Convert"
     description = "Convert, transform, or export Orange Textable tables."
@@ -129,11 +120,7 @@ class OWTextableConvert(OWTextableBaseWidget):
             infoBoxAttribute='infoBox',
             sendIfPreCallback=self.updateGUI,
         )
-        self.advancedSettings = AdvancedSettings(
-            widget=self.controlArea,
-            master=self,
-            callback=self.sendButton.settingsChanged,
-        )
+        self.advancedSettings = self.create_advancedSettings()
 
         # GUI...
 
@@ -141,12 +128,12 @@ class OWTextableConvert(OWTextableBaseWidget):
         self.advancedSettings.draw()
 
         # Transform box
-        self.transformBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.transformBox = self.create_widgetbox(
             box=u'Transform',
             orientation='vertical',
             addSpace=False,
-        )
+            )
+
         self.transformBoxLine1 = gui.widgetBox(
             widget=self.transformBox,
             orientation='horizontal',
@@ -420,12 +407,12 @@ class OWTextableConvert(OWTextableBaseWidget):
         self.advancedSettings.basicWidgets.append(dummyBox)
 
         # Conversion box
-        self.encodingBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.encodingBox = self.create_widgetbox(
             box=u'Encoding',
             orientation='horizontal',
             addSpace=False,
-        )
+            )
+
         gui.widgetLabel(
             widget=self.encodingBox,
             labelWidth=180,
@@ -457,12 +444,12 @@ class OWTextableConvert(OWTextableBaseWidget):
         )
 
         # Export box
-        self.exportBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.exportBox = self.create_widgetbox(
             box=u'Export',
             orientation='vertical',
             addSpace=False,
-        )
+            )
+
         exportBoxLine2 = gui.widgetBox(
             widget=self.exportBox,
             orientation='horizontal',
@@ -529,12 +516,12 @@ class OWTextableConvert(OWTextableBaseWidget):
         self.advancedSettings.advancedWidgets.append(self.exportBox)
 
         # Export box
-        self.basicExportBox = gui.widgetBox(
-            widget=self.controlArea,
+        self.basicExportBox = self.create_widgetbox(
             box=u'Export',
             orientation='vertical',
             addSpace=True,
-        )
+            )
+
         basicExportBoxLine1 = gui.widgetBox(
             widget=self.basicExportBox,
             orientation='horizontal',
@@ -564,136 +551,45 @@ class OWTextableConvert(OWTextableBaseWidget):
         self.advancedSettings.basicWidgets.append(self.basicExportBox)
 
         gui.rubber(self.controlArea)
-        
-        # Threading
-        self._task = None
-        self._executor = ThreadExecutor()
-        self.cancel_operation = False
 
         # Send button & Info box
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
         self.adjustSizeWithTimer()
-
-        # Connect signals to slots
-        self.signal_prog.connect(self.update_progress_bar) 
-        self.signal_text.connect(self.update_infobox)
-        self.signal_cancel_button.connect(self.disable_cancel_button)
         
         # Progress bar variables
         self.progress_bar_max = 0
         self.progress_bar_cur = 0
-        
-    @pyqtSlot(concurrent.futures.Future)
-    def _task_finished(self, f):
-        assert self.thread() is QThread.currentThread()
-        assert self._task is not None
-        assert self._task.future is f
-        assert f.done()
 
-        self._task = None
-        
-        try:
-            # Data outputs
-            transformed_table, orangeTable, outputString = f.result()
+    @OWTextableBaseWidget.task_decorator
+    def task_finished(self, f):
+    # Data outputs
+        transformed_table, orangeTable, outputString = f.result()
 
-            if transformed_table and orangeTable and outputString:
+        if transformed_table and orangeTable and outputString:
 
-                if self.segmentation is None:
-                    self.segmentation = Input(label=u'table', text=outputString)
-                else:
-                    self.segmentation.update(outputString, label=u'table')
-                
-                message = 'Table with %i row@p' % len(transformed_table.row_ids)
-                message = pluralize(message, len(transformed_table.row_ids))
-                message += ' and %i column@p ' % (len(transformed_table.col_ids) + 1)
-                message = pluralize(message, len(transformed_table.col_ids) + 1)
-                message += 'sent to output.'
-
-                self.infoBox.setText(message)
-
-                self.send('Orange table', orangeTable)
-                self.send('Textable table', transformed_table)
-                self.send('Segmentation', self.segmentation) # AS 11.2023: removed self
-                
+            if self.segmentation is None:
+                self.segmentation = Input(label=u'table', text=outputString)
             else:
-                self.send('Orange table', None)
-                self.send('Textable table', None)
-                self.send('Segmentation', None)
+                self.segmentation.update(outputString, label=u'table')
+                
+            message = 'Table with %i row@p' % len(transformed_table.row_ids)
+            message = pluralize(message, len(transformed_table.row_ids))
+            message += ' and %i column@p ' % (len(transformed_table.col_ids) + 1)
+            message = pluralize(message, len(transformed_table.col_ids) + 1)
+            message += 'sent to output.'
 
-        except Exception as ex:
-            print(ex)
+            self.infoBox.setText(message)
 
-            # Send None
-            self.send('Orange table', None)
-            self.send('Textable table', None)
-            self.send('Segmentation', None)
-
-        finally:
-            # Manage GUI visibility
-            self.manageGuiVisibility(False) # Processing done/cancelled
-    
-    def cancel_manually(self):
-        """ Wrapper of cancel() method,
-        used for manual cancellations """
-        self.cancel(manualCancel=True)
-    
-    def cancel(self, manualCancel=False):
-        # Make loop break
-        self.cancel_operation = True
-
-        # Cancel current task
-        if self._task is not None:
-            self._task.cancel()
-            assert self._task.future.done()
-            # Disconnect slot
-            self._task.watcher.done.disconnect(self._task_finished)
-            self._task = None
-            
-            # Send None to output
-            self.send('Orange table', None)
-            self.send('Textable table', None)
-            self.send('Segmentation', None)
-            
-        if manualCancel:
-            self.infoBox.setText(u'Operation cancelled by user.', 'warning')
-            
-        # Manage GUI visibility
-        self.manageGuiVisibility(False) # Processing done/cancelled
-        
-    def manageGuiVisibility(self, processing=False):
-        """ Update GUI and make available (or not) elements
-        while the thread task is running in background """
-
-        # Thread currently running, freeze the GUI
-        if processing:
-            self.sendButton.mainButton.setDisabled(1) # Send button: DISABLED
-            self.sendButton.cancelButton.setDisabled(0) # Cancel button: ENABLED
-            self.sendButton.autoSendCheckbox.setDisabled(1) # Send automatically: DISABLED
-            self.transformBox.setDisabled(1) # Transform box: DISABLED
-            self.encodingBox.setDisabled(1) # Encoding box: DISABLED
-            self.exportBox.setDisabled(1) # Export box: DISABLED
-            self.basicExportBox.setDisabled(1) # Basic export box: DISABLED
-            self.advancedSettings.checkbox.setDisabled(1) # Advanced options checkbox: DISABLED
-
-        # Thread done or not running, unfreeze the GUI
+            self.send('Orange table', orangeTable)
+            self.send('Textable table', transformed_table)
+            self.send('Segmentation', self.segmentation) # AS 11.2023: removed self
+                
         else:
-            # If "Send automatically" is disabled, reactivate "Send" button
-            if not self.sendButton.autoSendCheckbox.isChecked():
-                self.sendButton.mainButton.setDisabled(0) # Send: ENABLED
-            # Other buttons and layout
-            self.sendButton.cancelButton.setDisabled(1) # Cancel button: DISABLED
-            self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: ENABLED
-            self.transformBox.setDisabled(0) # Transform box: ENABLED
-            self.encodingBox.setDisabled(0) # Encoding box: ENABLED
-            self.exportBox.setDisabled(0) # Export box: ENABLED
-            self.basicExportBox.setDisabled(0) # Basic export box: ENABLED
-            self.advancedSettings.checkbox.setDisabled(0) # Advanced options checkbox: ENABLED
-            self.cancel_operation = False
-            self.signal_prog.emit(100, False) # 100% and do not re-init
-            self.sendButton.resetSettingsChangedFlag()
-            self.updateGUI()
+            self.send('Orange table', None)
+            self.send('Textable table', None)
+            self.send('Segmentation', None)
 
     def process_data(self, caller, transformed_table, numIterations):
         """ Process data in a worker thread
@@ -891,74 +787,7 @@ class OWTextableConvert(OWTextableBaseWidget):
         )
 
         # Threading ...
-
-        # Cancel old tasks
-        if self._task is not None:
-            self.cancel()
-        assert self._task is None
-
-        self._task = task = Task()
-
-        # Threading start, future, and watcher
-        task.future = self._executor.submit(threaded_function)
-        task.watcher = FutureWatcher(task.future)
-        task.watcher.done.connect(self._task_finished)
-
-        # Manage GUI visibility
-        self.manageGuiVisibility(True) # Processing            
-
-    # AS 11.2023
-    @pyqtSlot(bool)
-    def disable_cancel_button(self, disable):
-        """ Disables cancel button in a thread-safe manner """
-        if disable:
-            self.sendButton.cancelButton.setDisabled(1)
-        else:
-            self.sendButton.cancelButton.setDisabled(0)
-
-    # AS 11.2023
-    @pyqtSlot(int, bool)
-    def update_progress_bar(self, val, init):
-        """ Increase progress bar in a thread-safe manner.
-            Equivalent to progressBar.advance """
-        # Re-init progress bar, if needed
-        if init:
-            self.progressBarInit()
-        
-        # Compute new progression if val is not specified
-        if val < 0:
-            self.progress_bar_cur += 1
-
-            try:
-                current_progress = 1 + int(
-                    self.progress_bar_cur / self.progress_bar_max
-                * 99)
-            except ZeroDivisionError:
-                current_progress = 1
-    
-            # Update progress bar
-            if current_progress >= 100:
-                self.progressBarFinished() # Finish progress bar     
-            elif current_progress < 0:
-                self.progressBarSet(0)
-            else:
-                self.progressBarSet(current_progress)
-
-        # Display specified val otherwise
-        else:
-            # Update progress bar
-            if val >= 100:
-                self.progressBarFinished() # Finish progress bar     
-            elif val < 0:
-                self.progressBarSet(0)
-            else:
-                self.progressBarSet(val)
-
-    # AS 11.2023
-    @pyqtSlot(str, str)
-    def update_infobox(self, text, infotype):
-        """ Update info box in a thread-safe manner """
-        self.infoBox.setText(text, infotype)
+        self.threading(threaded_function)          
         
     def inputData(self, newInput):
         """Process incoming data."""
