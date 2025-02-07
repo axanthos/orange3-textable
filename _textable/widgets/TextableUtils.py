@@ -38,7 +38,7 @@ Provides functions:
 - getPredefinedEncodings
 """
 
-__version__ = '0.18'
+__version__ = '0.19'
 
 import re, os, uuid
 
@@ -1224,22 +1224,22 @@ class ProgressBar:
         self.count = 0
         self.finished = False
         self.widget.setBlocking(False)  # not accepting inputs from the canvas
-        self.widget.progressBarInit(processEvents=None)
+        self.widget.progressBarInit() # AX 06.02.25: removed processEvents=None
         QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
 
     def __del__(self):
         if not self.finished:
             self.widget.setBlocking(False)
-            self.widget.progressBarFinished(processEvents=None)
+            self.widget.progressBarFinished() # AX 06.02.25: removed processEvents=None
 
     def advance(self, count=1):
         self.count += count
         self.widget.progressBarSet(int(self.count * 100 / max(1, self.iter)),
-                                   processEvents=None)
+                                   ) # AX 06.02.25: removed processEvents=None
         QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
 
     def finish(self):
         self.finished = True
         self.widget.setBlocking(False)
-        self.widget.progressBarFinished(processEvents=None)
+        self.widget.progressBarFinished() # AX 06.02.25: removed processEvents=None
         QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
