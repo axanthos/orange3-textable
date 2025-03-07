@@ -38,7 +38,7 @@ Provides functions:
 - getPredefinedEncodings
 """
 
-__version__ = '0.19'
+__version__ = '0.20'
 
 import re, os, uuid
 
@@ -146,7 +146,7 @@ class SendButton(object):
         self.autoSendCheckbox.toggled[bool].connect(updateTextOnToggle)
 
         self.resetSettingsChangedFlag()
-
+    
     def sendIf(self):
         """Send data if autoSend is on, else register setting change"""
         if self.sendIfPreCallback is not None:
@@ -1061,7 +1061,7 @@ class OWTextableBaseWidget(widget.OWWidget, openclass=True):
             self.sendButton.autoSendCheckbox.setDisabled(0) # Send automatically: ENABLED
             self.cancel_operation = False
             self.signal_prog.emit(100, False) # 100% and do not re-init
-            self.sendButton.resetSettingsChangedFlag()
+            #self.sendButton.resetSettingsChangedFlag() # commented AX 7.3.25
             self.updateGUI()
     
     def cancel_manually(self):
@@ -1194,6 +1194,9 @@ class OWTextableBaseWidget(widget.OWWidget, openclass=True):
                 finally:
                     # Manage GUI visibility
                     self.manageGuiVisibility(False) # Processing done/cancelled
+                    # Following called moved here from manageGuiVisibility
+                    # (AX 7.3.25)
+                    self.sendButton.resetSettingsChangedFlag()
             return _task_finished
     
     def create_widgetbox(self, box, orientation, addSpace=False):

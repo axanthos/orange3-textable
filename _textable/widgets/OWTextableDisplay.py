@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.16.13'
+__version__ = '0.16.14'
 
 import sys
 import os
@@ -387,28 +387,26 @@ class OWTextableDisplay(OWTextableBaseWidget):
         """Send segmentation to output"""
         if not self.segmentation:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Bypassed segmentation', None, self)
-            self.send('Displayed segmentation', None, self)
+            self.send('Bypassed segmentation', None)
+            self.send('Displayed segmentation', None)
             return
 
         self.send(
             'Bypassed segmentation',
-            Segmenter.bypass(self.segmentation, self.captionTitle),
-            self
+            Segmenter.bypass(self.segmentation, self.captionTitle)
         )
         # TODO: Check if this is correct replacement for textable v1.*, v2.*
         if 'format' in self._currentWarningMessage or \
                 'format' in self._currentErrorMessage:
-            self.send('Displayed segmentation', None, self)
+            self.send('Displayed segmentation', None)
             return
         if len(self.displayedSegmentation[0].get_content()) > 0:
             self.send(
                 'Displayed segmentation',
                 self.displayedSegmentation,
-                self
             )
         else:
-            self.send('Displayed segmentation', None, self)
+            self.send('Displayed segmentation', None)
         # TODO: Differes only in capitalization with a check before
         #       Is this intentional?
         if "Format" not in self._currentErrorMessage:
