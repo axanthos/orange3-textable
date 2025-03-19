@@ -38,7 +38,7 @@ Provides functions:
 - getPredefinedEncodings
 """
 
-__version__ = '0.20'
+__version__ = '0.21'
 
 import re, os, uuid
 
@@ -1064,6 +1064,13 @@ class OWTextableBaseWidget(widget.OWWidget, openclass=True):
             #self.sendButton.resetSettingsChangedFlag() # commented AX 7.3.25
             self.updateGUI()
     
+    def updateGUI(self):
+        """Method overloaded in most Textable widgets,
+        added here to avoid a bug in new widgets 
+        that don't define it - AX 19.3.25.
+        """
+        pass
+    
     def cancel_manually(self):
         """ Wrapper of cancel() method,
         used for manual cancellations """
@@ -1160,21 +1167,24 @@ class OWTextableBaseWidget(widget.OWWidget, openclass=True):
                     task_function(self, f)
                 
                 # Exceptions handling for different widgets
-                except ValueError:
+                except ValueError as ex:
+                    print(ex)
                     self.infoBox.setText(
                     message=u'Please make sure that input is well-formed XML.',
                     state='error',
                     )
                     self.sendNoneToOutputs()
                     
-                except IndexError:
+                except IndexError as ex:
+                    print(ex)
                     self.infoBox.setText(
                     u'Reference to unmatched group in annotation key and/or value.',
                     'error'
                 )
                     self.sendNoneToOutputs()
 
-                except KeyError:
+                except KeyError as ex:
+                    print(ex)
                     return
                 
                 except re.error as re_error:
