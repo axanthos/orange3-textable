@@ -20,7 +20,7 @@ along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
 
-__version__ = '0.14.8'
+__version__ = '0.14.9'
 
 import re, math
 
@@ -796,7 +796,7 @@ class OWTextableSelect(OWTextableBaseWidget):
                 Segmenter.select,
                 caller=self,
                 segmentation=self.segmentation,
-                regex=re.compile(self.regex + '(?u)'),
+                regex=re.compile(f"(?u){self.regex}"),
                 mode=self.regexMode.lower(),
                 annotation_key=regexAnnotationKeyParam or None,
                 label=self.captionTitle,
