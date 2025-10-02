@@ -38,7 +38,7 @@ Provides functions:
 - getPredefinedEncodings
 """
 
-__version__ = '0.21'
+__version__ = '0.22'
 
 import re, os, uuid
 
@@ -936,8 +936,8 @@ class SegmentationContextHandler(VersionedSettingsHandlerMixin,
 
 
 from Orange.widgets import widget
-from PyQt5.QtCore import QTimer, QEventLoop
-from PyQt5.QtWidgets import QSizePolicy, QApplication
+from AnyQt.QtCore import QTimer, QEventLoop
+from AnyQt.QtWidgets import QSizePolicy, QApplication
 # Threading
 from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
 from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher

@@ -20,7 +20,7 @@ along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
 
-__version__ = '0.14.9'
+__version__ = '0.14.10'
 
 import re, math
 
@@ -971,7 +971,7 @@ class OWTextableSelect(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt5.QtWidgets import QApplication
+    from AnyQt.QtWidgets import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableSelect()
     ow.show()

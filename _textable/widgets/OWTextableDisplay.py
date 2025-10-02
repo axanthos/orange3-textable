@@ -18,15 +18,15 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.16.14'
+__version__ = '0.16.15'
 
 import sys
 import os
 import codecs
 import re
 
-from PyQt5.QtWidgets import QTextBrowser, QFileDialog, QMessageBox, QApplication
-from PyQt5.QtCore import QUrl
+from AnyQt.QtWidgets import QTextBrowser, QFileDialog, QMessageBox, QApplication
+from AnyQt.QtCore import QUrl
 
 import LTTL
 from LTTL.Segmentation import Segmentation

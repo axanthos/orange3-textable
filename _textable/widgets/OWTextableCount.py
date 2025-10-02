@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.9'
+__version__ = '0.21.10'
 
 
 from LTTL.TableThread import IntPivotCrosstab
@@ -613,7 +613,7 @@ class OWTextableCount(OWTextableBaseWidget):
 if __name__ == '__main__':
     import sys
 
-    from PyQt5.QtWidgets import QApplication
+    from AnyQt.QtWidgets import QApplication
     import LTTL.Segmenter as Segmenter
     from LTTL.Input import Input
 

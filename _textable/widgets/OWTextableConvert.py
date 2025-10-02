@@ -18,13 +18,13 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.19.12'
+__version__ = '0.19.13'
 
 import os
 import codecs
 import re
 
-from PyQt5.QtWidgets import QMessageBox, QApplication, QFileDialog
+from AnyQt.QtWidgets import QMessageBox, QApplication, QFileDialog
 import Orange.data
 from Orange.widgets import widget, gui, settings
 

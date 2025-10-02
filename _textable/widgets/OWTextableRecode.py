@@ -18,12 +18,12 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.11'
+__version__ = '0.13.12'
 
 import os, re, codecs, json
 
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from AnyQt.QtGui import QFont
+from AnyQt.QtWidgets import QFileDialog, QMessageBox
 
 import LTTL.SegmenterThread as Segmenter
 from LTTL.Segmentation import Segmentation
@@ -792,7 +792,7 @@ class OWTextableRecode(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt5.QtWidgets import QApplication
+    from AnyQt.QtWidgets import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableRecode()
     ow.show()

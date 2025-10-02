@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.12.7'
+__version__ = '0.12.8'
 
 from LTTL.TableThread import Table
 from LTTL.Segmentation import Segmentation
@@ -443,7 +443,7 @@ class OWTextableCategory(OWTextableBaseWidget):
 if __name__ == '__main__':
     import sys
     import re
-    from PyQt5.QtWidgets import QApplication
+    from AnyQt.QtWidgets import QApplication
     from LTTL.Input import Input
     from LTTL import Segmenter as segmenter
 

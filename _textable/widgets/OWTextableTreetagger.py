@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.10"
+__version__ = u"0.1.11"
 
 import os
 import re
@@ -29,7 +29,7 @@ from xml.sax.saxutils import quoteattr
 
 from Orange.widgets import gui, settings
 
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from AnyQt.QtWidgets import QFileDialog, QMessageBox
 
 from LTTL.Segmentation import Segmentation
 from LTTL.Input import Input
@@ -477,7 +477,7 @@ class Treetagger(OWTextableBaseWidget):
 
 if __name__ == "__main__":
     import sys
-    from PyQt5.QtWidgets import QApplication
+    from AnyQt.QtWidgets import QApplication
 
     myApplication = QApplication(sys.argv)
     myWidget = Treetagger()

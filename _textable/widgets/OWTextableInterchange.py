@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
 
 from LTTL.Segment import Segment
@@ -343,7 +343,7 @@ class OWTextableInterchange(OWTextableBaseWidget):
 
 if __name__ == "__main__":
     import sys
-    from PyQt5.QtWidgets import QApplication
+    from AnyQt.QtWidgets import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableInterchange()
     ow.show()

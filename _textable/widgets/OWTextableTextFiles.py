@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.17.12'
+__version__ = '0.17.13'
 
 
 import codecs
@@ -27,9 +27,9 @@ import re
 import json
 from unicodedata import normalize
 
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from AnyQt.QtCore import QTimer
+from AnyQt.QtGui import QFont
+from AnyQt.QtWidgets import QFileDialog, QMessageBox
 
 from chardet.universaldetector import UniversalDetector
 
@@ -988,7 +988,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt5.QtWidgets import QApplication
+    from AnyQt.QtWidgets import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableTextFiles()
     ow.show()

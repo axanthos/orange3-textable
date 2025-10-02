@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.14.12'
+__version__ = '0.14.13'
 
 import os
 import codecs
@@ -28,9 +28,9 @@ import http
 from unicodedata import normalize
 from urllib.request import urlopen
 
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import QMessageBox, QFileDialog
+from AnyQt.QtCore import QTimer
+from AnyQt.QtGui import QFont
+from AnyQt.QtWidgets import QMessageBox, QFileDialog
 
 import chardet
 
@@ -909,7 +909,7 @@ class OWTextableURLs(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt5.QtWidgets import QApplication
+    from AnyQt.QtWidgets import QApplication
     appl = QApplication(sys.argv)
     ow = OWTextableURLs()
     ow.show()

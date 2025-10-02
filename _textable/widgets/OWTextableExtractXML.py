@@ -18,11 +18,11 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.15.9'
+__version__ = '0.15.10'
 
 import re
 
-from PyQt5.QtGui import QFont
+from AnyQt.QtGui import QFont
 
 import LTTL.SegmenterThread as Segmenter
 from LTTL.Segmentation import Segmentation
@@ -714,7 +714,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    from PyQt5.QtWidgets import QApplication
+    from AnyQt.QtWidgets import QApplication
 
     appl = QApplication(sys.argv)
     ow = OWTextableExtractXML()
