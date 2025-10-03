@@ -15,7 +15,7 @@
 
 import sys, os
 
-version = "3.2.1"
+version = "3.2.5"
 author = "LangTech Sarl"
 
 title = "Textable"
