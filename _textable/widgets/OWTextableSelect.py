@@ -20,7 +20,7 @@ along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
 
-__version__ = '0.14.10'
+__version__ = '0.14.11'
 
 import re, math
 
@@ -342,9 +342,8 @@ class OWTextableSelect(OWTextableBaseWidget):
             labelWidth=180,
             callback=self.sendButton.settingsChanged,
             tooltip=(
-                u"Specify whether frequency thresholds will be\n"
-                u"expressed as numbers of tokens (value 'Count')\n"
-                u"or as relative frequencies (value 'Proportion')."
+                "Specify whether frequency thresholds will be\n"
+                "expressed as count or proportion."
             ),
         )
         gui.separator(widget=self.thresholdBox, height=3)
@@ -353,44 +352,54 @@ class OWTextableSelect(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
+        gui.checkBox(
+            widget=self.minCountLine,
+            master=self,
+            label=u'Min. count:',
+            labelWidth=180,
+            value='applyMinThreshold',
+            callback=self.sendButton.settingsChanged,
+            tooltip="Select types based on minimum count",
+        )
         self.minCountSpin = gui.spin(
             widget=self.minCountLine,
             master=self,
             value='minCount',
-            label=u'Min. count:',
-            labelWidth=180,
+            label="",
+            labelWidth=0,
             controlWidth=None,
-            checked='applyMinThreshold',
             minv=1,
             maxv=100,
             callback=self.sendButton.settingsChanged,
-            checkCallback=self.sendButton.settingsChanged,
             keyboardTracking=False,
-            tooltip=(
-                u"Minimum count for a type to be selected."
-            ),
+            tooltip="Minimum count for a type to be selected.",
         )
         self.minProportionLine = gui.widgetBox(
             widget=self.thresholdBox,
             box=False,
             orientation='horizontal',
         )
+        gui.checkBox(
+            widget=self.minProportionLine,
+            master=self,
+            label="Min. proportion (%):",
+            labelWidth=180,
+            value='applyMinThreshold',
+            callback=self.sendButton.settingsChanged,
+            tooltip="Select types based on minimum proportion",
+        )
         self.minProportionSpin = gui.spin(
             widget=self.minProportionLine,
             master=self,
             value='minProportion',
-            label=u'Min. proportion (%):',
-            labelWidth=180,
+            label="",
+            labelWidth=0,
             controlWidth=None,
-            checked='applyMinThreshold',
             minv=1,
             maxv=100,
             callback=self.sendButton.settingsChanged,
-            checkCallback=self.sendButton.settingsChanged,
             keyboardTracking=False,
-            tooltip=(
-                u"Minimum relative frequency for a type to be selected."
-            ),
+            tooltip="Minimum proportion for a type to be selected.",
         )
         gui.separator(widget=self.thresholdBox, height=3)
         self.maxCountLine = gui.widgetBox(
@@ -398,44 +407,54 @@ class OWTextableSelect(OWTextableBaseWidget):
             box=False,
             orientation='horizontal',
         )
+        gui.checkBox(
+            widget=self.maxCountLine,
+            master=self,
+            label=u'Max. count:',
+            labelWidth=180,
+            value='applyMaxThreshold',
+            callback=self.sendButton.settingsChanged,
+            tooltip="Select types based on maximum count",
+        )
         self.maxCountSpin = gui.spin(
             widget=self.maxCountLine,
             master=self,
             value='maxCount',
-            label=u'Max. count:',
-            labelWidth=180,
+            label="",
+            labelWidth=0,            
             controlWidth=None,
-            checked='applyMaxThreshold',
             minv=1,
             maxv=100,
             callback=self.sendButton.settingsChanged,
-            checkCallback=self.sendButton.settingsChanged,
             keyboardTracking=False,
-            tooltip=(
-                u"Maximum count for a type to be selected."
-            ),
+            tooltip="Maximum count for a type to be selected.",
         )
         self.maxProportionLine = gui.widgetBox(
             widget=self.thresholdBox,
             box=False,
             orientation='horizontal',
         )
+        gui.checkBox(
+            widget=self.maxProportionLine,
+            master=self,
+            labelWidth=180,
+            label=u'Max. proportion (%):',
+            value='applyMaxThreshold',
+            callback=self.sendButton.settingsChanged,
+            tooltip="Select items based on maximum proportion",
+        )
         self.maxProportionSpin = gui.spin(
             widget=self.maxProportionLine,
             master=self,
+            label="",
+            labelWidth=0,          
             value='maxProportion',
-            label=u'Max. proportion (%):',
-            labelWidth=180,
             controlWidth=None,
-            checked='applyMaxThreshold',
             minv=1,
             maxv=100,
             callback=self.sendButton.settingsChanged,
-            checkCallback=self.sendButton.settingsChanged,
             keyboardTracking=False,
-            tooltip=(
-                u"Maximum count for a type to be selected."
-            ),
+            tooltip="Maximum proportion for a type to be selected.",
         )
         gui.separator(widget=self.thresholdBox, height=3)
         self.advancedSettings.advancedWidgets.append(self.selectBox)
@@ -892,26 +911,30 @@ class OWTextableSelect(OWTextableBaseWidget):
                             self.maxCount
                             or len(self.segmentation)
                         )
-                        if self.applyMaxThreshold:
+                        self.maxCountSpin.setDisabled(
+                                not self.applyMaxThreshold)                       
+                        if self.applyMaxThreshold: 
                             maxValue = self.maxCount
                         else:
                             maxValue = len(self.segmentation)
-                        self.minCountSpin[1].setRange(
+                        self.minCountSpin.setRange(
                             1,
                             maxValue,
                         )
                         self.minCount = self.minCount or 1
+                        self.minCountSpin.setDisabled(
+                                not self.applyMinThreshold)                        
                         if self.applyMinThreshold:
                             minValue = self.minCount
                         else:
                             minValue = 1
-                        self.maxCountSpin[1].setRange(
+                        self.maxCountSpin.setRange(
                             minValue,
                             len(self.segmentation),
                         )
                     else:
-                        self.minCountSpin[1].setRange(1, 1)
-                        self.maxCountSpin[1].setRange(1, 1)
+                        self.minCountSpin.setRange(1, 1)
+                        self.maxCountSpin.setRange(1, 1)
                         pass
                     self.minCountLine.setVisible(True)
                     self.maxCountLine.setVisible(True)
@@ -922,27 +945,31 @@ class OWTextableSelect(OWTextableBaseWidget):
                                     self.segmentation is not None
                             and len(self.segmentation)
                     ):
+                        self.maxProportionSpin.setDisabled(
+                                not self.applyMaxThreshold)                      
                         if self.applyMaxThreshold:
                             maxValue = self.maxProportion
                         else:
                             maxValue = 100
-                        self.minProportionSpin[1].setRange(
+                        self.minProportionSpin.setRange(
                             1,
                             maxValue,
                         )
                         self.minProportion = self.minProportion or 1
+                        self.minProportionSpin.setDisabled(
+                                not self.applyMinThreshold)                        
                         if self.applyMinThreshold:
                             minValue = self.minProportion
                         else:
                             minValue = 1
-                        self.maxProportionSpin[1].setRange(
+                        self.maxProportionSpin.setRange(
                             minValue,
                             100,
                         )
                         self.maxProportion = self.maxProportion or 100
                     else:
-                        self.minProportionSpin[1].setRange(1, 100)
-                        self.maxProportionSpin[1].setRange(1, 100)
+                        self.minProportionSpin.setRange(1, 100)
+                        self.maxProportionSpin.setRange(1, 100)
                     self.minProportionLine.setVisible(True)
                     self.maxProportionLine.setVisible(True)
                 self.thresholdBox.setVisible(True)
