@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.15.10'
+__version__ = '0.15.11'
 
 import re
 
@@ -27,20 +27,17 @@ from AnyQt.QtGui import QFont
 import LTTL.SegmenterThread as Segmenter
 from LTTL.Segmentation import Segmentation
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
-    pluralize,SendButton, InfoBox, AdvancedSettings,
-    Task
+    pluralize,SendButton, InfoBox, AdvancedSettings, Task
 )
 
 import Orange
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
-import concurrent.futures
-from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableExtractXML(OWTextableBaseWidget):
@@ -52,8 +49,11 @@ class OWTextableExtractXML(OWTextableBaseWidget):
     priority = 4005
 
     # Input and output channels...
-    inputs = [('Segmentation', Segmentation, "inputData", widget.Single)]
-    outputs = [('Extracted data', Segmentation)]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False)
+    class Outputs:
+        extracted_data = Output("Extracted data", Segmentation, 
+                                auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -122,12 +122,10 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"input segmentation."
             ),
         )
-        gui.separator(widget=self.xmlExtractionBox, height=3)
         xmlExtractionBoxLine2 = gui.widgetBox(
             widget=self.xmlExtractionBox,
             box=False,
             orientation='horizontal',
-            addSpace=True,
         )
         gui.checkBox(
             widget=xmlExtractionBoxLine2,
@@ -162,7 +160,6 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"within the above specified XML element."
             ),
         )
-        gui.separator(widget=self.xmlExtractionBox, height=3)
         gui.checkBox(
             widget=self.xmlExtractionBox,
             master=self,
@@ -181,7 +178,6 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"shallow element."
             ),
         )
-        gui.separator(widget=self.xmlExtractionBox, height=3)
         conditionsBox = gui.widgetBox(
             widget=self.xmlExtractionBox,
             box=u'Conditions',
@@ -191,7 +187,6 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             widget=conditionsBox,
             box=False,
             orientation='horizontal',
-            addSpace=True,
         )
         self.conditionsListbox = gui.listBox(
             widget=xmlExtractionBoxLine4,
@@ -262,7 +257,6 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"be added to the list when button 'Add' is clicked."
             ),
         )
-        gui.separator(widget=addConditionBox, height=3)
         gui.lineEdit(
             widget=addConditionBox,
             master=self,
@@ -277,7 +271,6 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"is clicked."
             ),
         )
-        gui.separator(widget=addConditionBox, height=3)
         addConditionBoxLine3 = gui.widgetBox(
             widget=addConditionBox,
             box=False,
@@ -333,7 +326,6 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"than any character but newline)."
             ),
         )
-        gui.separator(widget=addConditionBox, height=3)
         self.addButton = gui.button(
             widget=addConditionBox,
             master=self,
@@ -344,20 +336,17 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             ),
         )
         self.advancedSettings.advancedWidgets.append(self.xmlExtractionBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
         self.optionsBox = self.create_widgetbox(
             box=u'Options',
             orientation='vertical',
-            addSpace=False,
             )
 
         optionsBoxLine2 = gui.widgetBox(
             widget=self.optionsBox,
             box=False,
             orientation='horizontal',
-            addSpace=True,
         )
         gui.checkBox(
             widget=optionsBoxLine2,
@@ -393,7 +382,6 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"input segment."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=3)
         gui.checkBox(
             widget=self.optionsBox,
             master=self,
@@ -408,15 +396,12 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"the value of the last one will be kept."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=2)
         self.advancedSettings.advancedWidgets.append(self.optionsBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Basic) XML extraction box
         self.basicXmlExtractionBox = self.create_widgetbox(
             box=u'XML Extraction',
             orientation='vertical',
-            addSpace=False,
             )
 
         gui.lineEdit(
@@ -432,7 +417,6 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"input segmentation."
             ),
         )
-        gui.separator(widget=self.basicXmlExtractionBox, height=3)
         gui.checkBox(
             widget=self.basicXmlExtractionBox,
             master=self,
@@ -444,9 +428,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"within the above specified XML element."
             ),
         )
-        gui.separator(widget=self.basicXmlExtractionBox, height=2)
         self.advancedSettings.basicWidgets.append(self.basicXmlExtractionBox)
-        self.advancedSettings.basicWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
 
@@ -454,7 +436,6 @@ class OWTextableExtractXML(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
 
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -465,7 +446,10 @@ class OWTextableExtractXML(OWTextableBaseWidget):
         message = u'%i segment@p sent to output.' % len(xml_extracted_data)
         message = pluralize(message, len(xml_extracted_data))
         self.infoBox.setText(message)
-        self.send('Extracted data', xml_extracted_data) # AS 10.2023: removed self
+        if len(xml_extracted_data):
+            self.Outputs.extracted_data.send(xml_extracted_data)
+        else:
+            self.sendNoneToOutputs()
 
     def sendData(self):
         """(Have LTTL.Segmenter) perform the actual tokenization"""
@@ -473,13 +457,13 @@ class OWTextableExtractXML(OWTextableBaseWidget):
         # Check that there's something on input...
         if not self.inputSegmentation:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Extracted data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # Check that element field is not empty...
         if not self.element:
             self.infoBox.setText(u'Please type an XML element', 'warning')
-            self.send('Extracted data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # TODO: update docs to indicate that angle brackets are optional
@@ -494,7 +478,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                     u'Please enter an annotation key for element import.',
                     'warning'
                 )
-                self.send('Extracted data', None) # AS 10.2023: removed self
+                self.sendNoneToOutputs()
                 return
         else:
             importElementAs = None
@@ -509,7 +493,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                     u'Please enter an annotation key for auto-numbering.',
                     'warning'
                 )
-                self.send('Extracted data', None) # AS 10.2023: removed self
+                self.sendNoneToOutputs()
                 return
         else:
             autoNumberKey = None
@@ -551,7 +535,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                             message += u' (condition #%i)' % (condition_idx + 1)
                         message += u'.'
                     self.infoBox.setText(message, 'error')
-                    self.send('Extracted data', None) # AS 10.2023: removed self
+                    self.sendNoneToOutputs()
                     return
 
         # Basic settings...
@@ -602,6 +586,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
         self.threading(threaded_function)
 
 
+    @Inputs.segmentation
     def inputData(self, segmentation):
         """Process incoming segmentation"""
         # Cancel pending tasks, if any
@@ -713,11 +698,4 @@ class OWTextableExtractXML(OWTextableBaseWidget):
             super().setCaption(title)
 
 if __name__ == '__main__':
-    import sys
-    from AnyQt.QtWidgets import QApplication
-
-    appl = QApplication(sys.argv)
-    ow = OWTextableExtractXML()
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    WidgetPreview(OWTextableExtractXML).run()

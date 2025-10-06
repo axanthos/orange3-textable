@@ -18,18 +18,19 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.11.6'
-
+__version__ = '0.11.8'
 
 import LTTL.SegmenterThread as Segmenter
 from LTTL.Segmentation import Segmentation
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
     InfoBox, SendButton, pluralize,
 )
 
 from Orange.widgets import gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
 from functools import partial
@@ -41,9 +42,12 @@ class OWTextablePreprocess(OWTextableBaseWidget, openclass=True):
     description = "Basic text preprocessing"
     icon = "icons/Preprocess.png"
     priority = 2001
+    
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False)
 
-    inputs = [('Segmentation', Segmentation, "inputData",)]
-    outputs = [('Preprocessed data', Segmentation)]
+    class Outputs:
+        segmentation = Output("Preprocessed data", Segmentation, auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -109,7 +113,6 @@ class OWTextablePreprocess(OWTextableBaseWidget, openclass=True):
             ),
         )
         self.caseTransformCombo.setMinimumWidth(120)
-        gui.separator(widget=self.optionsBox, height=3)
         gui.checkBox(
             widget=self.optionsBox,
             master=self,
@@ -120,7 +123,6 @@ class OWTextablePreprocess(OWTextableBaseWidget, openclass=True):
                 u"Replace accented characters with non-accented ones."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=3)
         gui.checkBox(
             widget=self.optionsBox,
             master=self,
@@ -131,7 +133,6 @@ class OWTextablePreprocess(OWTextableBaseWidget, openclass=True):
                 u"Copy all annotations from input to output segments."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=2)
 
         gui.rubber(self.controlArea)
 
@@ -139,7 +140,6 @@ class OWTextablePreprocess(OWTextableBaseWidget, openclass=True):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
 
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -152,9 +152,9 @@ class OWTextablePreprocess(OWTextableBaseWidget, openclass=True):
         message = u'%i segment@p sent to output.' % len(preprocessed_data)
         message = pluralize(message, len(preprocessed_data))
         self.infoBox.setText(message)
-        # caller.signal_text.emit(message, ‘warning’)
-        self.send('Preprocessed data', preprocessed_data) # AS 10.2023: removed self
+        self.Outputs.segmentation.send(preprocessed_data)
  
+    @Inputs.segmentation
     def inputData(self, newInput):
         """Process incoming data."""
         # Cancel pending tasks, if any
@@ -169,7 +169,7 @@ class OWTextablePreprocess(OWTextableBaseWidget, openclass=True):
 
         if not self.segmentation:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Preprocessed data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         if not self.segmentation.is_non_overlapping():
@@ -178,7 +178,7 @@ class OWTextablePreprocess(OWTextableBaseWidget, openclass=True):
                         u'overlapping.',
                 state='error'
             )
-            self.send('Preprocessed data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # TODO: remove label message in doc
@@ -235,10 +235,4 @@ class OWTextablePreprocess(OWTextableBaseWidget, openclass=True):
         super().onDeleteWidget()
 
 if __name__ == '__main__':
-    import sys
-    from AnyQt.QtWidgets import QApplication
-    appl = QApplication(sys.argv)
-    ow = OWTextablePreprocess()
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    WidgetPreview(OWTextablePreprocess).run()

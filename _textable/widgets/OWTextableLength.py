@@ -18,25 +18,25 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.14.8'
+__version__ = '0.14.9'
 
 
 from LTTL.TableThread import Table
 from LTTL.Segmentation import Segmentation
 import LTTL.ProcessorThread as Processor
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, SegmentationListContextHandler, ProgressBar,
-    SegmentationsInputList, InfoBox, SendButton, updateMultipleInputs,
-    Task
+    SegmentationsInputList, InfoBox, SendButton, updateMultipleInputs, Task
 )
 
 import Orange
 import Orange.data
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableLength(OWTextableBaseWidget):
@@ -47,9 +47,14 @@ class OWTextableLength(OWTextableBaseWidget):
     icon = "icons/Length.png"
     priority = 8003
 
-    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
-    outputs = [('Textable table', Table, widget.Default),
-               ('Orange table', Orange.data.Table)]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False, 
+                             multiple=True)    
+    class Outputs:
+        textable_table = Output("Textable table", Table, auto_summary=False, 
+                                default=True)
+        orange_table = Output("Orange table", Orange.data.Table, 
+                              auto_summary=False)
 
     settingsHandler = SegmentationListContextHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -73,9 +78,6 @@ class OWTextableLength(OWTextableBaseWidget):
         """Initialize a Length widget"""
         super().__init__(*args, **kwargs)
         
-        # Manual cancel (cancel button)
-        manualCancel = partial(self.cancel, True) # True = "Aborted by user!"
-
         self.windowSize = 1
 
         self.infoBox = InfoBox(
@@ -86,7 +88,7 @@ class OWTextableLength(OWTextableBaseWidget):
             widget=self.controlArea,
             master=self,
             callback=self.sendData,
-            cancelCallback=manualCancel, # Manual cancel button
+            cancelCallback=self.cancel_manually,
             infoBoxAttribute='infoBox',
             buttonLabel=u'Send',
             checkboxLabel=u'Send automatically',
@@ -99,7 +101,6 @@ class OWTextableLength(OWTextableBaseWidget):
         self.unitsBox = self.create_widgetbox(
             box=u'Units',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.unitSegmentationCombo = gui.comboBox(
@@ -116,20 +117,17 @@ class OWTextableLength(OWTextableBaseWidget):
             ),
         )
         self.unitSegmentationCombo.setMinimumWidth(120)
-        gui.separator(widget=self.unitsBox, height=3)
 
         # Averaging box...
         self.averagingBox = self.create_widgetbox(
             box=u'Averaging',
             orientation='vertical',
-            addSpace=True,
             )
 
         averagingBoxLine1 = gui.widgetBox(
             widget=self.averagingBox,
             box=False,
             orientation='horizontal',
-            addSpace=True,
         )
         gui.checkBox(
             widget=averagingBoxLine1,
@@ -171,13 +169,11 @@ class OWTextableLength(OWTextableBaseWidget):
                 u"lengthy operation for large segmentations."
             ),
         )
-        gui.separator(widget=self.averagingBox, height=2)
 
         # Contexts box...
         self.contextsBox = self.create_widgetbox(
             box=u'Contexts',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.modeCombo = gui.comboBox(
@@ -215,7 +211,6 @@ class OWTextableLength(OWTextableBaseWidget):
             widget=self.contextsBox,
             orientation='vertical',
         )
-        gui.separator(widget=self.slidingWindowBox, height=3)
         self.windowSizeSpin = gui.spin(
             widget=self.slidingWindowBox,
             master=self,
@@ -236,7 +231,6 @@ class OWTextableLength(OWTextableBaseWidget):
             widget=self.contextsBox,
             orientation='vertical',
         )
-        gui.separator(widget=self.containingSegmentationBox, height=3)
         self.contextSegmentationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
@@ -250,7 +244,6 @@ class OWTextableLength(OWTextableBaseWidget):
                 u"the contexts in which length will be measured."
             ),
         )
-        gui.separator(widget=self.containingSegmentationBox, height=3)
         self.contextAnnotationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
@@ -268,7 +261,6 @@ class OWTextableLength(OWTextableBaseWidget):
                 u"annotation values for a specific annotation key."
             ),
         )
-        gui.separator(widget=self.containingSegmentationBox, height=3)
         gui.checkBox(
             widget=self.containingSegmentationBox,
             master=self,
@@ -282,7 +274,6 @@ class OWTextableLength(OWTextableBaseWidget):
                 u"contains a single row)."
             ),
         )
-        gui.separator(widget=self.contextsBox, height=3)
 
         gui.rubber(self.controlArea)
 
@@ -290,7 +281,6 @@ class OWTextableLength(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
 
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -300,12 +290,11 @@ class OWTextableLength(OWTextableBaseWidget):
         # Processing results
         if not len(textable_table.row_ids):
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
-            self.send('Textable table', None) # AS 10.2023: removed self
-            self.send('Orange table', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
         else:
             self.infoBox.setText(u'Table sent to output.')
-            self.send('Textable table', textable_table) # AS 10.2023: removed self
-            self.send('Orange table', orange_table) # AS 10.2023: removed self
+            self.Outputs.textable_table.send(textable_table)
+            self.Outputs.orange_table.send(orange_table)
 
     def sendData(self):
 
@@ -314,8 +303,7 @@ class OWTextableLength(OWTextableBaseWidget):
         # Check that there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Textable table', None) # AS 10.2023: removed self
-            self.send('Orange table', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
         assert self.units >= 0
 
@@ -396,6 +384,7 @@ class OWTextableLength(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)
 
+    @Inputs.segmentation
     def inputData(self, newItem, newId=None):
         """Process incoming data."""
         # Cancel pending tasks, if any
@@ -515,25 +504,29 @@ class OWTextableLength(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
 if __name__ == '__main__':
-    import sys
-    from AnyQt.QtWidgets import QApplication
-    import LTTL.Segmenter as Segmenter
-    from LTTL.Input import Input
+    WidgetPreview(OWTextableLength).run()
+    
+    # Old command-line testing code...
 
-    appl = QApplication(sys.argv)
-    ow = OWTextableLength()
-    seg1 = Input(u'hello world', label=u'text1')
-    seg2 = Input(u'wonderful world', label=u'text2')
-    seg3 = Segmenter.concatenate([seg1, seg2], label=u'corpus')
-    seg4 = Segmenter.tokenize(
-        seg3,
-        [(r'\w+(?u)', u'tokenize',)],
-        label=u'words'
-    )
-    seg5 = Segmenter.tokenize(seg3, [(r'\w', u'tokenize',)], label=u'letters')
-    ow.inputData(seg3, 1)
-    ow.inputData(seg4, 2)
-    ow.inputData(seg5, 3)
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    # import sys
+    # from AnyQt.QtWidgets import QApplication
+    # import LTTL.Segmenter as Segmenter
+    # from LTTL.Input import Input
+
+    # appl = QApplication(sys.argv)
+    # ow = OWTextableLength()
+    # seg1 = Input(u'hello world', label=u'text1')
+    # seg2 = Input(u'wonderful world', label=u'text2')
+    # seg3 = Segmenter.concatenate([seg1, seg2], label=u'corpus')
+    # seg4 = Segmenter.tokenize(
+        # seg3,
+        # [(r'\w+(?u)', u'tokenize',)],
+        # label=u'words'
+    # )
+    # seg5 = Segmenter.tokenize(seg3, [(r'\w', u'tokenize',)], label=u'letters')
+    # ow.inputData(seg3, 1)
+    # ow.inputData(seg4, 2)
+    # ow.inputData(seg5, 3)
+    # ow.show()
+    # appl.exec_()
+    # ow.saveSettings()

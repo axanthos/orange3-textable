@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.19.13'
+__version__ = '0.19.14'
 
 import os
 import codecs
@@ -27,20 +27,20 @@ import re
 from AnyQt.QtWidgets import QMessageBox, QApplication, QFileDialog
 import Orange.data
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 from LTTL.TableThread import Table, PivotCrosstab, IntPivotCrosstab, Crosstab
 from LTTL.Segmentation import Segmentation
-from LTTL.Input import Input
+from LTTL.Input import Input as LTTL_Input
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     InfoBox, SendButton, AdvancedSettings, pluralize,
-    getPredefinedEncodings, addSeparatorAfterDefaultEncodings,
-    Task
+    getPredefinedEncodings, addSeparatorAfterDefaultEncodings, Task
 )
 
 # Threading
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 ColumnDelimiters = [
@@ -57,12 +57,14 @@ class OWTextableConvert(OWTextableBaseWidget):
     icon = "icons/Convert.png"
     priority = 10001
 
-    inputs = [('Textable table', Table, "inputData", widget.Single)]
-    outputs = [
-        ('Orange table', Orange.data.Table, widget.Default),
-        ('Textable table', Table, widget.Dynamic),
-        ('Segmentation', Segmentation)
-    ]
+    class Inputs:
+        textable_table = Input("Textable table", Table, auto_summary=False)
+    class Outputs:
+        orange_table = Output("Orange table", Orange.data.Table, 
+                              auto_summary=False, default=True)
+        textable_table = Output("Textable table", Table, auto_summary=False, 
+                                dynamic=True)
+        segmentation = Output("Segmentation", Segmentation, auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -131,7 +133,6 @@ class OWTextableConvert(OWTextableBaseWidget):
         self.transformBox = self.create_widgetbox(
             box=u'Transform',
             orientation='vertical',
-            addSpace=False,
             )
 
         self.transformBoxLine1 = gui.widgetBox(
@@ -160,7 +161,6 @@ class OWTextableConvert(OWTextableBaseWidget):
             ),
         )
         self.sortRowsKeyIdCombo.setMinimumWidth(150)
-        gui.separator(widget=self.transformBoxLine1, width=5)
         self.sortRowsReverseCheckBox = gui.checkBox(
             widget=self.transformBoxLine1,
             master=self,
@@ -171,7 +171,6 @@ class OWTextableConvert(OWTextableBaseWidget):
                 u"Sort rows in reverse (i.e. decreasing) order."
             ),
         )
-        gui.separator(widget=self.transformBox, height=3)
         self.transformBoxLine2 = gui.widgetBox(
             widget=self.transformBox,
             orientation='horizontal',
@@ -198,7 +197,6 @@ class OWTextableConvert(OWTextableBaseWidget):
             ),
         )
         self.sortColsKeyIdCombo.setMinimumWidth(150)
-        gui.separator(widget=self.transformBoxLine2, width=5)
         self.sortColsReverseCheckBox = gui.checkBox(
             widget=self.transformBoxLine2,
             master=self,
@@ -209,7 +207,6 @@ class OWTextableConvert(OWTextableBaseWidget):
                 u"Sort columns in reverse (i.e. decreasing) order."
             ),
         )
-        gui.separator(widget=self.transformBox, height=3)
         self.transposeCheckBox = gui.checkBox(
             widget=self.transformBox,
             master=self,
@@ -220,7 +217,6 @@ class OWTextableConvert(OWTextableBaseWidget):
                 u"Transpose table (i.e. exchange rows and columns)."
             ),
         )
-        gui.separator(widget=self.transformBox, height=3)
         self.transformBoxLine4 = gui.widgetBox(
             widget=self.transformBox,
             orientation='horizontal',
@@ -268,7 +264,6 @@ class OWTextableConvert(OWTextableBaseWidget):
             ),
         )
         self.normalizeModeCombo.setMinimumWidth(150)
-        gui.separator(widget=self.transformBoxLine4, width=5)
         self.normalizeTypeCombo = gui.comboBox(
             widget=self.transformBoxLine4,
             master=self,
@@ -288,7 +283,6 @@ class OWTextableConvert(OWTextableBaseWidget):
             ),
         )
         self.normalizeTypeCombo.setMinimumWidth(70)
-        gui.separator(widget=self.transformBox, height=3)
         self.transformBoxLine5 = gui.widgetBox(
             widget=self.transformBox,
             orientation='horizontal',
@@ -329,7 +323,6 @@ class OWTextableConvert(OWTextableBaseWidget):
             ),
         )
         self.conversionTypeCombo.setMinimumWidth(150)
-        gui.separator(widget=self.transformBoxLine5, width=5)
         self.associationBiasCombo = gui.comboBox(
             widget=self.transformBoxLine5,
             master=self,
@@ -354,7 +347,6 @@ class OWTextableConvert(OWTextableBaseWidget):
             ),
         )
         self.associationBiasCombo.setMinimumWidth(70)
-        gui.separator(widget=self.transformBox, height=3)
         self.transformBoxLine6 = gui.widgetBox(
             widget=self.transformBox,
             orientation='vertical',
@@ -371,7 +363,6 @@ class OWTextableConvert(OWTextableBaseWidget):
                 u"original crosstab."
             ),
         )
-        gui.separator(widget=self.transformBoxLine6, height=3)
         iBox = gui.indentedBox(
             widget=self.transformBoxLine6,
         )
@@ -392,9 +383,7 @@ class OWTextableConvert(OWTextableBaseWidget):
                 u"in a separate column with label '__weight__'.\n"
             ),
         )
-        gui.separator(widget=self.transformBox, height=3)
         self.advancedSettings.advancedWidgets.append(self.transformBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # This "dummy" box is the reason why an extra (and unwanted) pixel
         # appears just below the Advanced Settings checkbox. It is necessary
@@ -402,7 +391,6 @@ class OWTextableConvert(OWTextableBaseWidget):
         # modes...
         dummyBox = gui.widgetBox(
             widget=self.controlArea,
-            addSpace=False,
         )
         self.advancedSettings.basicWidgets.append(dummyBox)
 
@@ -410,7 +398,6 @@ class OWTextableConvert(OWTextableBaseWidget):
         self.encodingBox = self.create_widgetbox(
             box=u'Encoding',
             orientation='horizontal',
-            addSpace=False,
             )
 
         gui.widgetLabel(
@@ -437,7 +424,6 @@ class OWTextableConvert(OWTextableBaseWidget):
         )
         conversionEncodingCombo.setMinimumWidth(150)
         addSeparatorAfterDefaultEncodings(conversionEncodingCombo)
-        gui.separator(widget=self.encodingBox, width=5)
         gui.widgetLabel(
             widget=self.encodingBox,
             label='',
@@ -447,7 +433,6 @@ class OWTextableConvert(OWTextableBaseWidget):
         self.exportBox = self.create_widgetbox(
             box=u'Export',
             orientation='vertical',
-            addSpace=False,
             )
 
         exportBoxLine2 = gui.widgetBox(
@@ -471,12 +456,10 @@ class OWTextableConvert(OWTextableBaseWidget):
             ),
         )
         colDelimiterCombo.setMinimumWidth(150)
-        gui.separator(widget=exportBoxLine2, width=5)
         dummyLabel = gui.widgetLabel(
             widget=exportBoxLine2,
             label='',
         )
-        gui.separator(widget=self.exportBox, height=2)
         gui.checkBox(
             widget=self.exportBox,
             master=self,
@@ -486,7 +469,6 @@ class OWTextableConvert(OWTextableBaseWidget):
                 u"Include Orange table headers in output file."
             ),
         )
-        gui.separator(widget=self.exportBox, height=2)
         exportBoxLine3 = gui.widgetBox(
             widget=self.exportBox,
             orientation='horizontal',
@@ -512,14 +494,12 @@ class OWTextableConvert(OWTextableBaseWidget):
                 u"\n\nNote that the only possible encoding is utf-8."
             ),
         )
-        gui.separator(widget=self.exportBox, height=2)
         self.advancedSettings.advancedWidgets.append(self.exportBox)
 
         # Export box
         self.basicExportBox = self.create_widgetbox(
             box=u'Export',
             orientation='vertical',
-            addSpace=True,
             )
 
         basicExportBoxLine1 = gui.widgetBox(
@@ -547,7 +527,6 @@ class OWTextableConvert(OWTextableBaseWidget):
                 u"\n\nNote that the only possible encoding is utf-8."
             ),
         )
-        gui.separator(widget=self.basicExportBox, height=2)
         self.advancedSettings.basicWidgets.append(self.basicExportBox)
 
         gui.rubber(self.controlArea)
@@ -556,7 +535,6 @@ class OWTextableConvert(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
         
         # Progress bar variables
         self.progress_bar_max = 0
@@ -565,14 +543,14 @@ class OWTextableConvert(OWTextableBaseWidget):
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
     # Data outputs
-        transformed_table, orangeTable, outputString = f.result()
+        transformed_table, orange_table, output_string = f.result()
 
-        if transformed_table and orangeTable and outputString:
+        if transformed_table and orange_table and output_string:
 
             if self.segmentation is None:
-                self.segmentation = Input(label=u'table', text=outputString)
+                self.segmentation = LTTL_Input(label=u'table', text=output_string)
             else:
-                self.segmentation.update(outputString, label=u'table')
+                self.segmentation.update(output_string, label=u'table')
                 
             message = 'Table with %i row@p' % len(transformed_table.row_ids)
             message = pluralize(message, len(transformed_table.row_ids))
@@ -582,14 +560,12 @@ class OWTextableConvert(OWTextableBaseWidget):
 
             self.infoBox.setText(message)
 
-            self.send('Orange table', orangeTable)
-            self.send('Textable table', transformed_table)
-            self.send('Segmentation', self.segmentation) # AS 11.2023: removed self
+            self.Outputs.orange_table.send(orange_table)
+            self.Outputs.textable_table.send(transformed_table)
+            self.Outputs.segmentation.send(self.segmentation)
                 
         else:
-            self.send('Orange table', None)
-            self.send('Textable table', None)
-            self.send('Segmentation', None)
+            self.sendNoneToOutputs()
 
     def process_data(self, caller, transformed_table, numIterations):
         """ Process data in a worker thread
@@ -699,10 +675,10 @@ class OWTextableConvert(OWTextableBaseWidget):
         caller.signal_text.emit('Step 2/3: Post-processing...', 'warning')
         caller.signal_prog.emit(1, True)
 
-        orangeTable = transformed_table.to_orange_table(caller=self)
+        orange_table = transformed_table.to_orange_table(caller=self)
         
         # Check if thread was cancelled
-        if not orangeTable:
+        if not orange_table:
             caller.signal_prog.emit(100, False)
             return
         
@@ -717,17 +693,17 @@ class OWTextableConvert(OWTextableBaseWidget):
             colDelimiter = '\t'
             includeOrangeHeaders = False
             
-        outputString = transformed_table.to_string(
+        output_string = transformed_table.to_string(
             output_orange_headers=includeOrangeHeaders,
             col_delimiter=colDelimiter,
         )
         
         # Check if thread was cancelled
-        if not outputString:
+        if not output_string:
             caller.signal_prog.emit(100, False)
             return
         
-        return transformed_table, orangeTable, outputString
+        return transformed_table, orange_table, output_string
 
     def sendData(self):
 
@@ -736,9 +712,7 @@ class OWTextableConvert(OWTextableBaseWidget):
         # Check that there is something on input...
         if not self.table:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Orange table', None)
-            self.send('Textable table', None)
-            self.send('Segmentation', None)
+            self.sendNoneToOutputs()
             if self.segmentation is not None:
                 self.segmentation.clear()
                 self.segmentation = None
@@ -789,6 +763,7 @@ class OWTextableConvert(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)          
         
+    @Inputs.textable_table
     def inputData(self, newInput):
         """Process incoming data."""
         # Cancel pending tasks, if any
@@ -986,10 +961,6 @@ class OWTextableConvert(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    import sys
-    appl = QApplication(sys.argv)
-    ow = OWTextableConvert()
-    ow.show()
     t = IntPivotCrosstab(
         ['c', 'a', 'b'],
         ['B', 'C', 'A'],
@@ -1008,6 +979,4 @@ if __name__ == '__main__':
         header_col_type=u'discrete',
         missing=0
     )
-    ow.inputData(t)
-    appl.exec_()
-    ow.saveSettings()
+    WidgetPreview(OWTextableConvert).run(t)

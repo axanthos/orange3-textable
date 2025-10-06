@@ -30,6 +30,7 @@ Provides classes:
 - SegmentationContextHandler
 - OWTextableBaseWidget
 - ProgressBar
+- ExpandableOrangeLineEdit
 -----------------------------------------------------------------------------
 Provides functions:
 - pluralize
@@ -38,14 +39,28 @@ Provides functions:
 - getPredefinedEncodings
 """
 
-__version__ = '0.22'
+__version__ = '0.23'
 
 import re, os, uuid
 
+from LTTL.Segmentation import Segmentation
+
 from Orange.widgets import gui, settings, utils as widgetutils
 from Orange.widgets.utils.buttons import VariableTextPushButton
+from Orange.widgets import widget
 
+from AnyQt.QtCore import QTimer, QEventLoop
+from AnyQt.QtWidgets import (QSizePolicy, QApplication, QWidget, QPushButton, 
+                            QHBoxLayout, QDialog, QLineEdit, QVBoxLayout, 
+                            QDialogButtonBox, QStyle)
+
+# Threading
+from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
+from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
+from functools import partial
 import concurrent.futures
+
+
 
 class Task:
     """ Class for storing threaded tasks """
@@ -196,10 +211,10 @@ class AdvancedSettings(object):
 
     def draw(self):
         """Draw the advanced settings checkbox on window"""
-        gui.separator(
-            widget=self.widget,
-            height=1,
-        )
+        # gui.separator(
+            # widget=self.widget,
+            # height=1,
+        # )
         self.checkbox = gui.checkBox(
             widget=self.widget,
             master=self.master,
@@ -210,10 +225,10 @@ class AdvancedSettings(object):
                 u"Toggle advanced settings on and off."
             ),
         )
-        gui.separator(
-            widget=self.widget,
-            height=1,
-        )
+        # gui.separator(
+            # widget=self.widget,
+            # height=1,
+        # )
 
     def setVisible(self, bool):
         """Toggle between basic and advanced settings."""
@@ -591,8 +606,6 @@ def getPredefinedEncodings():
 # Context dependent settings.
 # ============================
 
-from LTTL.Segmentation import Segmentation
-
 
 class VersionedSettingsHandlerMixin(object):
     """
@@ -935,15 +948,6 @@ class SegmentationContextHandler(VersionedSettingsHandlerMixin,
         return 2 if context.encoded == self.encode(*args) else 0
 
 
-from Orange.widgets import widget
-from AnyQt.QtCore import QTimer, QEventLoop
-from AnyQt.QtWidgets import QSizePolicy, QApplication
-# Threading
-from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
-from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
-from functools import partial
-
-
 class OWTextableBaseWidget(widget.OWWidget, openclass=True):
     """
     A base widget for other concrete orange-textable widgets.
@@ -1024,13 +1028,17 @@ class OWTextableBaseWidget(widget.OWWidget, openclass=True):
         return
     
     def sendNoneToOutputs(self):
-        # Sends none to all widget outputs
+        """Sends none to all widget outputs"""
+        # Old-style outputs...
         for output in self.outputs:
             self.send(output.name, None)
+        # New-style outputs...
+        for output in self.Outputs.__dict__.values():
+            output.send(None)
 
     def manageGuiVisibility(self, processing=False):
-        # Update GUI and make available (or not) elements
-        #while the thread task is running in background
+        """Update GUI and make available (or not) elements
+        while the thread task is running in background"""
 
         # Thread currently running, freeze the GUI
         if processing:
@@ -1256,3 +1264,112 @@ class ProgressBar:
         self.widget.setBlocking(False)
         self.widget.progressBarFinished() # AX 06.02.25: removed processEvents=None
         QApplication.processEvents(QEventLoop.ExcludeUserInputEvents)
+
+
+class ExpandableOrangeLineEdit(QWidget):
+    """Drop-in replacement for Orange gui.lineEdit with an 'expand' button."""
+
+    def __init__(self, *args, **kwargs):
+        """All arguments are forwarded to Orange gui.lineEdit except the 
+        additional settingsChanged boolean (defaulting to False).
+        """
+        super().__init__()
+        
+        # Set size policy (resizable horizontally only)...
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+
+        # Extract settingsChanged kwarg if given.
+        self.settingsChanged = kwargs.pop("settingsChanged", False)
+        
+        # Extract and set label and labelWidth kwargs, and get widget and master.
+        label = kwargs["label"]
+        labelWidth = kwargs["labelWidth"]
+        kwargs["label"] = ""
+        kwargs["labelWidth"] = 0
+        widget = kwargs["widget"]
+        master = kwargs["master"]
+        
+        # Create the Orange gui.lineEdit inside this widget.
+        self.line_edit = gui.lineEdit(*args, **kwargs)
+
+        # Create the expand button...
+        self.expand_btn = QPushButton(self)
+        pixmapi = QStyle.SP_FileDialogDetailedView
+        self.expand_btn.setIcon(self.style().standardIcon(pixmapi))
+        self.expand_btn.setFixedSize(24, 24)
+        self.expand_btn.setToolTip("Open line editor.")
+        self.expand_btn.clicked.connect(self.open_modal)
+
+        # Create the Orange label.
+        if label:
+            label_widget = gui.label(widget, master, label, labelWidth)
+
+        # Layout: button + line edit...
+        
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        if label:
+            layout.addWidget(label_widget)
+        layout.addWidget(self.line_edit)
+        layout.addWidget(self.expand_btn)
+        layout.setStretch(0, 0)  # button fixed
+        layout.setStretch(1, 1)  # lineedit expands
+        self.setLayout(layout)
+        
+        self.master = kwargs["master"]
+        kwargs["widget"].layout().addWidget(self)
+
+    def open_modal(self):
+        """Open a resizable modal dialog with a larger QLineEdit."""
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Line editor")
+        dialog.setModal(True)
+        dialog.setMinimumWidth(400)
+        dialog.setMinimumHeight(80)
+        dialog.setMaximumHeight(80)
+
+        line_edit = QLineEdit(dialog)
+        line_edit.setText(self.line_edit.text())
+        line_edit.setStyleSheet("font: 16px")
+        line_edit.selectAll()
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(dialog.accept)
+        buttons.rejected.connect(dialog.reject)
+
+        dlg_layout = QVBoxLayout(dialog)
+        dlg_layout.addWidget(line_edit)
+        dlg_layout.addWidget(buttons)
+
+        if dialog.exec_() == QDialog.Accepted:
+            text_input = line_edit.text()
+            if text_input != self.line_edit.text():
+                self.line_edit.setText(text_input)
+                if self.settingsChanged:
+                    self.master.sendButton.settingsChanged()
+                else:
+                    self.master.updateGUI()
+
+    # Forward relevant methods/attributes to the internal gui.lineEdit...
+    def text(self):
+        return self.line_edit.text()
+
+    def setText(self, text):
+        self.line_edit.setText(text)
+
+    def setDisabled(self, val):
+        self.line_edit.setDisabled(val)
+        self.expand_btn.setDisabled(val)
+
+    def setEnabled(self, val):
+        self.line_edit.setEnabled(val)
+        self.expand_btn.setEnabled(val)
+
+    def setToolTip(self, tooltip):
+        self.line_edit.setToolTip(tooltip)
+        self.expand_btn.setToolTip(tooltip)
+
+    def setMinimumWidth(self, width):
+        self.line_edit.setMinimumWidth(width)
+        
+        

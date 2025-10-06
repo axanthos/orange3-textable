@@ -18,23 +18,22 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.15.5'
-
+__version__ = "0.15.6"
 
 import LTTL.SegmenterThread as Segmenter
 from LTTL.Segmentation import Segmentation
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, InfoBox, SendButton, AdvancedSettings,
     pluralize, updateMultipleInputs, SegmentationListContextHandler,
-    SegmentationsInputList, ProgressBar,
-    Task
+    SegmentationsInputList, ProgressBar, Task
 )
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableIntersect(OWTextableBaseWidget):
@@ -46,11 +45,15 @@ class OWTextableIntersect(OWTextableBaseWidget):
     priority = 4004
 
     # Input and output channels...
-    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
-    outputs = [
-        ('Selected data', Segmentation, widget.Default),
-        ('Discarded data', Segmentation)
-    ]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False,
+            multiple=True)
+
+    class Outputs:
+        selected_data = Output("Selected data", Segmentation, auto_summary=False,
+            default=True)
+        discarded_data = Output("Discarded data", Segmentation, 
+            auto_summary=False)
 
     settingsHandler = SegmentationListContextHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -70,7 +73,8 @@ class OWTextableIntersect(OWTextableBaseWidget):
     filteringAnnotationKey = settings.ContextSetting(u'(none)')
 
     want_main_area = False
-
+    resizing_enabled = False
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -95,7 +99,6 @@ class OWTextableIntersect(OWTextableBaseWidget):
         self.intersectBox = self.create_widgetbox(
             box=u'Intersect',
             orientation='vertical',
-            addSpace=False,
             )
 
         self.modeCombo = gui.comboBox(
@@ -116,7 +119,6 @@ class OWTextableIntersect(OWTextableBaseWidget):
             ),
         )
         self.modeCombo.setMinimumWidth(140)
-        gui.separator(widget=self.intersectBox, height=3)
         self.sourceCombo = gui.comboBox(
             widget=self.intersectBox,
             master=self,
@@ -130,7 +132,6 @@ class OWTextableIntersect(OWTextableBaseWidget):
                 u"will be selected to build the output segmentation."
             ),
         )
-        gui.separator(widget=self.intersectBox, height=3)
         self.sourceAnnotationCombo = gui.comboBox(
             widget=self.intersectBox,
             master=self,
@@ -148,7 +149,6 @@ class OWTextableIntersect(OWTextableBaseWidget):
                 u"(value 'none')."
             ),
         )
-        gui.separator(widget=self.intersectBox, height=3)
         self.filteringCombo = gui.comboBox(
             widget=self.intersectBox,
             master=self,
@@ -163,7 +163,6 @@ class OWTextableIntersect(OWTextableBaseWidget):
                 u"the output segmentation."
             ),
         )
-        gui.separator(widget=self.intersectBox, height=3)
         self.filteringAnnotationCombo = gui.comboBox(
             widget=self.intersectBox,
             master=self,
@@ -181,22 +180,18 @@ class OWTextableIntersect(OWTextableBaseWidget):
                 u"(value 'none')."
             ),
         )
-        gui.separator(widget=self.intersectBox, height=3)
         self.advancedSettings.advancedWidgets.append(self.intersectBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
         self.optionsBox = self.create_widgetbox(
             box=u'Options',
             orientation='vertical',
-            addSpace=False,
             )
 
         optionsBoxLine2 = gui.widgetBox(
             widget=self.optionsBox,
             box=False,
             orientation='horizontal',
-            addSpace=True,
         )
         gui.checkBox(
             widget=optionsBoxLine2,
@@ -230,9 +225,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
                 u"Copy all annotations from input to output segments."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=2)
         self.advancedSettings.advancedWidgets.append(self.optionsBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Basic intersect box
         self.basicIntersectBox = self.create_widgetbox(
@@ -258,7 +251,6 @@ class OWTextableIntersect(OWTextableBaseWidget):
             ),
         )
         self.basicModeCombo.setMinimumWidth(140)
-        gui.separator(widget=self.basicIntersectBox, height=3)
         self.basicSourceCombo = gui.comboBox(
             widget=self.basicIntersectBox,
             master=self,
@@ -272,7 +264,6 @@ class OWTextableIntersect(OWTextableBaseWidget):
                 u"will be selected to build the output segmentation."
             ),
         )
-        gui.separator(widget=self.basicIntersectBox, height=3)
         self.basicFilteringCombo = gui.comboBox(
             widget=self.basicIntersectBox,
             master=self,
@@ -287,9 +278,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
                 u"the output segmentation."
             ),
         )
-        gui.separator(widget=self.basicIntersectBox, height=3)
         self.advancedSettings.basicWidgets.append(self.basicIntersectBox)
-        self.advancedSettings.basicWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
 
@@ -297,7 +286,6 @@ class OWTextableIntersect(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
     
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -305,12 +293,18 @@ class OWTextableIntersect(OWTextableBaseWidget):
         filtered_data, discarded_data = f.result()
 
         # Send data
-        message = u'%i segment@p sent to output.' % len(filtered_data)
+        message = u'%i segment@p sent to default output.' % len(filtered_data)
         message = pluralize(message, len(filtered_data))
         self.infoBox.setText(message)
+        if len(filtered_data):
+            self.Outputs.selected_data.send(filtered_data)
+        else:
+            self.Outputs.selected_data.send(None)
+        if len(discarded_data):
+            self.Outputs.discarded_data.send(discarded_data)
+        else:
+            self.Outputs.discarded_data.send(None)
 
-        self.send('Selected data', filtered_data) # AS 11.2023: removed self
-        self.send('Discarded data', discarded_data) # AS 11.2023: removed self
 
     def sendData(self):
         """(Have LTTL.Segmenter) perform the actual filtering"""
@@ -318,8 +312,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
         # Check that there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Selected data', None) # 11.2023: Removed self
-            self.send('Discarded data', None) # 11.2023: Removed self
+            self.sendNoneToOutputs()
             return
 
         assert self.source >= 0
@@ -350,8 +343,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
                     u'Please enter an annotation key for auto-numbering.',
                     'warning'
                 )
-                self.send('Selected data', None) # 11.2023: Removed self
-                self.send('Discarded data', None) # 11.2023: Removed self
+                self.sendNoneToOutputs()
                 return
         else:
             autoNumberKey = None
@@ -387,6 +379,7 @@ class OWTextableIntersect(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)
 
+    @Inputs.segmentation
     def inputData(self, newItem, newId=None):
         """Process incoming data."""
         # Cancel pending tasks, if any
@@ -481,54 +474,59 @@ class OWTextableIntersect(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
 
+
 if __name__ == '__main__':
-    import sys
-    import re
+    WidgetPreview(OWTextableIntersect).run()
 
-    from AnyQt.QtWidgets import QApplication
-    from LTTL.Input import Input
+    # Old command-line testing code...
 
-    appl = QApplication(sys.argv)
-    ow = OWTextableIntersect()
-    seg1 = Input(u'hello world', 'text')
-    seg2 = Segmenter.tokenize(
-        seg1,
-        [
-            (re.compile(r'hello'), u'tokenize', {'tag': 'interj'}),
-            (re.compile(r'world'), u'tokenize', {'tag': 'noun'}),
-        ],
-        label='words',
-    )
-    seg3 = Segmenter.tokenize(
-        seg2,
-        [(re.compile(r'[aeiou]'), u'tokenize')],
-        label='V'
-    )
-    seg4 = Segmenter.tokenize(
-        seg2,
-        [(re.compile(r'[hlwrdc]'), u'tokenize')],
-        label='C'
-    )
-    seg5 = Segmenter.tokenize(
-        seg2,
-        [(re.compile(r' '), u'tokenize')],
-        label='S'
-    )
-    seg6 = Segmenter.concatenate(
-        [seg3, seg4, seg5],
-        import_labels_as='category',
-        label='chars',
-        sort=True,
-        merge_duplicates=True,
-    )
-    seg7 = Segmenter.tokenize(
-        seg6,
-        [(re.compile(r'l'), u'tokenize')],
-        label='pivot'
-    )
-    ow.inputData(seg2, 1)
-    ow.inputData(seg6, 2)
-    ow.inputData(seg7, 3)
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    # import sys
+    # import re
+
+    # from AnyQt.QtWidgets import QApplication
+    # from LTTL.Input import Input
+
+    # appl = QApplication(sys.argv)
+    # ow = OWTextableIntersect()
+    # seg1 = Input(u'hello world', 'text')
+    # seg2 = Segmenter.tokenize(
+        # seg1,
+        # [
+            # (re.compile(r'hello'), u'tokenize', {'tag': 'interj'}),
+            # (re.compile(r'world'), u'tokenize', {'tag': 'noun'}),
+        # ],
+        # label='words',
+    # )
+    # seg3 = Segmenter.tokenize(
+        # seg2,
+        # [(re.compile(r'[aeiou]'), u'tokenize')],
+        # label='V'
+    # )
+    # seg4 = Segmenter.tokenize(
+        # seg2,
+        # [(re.compile(r'[hlwrdc]'), u'tokenize')],
+        # label='C'
+    # )
+    # seg5 = Segmenter.tokenize(
+        # seg2,
+        # [(re.compile(r' '), u'tokenize')],
+        # label='S'
+    # )
+    # seg6 = Segmenter.concatenate(
+        # [seg3, seg4, seg5],
+        # import_labels_as='category',
+        # label='chars',
+        # sort=True,
+        # merge_duplicates=True,
+    # )
+    # seg7 = Segmenter.tokenize(
+        # seg6,
+        # [(re.compile(r'l'), u'tokenize')],
+        # label='pivot'
+    # )
+    # ow.inputData(seg2, 1)
+    # ow.inputData(seg6, 2)
+    # ow.inputData(seg7, 3)
+    # ow.show()
+    # appl.exec_()
+    # ow.saveSettings()

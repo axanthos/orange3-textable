@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.16.15'
+__version__ = '0.16.16'
 
 import sys
 import os
@@ -30,16 +30,18 @@ from AnyQt.QtCore import QUrl
 
 import LTTL
 from LTTL.Segmentation import Segmentation
-from LTTL.Input import Input
+from LTTL.Input import Input as LTTL_Input
 import LTTL.Segmenter as Segmenter
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     SendButton, InfoBox, getPredefinedEncodings, pluralize,
     addSeparatorAfterDefaultEncodings, normalizeCarriageReturns
 )
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 
 class OWTextableDisplay(OWTextableBaseWidget):
@@ -49,11 +51,13 @@ class OWTextableDisplay(OWTextableBaseWidget):
     icon = "icons/Display.png"
     priority = 6001
 
-    inputs = [('Segmentation', Segmentation, "inputData", widget.Single)]
-    outputs = [
-        ('Bypassed segmentation', Segmentation, widget.Default),
-        ('Displayed segmentation', Segmentation)
-    ]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False)
+    class Outputs:
+        bypassed_segmentation = Output("Bypassed segmentation", Segmentation, 
+                                       auto_summary=False, default=True)
+        displayed_segmentation = Output("Displayed segmentation", Segmentation, 
+                                        auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -84,7 +88,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
         self._currentWarningMessage = ""
 
         self.segmentation = None
-        self.displayedSegmentation = Input(
+        self.displayedSegmentation = LTTL_Input(
             label=u'displayed_segmentation',
             text=u''
         )
@@ -115,14 +119,12 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 u"Toggle advanced settings on and off."
             ),
         )
-        gui.separator(widget=self.controlArea, height=3)
 
         # Options box...
         optionsBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Options',
             orientation='vertical',
-            addSpace=True,
         )
         gui.checkBox(
             widget=optionsBox,
@@ -145,7 +147,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Formatting',
             orientation='vertical',
-            addSpace=True,
         )
         gui.checkBox(
             widget=formattingBox,
@@ -157,7 +158,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 u"Check this box to apply custom formatting."
             ),
         )
-        gui.separator(widget=formattingBox, height=3)
         self.formattingIndentedBox = gui.indentedBox(
             widget=formattingBox,
         )
@@ -175,7 +175,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
             ),
         )
         headerLineEdit.setMinimumWidth(200)
-        gui.separator(widget=self.formattingIndentedBox, height=3)
         gui.lineEdit(
             widget=self.formattingIndentedBox,
             master=self,
@@ -189,7 +188,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 u"See user guide for detailed instructions."
             ),
         )
-        gui.separator(widget=self.formattingIndentedBox, height=3)
         gui.lineEdit(
             widget=self.formattingIndentedBox,
             master=self,
@@ -204,7 +202,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 u"'\\t' for tabulation."
             ),
         )
-        gui.separator(widget=self.formattingIndentedBox, height=3)
         gui.lineEdit(
             widget=self.formattingIndentedBox,
             master=self,
@@ -219,14 +216,12 @@ class OWTextableDisplay(OWTextableBaseWidget):
             ),
         )
         headerLineEdit.setMinimumWidth(200)
-        gui.separator(widget=self.formattingIndentedBox, height=3)
 
         # Advanced export box
         self.advancedExportBox = gui.widgetBox(
             widget=self.controlArea,
             box=u'Export',
             orientation='vertical',
-            addSpace=True,
         )
         encodingCombo = gui.comboBox(
             widget=self.advancedExportBox,
@@ -248,7 +243,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
             ),
         )
         addSeparatorAfterDefaultEncodings(encodingCombo)
-        gui.separator(widget=self.advancedExportBox, height=3)
         exportBoxLine2 = gui.widgetBox(
             widget=self.advancedExportBox,
             orientation='horizontal',
@@ -298,18 +292,11 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 u"Toggle advanced settings on and off."
             ),
         )
-        gui.separator(widget=self.advancedSettingsRightBox, height=3)
-
-        self.advancedSettingsCheckBoxRightPlaceholder = gui.separator(
-            widget=self.mainArea,
-            height=25,
-        )
 
         self.basicFormatBox = gui.widgetBox(
             widget=self.mainArea,
             orientation='vertical',
             box=u'Format',
-            addSpace=False,
         )
         gui.checkBox(
             widget=self.basicFormatBox,
@@ -325,7 +312,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
             widget=self.mainArea,
             orientation='vertical',
             box=u'Navigation',
-            addSpace=True,
         )
         self.gotoSpin = gui.spin(
             widget=self.navigationBox,
@@ -344,12 +330,10 @@ class OWTextableDisplay(OWTextableBaseWidget):
         self.mainArea.layout().addWidget(self.browser)
 
         # Advanced export box
-        gui.separator(widget=self.mainArea, height=3)
         self.basicExportBox = gui.widgetBox(
             widget=self.mainArea,
             box=u'Export',
             orientation='horizontal',
-            addSpace=True,
         )
         gui.button(
             widget=self.basicExportBox,
@@ -377,6 +361,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
 
         self.sendButton.sendIf()
 
+    @Inputs.segmentation
     def inputData(self, newInput):
         """Process incoming data."""
         self.segmentation = newInput
@@ -387,30 +372,25 @@ class OWTextableDisplay(OWTextableBaseWidget):
         """Send segmentation to output"""
         if not self.segmentation:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Bypassed segmentation', None)
-            self.send('Displayed segmentation', None)
+            self.sendNoneToOutputs()
             return
 
-        self.send(
-            'Bypassed segmentation',
-            Segmenter.bypass(self.segmentation, self.captionTitle)
-        )
+        self.Outputs.bypassed_segmentation.send(Segmenter.bypass(self.segmentation, 
+                                                self.captionTitle))
+
         # TODO: Check if this is correct replacement for textable v1.*, v2.*
         if 'format' in self._currentWarningMessage or \
                 'format' in self._currentErrorMessage:
-            self.send('Displayed segmentation', None)
+            self.Outputs.displayed_segmentation.send(None)
             return
         if len(self.displayedSegmentation[0].get_content()) > 0:
-            self.send(
-                'Displayed segmentation',
-                self.displayedSegmentation,
-            )
+            self.Outputs.displayed_segmentation.send(self.displayedSegmentation)
         else:
-            self.send('Displayed segmentation', None)
+            self.Outputs.displayed_segmentation.send(None)
         # TODO: Differes only in capitalization with a check before
         #       Is this intentional?
         if "Format" not in self._currentErrorMessage:
-            message = u'%i segment@p sent to output.' % len(self.segmentation)
+            message = u'%i segment@p sent to default output.' % len(self.segmentation)
             message = pluralize(message, len(self.segmentation))
             self.infoBox.setText(message)
         self.sendButton.resetSettingsChangedFlag()
@@ -418,9 +398,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
     def updateGUI(self):
         """Update GUI state"""
         self.controlArea.setVisible(self.displayAdvancedSettings)
-        self.advancedSettingsCheckBoxRightPlaceholder.setVisible(
-            self.displayAdvancedSettings
-        )
         self.advancedSettingsCheckBoxLeft.setVisible(
             self.displayAdvancedSettings
         )
@@ -640,12 +617,8 @@ class OWTextableDisplay(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    appl = QApplication(sys.argv)
-    ow = OWTextableDisplay()
-    ow.show()
-    seg1 = Input(u'hello world', label=u'text1')
-    seg2 = Input(u'cruel world', label=u'text2')
-    seg3 = Segmenter.concatenate([seg1, seg2], label=u'corpus')
-    seg4 = Segmenter.tokenize(seg3, [(r'\w+(?u)', u'tokenize')], label=u'words')
-    ow.inputData(seg4)
-    appl.exec_()
+    seg1 = LTTL_Input("hello world", label="text1")
+    seg2 = LTTL_Input("cruel world", label="text2")
+    seg3 = Segmenter.concatenate([seg1, seg2], label="corpus")
+    seg4 = Segmenter.tokenize(seg3, [(r"(?u)\w+", "tokenize")], label="words")
+    WidgetPreview(OWTextableDisplay).run(seg4)

@@ -18,17 +18,19 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.01.5'
+__version__ = '0.01.6'
 
 
 import json
 from LTTL.Segmentation import Segmentation
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
     JSONMessage, SendButton, InfoBox, pluralize
 )
 
 from Orange.widgets import gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 
 class OWTextableMessage(OWTextableBaseWidget):
@@ -40,8 +42,10 @@ class OWTextableMessage(OWTextableBaseWidget):
     icon = "icons/Message.png"
     priority = 10002
 
-    inputs = [("Segmentation", Segmentation, "inputData")]
-    outputs = [("Message", JSONMessage)]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False)
+    class Outputs:
+        message = Output("Message", JSONMessage, auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -55,7 +59,6 @@ class OWTextableMessage(OWTextableBaseWidget):
         # Other attributes...
         self.segmentation = None
         self.infoBox = InfoBox(widget=self.controlArea)
-        gui.separator(self.controlArea, height=3)
         self.sendButton = SendButton(
             widget=self.controlArea,
             master=self,
@@ -75,8 +78,8 @@ class OWTextableMessage(OWTextableBaseWidget):
         self.setMinimumWidth(150)
 
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
 
+    @Inputs.segmentation
     def inputData(self, newInput):
         """Process incoming data"""
         self.segmentation = newInput
@@ -87,14 +90,14 @@ class OWTextableMessage(OWTextableBaseWidget):
         """Parse JSON data and send message"""
         if not self.segmentation:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Message', None, self)
+            self.sendNoneToOutputs()
             return
         if len(self.segmentation) > 1:
             self.infoBox.setText(
                 u'Please make sure that input contains only one segment.',
                 'error',
             )
-            self.send('Message', None, self)
+            self.sendNoneToOutputs()
             return
         self.infoBox.inputChanged()
         try:
@@ -104,21 +107,25 @@ class OWTextableMessage(OWTextableBaseWidget):
             message = u'%i item@p sent to output.' % len(jsonList)
             message = pluralize(message, len(jsonList))
             self.infoBox.setText(message)
-            self.send('Message', jsonMessage, self)
+            self.Outputs.message.send(jsonMessage)
         except ValueError:
             self.infoBox.setText(
                 u"Please make sure that input contains valid JSON data.",
                 'error'
             )
-            self.send('Message', None, self)
+            self.sendNoneToOutputs()
             return
         self.sendButton.resetSettingsChangedFlag()
 
 
 if __name__ == "__main__":
-    import sys
-    from AnyQt.QtWidgets import QApplication
-    appl = QApplication(sys.argv)
-    ow = OWTextableMessage()
-    ow.show()
-    appl.exec_()
+    WidgetPreview(OWTextableMessage).run()
+    
+    # Old command-line testing code...
+
+    # import sys
+    # from AnyQt.QtWidgets import QApplication
+    # appl = QApplication(sys.argv)
+    # ow = OWTextableMessage()
+    # ow.show()
+    # appl.exec_()

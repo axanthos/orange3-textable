@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u'1.0.7'
+__version__ = u'1.0.8'
 __author__ = "Mahtab Mohammadi"
 __maintainer__ = "LangTech Sarl"
 
@@ -27,19 +27,19 @@ import LTTL.ProcessorThread as Processor
 from LTTL.TableThread import IntPivotCrosstab
 from LTTL.Segmentation import Segmentation
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, ProgressBar,
     InfoBox, SendButton, updateMultipleInputs, pluralize,
-    SegmentationListContextHandler, SegmentationsInputList,
-    Task
+    SegmentationListContextHandler, SegmentationsInputList, Task
 )
 import Orange.data
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 import re
 
 # Threading
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableCooccurrence(OWTextableBaseWidget):
@@ -50,9 +50,15 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
     icon = "icons/Cooccurrence.png"
     priority = 8005
 
-    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
-    outputs = [('Textable pivot crosstab', IntPivotCrosstab, widget.Default),
-               ('Orange table', Orange.data.Table)]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False, 
+                             multiple=True)
+    class Outputs:
+        textable_pivot_crosstab = Output("Textable pivot crosstab", 
+                                         IntPivotCrosstab, auto_summary=False, 
+                                         default=True)
+        orange_table = Output("Orange table", Orange.data.Table, 
+                              auto_summary=False)
 
     settingsHandler = SegmentationListContextHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -99,7 +105,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         self.unitsBox = self.create_widgetbox(
             box=u'Units',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.unitsegmentationCombo = gui.comboBox(
@@ -118,7 +123,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             ),
         )
         self.unitsegmentationCombo.setMinimumWidth(120)
-        gui.separator(widget=self.unitsBox, height=3)
         self.unitAnnotationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
@@ -137,7 +141,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                 u"annotation key."
             ),
         )
-        gui.separator(widget=self.unitsBox, height=3)
         self.sequenceLengthSpin = gui.spin(
             widget=self.unitsBox,
             master=self,
@@ -159,7 +162,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                 u"counted between primary and secondary units."
             ),
         )
-        gui.separator(widget=self.unitsBox, height=3)
         self.intraSeqDelimLineEdit = gui.lineEdit(
             widget=self.unitsBox,
             master=self,
@@ -176,13 +178,11 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                 u"each sequence."
             ),
         )
-        gui.separator(widget=self.unitsBox, height=3)
 
         # Secondary unit
         self.units2Box = self.create_widgetbox(
             box=u'Secondary units',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.coocWithUnits2Checkbox = gui.checkBox(
@@ -196,7 +196,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                 u"primary and secondary units."
             ),
         )
-        gui.separator(widget=self.units2Box, height=3)
         iBox = gui.indentedBox(
             widget=self.units2Box,
         )
@@ -217,7 +216,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                 u"resulting crosstab."
             )
         )
-        gui.separator(widget=iBox, height=3)
         self.unit2AnnotationCombo = gui.comboBox(
             widget=iBox,
             master=self,
@@ -241,13 +239,11 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             iBox.setDisabled(False)
         else:
             iBox.setDisabled(True)
-        gui.separator(widget=self.units2Box, height=3)
 
         # Context box...
         self._contextsBox = self.create_widgetbox(
             box=u'Contexts',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.modeCombo = gui.comboBox(
@@ -277,7 +273,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             widget=self._contextsBox,
             orientation='vertical'
         )
-        gui.separator(widget=self.slidingWindowBox, height=3)
         self.windowSizeSpin = gui.spin(
             widget=self.slidingWindowBox,
             master=self,
@@ -298,7 +293,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
             widget=self._contextsBox,
             orientation='vertical',
         )
-        gui.separator(widget=self.containingSegmentationBox, height=3)
         self.contextSegmentationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
@@ -312,7 +306,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                 u"the contexts in which co-occurrences will be counted."
             ),
         )
-        gui.separator(widget=self.containingSegmentationBox, height=3)
         self.contextAnnotationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
@@ -330,7 +323,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                 u"values for a specific annotation key."
             )
         )
-        gui.separator(widget=self.containingSegmentationBox, height=3)
 
         gui.rubber(self.controlArea)
 
@@ -338,7 +330,6 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
     
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -348,15 +339,14 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         # Send data 
         if len(textable_table.row_ids) == 0:
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
-            self.send('Textable pivot crosstab', None)
-            self.send('Orange table', None)
+            self.sendNoneToOutputs()
         else:
             total = sum([i for i in textable_table.values.values()])
             message = u'Table with %i cooccurrence@p sent to output.' % total
             message = pluralize(message, total)
             self.infoBox.setText(message)
-            self.send('Textable pivot crosstab', textable_table)
-            self.send('Orange table', orange_table)
+            self.Outputs.textable_pivot_crosstab.send(textable_table)
+            self.Outputs.orange_table.send(orange_table)
 
     def sendData(self):
         """Check input, compute co-occurrence, then send tabel"""
@@ -364,8 +354,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         # Check if there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Textable pivot crosstab', None)
-            self.send('Orange table', None)
+            self.sendNoneToOutputs()
             return
 
         assert self.units >= 0
@@ -438,6 +427,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)
         
+    @Inputs.segmentation
     def inputData(self, newItem, newId=None):
         """Process incoming data."""
         # Cancel pending tasks, if any
@@ -479,8 +469,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
                     u"try again.",
                     state='warning',
                 )
-                self.send('Textable pivot crosstab', None)
-                self.send('Orange table', None)
+                self.sendNoneToOutputs()
 
     def updateGUI(self):
 
@@ -599,51 +588,55 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    import sys
-    from AnyQt.QtWidgets import QApplication
-    import LTTL.Segmenter as Segmenter
-    from LTTL.Input import Input
+    WidgetPreview(OWTextableCooccurrence).run()
+    
+    # Old command-line testing code...
+    
+    # import sys
+    # from AnyQt.QtWidgets import QApplication
+    # import LTTL.Segmenter as Segmenter
+    # from LTTL.Input import Input
 
-    appl = QApplication(sys.argv)
-    ow = OWTextableCooccurrence()
-    seg1 = Input(u'un texte', label=u'text')
-    seg2 = Segmenter.tokenize(
-        seg1,
-        regexes=[
-            (
-                re.compile(r'\w+'),
-                u'tokenize',
-                {'type': 'W'},
-            )
-        ],
-        label=u'words',
-    )
-    seg3 = Segmenter.tokenize(
-        seg1,
-        regexes=[
-            (
-                re.compile(r'[aeiouy]'),
-                u'tokenize',
-                {'type': 'V'},
-            )
-        ],
-        label=u'vowel',
-    )
-    seg4 = Segmenter.tokenize(
-        seg1,
-        regexes=[
-            (
-                re.compile(r'[^aeiouy]'),
-                u'tokenize',
-                {'type2': 'C'},
-            )
-        ],
-        label=u'consonant',
-    )
-    ow.inputData(seg3, 1)
-    ow.inputData(seg2, 2)
-    ow.inputData(seg4, 3)
+    # appl = QApplication(sys.argv)
+    # ow = OWTextableCooccurrence()
+    # seg1 = Input(u'un texte', label=u'text')
+    # seg2 = Segmenter.tokenize(
+        # seg1,
+        # regexes=[
+            # (
+                # re.compile(r'\w+'),
+                # u'tokenize',
+                # {'type': 'W'},
+            # )
+        # ],
+        # label=u'words',
+    # )
+    # seg3 = Segmenter.tokenize(
+        # seg1,
+        # regexes=[
+            # (
+                # re.compile(r'[aeiouy]'),
+                # u'tokenize',
+                # {'type': 'V'},
+            # )
+        # ],
+        # label=u'vowel',
+    # )
+    # seg4 = Segmenter.tokenize(
+        # seg1,
+        # regexes=[
+            # (
+                # re.compile(r'[^aeiouy]'),
+                # u'tokenize',
+                # {'type2': 'C'},
+            # )
+        # ],
+        # label=u'consonant',
+    # )
+    # ow.inputData(seg3, 1)
+    # ow.inputData(seg2, 2)
+    # ow.inputData(seg4, 3)
 
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    # ow.show()
+    # appl.exec_()
+    # ow.saveSettings()

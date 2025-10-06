@@ -18,22 +18,22 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.6'
+__version__ = '0.21.7'
 
 
 from LTTL.Segmentation import Segmentation
 import LTTL.SegmenterThread as Segmenter
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
-    updateMultipleInputs, InfoBox, SendButton, pluralize,
-    Task
+    updateMultipleInputs, InfoBox, SendButton, pluralize, Task
 )
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableMerge(OWTextableBaseWidget):
@@ -45,8 +45,11 @@ class OWTextableMerge(OWTextableBaseWidget):
     priority = 4001
 
     # Input and output channels...
-    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
-    outputs = [('Merged data', Segmentation)]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False, 
+                             multiple=True)
+    class Outputs:
+        merged_data = Output("Merged data", Segmentation, auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -81,7 +84,6 @@ class OWTextableMerge(OWTextableBaseWidget):
         self.optionsBox = self.create_widgetbox(
             box=u'Options',
             orientation='vertical',
-            addSpace=False,
             )
 
         optionsBoxLine1 = gui.widgetBox(
@@ -111,7 +113,6 @@ class OWTextableMerge(OWTextableBaseWidget):
                 u"labels."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=3)
         optionsBoxLine2 = gui.widgetBox(
             widget=self.optionsBox,
             box=False,
@@ -141,7 +142,6 @@ class OWTextableMerge(OWTextableBaseWidget):
                 u"Annotation key for input segment auto-numbering."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=3)
         gui.checkBox(
             widget=self.optionsBox,
             master=self,
@@ -152,7 +152,6 @@ class OWTextableMerge(OWTextableBaseWidget):
                 u"Copy all annotations from input to output segments."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=3)
         gui.checkBox(
             widget=self.optionsBox,
             master=self,
@@ -168,8 +167,7 @@ class OWTextableMerge(OWTextableBaseWidget):
                 u"will be kept."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=2)
-        gui.separator(widget=self.controlArea, height=3)
+        
 
         gui.rubber(self.controlArea)
 
@@ -187,7 +185,10 @@ class OWTextableMerge(OWTextableBaseWidget):
         message = u'%i segment@p sent to output.' % len(concatenation)
         message = pluralize(message, len(concatenation))
         self.infoBox.setText(message)
-        self.send('Merged data', concatenation) # AS 10.2023: removed self
+        if len(concatenation):
+            self.Outputs.merged_data.send(concatenation)
+        else:
+            self.sendNoneToOutputs()
 
     def sendData(self):
         """Check inputs, build merged segmentation, then send it"""
@@ -195,7 +196,7 @@ class OWTextableMerge(OWTextableBaseWidget):
         # Check that there's something on input...
         if not self.texts:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Merged data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # TODO: remove message 'No label was provided.' from docs
@@ -212,7 +213,7 @@ class OWTextableMerge(OWTextableBaseWidget):
                     u'Please enter an annotation key for imported labels.',
                     'warning'
                 )
-                self.send('Merged data', None) # AS 10.2023: removed self
+                self.sendNoneToOutputs()
                 return
         else:
             labelKey = None
@@ -226,7 +227,7 @@ class OWTextableMerge(OWTextableBaseWidget):
                     u'Please enter an annotation key for auto-numbering.',
                     'warning'
                 )
-                self.send('Merged data', None) # AS 10.2023: removed self
+                self.sendNoneToOutputs()
                 return
         else:
             autoNumberKey = None
@@ -255,6 +256,7 @@ class OWTextableMerge(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)
 
+    @Inputs.segmentation
     def inputData(self, newItem, newId=None):
         """Process incoming data."""
         # Cancel pending tasks, if any
@@ -291,20 +293,24 @@ class OWTextableMerge(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
 if __name__ == '__main__':
-    import sys
-    from AnyQt.QtWidgets import QApplication
-    from LTTL.Input import Input
+    WidgetPreview(OWTextableMerge).run()
+    
+    # Old command-line testing code...
 
-    appl = QApplication(sys.argv)
-    ow = OWTextableMerge()
-    seg1 = Input(u'hello world', label=u'text1')
-    seg2 = Input(u'cruel world', label=u'text2')
-    seg3 = Segmenter.concatenate([seg1, seg2], label=u'corpus')
-    seg4 = Segmenter.tokenize(seg3,
-                              [(r'\w+(?u)', u'tokenize', {'type': 'mot'})],
-                              label=u'words')
-    ow.inputData(seg3, 1)
-    ow.inputData(seg4, 2)
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    # import sys
+    # from AnyQt.QtWidgets import QApplication
+    # from LTTL.Input import Input
+
+    # appl = QApplication(sys.argv)
+    # ow = OWTextableMerge()
+    # seg1 = Input(u'hello world', label=u'text1')
+    # seg2 = Input(u'cruel world', label=u'text2')
+    # seg3 = Segmenter.concatenate([seg1, seg2], label=u'corpus')
+    # seg4 = Segmenter.tokenize(seg3,
+                              # [(r'\w+(?u)', u'tokenize', {'type': 'mot'})],
+                              # label=u'words')
+    # ow.inputData(seg3, 1)
+    # ow.inputData(seg4, 2)
+    # ow.show()
+    # appl.exec_()
+    # ow.saveSettings()

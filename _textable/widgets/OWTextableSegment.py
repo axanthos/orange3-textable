@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.12'
+__version__ = '0.21.13'
 
 import os, re, codecs, json
 
@@ -27,21 +27,18 @@ from AnyQt.QtWidgets import QFileDialog, QMessageBox
 import LTTL.SegmenterThread as Segmenter
 from LTTL.Segmentation import Segmentation
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
     JSONMessage, InfoBox, SendButton, AdvancedSettings,
-    normalizeCarriageReturns, pluralize,
-    Task
+    normalizeCarriageReturns, pluralize, ExpandableOrangeLineEdit, Task
 )
 
 import Orange
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
-import concurrent.futures
-from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableSegment(OWTextableBaseWidget):
@@ -53,11 +50,12 @@ class OWTextableSegment(OWTextableBaseWidget):
     priority = 4002
 
     # Input and output channels...
-    inputs = [
-        ('Segmentation', Segmentation, "inputData",),
-        ('Message', JSONMessage, "inputMessage",)
-    ]
-    outputs = [('Segmented data', Segmentation)]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False)
+        message = Input("Message", JSONMessage, auto_summary=False)
+
+    class Outputs:
+        segmentation = Output("Segmented data", Segmentation, auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -75,6 +73,7 @@ class OWTextableSegment(OWTextableBaseWidget):
     mode = settings.Setting(u'Tokenize')
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -111,13 +110,11 @@ class OWTextableSegment(OWTextableBaseWidget):
         self.regexBox = self.create_widgetbox(
             box =u'Regexes',
             orientation='vertical',
-            addSpace=False,
         )
         regexBoxLine1 = gui.widgetBox(
             widget=self.regexBox,
             box=False,
             orientation='horizontal',
-            addSpace=True,
         )
         self.regexListbox = gui.listBox(
             widget=regexBoxLine1,
@@ -212,7 +209,6 @@ class OWTextableSegment(OWTextableBaseWidget):
             widget=regexBoxLine2,
             box=True,
             orientation='vertical',
-            addSpace=False,
         )
         self.modeCombo = gui.comboBox(
             widget=addRegexBox,
@@ -233,11 +229,7 @@ class OWTextableSegment(OWTextableBaseWidget):
             ),
         )
         self.modeCombo.setMinimumWidth(120)
-        gui.separator(
-            widget=addRegexBox,
-            height=3,
-        )
-        gui.lineEdit(
+        ExpandableOrangeLineEdit(
             widget=addRegexBox,
             master=self,
             value='newRegex',
@@ -255,10 +247,6 @@ class OWTextableSegment(OWTextableBaseWidget):
                 u"4) .+\tlines\n"
                 u"and so on."
             ),
-        )
-        gui.separator(
-            widget=addRegexBox,
-            height=3,
         )
         gui.lineEdit(
             widget=addRegexBox,
@@ -279,10 +267,6 @@ class OWTextableSegment(OWTextableBaseWidget):
                 u"captured group number (e.g. '&1', '&2', etc.)."
             ),
         )
-        gui.separator(
-            widget=addRegexBox,
-            height=3,
-        )
         gui.lineEdit(
             widget=addRegexBox,
             master=self,
@@ -301,10 +285,6 @@ class OWTextableSegment(OWTextableBaseWidget):
                 u"immediately followed by a digit indicating the\n"
                 u"captured group number (e.g. '&1', '&2', etc.)."
             ),
-        )
-        gui.separator(
-            widget=addRegexBox,
-            height=3,
         )
         addRegexBoxLine1 = gui.widgetBox(
             widget=addRegexBox,
@@ -361,10 +341,6 @@ class OWTextableSegment(OWTextableBaseWidget):
                 u"than any character but newline)."
             ),
         )
-        gui.separator(
-            widget=addRegexBox,
-            height=3,
-        )
         self.addButton = gui.button(
             widget=addRegexBox,
             master=self,
@@ -376,13 +352,11 @@ class OWTextableSegment(OWTextableBaseWidget):
             ),
         )
         self.advancedSettings.advancedWidgets.append(self.regexBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Advanced) options box...
         self.optionsBox = self.create_widgetbox(
             box=u'Options',
             orientation='vertical',
-            addSpace=False,
             )
 
         optionsBoxLine2 = gui.widgetBox(
@@ -412,10 +386,6 @@ class OWTextableSegment(OWTextableBaseWidget):
                 u"Annotation key for output segment auto-numbering."
             ),
         )
-        gui.separator(
-            widget=self.optionsBox,
-            height=3,
-        )
         gui.checkBox(
             widget=self.optionsBox,
             master=self,
@@ -427,10 +397,6 @@ class OWTextableSegment(OWTextableBaseWidget):
                 u"and values associated with the corresponding\n"
                 u"input segment."
             ),
-        )
-        gui.separator(
-            widget=self.optionsBox,
-            height=3,
         )
         gui.checkBox(
             widget=self.optionsBox,
@@ -447,18 +413,13 @@ class OWTextableSegment(OWTextableBaseWidget):
                 u"application) will be kept."
             ),
         )
-        gui.separator(
-            widget=self.optionsBox,
-            height=2,
-        )
         self.advancedSettings.advancedWidgets.append(self.optionsBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Basic) Regex box...
         self.basicRegexBox = self.create_widgetbox(
             box=u'Segment type',
             orientation='vertical',
-            addSpace=False,)
+        )
 
         self.segmentTypeCombo = gui.comboBox(
             widget=self.basicRegexBox,
@@ -484,29 +445,22 @@ class OWTextableSegment(OWTextableBaseWidget):
             box=False,
             orientation='vertical',
         )
-        gui.separator(
-            widget=self.basicRegexFieldBox,
-            height=2,
-        )
-        gui.lineEdit(
+        ExpandableOrangeLineEdit(
             widget=self.basicRegexFieldBox,
             master=self,
             value='regex',
             orientation='horizontal',
-            label=u'Regex:',
-            labelWidth=60,
+            settingsChanged=True,
+            label="",
+            labelWidth=0,
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 u"A pattern that specifies the form of units into\n"
                 u"which the data will be segmented."
             ),
         )
-        gui.separator(
-            widget=self.basicRegexBox,
-            height=3,
-        )
+
         self.advancedSettings.basicWidgets.append(self.basicRegexBox)
-        self.advancedSettings.basicWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
 
@@ -516,6 +470,7 @@ class OWTextableSegment(OWTextableBaseWidget):
         self.sendButton.sendIf()
         self.adjustSizeWithTimer()
 
+    @Inputs.message
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
         if not message:
@@ -544,7 +499,7 @@ class OWTextableSegment(OWTextableBaseWidget):
                         u"JSON message.",
                         'error'
                     )
-                    self.send('Segmented data', None) # AS 10.2023: removed self
+                    self.sendNoneToOutputs()
                     return
                 temp_regexes.append(
                     (
@@ -565,7 +520,7 @@ class OWTextableSegment(OWTextableBaseWidget):
                 u"Please make sure that incoming message is valid JSON.",
                 'error'
             )
-            self.send('Segmented data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
     
     @OWTextableBaseWidget.task_decorator
@@ -580,7 +535,7 @@ class OWTextableSegment(OWTextableBaseWidget):
                     u'Operation was cancelled.',
                     'warning'
                 )
-            self.send('Segmented data', None)
+            self.sendNoneToOutputs()
             self.manageGuiVisibility(False) # Processing done/cancelled!
             return
 
@@ -588,7 +543,10 @@ class OWTextableSegment(OWTextableBaseWidget):
         message = u'%i segment@p sent to output.' % len(segmented_data)
         message = pluralize(message, len(segmented_data))
         self.infoBox.setText(message)
-        self.send('Segmented data', segmented_data) # AS 10.2023: removed self
+        if len(segmented_data):
+            self.Outputs.segmentation.send(segmented_data)
+        else:
+            self.sendNoneToOutputs()
 
     def sendData(self):
         """(Have LTTL.Segmenter) perform the actual tokenization"""
@@ -596,7 +554,7 @@ class OWTextableSegment(OWTextableBaseWidget):
         # Check that there's something on input...
         if not self.inputSegmentation:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Segmented data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # Check that there's at least one regex (if needed)...
@@ -607,7 +565,7 @@ class OWTextableSegment(OWTextableBaseWidget):
             )
         ):
             self.infoBox.setText(u'Please enter a regex.', 'warning')
-            self.send('Segmented data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # Get regexes from basic or advanced settings...
@@ -656,7 +614,7 @@ class OWTextableSegment(OWTextableBaseWidget):
                         u'Please enter an annotation key for auto-numbering.',
                         'warning'
                     )
-                    self.send('Segmented data', None) # AS 10.2023: removed self
+                    self.sendNoneToOutputs()
                     return
             else:
                 autoNumberKey = None
@@ -706,7 +664,7 @@ class OWTextableSegment(OWTextableBaseWidget):
                         message += u' (regex #%i)' % (regex_idx + 1)
                     message += u'.'
                 self.infoBox.setText(message, 'error')
-                self.send('Segmented data', None) # AS 10.2023: removed self
+                self.sendNoneToOutputs()
                 return
         
         # Deal with amount of steps
@@ -740,6 +698,7 @@ class OWTextableSegment(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)
 
+    @Inputs.segmentation
     def inputData(self, segmentation):
         """Process incoming segmentation"""
         # Cancel pending tasks, if any
@@ -930,7 +889,7 @@ class OWTextableSegment(OWTextableBaseWidget):
         
         # AS 11.2023
         # Regex correctly added message
-        self.infoBox.setText(u'Regex correctly added', 'warning')
+        # self.infoBox.setText(u'Regex correctly added', 'warning')
 
     def updateGUI(self):
         """Update GUI state"""
@@ -1029,14 +988,8 @@ class OWTextableSegment(OWTextableBaseWidget):
         else:
             super().setCaption(title)
 
-if __name__ == '__main__':
-    import sys
-    from AnyQt.QtWidgets import QApplication
-    from LTTL.Input import Input
 
-    appl = QApplication(sys.argv)
-    ow = OWTextableSegment()
-    ow.inputData(Input('a simple example'))
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+if __name__ == '__main__':
+    from LTTL.Input import Input as LTTL_Input
+    WidgetPreview(OWTextableSegment).run(LTTL_Input('a simple example'))
+

@@ -18,19 +18,21 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 
 from LTTL.Segment import Segment
-from LTTL.Input import Input
+from LTTL.Input import Input as LTTL_Input
 from LTTL.Segmentation import Segmentation
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     SendButton, InfoBox, pluralize
 )
 
 from Orange.widgets import gui, settings
 from Orange.data import DiscreteVariable, StringVariable, Domain, Table
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 textMiningIsInstalled = True
 try:
@@ -57,6 +59,14 @@ class OWTextableInterchange(OWTextableBaseWidget):
             ("Textable segmentation", Segmentation),
             ("Text Mining corpus", Corpus),
         ]
+        class Inputs:
+            segmentation = Input("Textable segmentation", Segmentation, 
+                                 auto_summary=False)
+            corpus = Input("Text Mining corpus", Corpus, auto_summary=False)
+        class Outputs:
+            segmentation = Output("Textable segmentation", Segmentation, 
+                                  auto_summary=False)
+            corpus = Output("Text Mining corpus", Corpus, auto_summary=False)
 
         settingsHandler = VersionedSettingsHandler(
             version=__version__.rsplit(".", 1)[0]
@@ -87,9 +97,6 @@ class OWTextableInterchange(OWTextableBaseWidget):
                 "warning"
             )
             return
-
-
-        gui.separator(self.controlArea, height=3)
         self.sendButton = SendButton(
             widget=self.controlArea,
             master=self,
@@ -104,7 +111,6 @@ class OWTextableInterchange(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Conversion to corpus',
             orientation='vertical',
-            addSpace=False,
         )
 
         self.maxNumCategoriesSpin = gui.spin(
@@ -130,7 +136,6 @@ class OWTextableInterchange(OWTextableBaseWidget):
             widget=self.controlArea,
             box=u'Conversion to segmentation',
             orientation='vertical',
-            addSpace=False,
         )
 
         self.segmentContentCombo = gui.comboBox(
@@ -147,8 +152,6 @@ class OWTextableInterchange(OWTextableBaseWidget):
         )
         self.segmentContentCombo.setMinimumWidth(120)
 
-        gui.separator(widget=self.controlArea, height=2)
-
         gui.rubber(self.controlArea)
 
         # Send button...
@@ -160,8 +163,8 @@ class OWTextableInterchange(OWTextableBaseWidget):
         self.setMinimumWidth(150)
 
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
 
+    @Inputs.segmentation
     def inputSegmentation(self, segmentation):
         """Process incoming segmentation"""
         self.segmentation = segmentation
@@ -169,6 +172,7 @@ class OWTextableInterchange(OWTextableBaseWidget):
         self.updateGUI()
         self.sendButton.sendIf()
 
+    @Inputs.corpus
     def inputCorpus(self, corpus):
         """Process incoming corpus"""
         self.corpus = corpus
@@ -181,8 +185,7 @@ class OWTextableInterchange(OWTextableBaseWidget):
         """Convert input(s) and send output"""
         if not (self.segmentation or self.corpus):
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Textable segmentation', None, self)
-            self.send('Text Mining corpus', None)
+            self.sendNoneToOutputs()
             return
 
         msg_seg = msg_corpus = ""
@@ -208,7 +211,7 @@ class OWTextableInterchange(OWTextableBaseWidget):
                 content = row[text_feature].value
                 if content == "":
                     continue
-                new_input = Input(row[text_feature].value)
+                new_input = LTTL_Input(row[text_feature].value)
                 new_segment_annotations = dict()
                 for attr in self.corpus.domain:
                     attr_str = str(row[attr])
@@ -232,11 +235,14 @@ class OWTextableInterchange(OWTextableBaseWidget):
                 self.createdInputs.append(new_input)
                 progressBar.advance()
             new_segmentation = Segmentation(new_segments, self.captionTitle)
-            msg_seg = u'%i segment@p' % len(new_segmentation)
+            msg_seg = u'%i segment@p sent to output.' % len(new_segmentation)
             msg_seg = pluralize(msg_seg, len(new_segmentation))
-            self.send('Textable segmentation', new_segmentation, self)
+            if len(new_segmentation):
+                self.Outputs.segmentation.send(new_segmentation)
+            else:
+                self.Outputs.segmentation.send(None)           
         else:
-             self.send('Textable segmentation', None, self)
+            self.Outputs.segmentation.send(None)
 
         # Convert segmentation to corpus...
         if self.segmentation:
@@ -289,9 +295,9 @@ class OWTextableInterchange(OWTextableBaseWidget):
                 )
             msg_corpus = u'%i document@p' % len(self.segmentation)
             msg_corpus = pluralize(msg_corpus, len(self.segmentation))
-            self.send('Text Mining corpus', corpus)
+            self.Outputs.corpus.send(corpus)
         else:
-            self.send('Text Mining corpus', None)
+            self.Outputs.corpus.send(None)
 
         progressBar.finish()
         self.controlArea.setDisabled(False)
@@ -321,8 +327,6 @@ class OWTextableInterchange(OWTextableBaseWidget):
         if self.segmentation is not None:
             self.toCorpusOptionsBox.setDisabled(False)
 
-        self.adjustSizeWithTimer()
-
     def setCaption(self, title):
         if 'captionTitle' in dir(self):
             changed = title != self.captionTitle
@@ -342,9 +346,4 @@ class OWTextableInterchange(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from AnyQt.QtWidgets import QApplication
-    appl = QApplication(sys.argv)
-    ow = OWTextableInterchange()
-    ow.show()
-    appl.exec_()
+    WidgetPreview(OWTextableInterchange).run()

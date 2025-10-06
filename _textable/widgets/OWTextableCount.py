@@ -18,25 +18,25 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.21.10'
+__version__ = '0.21.11'
 
 
 from LTTL.TableThread import IntPivotCrosstab
 from LTTL.Segmentation import Segmentation
 import LTTL.ProcessorThread as Processor
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget,
     InfoBox, SendButton, updateMultipleInputs, pluralize,
-    SegmentationListContextHandler, SegmentationsInputList,
-    Task
+    SegmentationListContextHandler, SegmentationsInputList, Task
 )
 
 import Orange
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableCount(OWTextableBaseWidget):
@@ -47,11 +47,15 @@ class OWTextableCount(OWTextableBaseWidget):
     icon = "icons/Count.png"
     priority = 8002
 
-    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
-    outputs = [
-        ('Textable pivot crosstab', IntPivotCrosstab, widget.Default),
-        ('Orange table', Orange.data.Table)
-    ]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False, 
+                             multiple=True)
+    class Outputs:
+        textable_pivot_crosstab = Output("Textable pivot crosstab", 
+                                         IntPivotCrosstab, auto_summary=False, 
+                                         default=True)
+        orange_table = Output("Orange table", Orange.data.Table, 
+                              auto_summary=False)
 
     settingsHandler = SegmentationListContextHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -102,7 +106,6 @@ class OWTextableCount(OWTextableBaseWidget):
         self.unitsBox = self.create_widgetbox(
             box=u'Units',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.unitSegmentationCombo = gui.comboBox(
@@ -119,7 +122,6 @@ class OWTextableCount(OWTextableBaseWidget):
             ),
         )
         self.unitSegmentationCombo.setMinimumWidth(120)
-        gui.separator(widget=self.unitsBox, height=3)
         self.unitAnnotationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
@@ -137,7 +139,6 @@ class OWTextableCount(OWTextableBaseWidget):
                 u"annotation values for a specific annotation key."
             ),
         )
-        gui.separator(widget=self.unitsBox, height=3)
         self.sequenceLengthSpin = gui.spin(
             widget=self.unitsBox,
             master=self,
@@ -155,7 +156,6 @@ class OWTextableCount(OWTextableBaseWidget):
                 u"rather sequences of 2, 3, ... segments (n-grams)."
             ),
         )
-        gui.separator(widget=self.unitsBox, height=3)
         self.intraSeqDelimLineEdit = gui.lineEdit(
             widget=self.unitsBox,
             master=self,
@@ -172,13 +172,11 @@ class OWTextableCount(OWTextableBaseWidget):
                 u"each sequence."
             ),
         )
-        gui.separator(widget=self.unitsBox, height=3)
 
         # Contexts box...
         self.contextsBox = self.create_widgetbox(
             box=u'Contexts',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.modeCombo = gui.comboBox(
@@ -220,7 +218,6 @@ class OWTextableCount(OWTextableBaseWidget):
             widget=self.contextsBox,
             orientation='vertical',
         )
-        gui.separator(widget=self.slidingWindowBox, height=3)
         self.windowSizeSpin = gui.spin(
             widget=self.slidingWindowBox,
             master=self,
@@ -241,7 +238,6 @@ class OWTextableCount(OWTextableBaseWidget):
             widget=self.contextsBox,
             orientation='vertical',
         )
-        gui.separator(widget=self.leftRightNeighborhoodBox, height=3)
         self.leftContextSizeSpin = gui.spin(
             widget=self.leftRightNeighborhoodBox,
             master=self,
@@ -259,7 +255,6 @@ class OWTextableCount(OWTextableBaseWidget):
                 u"left side of contexts."
             ),
         )
-        gui.separator(widget=self.leftRightNeighborhoodBox, height=3)
         self.rightContextSizeSpin = gui.spin(
             widget=self.leftRightNeighborhoodBox,
             master=self,
@@ -277,7 +272,6 @@ class OWTextableCount(OWTextableBaseWidget):
                 u"right side of contexts."
             ),
         )
-        gui.separator(widget=self.leftRightNeighborhoodBox, height=3)
         self.unitPosMarkerLineEdit = gui.lineEdit(
             widget=self.leftRightNeighborhoodBox,
             master=self,
@@ -292,7 +286,6 @@ class OWTextableCount(OWTextableBaseWidget):
                 u"context sides."
             ),
         )
-        gui.separator(widget=self.leftRightNeighborhoodBox, height=3)
         gui.checkBox(
             widget=self.leftRightNeighborhoodBox,
             master=self,
@@ -309,10 +302,6 @@ class OWTextableCount(OWTextableBaseWidget):
             widget=self.contextsBox,
             orientation='vertical',
         )
-        gui.separator(
-            widget=self.containingSegmentationBox,
-            height=3,
-        )
         self.contextSegmentationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
@@ -327,7 +316,6 @@ class OWTextableCount(OWTextableBaseWidget):
                 u"segmentation will be counted."
             ),
         )
-        gui.separator(widget=self.containingSegmentationBox, height=3)
         self.contextAnnotationCombo = gui.comboBox(
             widget=self.containingSegmentationBox,
             master=self,
@@ -345,7 +333,6 @@ class OWTextableCount(OWTextableBaseWidget):
                 u"annotation values for a specific annotation key."
             ),
         )
-        gui.separator(widget=self.containingSegmentationBox, height=3)
         gui.checkBox(
             widget=self.containingSegmentationBox,
             master=self,
@@ -359,7 +346,6 @@ class OWTextableCount(OWTextableBaseWidget):
                 u"contains a single row)."
             ),
         )
-        gui.separator(widget=self.contextsBox, height=3)
 
         gui.rubber(self.controlArea)
 
@@ -367,7 +353,6 @@ class OWTextableCount(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
 
     
     @OWTextableBaseWidget.task_decorator
@@ -380,11 +365,10 @@ class OWTextableCount(OWTextableBaseWidget):
             
         if total == 0:
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
-            self.send('Textable pivot crosstab', None) # AS 10.2023: removed self
-            self.send('Orange table', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
         else:
-            self.send('Textable pivot crosstab', textable_table) # AS 10.2023: removed self
-            self.send('Orange table', orange_table) # AS 10.2023: removed self
+            self.Outputs.textable_pivot_crosstab.send(textable_table)
+            self.Outputs.orange_table.send(orange_table)
                 
             message = u'Table with %i occurrence@p sent to output.' % total
             message = pluralize(message, total)
@@ -396,8 +380,7 @@ class OWTextableCount(OWTextableBaseWidget):
         # Check that there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Textable pivot crosstab', None) # AS 10.2023: removed self
-            self.send('Orange table', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # Units parameter...
@@ -485,6 +468,7 @@ class OWTextableCount(OWTextableBaseWidget):
         # Threading
         self.threading(threaded_function)
             
+    @Inputs.segmentation
     def inputData(self, newItem, newId=None):
         """Process incoming data."""        
         # Cancel pending tasks, if any
@@ -611,24 +595,28 @@ class OWTextableCount(OWTextableBaseWidget):
         self.sendButton.sendIf()
 
 if __name__ == '__main__':
-    import sys
+    WidgetPreview(OWTextableCount).run()
+    
+    # Old command-line testing code...
 
-    from AnyQt.QtWidgets import QApplication
-    import LTTL.Segmenter as Segmenter
-    from LTTL.Input import Input
+    # import sys
 
-    appl = QApplication(sys.argv)
-    ow = OWTextableCount()
-    seg1 = Input(u'hello world', label=u'text1')
-    seg2 = Input(u'cruel world', label=u'text2')
-    seg3 = Segmenter.concatenate([seg1, seg2], label=u'corpus')
-    seg4 = Segmenter.tokenize(
-        seg3,
-        [(r'\w+(?u)', u'tokenize', {'type': 'mot'})],
-        label=u'words'
-    )
-    ow.inputData(seg3, 1)
-    ow.inputData(seg4, 2)
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    # from AnyQt.QtWidgets import QApplication
+    # import LTTL.Segmenter as Segmenter
+    # from LTTL.Input import Input
+
+    # appl = QApplication(sys.argv)
+    # ow = OWTextableCount()
+    # seg1 = Input(u'hello world', label=u'text1')
+    # seg2 = Input(u'cruel world', label=u'text2')
+    # seg3 = Segmenter.concatenate([seg1, seg2], label=u'corpus')
+    # seg4 = Segmenter.tokenize(
+        # seg3,
+        # [(r'\w+(?u)', u'tokenize', {'type': 'mot'})],
+        # label=u'words'
+    # )
+    # ow.inputData(seg3, 1)
+    # ow.inputData(seg4, 2)
+    # ow.show()
+    # appl.exec_()
+    # ow.saveSettings()

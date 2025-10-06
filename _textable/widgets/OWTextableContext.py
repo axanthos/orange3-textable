@@ -18,23 +18,23 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.10.9'
+__version__ = '0.10.10'
 
 from LTTL.TableThread import Table
 from LTTL.Segmentation import Segmentation
 import LTTL.ProcessorThread as Processor
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, ProgressBar,
     InfoBox, SendButton, updateMultipleInputs, SegmentationListContextHandler,
-    SegmentationsInputList,
-    Task
+    SegmentationsInputList, Task
 )
 import Orange.data
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableContext(OWTextableBaseWidget):
@@ -45,9 +45,14 @@ class OWTextableContext(OWTextableBaseWidget):
     icon = "icons/Context.png"
     priority = 8001
 
-    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
-    outputs = [('Textable table', Table, widget.Default),
-               ('Orange table', Orange.data.Table)]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False, 
+                             multiple=True)
+    class Outputs:
+        textable_table = Output("Textable table", Table, auto_summary=False, 
+                                default=True)
+        orange_table = Output("Orange table", Orange.data.Table, 
+                              auto_summary=False)
 
     settingsHandler = SegmentationListContextHandler(
         version=__version__.rsplit(".", 1)[0],
@@ -98,7 +103,6 @@ class OWTextableContext(OWTextableBaseWidget):
         self.unitsBox = self.create_widgetbox(
             box=u'Units',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.unitSegmentationCombo = gui.comboBox(
@@ -115,7 +119,6 @@ class OWTextableContext(OWTextableBaseWidget):
             ),
         )
         self.unitSegmentationCombo.setMinimumWidth(120)
-        gui.separator(widget=self.unitsBox, height=3)
 
         self.unitsSubBox = gui.widgetBox(
             widget=self.unitsBox,
@@ -138,7 +141,6 @@ class OWTextableContext(OWTextableBaseWidget):
                 u"segmentation."
             ),
         )
-        gui.separator(widget=self.unitsSubBox, height=3)
         self.separateAnnotationCheckBox = gui.checkBox(
             widget=self.unitsSubBox,
             master=self,
@@ -156,7 +158,6 @@ class OWTextableContext(OWTextableBaseWidget):
         self.contextsBox = self.create_widgetbox(
             box=u'Contexts',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.modeCombo = gui.comboBox(
@@ -185,7 +186,6 @@ class OWTextableContext(OWTextableBaseWidget):
                 u"output table usually contains 3 columns)."
             ),
         )
-        gui.separator(widget=self.contextsBox, height=3)
         self.contextSegmentationCombo = gui.comboBox(
             widget=self.contextsBox,
             master=self,
@@ -199,7 +199,6 @@ class OWTextableContext(OWTextableBaseWidget):
                 u"is based."
             ),
         )
-        gui.separator(widget=self.contextsBox, height=3)
         self.contextAnnotationCombo = gui.comboBox(
             widget=self.contextsBox,
             master=self,
@@ -224,7 +223,6 @@ class OWTextableContext(OWTextableBaseWidget):
             widget=self.contextsBox,
             orientation='vertical',
         )
-        gui.separator(widget=self.neighboringSegmentsBox, height=3)
         self.maxDistanceLine = gui.widgetBox(
             widget=self.neighboringSegmentsBox,
             box=False,
@@ -247,7 +245,6 @@ class OWTextableContext(OWTextableBaseWidget):
                 u"Maximal distance between 'key' and context segments."
             ),
         )
-        gui.separator(widget=self.neighboringSegmentsBox, height=3)
         self.useCollocationFormatCheckbox = gui.checkBox(
             widget=self.neighboringSegmentsBox,
             master=self,
@@ -260,7 +257,6 @@ class OWTextableContext(OWTextableBaseWidget):
                 u"occurrence."
             ),
         )
-        gui.separator(widget=self.neighboringSegmentsBox, height=3)
         iBox = gui.indentedBox(
             widget=self.neighboringSegmentsBox,
         )
@@ -284,7 +280,6 @@ class OWTextableContext(OWTextableBaseWidget):
             widget=self.contextsBox,
             orientation='vertical',
         )
-        gui.separator(widget=self.containingSegmentationBox, height=3)
         self.maxLengthLine = gui.widgetBox(
             widget=self.containingSegmentationBox,
             box=False,
@@ -308,8 +303,6 @@ class OWTextableContext(OWTextableBaseWidget):
                 u"and right contexts."
             ),
         )
-
-        gui.separator(widget=self.neighboringSegmentsBox, height=3)
         gui.checkBox(
             widget=self.neighboringSegmentsBox,
             master=self,
@@ -322,7 +315,6 @@ class OWTextableContext(OWTextableBaseWidget):
                 u"each string is adjacent to the beginning of the next string."
             ),
         )
-        gui.separator(widget=self.contextsBox, height=3)
 
         gui.rubber(self.controlArea)
 
@@ -330,7 +322,6 @@ class OWTextableContext(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
 
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -340,11 +331,10 @@ class OWTextableContext(OWTextableBaseWidget):
         # Data treatment
         if not len(textable_table.row_ids):
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
-            self.send('Textable table', None) # AS 10.2023: removed self
-            self.send('Orange table', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
         else:
-            self.send('Textable table', textable_table) # AS 10.2023: removed self
-            self.send('Orange table', orange_table) # AS 10.2023: removed self
+            self.Outputs.textable_table.send(textable_table)
+            self.Outputs.orange_table.send(orange_table)
             self.infoBox.setText(u'Table sent to output.')
 
     def sendData(self):
@@ -353,8 +343,7 @@ class OWTextableContext(OWTextableBaseWidget):
         # Check that there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Textable table', None) # AS 10.2023: removed self
-            self.send('Orange table', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         assert self.units >= 0
@@ -457,6 +446,7 @@ class OWTextableContext(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)
         
+    @Inputs.segmentation
     def inputData(self, newItem, newId=None):
         """Process incoming data."""
         # Cancel pending tasks, if any
@@ -583,54 +573,60 @@ class OWTextableContext(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys, re
-    from AnyQt.QtWidgets import QApplication
-    import LTTL.Segmenter as Segmenter
-    from LTTL.Input import Input
+    WidgetPreview(OWTextableContext).run()
 
-    appl = QApplication(sys.argv)
-    ow = OWTextableContext()
-    seg1 = Input(u'hello world', 'text')
-    seg2 = Segmenter.tokenize(
-        seg1,
-        [
-            (re.compile(r'hello'), u'tokenize', {'tag': 'interj'}),
-            (re.compile(r'world'), u'tokenize', {'tag': 'noun'}),
-        ],
-        label='words',
-    )
-    seg3 = Segmenter.tokenize(
-        seg2,
-        [(re.compile(r'[aeiou]'), u'tokenize')],
-        label='V'
-    )
-    seg4 = Segmenter.tokenize(
-        seg2,
-        [(re.compile(r'[hlwrdc]'), u'tokenize')],
-        label='C'
-    )
-    seg5 = Segmenter.tokenize(
-        seg2,
-        [(re.compile(r' '), u'tokenize')],
-        label='S'
-    )
-    seg6 = Segmenter.concatenate(
-        [seg3, seg4, seg5],
-        import_labels_as='category',
-        label='chars',
-        sort=True,
-        merge_duplicates=True,
-    )
-    seg7 = Segmenter.tokenize(
-        seg6,
-        [(re.compile(r'l'), u'tokenize')],
-        label='key_segment'
-    )
-    ow.inputData(seg2, 1)
-    ow.inputData(seg6, 2)
-    ow.inputData(seg7, 3)
-    ow.handleNewSignals()
-    ow.inputData(seg2, 1)
-    ow.handleNewSignals()
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    # Old command-line testing code...
+
+    # import sys, re
+    # from AnyQt.QtWidgets import QApplication
+    # import LTTL.Segmenter as Segmenter
+    # from LTTL.Input import Input
+
+    # appl = QApplication(sys.argv)
+    # ow = OWTextableContext()
+    # seg1 = Input(u'hello world', 'text')
+    # seg2 = Segmenter.tokenize(
+        # seg1,
+        # [
+            # (re.compile(r'hello'), u'tokenize', {'tag': 'interj'}),
+            # (re.compile(r'world'), u'tokenize', {'tag': 'noun'}),
+        # ],
+        # label='words',
+    # )
+    # seg3 = Segmenter.tokenize(
+        # seg2,
+        # [(re.compile(r'[aeiou]'), u'tokenize')],
+        # label='V'
+    # )
+    # seg4 = Segmenter.tokenize(
+        # seg2,
+        # [(re.compile(r'[hlwrdc]'), u'tokenize')],
+        # label='C'
+    # )
+    # seg5 = Segmenter.tokenize(
+        # seg2,
+        # [(re.compile(r' '), u'tokenize')],
+        # label='S'
+    # )
+    # seg6 = Segmenter.concatenate(
+        # [seg3, seg4, seg5],
+        # import_labels_as='category',
+        # label='chars',
+        # sort=True,
+        # merge_duplicates=True,
+    # )
+    # seg7 = Segmenter.tokenize(
+        # seg6,
+        # [(re.compile(r'l'), u'tokenize')],
+        # label='key_segment'
+    # )
+    # ow.inputData(seg2, 1)
+    # ow.inputData(seg6, 2)
+    # ow.inputData(seg7, 3)
+    # ow.handleNewSignals()
+    # ow.inputData(seg2, 1)
+    # ow.handleNewSignals()
+    # ow.show()
+    # appl.exec_()
+    # ow.saveSettings()
+

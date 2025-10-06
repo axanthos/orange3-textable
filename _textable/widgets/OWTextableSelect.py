@@ -20,7 +20,7 @@ along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
 
-__version__ = '0.14.11'
+__version__ = '0.14.12'
 
 import re, math
 
@@ -28,19 +28,16 @@ import LTTL.SegmenterThread as Segmenter
 from LTTL.Segmentation import Segmentation
 from LTTL.Utils import iround
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, SegmentationContextHandler, ProgressBar,
-    InfoBox, SendButton, AdvancedSettings, pluralize,
-    Task
+    InfoBox, SendButton, AdvancedSettings, pluralize, Task
 )
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from AnyQt.QtCore import QThread, QTimer, pyqtSlot, pyqtSignal
-import concurrent.futures
-from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableSelect(OWTextableBaseWidget):
@@ -52,11 +49,13 @@ class OWTextableSelect(OWTextableBaseWidget):
     priority = 4003
 
     # Input and output channels...
-    inputs = [('Segmentation', Segmentation, "inputData",)]
-    outputs = [
-        ('Selected data', Segmentation, widget.Default),
-        ('Discarded data', Segmentation)
-    ]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False)
+    class Outputs:
+        selected_data = Output("Selected data", Segmentation, auto_summary=False, 
+                               default=True)
+        discarded_data = Output("Discarded data", Segmentation, 
+                                auto_summary=False)
 
     settingsHandler = SegmentationContextHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -113,7 +112,6 @@ class OWTextableSelect(OWTextableBaseWidget):
         self.selectBox = self.create_widgetbox(
             box=u'Select',
             orientation='vertical',
-            addSpace=False,
             )
 
         self.methodCombo = gui.comboBox(
@@ -138,7 +136,6 @@ class OWTextableSelect(OWTextableBaseWidget):
             ),
         )
         self.methodCombo.setMinimumWidth(120)
-        gui.separator(widget=self.selectBox, height=3)
         # Regex box...
         self.regexBox = gui.widgetBox(
             widget=self.selectBox,
@@ -160,7 +157,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"the output segmentation."
             ),
         )
-        gui.separator(widget=self.regexBox, height=3)
         self.regexAnnotationCombo = gui.comboBox(
             widget=self.regexBox,
             master=self,
@@ -179,7 +175,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"'none')."
             ),
         )
-        gui.separator(widget=self.regexBox, height=3)
         gui.lineEdit(
             widget=self.regexBox,
             master=self,
@@ -195,7 +190,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"from the output segmentation."
             ),
         )
-        gui.separator(widget=self.regexBox, height=3)
         regexBoxLine4 = gui.widgetBox(
             widget=self.regexBox,
             box=False,
@@ -251,7 +245,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"than any character but newline)."
             ),
         )
-        gui.separator(widget=self.regexBox, height=3)
 
         # Sample box...
         self.sampleBox = gui.widgetBox(
@@ -274,7 +267,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"proportion of the input segments ('Proportion')."
             ),
         )
-        gui.separator(widget=self.sampleBox, height=3)
         self.sampleSizeSpin = gui.spin(
             widget=self.sampleBox,
             master=self,
@@ -305,7 +297,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"The proportion of segments that will be sampled."
             ),
         )
-        gui.separator(widget=self.sampleBox, height=3)
 
         # Threshold box...
         self.thresholdBox = gui.widgetBox(
@@ -330,7 +321,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"(value 'none')."
             ),
         )
-        gui.separator(widget=self.thresholdBox, height=3)
         self.thresholdModeCombo = gui.comboBox(
             widget=self.thresholdBox,
             master=self,
@@ -346,7 +336,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 "expressed as count or proportion."
             ),
         )
-        gui.separator(widget=self.thresholdBox, height=3)
         self.minCountLine = gui.widgetBox(
             widget=self.thresholdBox,
             box=False,
@@ -401,7 +390,6 @@ class OWTextableSelect(OWTextableBaseWidget):
             keyboardTracking=False,
             tooltip="Minimum proportion for a type to be selected.",
         )
-        gui.separator(widget=self.thresholdBox, height=3)
         self.maxCountLine = gui.widgetBox(
             widget=self.thresholdBox,
             box=False,
@@ -456,15 +444,12 @@ class OWTextableSelect(OWTextableBaseWidget):
             keyboardTracking=False,
             tooltip="Maximum proportion for a type to be selected.",
         )
-        gui.separator(widget=self.thresholdBox, height=3)
         self.advancedSettings.advancedWidgets.append(self.selectBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
         self.optionsBox = self.create_widgetbox(
             box=u'Options',
             orientation='vertical',
-            addSpace=False,
             )
 
         optionsBoxLine2 = gui.widgetBox(
@@ -494,7 +479,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"Annotation key for output segment auto-numbering."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=3)
         gui.checkBox(
             widget=self.optionsBox,
             master=self,
@@ -505,15 +489,12 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"Copy all annotations from input to output segments."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=2)
         self.advancedSettings.advancedWidgets.append(self.optionsBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Basic Select box
         self.basicSelectBox = self.create_widgetbox(
             box=u'Select',
             orientation='vertical',
-            addSpace=False,
             )
 
         self.basicRegexModeCombo = gui.comboBox(
@@ -532,7 +513,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"the output segmentation."
             ),
         )
-        gui.separator(widget=self.basicSelectBox, height=3)
         self.basicRegexAnnotationCombo = gui.comboBox(
             widget=self.basicSelectBox,
             master=self,
@@ -551,7 +531,6 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"'none')."
             ),
         )
-        gui.separator(widget=self.basicSelectBox, height=3)
         gui.lineEdit(
             widget=self.basicSelectBox,
             master=self,
@@ -567,9 +546,7 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"from the output segmentation."
             ),
         )
-        gui.separator(widget=self.basicSelectBox, height=3)
         self.advancedSettings.basicWidgets.append(self.basicSelectBox)
-        self.advancedSettings.basicWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
 
@@ -577,7 +554,6 @@ class OWTextableSelect(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
     
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -585,12 +561,19 @@ class OWTextableSelect(OWTextableBaseWidget):
         selected_data, discarded_data = f.result()
             
         # Send data
-        message = u'%i segment@p sent to output.' % len(selected_data)
+        message = u'%i segment@p sent to default output.' % len(selected_data)
         message = pluralize(message, len(selected_data))
         self.infoBox.setText(message)
 
-        self.send('Selected data', selected_data) # AS 10.2023: removed self
-        self.send('Discarded data', discarded_data) # AS 10.2023: removed self
+        if len(selected_data):
+            self.Outputs.selected_data.send(selected_data)
+        else:
+            self.Outputs.selected_data.send(None)
+        if len(discarded_data):
+            self.Outputs.discarded_data.send(discarded_data)
+        else:
+            self.Outputs.discarded_data.send(None)
+
 
     def sendData(self):
         """(Have LTTL.Segmenter) perform the actual selection"""
@@ -598,8 +581,7 @@ class OWTextableSelect(OWTextableBaseWidget):
         # Check that there's something on input...
         if not self.segmentation:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Selected data', None) # AS 10.2023: removed self
-            self.send('Discarded data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # TODO: remove message 'No label was provided.' from docs
@@ -613,8 +595,7 @@ class OWTextableSelect(OWTextableBaseWidget):
                 # Check that regex is not empty...
                 if not self.regex:
                     self.infoBox.setText(u'Please enter a regex.', 'warning')
-                    self.send('Selected data', None) # AS 10.2023: removed self
-                    self.send('Discarded data', None) # AS 10.2023: removed self
+                    self.sendNoneToOutputs()
                     return
 
                 # Prepare regex...
@@ -644,8 +625,7 @@ class OWTextableSelect(OWTextableBaseWidget):
                     except AttributeError:
                         message = u'Please enter a valid regex.'
                     self.infoBox.setText(message, 'error')
-                    self.send('Selected data', None) # AS 10.2023: removed self
-                    self.send('Discarded data', None) # AS 10.2023: removed self
+                    self.sendNoneToOutputs()
                     return
 
                 # Get number of iterations...
@@ -667,8 +647,7 @@ class OWTextableSelect(OWTextableBaseWidget):
                         message='Please enter a larger sample size',
                         state="error",
                     )
-                    self.send('Selected data', None) # AS 10.2023: removed self
-                    self.send('Discarded data', None) # AS 10.2023: removed self
+                    self.sendNoneToOutputs()
                     return
 
                 # Get number of iterations...
@@ -711,8 +690,7 @@ class OWTextableSelect(OWTextableBaseWidget):
                         u'Please enter an annotation key for auto-numbering.',
                         'warning'
                     )
-                    self.send('Selected data', None) # AS 10.2023: removed self
-                    self.send('Discarded data', None) # AS 10.2023: removed self
+                    self.sendNoneToOutputs()
                     return
             else:
                 autoNumberKey = None
@@ -799,8 +777,7 @@ class OWTextableSelect(OWTextableBaseWidget):
             # Check that regex is not empty...
             if not self.regex:
                 self.infoBox.setText(u'Please enter a regex.', 'warning')
-                self.send('Selected data', None) # AS 10.2023: removed self
-                self.send('Discarded data', None) # AS 10.2023: removed self
+                self.sendNoneToOutputs()
                 return
 
             # Get number of iterations...
@@ -830,6 +807,7 @@ class OWTextableSelect(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)
 
+    @Inputs.segmentation
     def inputData(self, segmentation):
         """Process incoming segmentation"""
         # Cancel pending tasks, if any
@@ -997,11 +975,5 @@ class OWTextableSelect(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    import sys
-    from AnyQt.QtWidgets import QApplication
-    appl = QApplication(sys.argv)
-    ow = OWTextableSelect()
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    WidgetPreview(OWTextableSelect).run()
 

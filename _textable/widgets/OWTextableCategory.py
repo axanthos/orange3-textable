@@ -18,27 +18,24 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.12.8'
+__version__ = '0.12.9'
 
 from LTTL.TableThread import Table
 from LTTL.Segmentation import Segmentation
 import LTTL.ProcessorThread as Processor
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, ProgressBar,
     InfoBox, SendButton, updateMultipleInputs, SegmentationListContextHandler,
-    SegmentationsInputList,
-    Task
+    SegmentationsInputList, Task
 )
 
 import Orange.data
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
-import concurrent.futures
-from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableCategory(OWTextableBaseWidget):
@@ -50,9 +47,14 @@ class OWTextableCategory(OWTextableBaseWidget):
     icon = "icons/Category.png"
     priority = 8006
 
-    inputs = [('Segmentation', Segmentation, "inputData", widget.Multiple)]
-    outputs = [('Textable table', Table, widget.Default),
-               ('Orange table', Orange.data.Table)]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False, 
+                             multiple=True)
+    class Outputs:
+        textable_table = Output("Textable table", Table, auto_summary=False, 
+                                default=True)
+        orange_table = Output("Orange table", Orange.data.Table, 
+                              auto_summary=False)
 
     settingsHandler = SegmentationListContextHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -100,7 +102,6 @@ class OWTextableCategory(OWTextableBaseWidget):
         self.unitsBox = self.create_widgetbox(
             box=u'Units',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.unitSegmentationCombo = gui.comboBox(
@@ -117,7 +118,6 @@ class OWTextableCategory(OWTextableBaseWidget):
             ),
         )
         self.unitSegmentationCombo.setMinimumWidth(120)
-        gui.separator(widget=self.unitsBox, height=3)
         self.unitAnnotationCombo = gui.comboBox(
             widget=self.unitsBox,
             master=self,
@@ -134,7 +134,6 @@ class OWTextableCategory(OWTextableBaseWidget):
                 u"annotation values for a specific annotation key."
             ),
         )
-        gui.separator(widget=self.unitsBox, height=3)
         self.sequenceLengthSpin = gui.spin(
             widget=self.unitsBox,
             master=self,
@@ -153,7 +152,6 @@ class OWTextableCategory(OWTextableBaseWidget):
                 u"category extraction."
             ),
         )
-        gui.separator(widget=self.unitsBox, height=3)
         self.intraSeqDelimLineEdit = gui.lineEdit(
             widget=self.unitsBox,
             master=self,
@@ -170,13 +168,11 @@ class OWTextableCategory(OWTextableBaseWidget):
                 u"each sequence."
             ),
         )
-        gui.separator(widget=self.unitsBox, height=3)
 
         # Multiple Values box
         self.multipleValuesBox = self.create_widgetbox(
             box=u'Multiple Values',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.sortOrderCombo = gui.comboBox(
@@ -194,7 +190,6 @@ class OWTextableCategory(OWTextableBaseWidget):
             ),
         )
         self.sortOrderCombo.setMinimumWidth(120)
-        gui.separator(widget=self.multipleValuesBox, height=3)
         self.sortReverseCheckBox = gui.checkBox(
             widget=self.multipleValuesBox,
             master=self,
@@ -205,7 +200,6 @@ class OWTextableCategory(OWTextableBaseWidget):
                 u"Sort in reverse (i.e. decreasing) order."
             ),
         )
-        gui.separator(widget=self.multipleValuesBox, height=3)
         gui.checkBox(
             widget=self.multipleValuesBox,
             master=self,
@@ -217,7 +211,6 @@ class OWTextableCategory(OWTextableBaseWidget):
                 u"(after sorting)."
             ),
         )
-        gui.separator(widget=self.multipleValuesBox, height=3)
         self.multipleValuesDelimLineEdit = gui.lineEdit(
             widget=self.multipleValuesBox,
             master=self,
@@ -233,13 +226,11 @@ class OWTextableCategory(OWTextableBaseWidget):
                 u"used as a delimiter between them."
             ),
         )
-        gui.separator(widget=self.multipleValuesBox, height=3)
 
         # Contexts box...
         self.contextsBox = self.create_widgetbox(
             box=u'Contexts',
             orientation='vertical',
-            addSpace=True,
             )
 
         self.contextSegmentationCombo = gui.comboBox(
@@ -256,7 +247,6 @@ class OWTextableCategory(OWTextableBaseWidget):
                 u"assigned."
             ),
         )
-        gui.separator(widget=self.contextsBox, height=3)
         self.contextAnnotationCombo = gui.comboBox(
             widget=self.contextsBox,
             master=self,
@@ -274,7 +264,6 @@ class OWTextableCategory(OWTextableBaseWidget):
                 u"annotation values for a specific annotation key."
             ),
         )
-        gui.separator(widget=self.contextsBox, height=3)
 
         gui.rubber(self.controlArea)
 
@@ -282,7 +271,6 @@ class OWTextableCategory(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
     
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -292,12 +280,11 @@ class OWTextableCategory(OWTextableBaseWidget):
         # Send data
         if not len(textable_table.row_ids):
             self.infoBox.setText(u'Resulting table is empty.', 'warning')
-            self.send('Textable table', None)
-            self.send('Orange table', None)
+            self.sendNoneToOutputs()
         else:
             self.infoBox.setText(u'Table sent to output.')
-            self.send('Textable table', textable_table)
-            self.send('Orange table', orange_table)
+            self.Outputs.textable_table.send(textable_table)
+            self.Outputs.orange_table.send(orange_table)
 
     def sendData(self):
 
@@ -306,8 +293,7 @@ class OWTextableCategory(OWTextableBaseWidget):
         # Check that there's something on input...
         if len(self.segmentations) == 0:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Textable table', None)
-            self.send('Orange table', None)
+            self.sendNoneToOutputs()
             return
 
         # Units parameter...
@@ -353,6 +339,7 @@ class OWTextableCategory(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)
 
+    @Inputs.segmentation
     def inputData(self, newItem, newId=None):
         """Process incoming data."""
         # Cancel pending tasks, if any
@@ -442,44 +429,50 @@ class OWTextableCategory(OWTextableBaseWidget):
 
 if __name__ == '__main__':
     import sys
-    import re
-    from AnyQt.QtWidgets import QApplication
-    from LTTL.Input import Input
-    from LTTL import Segmenter as segmenter
+    WidgetPreview(OWTextableCategory).run()
 
-    appl = QApplication(sys.argv)
-    ow = OWTextableCategory()
-    seg1 = Input(u'aaabc', 'text1')
-    seg2 = Input(u'abbc', 'text2')
-    # segmenter = Segmenter()
-    seg3 = segmenter.concatenate(
-        [seg1, seg2],
-        import_labels_as='string',
-        label='corpus'
-    )
-    seg4 = segmenter.tokenize(
-        seg3,
-        regexes=[(re.compile(r'\w+'), u'tokenize',)],
-    )
-    seg5 = segmenter.tokenize(
-        seg4,
-        regexes=[(re.compile(r'[ai]'), u'tokenize',)],
-        label='V'
-    )
-    seg6 = segmenter.tokenize(
-        seg4,
-        regexes=[(re.compile(r'[bc]'), u'tokenize',)],
-        label='C'
-    )
-    seg7 = segmenter.concatenate(
-        [seg5, seg6],
-        import_labels_as='category',
-        label='letters',
-        sort=True,
-        merge_duplicates=True,
-    )
-    ow.inputData(seg7, 1)
-    ow.inputData(seg4, 2)
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    # Old command-line testing code...
+    
+    # import sys
+    # import re
+    # from AnyQt.QtWidgets import QApplication
+    # from LTTL.Input import Input
+    # from LTTL import Segmenter as segmenter
+
+    # appl = QApplication(sys.argv)
+    # ow = OWTextableCategory()
+    # seg1 = Input(u'aaabc', 'text1')
+    # seg2 = Input(u'abbc', 'text2')
+    # # segmenter = Segmenter()
+    # seg3 = segmenter.concatenate(
+        # [seg1, seg2],
+        # import_labels_as='string',
+        # label='corpus'
+    # )
+    # seg4 = segmenter.tokenize(
+        # seg3,
+        # regexes=[(re.compile(r'\w+'), u'tokenize',)],
+    # )
+    # seg5 = segmenter.tokenize(
+        # seg4,
+        # regexes=[(re.compile(r'[ai]'), u'tokenize',)],
+        # label='V'
+    # )
+    # seg6 = segmenter.tokenize(
+        # seg4,
+        # regexes=[(re.compile(r'[bc]'), u'tokenize',)],
+        # label='C'
+    # )
+    # seg7 = segmenter.concatenate(
+        # [seg5, seg6],
+        # import_labels_as='category',
+        # label='letters',
+        # sort=True,
+        # merge_duplicates=True,
+    # )
+    # ow.inputData(seg7, 1)
+    # ow.inputData(seg4, 2)
+    # ow.show()
+    # appl.exec_()
+    # ow.saveSettings()
+
