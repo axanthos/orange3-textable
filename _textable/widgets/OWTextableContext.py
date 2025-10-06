@@ -572,7 +572,6 @@ class OWTextableContext(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    import sys, re
     WidgetPreview(OWTextableContext).run()
 
     # Old command-line testing code...

@@ -428,7 +428,6 @@ class OWTextableCategory(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    import sys
     WidgetPreview(OWTextableCategory).run()
 
     # Old command-line testing code...
