@@ -30,7 +30,8 @@ from LTTL.Utils import iround
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, SegmentationContextHandler, ProgressBar,
-    InfoBox, SendButton, AdvancedSettings, pluralize, Task
+    InfoBox, SendButton, AdvancedSettings, pluralize, ExpandableOrangeLineEdit,
+    Task
 )
 
 from Orange.widgets import widget, gui, settings
@@ -87,6 +88,7 @@ class OWTextableSelect(OWTextableBaseWidget):
     thresholdAnnotationKey = settings.ContextSetting(u'(none)')
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -175,13 +177,14 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"'none')."
             ),
         )
-        gui.lineEdit(
+        ExpandableOrangeLineEdit(
             widget=self.regexBox,
             master=self,
             value='regex',
             orientation='horizontal',
             label=u'Regex:',
             labelWidth=180,
+            settingsChanged=True,
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 u"The regex pattern that must be matched by input\n"
@@ -531,13 +534,14 @@ class OWTextableSelect(OWTextableBaseWidget):
                 u"'none')."
             ),
         )
-        gui.lineEdit(
+        ExpandableOrangeLineEdit(
             widget=self.basicSelectBox,
             master=self,
             value='regex',
             orientation='horizontal',
             label=u'Regex:',
             labelWidth=180,
+            settingsChanged=True,
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 u"The regex pattern that must be matched by input\n"
@@ -975,5 +979,6 @@ class OWTextableSelect(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    WidgetPreview(OWTextableSelect).run()
+    from LTTL.Input import Input as LTTL_Input
+    WidgetPreview(OWTextableSelect).run(LTTL_Input('a simple example'))
 
