@@ -1,5 +1,5 @@
 """File __init__.py
-Copyright 2012-2025 LangTech Sarl (info@langtech.ch)
+Copyright 2012-2025 Aris Xanthos
 -----------------------------------------------------------------------------
 This file is part of the Orange3-Textable package.
 

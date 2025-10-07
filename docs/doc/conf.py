@@ -16,7 +16,7 @@
 import sys, os
 
 version = "3.2.5"
-author = "LangTech Sarl"
+author = "Aris Xanthos"
 
 title = "Textable"
 
@@ -283,7 +283,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'Orange3-Textable.tex', 'Orange3-Textable Documentation',
-     'LangTech Sarl', 'manual'),
+     'Aris Xanthos', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
