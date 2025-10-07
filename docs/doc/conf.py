@@ -15,7 +15,7 @@
 
 import sys, os
 
-version = "3.2.5"
+version = "3.2.6"
 author = "Aris Xanthos"
 
 title = "Textable"
