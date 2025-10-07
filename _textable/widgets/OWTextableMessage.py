@@ -51,6 +51,7 @@ class OWTextableMessage(OWTextableBaseWidget):
         version=__version__.rsplit(".", 1)[0]
     )
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self, *args, **kwargs):
         """Initialize a Message widget"""

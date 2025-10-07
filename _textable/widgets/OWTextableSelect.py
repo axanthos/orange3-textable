@@ -184,7 +184,6 @@ class OWTextableSelect(OWTextableBaseWidget):
             orientation='horizontal',
             label=u'Regex:',
             labelWidth=180,
-            settingsChanged=True,
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 u"The regex pattern that must be matched by input\n"
@@ -541,7 +540,6 @@ class OWTextableSelect(OWTextableBaseWidget):
             orientation='horizontal',
             label=u'Regex:',
             labelWidth=180,
-            settingsChanged=True,
             callback=self.sendButton.settingsChanged,
             tooltip=(
                 u"The regex pattern that must be matched by input\n"

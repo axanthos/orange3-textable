@@ -97,6 +97,7 @@ class OWTextableConvert(OWTextableBaseWidget):
     encodings = getPredefinedEncodings()
 
     want_main_area = False
+    resizing_enabled = False
 
     @property
     def colDelimiter(self):

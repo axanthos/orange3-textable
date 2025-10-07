@@ -77,6 +77,7 @@ class OWTextableContext(OWTextableBaseWidget):
     contextAnnotationKey = settings.ContextSetting(u'(none)')  # type: str
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self):
         """Initialize a Context widget"""

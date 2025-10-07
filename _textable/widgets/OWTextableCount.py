@@ -79,6 +79,7 @@ class OWTextableCount(OWTextableBaseWidget):
     contextAnnotationKey = settings.ContextSetting(u'(none)')
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self, *args, **kwargs):
         """Initialize a Count widget"""

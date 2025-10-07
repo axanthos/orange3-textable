@@ -36,7 +36,8 @@ import LTTL.Segmenter as Segmenter
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     SendButton, InfoBox, getPredefinedEncodings, pluralize,
-    addSeparatorAfterDefaultEncodings, normalizeCarriageReturns
+    addSeparatorAfterDefaultEncodings, normalizeCarriageReturns,
+    ExpandableOrangeLineEdit
 )
 
 from Orange.widgets import widget, gui, settings
@@ -175,7 +176,7 @@ class OWTextableDisplay(OWTextableBaseWidget):
             ),
         )
         headerLineEdit.setMinimumWidth(200)
-        gui.lineEdit(
+        ExpandableOrangeLineEdit(
             widget=self.formattingIndentedBox,
             master=self,
             value='customFormat',
@@ -215,7 +216,6 @@ class OWTextableDisplay(OWTextableBaseWidget):
                 u"formatted segmentation."
             ),
         )
-        headerLineEdit.setMinimumWidth(200)
 
         # Advanced export box
         self.advancedExportBox = gui.widgetBox(

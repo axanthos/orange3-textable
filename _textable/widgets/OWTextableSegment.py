@@ -450,7 +450,6 @@ class OWTextableSegment(OWTextableBaseWidget):
             master=self,
             value='regex',
             orientation='horizontal',
-            settingsChanged=True,
             label="",
             labelWidth=0,
             callback=self.sendButton.settingsChanged,

@@ -29,7 +29,8 @@ from LTTL.Segmentation import Segmentation
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
-    pluralize,SendButton, InfoBox, AdvancedSettings, Task
+    pluralize,SendButton, InfoBox, AdvancedSettings, ExpandableOrangeLineEdit,
+    Task
 )
 
 import Orange
@@ -71,6 +72,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
     displayAdvancedSettings = settings.Setting(False)
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -257,7 +259,7 @@ class OWTextableExtractXML(OWTextableBaseWidget):
                 u"be added to the list when button 'Add' is clicked."
             ),
         )
-        gui.lineEdit(
+        ExpandableOrangeLineEdit(
             widget=addConditionBox,
             master=self,
             value='newConditionRegex',

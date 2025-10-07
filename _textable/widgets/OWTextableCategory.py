@@ -74,6 +74,7 @@ class OWTextableCategory(OWTextableBaseWidget):
     sequenceLength = settings.ContextSetting(1)
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self):
 

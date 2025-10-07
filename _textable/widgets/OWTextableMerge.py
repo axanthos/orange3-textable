@@ -63,6 +63,7 @@ class OWTextableMerge(OWTextableBaseWidget):
     mergeDuplicates = settings.Setting(False)
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

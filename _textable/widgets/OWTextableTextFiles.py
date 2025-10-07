@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.17.13'
+__version__ = '0.17.14'
 
 
 import codecs
@@ -34,21 +34,21 @@ from AnyQt.QtWidgets import QFileDialog, QMessageBox
 from chardet.universaldetector import UniversalDetector
 
 from LTTL.Segmentation import Segmentation
-from LTTL.Input import Input
+from LTTL.Input import Input as LTTL_Input
 import LTTL.SegmenterThread as Segmenter
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     JSONMessage, InfoBox, SendButton, AdvancedSettings,
     addSeparatorAfterDefaultEncodings, addAutoDetectEncoding,
-    getPredefinedEncodings, normalizeCarriageReturns, pluralize,
-    Task
+    getPredefinedEncodings, normalizeCarriageReturns, pluralize, Task
 )
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 CHUNK_LENGTH = 1000000
@@ -64,10 +64,10 @@ class OWTextableTextFiles(OWTextableBaseWidget):
     priority = 2
 
     # Input and output channels...
-    inputs = [
-        ('Message', JSONMessage, "inputMessage", widget.Single)
-    ]
-    outputs = [('Text data', Segmentation)]
+    class Inputs:
+        message = Input("Message", JSONMessage, auto_summary=False)    
+    class Outputs:
+        text_data = Output("Text data", Segmentation, auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -85,6 +85,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
     file = settings.Setting(u'')
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -118,7 +119,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         self.basicFileBox = self.create_widgetbox(
             box=u'Source',
             orientation='vertical',
-            addSpace=False,
             )
 
         basicFileBoxLine1 = gui.widgetBox(
@@ -138,7 +138,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"The path of the file."
             ),
         )
-        gui.separator(widget=basicFileBoxLine1, width=5)
         gui.button(
             widget=basicFileBoxLine1,
             master=self,
@@ -148,7 +147,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"Open a dialog for selecting file."
             ),
         )
-        gui.separator(widget=self.basicFileBox, width=3)
         advancedEncodingsCombobox = gui.comboBox(
             widget=self.basicFileBox,
             master=self,
@@ -165,9 +163,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         )
         addSeparatorAfterDefaultEncodings(advancedEncodingsCombobox)
         addAutoDetectEncoding(advancedEncodingsCombobox)
-        gui.separator(widget=self.basicFileBox, width=3)
         self.advancedSettings.basicWidgets.append(self.basicFileBox)
-        self.advancedSettings.basicWidgetsAppendSeparator()
 
         # ADVANCED GUI...
 
@@ -175,14 +171,12 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         self.fileBox = self.create_widgetbox(
             box=u'Sources',
             orientation='vertical',
-            addSpace=False,
             )
 
         fileBoxLine1 = gui.widgetBox(
             widget=self.fileBox,
             box=False,
             orientation='horizontal',
-            addSpace=True,
         )
         self.fileListbox = gui.listBox(
             widget=fileBoxLine1,
@@ -296,7 +290,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"the list will be the same as in this field."
             ),
         )
-        gui.separator(widget=addFileBoxLine1, width=5)
         gui.button(
             widget=addFileBoxLine1,
             master=self,
@@ -312,7 +305,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"added to the list when button 'Add' is clicked."
             ),
         )
-        gui.separator(widget=addFileBox, width=3)
         basicEncodingsCombobox = gui.comboBox(
             widget=addFileBox,
             master=self,
@@ -330,7 +322,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         addSeparatorAfterDefaultEncodings(basicEncodingsCombobox)
         addAutoDetectEncoding(basicEncodingsCombobox)
         self.encoding = self.encoding
-        gui.separator(widget=addFileBox, width=3)
         gui.lineEdit(
             widget=addFileBox,
             master=self,
@@ -345,7 +336,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"added to the list."
             ),
         )
-        gui.separator(widget=addFileBox, width=3)
         gui.lineEdit(
             widget=addFileBox,
             master=self,
@@ -359,7 +349,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"associated with the above annotation key."
             ),
         )
-        gui.separator(widget=addFileBox, width=3)
         self.addButton = gui.button(
             widget=addFileBox,
             master=self,
@@ -375,13 +364,11 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             ),
         )
         self.advancedSettings.advancedWidgets.append(self.fileBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
         self.optionsBox = self.create_widgetbox(
             box=u'Options',
             orientation='vertical',
-            addSpace=False,
             )
 
         optionsBoxLine1 = gui.widgetBox(
@@ -410,7 +397,6 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"Annotation key for importing file names."
             ),
         )
-        gui.separator(widget=self.optionsBox, width=3)
         optionsBoxLine2 = gui.widgetBox(
             widget=self.optionsBox,
             box=False,
@@ -437,16 +423,13 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"Annotation key for file auto-numbering."
             ),
         )
-        gui.separator(widget=self.optionsBox, width=3)
         self.advancedSettings.advancedWidgets.append(self.optionsBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
 
         # Send button & Info box
         self.sendButton.draw()
         self.infoBox.draw()
-        self.adjustSizeWithTimer()
         QTimer.singleShot(0, self.sendButton.sendIf)
 
     @OWTextableBaseWidget.task_decorator
@@ -464,7 +447,10 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             message += u'(%i character@p).' % numChars
             message = pluralize(message, numChars)
             self.infoBox.setText(message)
-            self.send('Text data', processed_data) # AS 11.2023: removed self
+            if len(processed_data):
+                self.Outputs.text_data.send(processed_data)
+            else:
+                self.sendNoneToOutputs()
             
     def process_data(self, myFiles):
         """ Process data in a worker thread
@@ -536,7 +522,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                     self.signal_prog.emit(100, False)
                     
                     # Send None
-                    self.send('Text data', None) # AS 11.2023: removed self
+                    self.sendNoneToOutputs()
                     
                     return
 
@@ -556,7 +542,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 self.signal_prog.emit(100, False)
                 
                 # Send None
-                self.send('Text data', None) # AS 11.2023: removed self
+                self.sendNoneToOutputs()
 
                 return
 
@@ -599,7 +585,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         else:
             label = None
         for index in range(len(fileContents)):
-            myInput = Input(fileContents[index], label)
+            myInput = LTTL_Input(fileContents[index], label)
             segment = myInput[0]
             segment.annotations.update(annotations[index])
             myInput[0] = segment
@@ -636,7 +622,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
             not (self.file or self.displayAdvancedSettings)
         ):
             self.infoBox.setText(u'Please select input file.', 'warning')
-            self.send('Text data', None) # AS 11.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # Check that autoNumberKey is not empty (if necessary)...
@@ -648,7 +634,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                     u'Please enter an annotation key for auto-numbering.',
                     'warning'
                 )
-                self.send('Text data', None) # AS 11.2023: removed self
+                self.sendNoneToOutputs()
                 return
         else:
             autoNumberKey = None
@@ -674,6 +660,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)
 
+    @Inputs.message
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
         if not message:
@@ -696,7 +683,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                         u"JSON message.",
                         'error'
                     )
-                    self.send('Text data', None) # AS 11.2023: removed self
+                    self.sendNoneToOutputs()
                     return
                 temp_files.append((
                     path,
@@ -711,7 +698,7 @@ class OWTextableTextFiles(OWTextableBaseWidget):
                 u"Please make sure that incoming message is valid JSON.",
                 'error'
             )
-            self.send('Text data', None) # AS 11.2023: removed self
+            self.sendNoneToOutputs()
             return
 
     def clearCreatedInputs(self):
@@ -987,10 +974,4 @@ class OWTextableTextFiles(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    import sys
-    from AnyQt.QtWidgets import QApplication
-    appl = QApplication(sys.argv)
-    ow = OWTextableTextFiles()
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    WidgetPreview(OWTextableTextFiles).run()

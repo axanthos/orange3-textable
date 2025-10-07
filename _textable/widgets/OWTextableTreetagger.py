@@ -19,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = u"0.1.11"
+__version__ = u"0.1.12"
 
 import os
 import re
@@ -32,13 +32,16 @@ from Orange.widgets import gui, settings
 from AnyQt.QtWidgets import QFileDialog, QMessageBox
 
 from LTTL.Segmentation import Segmentation
-from LTTL.Input import Input
+from LTTL.Input import Input as LTTL_Input
 import LTTL.Segmenter as Segmenter
 
 from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, pluralize,
     InfoBox, SendButton, ProgressBar
 )
+
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 import appdirs
 import treetaggerwrapper
@@ -52,8 +55,10 @@ class Treetagger(OWTextableBaseWidget):
     icon = "icons/treetagger.svg"
     priority = 2003
 
-    inputs = [("Segmentation", Segmentation, "inputData")]
-    outputs = [("Tagged data", Segmentation)]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False)
+    class Outputs:
+        tagged_data = Output("Tagged data", Segmentation, auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -64,6 +69,7 @@ class Treetagger(OWTextableBaseWidget):
     outputFormat = settings.Setting("segment into words")
 
     want_main_area = False
+    resizing_enabled = False
 
     configFilePath = os.path.normpath(
         appdirs.user_data_dir("textable", "langtech") + "/treetagger_path"
@@ -100,8 +106,6 @@ class Treetagger(OWTextableBaseWidget):
             sendIfPreCallback=self.updateGUI
         )
 
-        gui.separator(self.controlArea, height=3)
-
         self.optionsBox = gui.widgetBox(
             self.controlArea,
             u"Options",
@@ -122,8 +126,6 @@ class Treetagger(OWTextableBaseWidget):
             ),
         )
         self.languageCombobox.setMinimumWidth(120)
-
-        gui.separator(self.optionsBox, height=3)
 
         gui.comboBox(
             widget=self.optionsBox,
@@ -148,8 +150,6 @@ class Treetagger(OWTextableBaseWidget):
             ),
         )
 
-        gui.separator(self.optionsBox, height=3)
-
         gui.checkBox(
             widget=self.optionsBox,
             master=self,
@@ -169,10 +169,7 @@ class Treetagger(OWTextableBaseWidget):
 
         self.locateTreetaggerBox=gui.widgetBox(
             self.controlArea,
-            addSpace=False,
         )
-
-        gui.separator(self.locateTreetaggerBox, height=3)
 
         self.treetaggerButton = gui.button(
             widget=self.locateTreetaggerBox,
@@ -187,8 +184,7 @@ class Treetagger(OWTextableBaseWidget):
 
         self.sendButton.sendIf()
 
-        self.adjustSizeWithTimer()
-
+    @Inputs.segmentation
     def inputData(self, inputData):
         """Process incoming data."""
         self.segmentation = inputData
@@ -202,18 +198,18 @@ class Treetagger(OWTextableBaseWidget):
 
         if not self.TreetaggerPath:
             self.infoBox.setText(self.noTreetaggerPathWarning, "warning")
-            self.send("Tagged data", None, self)
+            self.sendNoneToOutputs()
             return
         elif not self.getAvailableLanguages():
             self.infoBox.setText(self.noLanguageParameterWarning, "warning")
-            self.send("Tagged data", None, self)
+            self.sendNoneToOutputs()
             return
         elif not self.segmentation:
             self.infoBox.setText(
                 u"Widget needs input",
                 "warning"
             )
-            self.send("Tagged data", None, self)
+            self.sendNoneToOutputs()
             return
 
         # Initialize progress bar.
@@ -270,7 +266,7 @@ class Treetagger(OWTextableBaseWidget):
             notagip=True,
             notagdns=True,
         )
-        tagged_input = Input("\n".join(tagged_lines))
+        tagged_input = LTTL_Input("\n".join(tagged_lines))
         self.createdInputs.append(tagged_input)
 
         # Replace <unknown> with [unknown] and " with &quot; then
@@ -312,7 +308,7 @@ class Treetagger(OWTextableBaseWidget):
                     "XML, or it doesn't contain instances of '&#60;' and '\x3e'",
                     "error"
                 )
-                self.send("Tagged data", None, self)
+                self.sendNoneToOutputs()
                 self.progressBar.finish()
                 self.controlArea.setDisabled(False)
                 return
@@ -324,7 +320,10 @@ class Treetagger(OWTextableBaseWidget):
         message = u'%i segment@p sent to output.' % len(output_segmentation)
         message = pluralize(message, len(output_segmentation))
         self.infoBox.setText(message)
-        self.send('Tagged data', output_segmentation, self)
+        if len(output_segmentation):
+            self.Outputs.tagged_data.send(output_segmentation)
+        else:
+            self.sendNoneToOutputs()
         self.sendButton.resetSettingsChangedFlag()
 
     def updateGUI(self):
@@ -345,7 +344,6 @@ class Treetagger(OWTextableBaseWidget):
             self.infoBox.setText(self.noTreetaggerPathWarning, "warning")
             self.optionsBox.setDisabled(True)
             self.locateTreetaggerBox.setVisible(True)
-        self.adjustSizeWithTimer()
 
     def getAvailableLanguages(self):
         languages = list()
@@ -476,13 +474,5 @@ class Treetagger(OWTextableBaseWidget):
 
 
 if __name__ == "__main__":
-    import sys
-    from AnyQt.QtWidgets import QApplication
-
-    myApplication = QApplication(sys.argv)
-    myWidget = Treetagger()
-    myWidget.show()
-    myWidget.segmentation = Input("My tailor is rich.")
-    myWidget.language = "English"
-    myWidget.sendData()
-    myApplication.exec_()
+    WidgetPreview(Treetagger).run(LTTL_Input("My tailor is rich."))
+    

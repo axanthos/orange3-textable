@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.14.13'
+__version__ = '0.14.14'
 
 import os
 import codecs
@@ -35,21 +35,21 @@ from AnyQt.QtWidgets import QMessageBox, QFileDialog
 import chardet
 
 from LTTL.Segmentation import Segmentation
-from LTTL.Input import Input
+from LTTL.Input import Input as LTTL_Input
 import LTTL.SegmenterThread as Segmenter
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, ProgressBar,
     JSONMessage, InfoBox, SendButton, AdvancedSettings,
     addSeparatorAfterDefaultEncodings, addAutoDetectEncoding,
-    normalizeCarriageReturns, getPredefinedEncodings, pluralize,
-    Task
+    normalizeCarriageReturns, getPredefinedEncodings, pluralize, Task
 )
 
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 
@@ -61,10 +61,10 @@ class OWTextableURLs(OWTextableBaseWidget):
     icon = "icons/URLs.png"
     priority = 3
 
-    inputs = [
-        ('Message', JSONMessage, "inputMessage", widget.Single)
-    ]
-    outputs = [('Text data', Segmentation)]
+    class Inputs:
+        message = Input("Message", JSONMessage, auto_summary=False)
+    class Outputs:
+        text_data = Output("Text data", Segmentation, auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -81,6 +81,7 @@ class OWTextableURLs(OWTextableBaseWidget):
     URL = settings.Setting(u'')
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self):
         super().__init__()
@@ -116,7 +117,6 @@ class OWTextableURLs(OWTextableBaseWidget):
         self.basicURLBox = self.create_widgetbox(
             box=u'Source',
             orientation='vertical',
-            addSpace=False,
             )
 
         basicURLBoxLine1 = gui.widgetBox(
@@ -136,7 +136,6 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"The URL whose content will be imported."
             ),
         )
-        gui.separator(widget=self.basicURLBox, height=3)
         advancedEncodingsCombobox = gui.comboBox(
             widget=self.basicURLBox,
             master=self,
@@ -153,9 +152,7 @@ class OWTextableURLs(OWTextableBaseWidget):
         )
         addSeparatorAfterDefaultEncodings(advancedEncodingsCombobox)
         addAutoDetectEncoding(advancedEncodingsCombobox)
-        gui.separator(widget=self.basicURLBox, height=3)
         self.advancedSettings.basicWidgets.append(self.basicURLBox)
-        self.advancedSettings.basicWidgetsAppendSeparator()
 
         # ADVANCED GUI...
 
@@ -163,14 +160,12 @@ class OWTextableURLs(OWTextableBaseWidget):
         self.URLBox = self.create_widgetbox(
             box=u'Sources',
             orientation='vertical',
-            addSpace=False,
             )
 
         URLBoxLine1 = gui.widgetBox(
             widget=self.URLBox,
             box=False,
             orientation='horizontal',
-            addSpace=True,
         )
         self.fileListbox = gui.listBox(
             widget=URLBoxLine1,
@@ -263,7 +258,6 @@ class OWTextableURLs(OWTextableBaseWidget):
             widget=URLBoxLine2,
             box=True,
             orientation='vertical',
-            addSpace=False,
         )
         gui.lineEdit(
             widget=addURLBox,
@@ -281,7 +275,6 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u" will be the same as in this field."
             ),
         )
-        gui.separator(widget=addURLBox, height=3)
         basicEncodingsCombobox = gui.comboBox(
             widget=addURLBox,
             master=self,
@@ -299,7 +292,6 @@ class OWTextableURLs(OWTextableBaseWidget):
         addSeparatorAfterDefaultEncodings(basicEncodingsCombobox)
         addAutoDetectEncoding(basicEncodingsCombobox)
         self.encoding = self.encoding
-        gui.separator(widget=addURLBox, height=3)
         gui.lineEdit(
             widget=addURLBox,
             master=self,
@@ -314,7 +306,6 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"added to the list."
             ),
         )
-        gui.separator(widget=addURLBox, height=3)
         gui.lineEdit(
             widget=addURLBox,
             master=self,
@@ -328,7 +319,6 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"associated with the above annotation key."
             ),
         )
-        gui.separator(widget=addURLBox, height=3)
         self.addButton = gui.button(
             widget=addURLBox,
             master=self,
@@ -340,13 +330,11 @@ class OWTextableURLs(OWTextableBaseWidget):
             ),
         )
         self.advancedSettings.advancedWidgets.append(self.URLBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # Options box...
         self.optionsBox = self.create_widgetbox(
             box=u'Options',
             orientation='vertical',
-            addSpace=False,
             )
 
         optionsBoxLine1 = gui.widgetBox(
@@ -375,7 +363,6 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"Annotation key for importing URLs."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=3)
         optionsBoxLine2 = gui.widgetBox(
             widget=self.optionsBox,
             box=False,
@@ -402,16 +389,13 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"Annotation key for URL auto-numbering."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=3)
         self.advancedSettings.advancedWidgets.append(self.optionsBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
 
         # Send button & Info box
         self.sendButton.draw()
         self.infoBox.draw()
-        self.adjustSizeWithTimer()
         QTimer.singleShot(0, self.sendButton.sendIf)
     
     @OWTextableBaseWidget.task_decorator
@@ -429,7 +413,10 @@ class OWTextableURLs(OWTextableBaseWidget):
             message += u'(%i character@p).' % numChars
             message = pluralize(message, numChars)
             self.infoBox.setText(message)
-            self.send('Text data', processed_data) # AS 11.2023: removed self
+            if len(processed_data):
+                self.Outputs.text_data.send(processed_data)
+            else:
+                self.sendNoneToOutputs()
             
     def process_data(self, myURLs):
         """ Process data in a worker thread
@@ -480,7 +467,7 @@ class OWTextableURLs(OWTextableBaseWidget):
                 self.signal_prog.emit(100, False)
                 
                 # Send None
-                self.send('Text data', None) # AS 11.2023: removed self
+                self.sendNoneToOutputs()
                 
                 return
             try:
@@ -502,7 +489,7 @@ class OWTextableURLs(OWTextableBaseWidget):
                 self.signal_prog.emit(100, False)
                 
                 # Send None
-                self.send('Text data', None) # AS 11.2023: removed self
+                self.sendNoneToOutputs()
 
                 return
 
@@ -550,7 +537,7 @@ class OWTextableURLs(OWTextableBaseWidget):
         else:
             label = None
         for index in range(len(URLContents)):
-            myInput = Input(URLContents[index], label)
+            myInput = LTTL_Input(URLContents[index], label)
             segment = myInput[0]
             segment.annotations.update(annotations[index])
             myInput[0] = segment
@@ -586,7 +573,7 @@ class OWTextableURLs(OWTextableBaseWidget):
             not (self.URL or self.displayAdvancedSettings)
         ):
             self.infoBox.setText(u'Please select source URL.', 'warning')
-            self.send('Text data', None) # AS 11.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # Check that autoNumberKey is not empty (if necessary)...
@@ -598,7 +585,7 @@ class OWTextableURLs(OWTextableBaseWidget):
                     u'Please enter an annotation key for auto-numbering.',
                     'warning'
                 )
-                self.send('Text data', None) # AS 11.2023: removed self
+                self.sendNoneToOutputs()
                 return
         else:
             autoNumberKey = None
@@ -624,6 +611,7 @@ class OWTextableURLs(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)
         
+    @Inputs.message
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
         if not message:
@@ -646,7 +634,7 @@ class OWTextableURLs(OWTextableBaseWidget):
                         u"JSON message.",
                         'error'
                     )
-                    self.send('Text data', None) # AS 11.2023: removed self
+                    self.sendNoneToOutputs()
                     return
                 temp_URLs.append((
                     URL,
@@ -661,7 +649,7 @@ class OWTextableURLs(OWTextableBaseWidget):
                 u"Please make sure that incoming message is valid JSON.",
                 'error'
             )
-            self.send('Text data', None) # AS 11.2023: removed self
+            self.sendNoneToOutputs()
             return
 
     def clearCreatedInputs(self):
@@ -908,10 +896,4 @@ class OWTextableURLs(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    import sys
-    from AnyQt.QtWidgets import QApplication
-    appl = QApplication(sys.argv)
-    ow = OWTextableURLs()
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    WidgetPreview(OWTextableURLs).run()

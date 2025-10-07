@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.12'
+__version__ = '0.13.13'
 
 import os, re, codecs, json
 
@@ -28,19 +28,17 @@ from AnyQt.QtWidgets import QFileDialog, QMessageBox
 import LTTL.SegmenterThread as Segmenter
 from LTTL.Segmentation import Segmentation
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler, JSONMessage, ProgressBar,
-    InfoBox, SendButton, AdvancedSettings, pluralize, normalizeCarriageReturns,
-    Task
+    InfoBox, SendButton, AdvancedSettings, pluralize, normalizeCarriageReturns, 
+    ExpandableOrangeLineEdit, Task
 )
 
 from Orange.widgets import gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 # Threading
-from AnyQt.QtCore import QThread, pyqtSlot, pyqtSignal
-import concurrent.futures
-from Orange.widgets.utils.concurrent import ThreadExecutor, FutureWatcher
-from Orange.widgets.utils.widgetpreview import WidgetPreview
 from functools import partial
 
 class OWTextableRecode(OWTextableBaseWidget):
@@ -52,11 +50,11 @@ class OWTextableRecode(OWTextableBaseWidget):
     priority = 2002
 
     # Input and output channels...
-    inputs = [
-        ('Segmentation', Segmentation, "inputData"),
-        ('Message', JSONMessage, "inputMessage")
-    ]
-    outputs = [('Recoded data', Segmentation)]
+    class Inputs:
+        segmentation = Input("Segmentation", Segmentation, auto_summary=False)    
+        message = Input("Message", JSONMessage, auto_summary=False)
+    class Outputs:
+        recoded_data = Output("Recoded data", Segmentation, auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -70,6 +68,7 @@ class OWTextableRecode(OWTextableBaseWidget):
     replString = settings.Setting(u'')
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self, *args, **kwargs):
 
@@ -106,14 +105,12 @@ class OWTextableRecode(OWTextableBaseWidget):
         self.substBox = self.create_widgetbox(
             box=u'Substitutions',
             orientation='vertical',
-            addSpace=False,
             )
 
         substBoxLine1 = gui.widgetBox(
             widget=self.substBox,
             box=False,
             orientation='horizontal',
-            addSpace=True,
         )
         self.substListbox = gui.listBox(
             widget=substBoxLine1,
@@ -209,7 +206,7 @@ class OWTextableRecode(OWTextableBaseWidget):
             box=True,
             orientation='vertical',
         )
-        gui.lineEdit(
+        ExpandableOrangeLineEdit(
             widget=addSubstBox,
             master=self,
             value='newRegex',
@@ -222,8 +219,7 @@ class OWTextableRecode(OWTextableBaseWidget):
                 u"when button 'Add' is clicked."
             ),
         )
-        gui.separator(widget=addSubstBox, height=3)
-        gui.lineEdit(
+        ExpandableOrangeLineEdit(
             widget=addSubstBox,
             master=self,
             value='newReplString',
@@ -243,7 +239,6 @@ class OWTextableRecode(OWTextableBaseWidget):
 
             ),
         )
-        gui.separator(widget=addSubstBox, height=3)
         addSubstBoxLine3 = gui.widgetBox(
             widget=addSubstBox,
             box=False,
@@ -299,7 +294,6 @@ class OWTextableRecode(OWTextableBaseWidget):
                 u"than any character but newline)."
             ),
         )
-        gui.separator(widget=addSubstBox, height=3)
         self.addButton = gui.button(
             widget=addSubstBox,
             master=self,
@@ -310,13 +304,11 @@ class OWTextableRecode(OWTextableBaseWidget):
             ),
         )
         self.advancedSettings.advancedWidgets.append(self.substBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Advanced) Options box...
         self.optionsBox = self.create_widgetbox(
             box=u'Options',
             orientation='vertical',
-            addSpace=False,
             )
 
         gui.checkBox(
@@ -329,18 +321,15 @@ class OWTextableRecode(OWTextableBaseWidget):
                 u"Copy all annotations from input to output segments."
             ),
         )
-        gui.separator(widget=self.optionsBox, height=2)
         self.advancedSettings.advancedWidgets.append(self.optionsBox)
-        self.advancedSettings.advancedWidgetsAppendSeparator()
 
         # (Basic) Substitution box...
         self.basicSubstBox = self.create_widgetbox(
             box=u'Substitution',
             orientation='vertical',
-            addSpace=False,
             )
 
-        gui.lineEdit(
+        ExpandableOrangeLineEdit(
             widget=self.basicSubstBox,
             master=self,
             value='regex',
@@ -353,8 +342,7 @@ class OWTextableRecode(OWTextableBaseWidget):
                 u"the input segmentation."
             ),
         )
-        gui.separator(widget=self.basicSubstBox, height=3)
-        gui.lineEdit(
+        ExpandableOrangeLineEdit(
             widget=self.basicSubstBox,
             master=self,
             value='replString',
@@ -367,9 +355,7 @@ class OWTextableRecode(OWTextableBaseWidget):
                 u"match of the above regex in the input segmentation."
             ),
         )
-        gui.separator(widget=self.basicSubstBox, height=3)
         self.advancedSettings.basicWidgets.append(self.basicSubstBox)
-        self.advancedSettings.basicWidgetsAppendSeparator()
 
         gui.rubber(self.controlArea)
 
@@ -377,7 +363,6 @@ class OWTextableRecode(OWTextableBaseWidget):
         self.sendButton.draw()
         self.infoBox.draw()
         self.sendButton.sendIf()
-        self.adjustSizeWithTimer()
     
     @OWTextableBaseWidget.task_decorator
     def task_finished(self, f):
@@ -396,7 +381,7 @@ class OWTextableRecode(OWTextableBaseWidget):
         else:
             message += u" (no replacements performed)."
         self.infoBox.setText(message)
-        self.send('Recoded data', recoded_data) # AS 10.2023: removed self
+        self.Outputs.recoded_data.send(recoded_data)
 
     def sendData(self):
         """(Have LTTL.Segmenter) perform the actual recoding"""
@@ -404,7 +389,7 @@ class OWTextableRecode(OWTextableBaseWidget):
         # Check that there's something on input...
         if not self.segmentation:
             self.infoBox.setText(u'Widget needs input.', 'warning')
-            self.send('Recoded data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # Check that segmentation is non-overlapping...
@@ -414,7 +399,7 @@ class OWTextableRecode(OWTextableBaseWidget):
                         u'overlapping.',
                 state='error'
             )
-            self.send('Recoded data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
         # TODO: remove label message in doc
@@ -472,7 +457,7 @@ class OWTextableRecode(OWTextableBaseWidget):
                 self.infoBox.setText(
                     message, 'error'
                 )
-                self.send('Recoded data', None) # AS 10.2023: removed self
+                self.sendNoneToOutputs()
                 return
 
         # Perform recoding...
@@ -497,6 +482,7 @@ class OWTextableRecode(OWTextableBaseWidget):
         # Threading ...
         self.threading(threaded_function)
 
+    @Inputs.message
     def inputMessage(self, message):
         """Handle JSON message on input connection"""
         if not message:
@@ -523,7 +509,7 @@ class OWTextableRecode(OWTextableBaseWidget):
                         u"JSON message.",
                         'error'
                     )
-                    self.send('Recoded data', None) # AS 10.2023: removed self
+                    self.sendNoneToOutputs()
                     return
                 temp_substitutions.append((
                     regex,
@@ -540,9 +526,10 @@ class OWTextableRecode(OWTextableBaseWidget):
                 u"Please make sure that incoming message is valid JSON.",
                 'error'
             )
-            self.send('Recoded data', None) # AS 10.2023: removed self
+            self.sendNoneToOutputs()
             return
 
+    @Inputs.segmentation
     def inputData(self, segmentation):
         """Process incoming segmentation"""
         # Cancel pending tasks, if any
@@ -791,10 +778,5 @@ class OWTextableRecode(OWTextableBaseWidget):
             super().setCaption(title)
 
 if __name__ == '__main__':
-    import sys
-    from AnyQt.QtWidgets import QApplication
-    appl = QApplication(sys.argv)
-    ow = OWTextableRecode()
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    from LTTL.Input import Input as LTTL_Input
+    WidgetPreview(OWTextableRecode).run(LTTL_Input("a simple example"))

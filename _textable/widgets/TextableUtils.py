@@ -1270,16 +1270,12 @@ class ExpandableOrangeLineEdit(QWidget):
     """Drop-in replacement for Orange gui.lineEdit with an 'expand' button."""
 
     def __init__(self, *args, **kwargs):
-        """All arguments are forwarded to Orange gui.lineEdit except the 
-        additional settingsChanged boolean (defaulting to False).
+        """All arguments are forwarded to Orange gui.lineEdit.
         """
         super().__init__()
         
         # Set size policy (resizable horizontally only)...
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-
-        # Extract settingsChanged kwarg if given.
-        self.settingsChanged = kwargs.pop("settingsChanged", False)
         
         # Extract and set label and labelWidth kwargs, and get widget and master.
         label = kwargs["label"]
@@ -1345,10 +1341,7 @@ class ExpandableOrangeLineEdit(QWidget):
             text_input = line_edit.text()
             if text_input != self.line_edit.text():
                 self.line_edit.setText(text_input)
-                if self.settingsChanged:
-                    self.master.sendButton.settingsChanged()
-                else:
-                    self.master.updateGUI()
+                self.line_edit.callback()
 
     # Forward relevant methods/attributes to the internal gui.lineEdit...
     def text(self):

@@ -37,4 +37,4 @@ __version__
     
     # Old command-line testing code...
     
-ExpandableLineEdit? (=> Extract XML, Display, Select, Recode)
+ExpandableOrangeLineEdit? (=> Extract XML, Display, Select, Recode)

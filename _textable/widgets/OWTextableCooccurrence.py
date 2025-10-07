@@ -79,6 +79,7 @@ class OWTextableCooccurrence(OWTextableBaseWidget):
     windowSize = settings.ContextSetting(2)
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self):
         """Initialize a Cooccurrence widget"""

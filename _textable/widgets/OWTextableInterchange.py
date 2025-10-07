@@ -75,6 +75,7 @@ class OWTextableInterchange(OWTextableBaseWidget):
         maxNumCategories = settings.Setting(100)
 
     want_main_area = False
+    resizing_enabled = False
 
     def __init__(self, *args, **kwargs):
         """Initialize a Message widget"""

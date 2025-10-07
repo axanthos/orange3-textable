@@ -18,20 +18,22 @@ You should have received a copy of the GNU General Public License
 along with Orange3-Textable. If not, see <http://www.gnu.org/licenses/>.
 """
 
-__version__ = '0.13.8'
+__version__ = '0.13.9'
 
 from unicodedata import normalize
 
 from LTTL.Segmentation import Segmentation
-from LTTL.Input import Input
+from LTTL.Input import Input as LTTL_Input
 
 from AnyQt.QtWidgets import QPlainTextEdit
 
-from .TextableUtils import (
+from _textable.widgets.TextableUtils import (
     OWTextableBaseWidget, VersionedSettingsHandler,
     pluralize, InfoBox, SendButton
 )
 from Orange.widgets import widget, gui, settings
+from Orange.widgets.widget import Input, Output
+from Orange.widgets.utils.widgetpreview import WidgetPreview
 
 
 class OWTextableTextField(OWTextableBaseWidget):
@@ -45,8 +47,10 @@ class OWTextableTextField(OWTextableBaseWidget):
     openclass = True
     
     # Input and output channels...
-    inputs = [('Text data', Segmentation, "inputTextData", widget.Single)]
-    outputs = [('Text data', Segmentation)]
+    class Inputs:
+        text_data = Input("Text data", Segmentation, auto_summary=False)
+    class Outputs:
+        text_data = Output("Text data", Segmentation, auto_summary=False)
 
     settingsHandler = VersionedSettingsHandler(
         version=__version__.rsplit(".", 1)[0]
@@ -73,23 +77,15 @@ class OWTextableTextField(OWTextableBaseWidget):
         )
 
         # LTTL.Input object (token that will be sent).
-        self.segmentation = Input(text=u'')
+        self.segmentation = LTTL_Input(text="")
 
         # GUI...
 
         # Text Field...
-        gui.separator(
-            widget=self.controlArea,
-            height=3,
-        )
         self.editor = QPlainTextEdit()
         self.editor.setPlainText(self.textFieldContent.decode('utf-8'))
         self.controlArea.layout().addWidget(self.editor)
         self.editor.textChanged.connect(self.sendButton.settingsChanged)
-        gui.separator(
-            widget=self.controlArea,
-            height=3,
-        )
         self.setMinimumWidth(250)
 
         # Send button...
@@ -100,6 +96,7 @@ class OWTextableTextField(OWTextableBaseWidget):
 
         self.sendButton.sendIf()
 
+    @Inputs.text_data
     def inputTextData(self, segmentation):
         """Handle text data on input connection"""
         if not segmentation:
@@ -123,7 +120,7 @@ class OWTextableTextField(OWTextableBaseWidget):
                 message=u'Please type or paste some text above.',
                 state='warning',
             )
-            self.send('Text data', None)
+            self.sendNoneToOutputs()
             return
 
         # TODO: remove message 'No label was provided.' from docs
@@ -138,7 +135,7 @@ class OWTextableTextField(OWTextableBaseWidget):
         self.segmentation.update(textFieldContent, label=self.captionTitle)
 
         # Send token...
-        self.send('Text data', self.segmentation)
+        self.Outputs.text_data.send(self.segmentation)
         self.sendButton.resetSettingsChangedFlag()
 
     def setCaption(self, title):
@@ -156,10 +153,4 @@ class OWTextableTextField(OWTextableBaseWidget):
 
 
 if __name__ == '__main__':
-    import sys
-    from AnyQt.QtWidgets import  QApplication
-    appl = QApplication(sys.argv)
-    ow = OWTextableTextField()
-    ow.show()
-    appl.exec_()
-    ow.saveSettings()
+    WidgetPreview(OWTextableTextField).run()
