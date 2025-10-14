@@ -571,7 +571,7 @@ class OWTextableSelect(OWTextableBaseWidget):
             self.Outputs.selected_data.send(selected_data)
         else:
             self.Outputs.selected_data.send(None)
-        if len(discarded_data):
+        if discarded_data is not None and len(discarded_data):
             self.Outputs.discarded_data.send(discarded_data)
         else:
             self.Outputs.discarded_data.send(None)
