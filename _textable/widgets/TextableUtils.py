@@ -39,7 +39,7 @@ Provides functions:
 - getPredefinedEncodings
 """
 
-__version__ = '0.23'
+__version__ = '0.24'
 
 import re, os, uuid
 
@@ -1326,7 +1326,7 @@ class ExpandableOrangeLineEdit(QWidget):
 
         line_edit = QLineEdit(dialog)
         line_edit.setText(self.line_edit.text())
-        line_edit.setStyleSheet("font: 16px")
+        line_edit.setStyleSheet("font: 18px")
         line_edit.selectAll()
 
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
