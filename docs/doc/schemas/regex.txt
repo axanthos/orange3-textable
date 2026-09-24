@@ -1,0 +1,16 @@
+[
+    {
+        "annotation_key": "scene",
+        "annotation_value": "&1",
+        "mode": "Tokenize",
+        "regex": "(Act \\d, Scene \\d): <a href=\"(titus\\.\\d.\\d\\.html)\">",
+        "unicode_dependent": true
+    },
+    {
+        "annotation_key": "url",
+        "annotation_value": "&2",
+        "mode": "Tokenize",
+        "regex": "(Act \\d, Scene \\d): <a href=\"(titus\\.\\d.\\d\\.html)\">",
+        "unicode_dependent": true
+    }
+]
